@@ -522,11 +522,79 @@ app.patch("/api/classes/:id/status", async (req, res) => {
   }
 });
 // CLASSES API END
+
+// RECORDINGS API START
+app.get("/api/recordings", async (req, res) => {
+  try {
+    const db = getDb();
+
+    const snapshot = await db.collection("recordings")
+      .orderBy("createdAt", "desc")
+      .get();
+
+    const recordings = [];
+
+    snapshot.forEach((doc) => {
+      recordings.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    res.json({
+      ok: true,
+      recordings
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      message: "Could not load recordings."
+    });
+  }
+});
+
+app.post("/api/recordings/create", async (req, res) => {
+  try {
+    const db = getDb();
+
+    const recordingData = {
+      level: req.body.level || "",
+      learnerGroup: req.body.learnerGroup || "",
+      teacher: req.body.teacher || "",
+      classDay: req.body.classDay || "",
+      classDate: req.body.classDate || "",
+      recordingLink: req.body.recordingLink || "",
+      notes: req.body.notes || "",
+      status: req.body.status || "Saved",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+
+    const docRef = await db.collection("recordings").add(recordingData);
+
+    res.json({
+      ok: true,
+      id: docRef.id,
+      message: "Recording saved."
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      message: "Could not save recording."
+    });
+  }
+});
+// RECORDINGS API END
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Impact backend running on port ${PORT}`);
 });
+
 
 
 

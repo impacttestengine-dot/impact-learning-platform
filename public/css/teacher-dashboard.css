@@ -684,3 +684,60 @@ body{
     align-self: flex-start;
   }
 }
+
+/* Recordings module */
+.recordings-layout {
+  align-items: flex-start;
+}
+
+.module-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.module-card-head h2 {
+  margin: 0;
+}
+
+.module-card-head span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 900;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.82);
+}
+
+.recording-notes {
+  margin-bottom: 16px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(11, 14, 25, 0.28);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.recording-notes span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.54);
+  font-weight: 800;
+}
+
+.recording-notes p {
+  margin: 0;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.45;
+}
+
+.recording-link-button {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}

@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recordings | Impact Learning Platform</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/teacher-dashboard.css">
+</head>
+<body>
+  <main class="teacher-page">
+    <a class="home-link" href="/teacher/dashboard.html">Dashboard</a>
+
+    <section class="teacher-hero">
+      <div class="eyebrow">Teacher Workspace</div>
+      <h1>Recordings</h1>
+    </section>
+
+    <section class="dashboard-grid recordings-layout">
+      <div class="dashboard-card">
+        <h2>Add Recording</h2>
+        <p>Save class recording links and notes for learner reference.</p>
+
+        <form id="recordingForm" class="teacher-form">
+          <div class="form-grid">
+            <label>
+              Level
+              <input id="level" type="text">
+            </label>
+
+            <label>
+              Learner / Group
+              <input id="learnerGroup" type="text">
+            </label>
+
+            <label>
+              Teacher
+              <input id="teacher" type="text">
+            </label>
+
+            <label>
+              Day
+              <select id="classDay">
+                <option value="">Select Day</option>
+                <option>Monday</option>
+                <option>Tuesday</option>
+                <option>Wednesday</option>
+                <option>Thursday</option>
+                <option>Friday</option>
+                <option>Saturday</option>
+                <option>Sunday</option>
+              </select>
+            </label>
+
+            <label>
+              Date
+              <input id="classDate" type="date">
+            </label>
+
+            <label>
+              Status
+              <select id="status">
+                <option>Saved</option>
+                <option>Needs Review</option>
+                <option>Shared</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            Recording Link
+            <input id="recordingLink" type="url">
+          </label>
+
+          <label>
+            Notes
+            <textarea id="notes" rows="4"></textarea>
+          </label>
+
+          <button class="start-class-button" type="submit">Save Recording</button>
+        </form>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="module-card-head">
+          <h2>Saved Recordings</h2>
+          <span id="recordingCount">0 recordings</span>
+        </div>
+
+        <div id="recordingList" class="records-list">
+          <div class="empty-state">Loading recordings...</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/recordings.js"></script>
+</body>
+</html>
