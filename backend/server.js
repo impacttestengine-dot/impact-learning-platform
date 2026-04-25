@@ -1,64 +1,55 @@
 ﻿const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
-require("dotenv").config();
+const multer = require("multer");
 
 const app = express();
-
-app.use(cors({
-  origin: [
-    "https://impact-test-engine.web.app",
-    "https://impact-test-engine.firebaseapp.com",
-    "http://localhost:5000",
-    "http://localhost:3000"
-  ],
-  methods: ["GET", "POST", "PATCH"],
-  allowedHeaders: ["Content-Type"]
-}));
-
-app.use(express.json());
-
-function initFirebaseAdmin() {
-  if (admin.apps.length) return;
-
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = (process.env.FIREBASE_PRIVATE_KEY || "").replace(/\\n/g, "\n");
-
-  if (!projectId || !clientEmail || !privateKey) {
-    console.warn("Firebase Admin credentials are missing.");
-    return;
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 500 * 1024 * 1024
   }
+});
 
+app.use(cors());
+app.use(express.json({ limit: "50mb" }));
+
+const serviceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY
+    ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n")
+    : undefined
+};
+
+if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId,
-      clientEmail,
-      privateKey
-    })
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket:
+      process.env.FIREBASE_STORAGE_BUCKET ||
+      `${process.env.FIREBASE_PROJECT_ID}.appspot.com`
   });
 }
 
-initFirebaseAdmin();
-
 function getDb() {
-  if (!admin.apps.length) {
-    throw new Error("Firebase Admin is not initialized.");
-  }
   return admin.firestore();
 }
 
-function generatePasskey() {
-  const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-  const numbers = "23456789";
-  const symbols = "$&";
+function minutesFromTime(timeValue) {
+  const parts = String(timeValue || "").split(":");
+  if (parts.length < 2) return null;
+  return Number(parts[0]) * 60 + Number(parts[1]);
+}
 
-  const partA = Array.from({ length: 3 }, () => letters[Math.floor(Math.random() * letters.length)]).join("");
-  const partB = Array.from({ length: 3 }, () => numbers[Math.floor(Math.random() * numbers.length)]).join("");
-  const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-  const partC = Array.from({ length: 2 }, () => letters[Math.floor(Math.random() * letters.length)]).join("");
+function durationMinutes(value) {
+  const match = String(value || "").match(/\d+/);
+  return match ? Number(match[0]) : 60;
+}
 
-  return `IMP-${partA}${symbol}${partB}-${partC}`;
+function overlaps(startA, durationA, startB, durationB) {
+  const endA = startA + durationA;
+  const endB = startB + durationB;
+  return startA < endB && startB < endA;
 }
 
 app.get("/", (req, res) => {
@@ -69,199 +60,19 @@ app.get("/", (req, res) => {
   });
 });
 
-app.post("/api/passkeys/create", async (req, res) => {
-  try {
-    const { ownerName, role, status } = req.body;
-
-    if (!ownerName || !role) {
-      return res.status(400).json({
-        ok: false,
-        message: "ownerName and role are required."
-      });
-    }
-
-    const teamRoles = ["teacher", "academic-team-lead", "operations", "impact-team-lead"];
-    const isTeamRole = teamRoles.includes(role);
-    const passkey = generatePasskey();
-    const db = getDb();
-
-    const docRef = await db.collection("accessPasskeys").add({
-      ownerName,
-      role,
-      passkey,
-      status: status || "active",
-      accessScope: isTeamRole ? "team" : "learner",
-      canAccessTeacher: isTeamRole,
-      canAccessLearner: true,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    });
-
-    res.json({
-      ok: true,
-      id: docRef.id,
-      passkey
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not create passkey."
-    });
-  }
-});
-
-app.post("/api/passkeys/validate", async (req, res) => {
-  try {
-    const { passkey, targetSide } = req.body;
-
-    if (!passkey || !targetSide) {
-      return res.status(400).json({
-        ok: false,
-        message: "passkey and targetSide are required."
-      });
-    }
-
-    const db = getDb();
-
-    const snapshot = await db.collection("accessPasskeys")
-      .where("passkey", "==", String(passkey).trim())
-      .where("status", "==", "active")
-      .limit(1)
-      .get();
-
-    if (snapshot.empty) {
-      return res.status(401).json({
-        ok: false,
-        message: "Invalid passkey."
-      });
-    }
-
-    const record = snapshot.docs[0].data();
-
-    if (targetSide === "teacher" && record.canAccessTeacher !== true) {
-      return res.status(403).json({
-        ok: false,
-        message: "This passkey cannot open the teacher side."
-      });
-    }
-
-    if (targetSide === "learner" && record.canAccessLearner !== true) {
-      return res.status(403).json({
-        ok: false,
-        message: "This passkey cannot open the learner side."
-      });
-    }
-
-    res.json({
-      ok: true,
-      role: record.role,
-      ownerName: record.ownerName || "",
-      message: "Access granted."
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not validate passkey."
-    });
-  }
-});
-
-app.post("/api/classes/create", async (req, res) => {
-  try {
-    const db = getDb();
-
-    const classData = {
-      ...req.body,
-      status: req.body.status || "Scheduled",
-      googleCalendarEventId: "",
-      googleMeetSpaceName: "",
-      googleMeetConferenceRecord: "",
-      startedAt: "",
-      completedAt: "",
-      actualDurationMinutes: "",
-      reviewReason: "",
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    };
-
-    const docRef = await db.collection("classes").add(classData);
-
-    res.json({
-      ok: true,
-      id: docRef.id,
-      message: "Class created."
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not create class."
-    });
-  }
-});
-
-app.patch("/api/classes/:id/status", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status, reviewReason, actualDurationMinutes } = req.body;
-
-    const db = getDb();
-
-    await db.collection("classes").doc(id).update({
-      status,
-      reviewReason: reviewReason || "",
-      actualDurationMinutes: actualDurationMinutes || "",
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    });
-
-    res.json({
-      ok: true,
-      message: "Class updated."
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not update class."
-    });
-  }
-});
-
-
-// RECORDS API START
+/* RECORDS API */
 app.get("/api/records", async (req, res) => {
   try {
     const db = getDb();
-
-    const snapshot = await db.collection("learners")
-      .orderBy("createdAt", "desc")
-      .get();
+    const snapshot = await db.collection("records").orderBy("createdAt", "desc").get();
 
     const records = [];
-    snapshot.forEach((doc) => {
-      records.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
+    snapshot.forEach((doc) => records.push({ id: doc.id, ...doc.data() }));
 
-    res.json({
-      ok: true,
-      records
-    });
-
+    res.json({ ok: true, records });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not load records."
-    });
+    res.status(500).json({ ok: false, message: "Could not load records." });
   }
 });
 
@@ -269,153 +80,53 @@ app.post("/api/records/create", async (req, res) => {
   try {
     const db = getDb();
 
-    const record = {
+    const recordData = {
       fullName: req.body.fullName || "",
       age: req.body.age || "",
       enrollmentDate: req.body.enrollmentDate || "",
-      level: req.body.level || "",
-      placementResult: req.body.placementResult || "",
-      progressionCount: req.body.progressionCount || "0",
-      teacher: req.body.teacher || "",
-      parentName: req.body.parentName || "",
+      currentLevel: req.body.currentLevel || "",
+      assignedTeacher: req.body.assignedTeacher || "",
+      parentGuardian: req.body.parentGuardian || "",
       parentPhone: req.body.parentPhone || "",
       parentEmail: req.body.parentEmail || "",
       classDays: req.body.classDays || "",
+      placement: req.body.placement || "",
+      progressions: req.body.progressions || 0,
       status: req.body.status || "Active",
-      notes: req.body.notes || "",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     };
 
-    const docRef = await db.collection("learners").add(record);
+    const docRef = await db.collection("records").add(recordData);
 
     res.json({
       ok: true,
       id: docRef.id,
       message: "Record created."
     });
-
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not create record."
-    });
+    res.status(500).json({ ok: false, message: "Could not create record." });
   }
 });
 
-app.put("/api/records/:id", async (req, res) => {
+app.patch("/api/records/:id", async (req, res) => {
   try {
     const db = getDb();
-    const { id } = req.params;
 
-    const record = {
-      fullName: req.body.fullName || "",
-      age: req.body.age || "",
-      enrollmentDate: req.body.enrollmentDate || "",
-      level: req.body.level || "",
-      placementResult: req.body.placementResult || "",
-      progressionCount: req.body.progressionCount || "0",
-      teacher: req.body.teacher || "",
-      parentName: req.body.parentName || "",
-      parentPhone: req.body.parentPhone || "",
-      parentEmail: req.body.parentEmail || "",
-      classDays: req.body.classDays || "",
-      status: req.body.status || "Active",
-      notes: req.body.notes || "",
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    };
-
-    await db.collection("learners").doc(id).update(record);
-
-    res.json({
-      ok: true,
-      message: "Record updated."
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not update record."
-    });
-  }
-});
-// RECORDS API END
-
-
-// CLASS TRACKING API START
-app.patch("/api/classes/:id/start", async (req, res) => {
-  try {
-    const db = getDb();
-    const { id } = req.params;
-
-    await db.collection("classes").doc(id).update({
-      status: "In Progress",
-      startedAt: admin.firestore.FieldValue.serverTimestamp(),
+    await db.collection("records").doc(req.params.id).update({
+      ...req.body,
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
-    res.json({
-      ok: true,
-      message: "Class started."
-    });
-
+    res.json({ ok: true, message: "Record updated." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not start class."
-    });
+    res.status(500).json({ ok: false, message: "Could not update record." });
   }
 });
 
-app.patch("/api/classes/:id/end", async (req, res) => {
-  try {
-    const db = getDb();
-    const { id } = req.params;
-
-    await db.collection("classes").doc(id).update({
-      status: req.body.status || "Completed",
-      completedAt: admin.firestore.FieldValue.serverTimestamp(),
-      actualDurationMinutes: req.body.actualDurationMinutes || "",
-      reviewReason: req.body.reviewReason || "",
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    });
-
-    res.json({
-      ok: true,
-      message: "Class ended and logged."
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not end class."
-    });
-  }
-});
-// CLASS TRACKING API END
-
-// CLASSES API START
-function minutesFromTime(timeValue) {
-  const parts = String(timeValue || "").split(":");
-  if (parts.length < 2) return null;
-  return (Number(parts[0]) * 60) + Number(parts[1]);
-}
-
-function durationMinutes(value) {
-  const match = String(value || "").match(/\d+/);
-  return match ? Number(match[0]) : 45;
-}
-
-function overlaps(startA, durationA, startB, durationB) {
-  const endA = startA + durationA;
-  const endB = startB + durationB;
-  return startA < endB && startB < endA;
-}
-
+/* CLASSES API */
 app.get("/api/classes", async (req, res) => {
   try {
     const db = getDb();
@@ -441,7 +152,10 @@ app.post("/api/classes/create", async (req, res) => {
     const meetingLink = req.body.meetingLink || "";
 
     if (!meetingLink) {
-      return res.status(400).json({ ok: false, message: "Please select a Google Meet room." });
+      return res.status(400).json({
+        ok: false,
+        message: "Please select a Google Meet room."
+      });
     }
 
     const newStart = minutesFromTime(time);
@@ -463,7 +177,11 @@ app.post("/api/classes/create", async (req, res) => {
       const existingStart = minutesFromTime(item.time);
       const existingDuration = durationMinutes(item.duration);
 
-      if (newStart !== null && existingStart !== null && overlaps(newStart, newDuration, existingStart, existingDuration)) {
+      if (
+        newStart !== null &&
+        existingStart !== null &&
+        overlaps(newStart, newDuration, existingStart, existingDuration)
+      ) {
         roomConflict = true;
       }
     });
@@ -495,36 +213,55 @@ app.post("/api/classes/create", async (req, res) => {
 
     const docRef = await db.collection("classes").add(classData);
 
-    res.json({ ok: true, id: docRef.id, meetingLink, message: "Class created." });
+    res.json({
+      ok: true,
+      id: docRef.id,
+      meetingLink,
+      message: "Class created."
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ ok: false, message: "Could not create class." });
   }
 });
 
-app.patch("/api/classes/:id/status", async (req, res) => {
+app.patch("/api/classes/:id/start", async (req, res) => {
   try {
     const db = getDb();
-    const { id } = req.params;
 
-    await db.collection("classes").doc(id).update({
-      status: req.body.status || "Updated",
-      reviewReason: req.body.reviewReason || "",
-      actualDurationMinutes: req.body.actualDurationMinutes || "",
-      completedAt: req.body.completedAt || "",
+    await db.collection("classes").doc(req.params.id).update({
+      status: "In Progress",
+      startedAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
-    res.json({ ok: true, message: "Class updated." });
+    res.json({ ok: true, message: "Class started." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ ok: false, message: "Could not update class." });
+    res.status(500).json({ ok: false, message: "Could not start class." });
   }
 });
-// CLASSES API END
 
+app.patch("/api/classes/:id/end", async (req, res) => {
+  try {
+    const db = getDb();
 
-// RECORDINGS API START
+    await db.collection("classes").doc(req.params.id).update({
+      status: req.body.status || "Completed",
+      completedAt: admin.firestore.FieldValue.serverTimestamp(),
+      actualDurationMinutes: req.body.actualDurationMinutes || "",
+      reviewReason: req.body.reviewReason || "",
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    res.json({ ok: true, message: "Class ended and logged." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ ok: false, message: "Could not end class." });
+  }
+});
+
+/* RECORDINGS API */
 app.get("/api/recordings", async (req, res) => {
   try {
     const db = getDb();
@@ -545,7 +282,10 @@ app.post("/api/recordings/upload", upload.single("recording"), async (req, res) 
     const db = getDb();
 
     if (!req.file) {
-      return res.status(400).json({ ok: false, message: "No recording file uploaded." });
+      return res.status(400).json({
+        ok: false,
+        message: "No recording file uploaded."
+      });
     }
 
     const level = req.body.level || "Unsorted";
@@ -553,12 +293,13 @@ app.post("/api/recordings/upload", upload.single("recording"), async (req, res) 
     const teacher = req.body.teacher || "";
     const learnerGroup = req.body.learnerGroup || "";
     const notes = req.body.notes || "";
-    const fileType = req.file.mimetype || "";
-    const safeName = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const filePath = `recordings/${level}/${Date.now()}-${safeName}`;
+    const fileType = req.file.mimetype || "application/octet-stream";
 
-    const bucketName = process.env.FIREBASE_STORAGE_BUCKET || `${process.env.FIREBASE_PROJECT_ID}.appspot.com`;
-    const bucket = admin.storage().bucket(bucketName);
+    const safeLevel = level.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const safeName = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const filePath = `recordings/${safeLevel}/${Date.now()}-${safeName}`;
+
+    const bucket = admin.storage().bucket();
     const file = bucket.file(filePath);
 
     await file.save(req.file.buffer, {
@@ -568,9 +309,10 @@ app.post("/api/recordings/upload", upload.single("recording"), async (req, res) 
       resumable: false
     });
 
-    await file.makePublic();
-
-    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
+    const [signedUrl] = await file.getSignedUrl({
+      action: "read",
+      expires: "03-01-2035"
+    });
 
     const recordingData = {
       level,
@@ -581,7 +323,7 @@ app.post("/api/recordings/upload", upload.single("recording"), async (req, res) 
       fileName: req.file.originalname,
       fileType,
       filePath,
-      publicUrl,
+      publicUrl: signedUrl,
       status: "Uploaded",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
@@ -597,20 +339,15 @@ app.post("/api/recordings/upload", upload.single("recording"), async (req, res) 
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ ok: false, message: "Could not upload recording." });
+    res.status(500).json({
+      ok: false,
+      message: "Could not upload recording."
+    });
   }
 });
-// RECORDINGS API END
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Impact backend running on port ${PORT}`);
 });
-
-
-
-
-
-
-
-
