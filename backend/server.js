@@ -342,11 +342,121 @@ app.put("/api/records/:id", async (req, res) => {
   }
 });
 // RECORDS API END
+
+// CLASSES API START
+app.get("/api/classes", async (req, res) => {
+  try {
+    const db = getDb();
+
+    const snapshot = await db.collection("classes")
+      .orderBy("createdAt", "desc")
+      .get();
+
+    const classes = [];
+
+    snapshot.forEach((doc) => {
+      classes.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    res.json({
+      ok: true,
+      classes
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      message: "Could not load classes."
+    });
+  }
+});
+
+app.post("/api/classes/create", async (req, res) => {
+  try {
+    const db = getDb();
+
+    const meetLinks = [
+      "https://meet.google.com/ukw-macm-cvo",
+      "https://meet.google.com/fxh-gazg-jpp",
+      "https://meet.google.com/rps-qrqe-upw",
+      "https://meet.google.com/mea-ihvu-jhi"
+    ];
+
+    const assignedMeetLink = req.body.meetingLink || meetLinks[Math.floor(Math.random() * meetLinks.length)];
+
+    const classData = {
+      classTitle: req.body.classTitle || "",
+      learnerGroup: req.body.learnerGroup || "",
+      teacher: req.body.teacher || "",
+      classDay: req.body.classDay || "",
+      time: req.body.time || "",
+      duration: req.body.duration || "",
+      meetingLink: assignedMeetLink,
+      status: req.body.status || "Scheduled",
+      notes: req.body.notes || "",
+      startedAt: "",
+      completedAt: "",
+      actualDurationMinutes: "",
+      reviewReason: "",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+
+    const docRef = await db.collection("classes").add(classData);
+
+    res.json({
+      ok: true,
+      id: docRef.id,
+      meetingLink: assignedMeetLink,
+      message: "Class created."
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      message: "Could not create class."
+    });
+  }
+});
+
+app.patch("/api/classes/:id/status", async (req, res) => {
+  try {
+    const db = getDb();
+    const { id } = req.params;
+
+    await db.collection("classes").doc(id).update({
+      status: req.body.status || "Updated",
+      reviewReason: req.body.reviewReason || "",
+      actualDurationMinutes: req.body.actualDurationMinutes || "",
+      completedAt: req.body.completedAt || "",
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    res.json({
+      ok: true,
+      message: "Class updated."
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      message: "Could not update class."
+    });
+  }
+});
+// CLASSES API END
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Impact backend running on port ${PORT}`);
 });
+
 
 
 
