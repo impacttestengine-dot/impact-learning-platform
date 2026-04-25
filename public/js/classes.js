@@ -4,6 +4,8 @@ const form = document.getElementById("classForm");
 const classList = document.getElementById("classList") || document.getElementById("classesList");
 const classCount = document.getElementById("classCount");
 const formStatus = document.getElementById("formStatus") || document.getElementById("classStatus");
+const roomSelect = document.getElementById("meetingLink");
+let classesCache = [];
 
 const meetRoomNames = {
   "https://meet.google.com/ukw-macm-cvo": "Impact Meet Room 1",
@@ -33,6 +35,73 @@ function durationToNumber(value){
 function getMeetRoomName(link){
   return meetRoomNames[link] || "Selected Meet Room";
 }
+
+function minutesFromTime(timeValue){
+  const parts = String(timeValue || "").split(":");
+  if(parts.length < 2) return null;
+  return (Number(parts[0]) * 60) + Number(parts[1]);
+}
+
+function durationMinutes(value){
+  const match = String(value || "").match(/\d+/);
+  return match ? Number(match[0]) : 45;
+}
+
+function overlaps(startA, durationA, startB, durationB){
+  const endA = startA + durationA;
+  const endB = startB + durationB;
+  return startA < endB && startB < endA;
+}
+
+function updateRoomAvailability(){
+  if(!roomSelect) return;
+
+  const selectedDay = value("classDay");
+  const selectedTime = value("time");
+  const selectedDuration = value("duration");
+
+  const newStart = minutesFromTime(selectedTime);
+  const newDuration = durationMinutes(selectedDuration);
+
+  Array.from(roomSelect.options).forEach((option) => {
+    if(!option.value) return;
+
+    const originalName = meetRoomNames[option.value] || option.textContent.replace(" — room unavailable at this period", "");
+
+    option.disabled = false;
+    option.textContent = originalName;
+
+    if(!selectedDay || newStart === null) return;
+
+    const unavailable = classesCache.some((item) => {
+      const status = item.status || "Scheduled";
+      if(!["Scheduled", "In Progress"].includes(status)) return false;
+      if(item.classDay !== selectedDay) return false;
+      if(item.meetingLink !== option.value) return false;
+
+      const existingStart = minutesFromTime(item.time);
+      const existingDuration = durationMinutes(item.duration);
+
+      if(existingStart === null) return false;
+
+      return overlaps(newStart, newDuration, existingStart, existingDuration);
+    });
+
+    if(unavailable){
+      option.disabled = true;
+      option.textContent = `${originalName} — room unavailable at this period`;
+    }
+  });
+
+  if(roomSelect.selectedOptions[0]?.disabled){
+    roomSelect.value = "";
+  }
+}
+
+["classDay", "time", "duration"].forEach((id) => {
+  document.getElementById(id)?.addEventListener("change", updateRoomAvailability);
+  document.getElementById(id)?.addEventListener("input", updateRoomAvailability);
+});
 
 function getClassData(){
   return {
@@ -124,7 +193,10 @@ async function loadClasses(){
       return;
     }
 
-    const classes = (data.classes || []).filter((item) => {
+    classesCache = data.classes || [];
+    updateRoomAvailability();
+
+    const classes = classesCache.filter((item) => {
       const title = String(item.classTitle || "").trim();
       const learner = String(item.learnerGroup || "").trim();
       const teacher = String(item.teacher || "").trim();
@@ -228,3 +300,4 @@ if(form){
 }
 
 loadClasses();
+
