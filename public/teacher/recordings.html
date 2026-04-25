@@ -8,22 +8,22 @@
   <link rel="stylesheet" href="/css/teacher-dashboard.css">
 </head>
 <body>
-  <main class="teacher-page">
+  <main class="teacher-page recordings-page">
     <a class="home-link" href="/teacher/dashboard.html">Dashboard</a>
 
-    <section class="teacher-hero">
+    <section class="teacher-hero recordings-hero">
       <div class="eyebrow">Teacher Workspace</div>
       <h1>Recordings</h1>
     </section>
 
     <section class="recordings-shell">
-      <div class="recordings-folder-panel">
+      <aside class="recordings-folder-panel">
         <h2>Level Folders</h2>
         <p>Select a level to view or upload class recordings.</p>
         <div id="levelFolders" class="level-folder-grid"></div>
-      </div>
+      </aside>
 
-      <div class="recordings-content-panel">
+      <section class="recordings-content-panel">
         <div class="recordings-content-head">
           <div>
             <p class="class-card-label">Selected Folder</p>
@@ -33,9 +33,9 @@
         </div>
 
         <form id="recordingForm" class="recording-upload-card">
-          <input type="hidden" id="level" value="Absolute Beginner">
+          <h3>Upload Recording</h3>
 
-          <div class="form-grid">
+          <div class="recording-form-grid">
             <label>
               Recording Title
               <input id="title" type="text">
@@ -51,24 +51,25 @@
               <input id="teacher" type="text">
             </label>
 
-            <label>
+            <label class="file-upload-field">
               Upload Video / Audio
               <input id="recordingFile" type="file" accept="video/*,audio/*">
             </label>
           </div>
 
-          <label>
+          <label class="full-field">
             Notes
             <textarea id="notes" rows="4"></textarea>
           </label>
 
           <button class="start-class-button" type="submit">Upload Recording</button>
+          <input type="hidden" id="level" value="Absolute Beginner">
         </form>
 
         <div id="recordingList" class="recording-list-grid">
           <div class="empty-state">Loading recordings...</div>
         </div>
-      </div>
+      </section>
     </section>
   </main>
 

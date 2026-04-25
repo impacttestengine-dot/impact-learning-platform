@@ -742,82 +742,109 @@ body{
   text-decoration: none;
 }
 
-/* Premium recordings module */
+
+
+/* Premium recordings module - fixed layout */
+.recordings-page {
+  min-height: 100vh;
+  padding-bottom: 70px;
+}
+
+.recordings-hero {
+  margin-bottom: 18px;
+}
+
 .recordings-shell {
   width: min(1180px, 92vw);
   margin: 0 auto 70px;
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: 310px minmax(0, 1fr);
   gap: 24px;
   align-items: start;
 }
 
 .recordings-folder-panel,
-.recordings-content-panel,
-.recording-upload-card,
-.recording-media-card {
-  border-radius: 28px;
-  background: rgba(255,255,255,0.075);
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: 0 24px 70px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.10);
+.recordings-content-panel {
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
 
-.recordings-folder-panel,
-.recordings-content-panel {
+.recordings-folder-panel {
   padding: 24px;
+  position: sticky;
+  top: 22px;
+}
+
+.recordings-content-panel {
+  padding: 26px;
+  min-width: 0;
 }
 
 .recordings-folder-panel h2,
 .recordings-content-head h2 {
   margin: 0;
+  color: rgba(255, 255, 255, 0.94);
 }
 
 .recordings-folder-panel p {
-  color: rgba(255,255,255,0.72);
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.72);
   font-weight: 700;
+  line-height: 1.35;
 }
 
 .level-folder-grid {
   display: grid;
   gap: 12px;
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
 .level-folder-card {
   width: 100%;
+  min-height: 74px;
   text-align: left;
   cursor: pointer;
-  padding: 16px;
+  padding: 15px 16px;
   border-radius: 20px;
-  background: rgba(10,14,26,0.34);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.92);
+  background: rgba(10, 14, 26, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.92);
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 6px 12px;
+  grid-template-columns: 28px 1fr;
+  gap: 4px 12px;
   align-items: center;
 }
 
 .level-folder-card.active {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.28);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.30);
 }
 
 .folder-icon {
   grid-row: span 2;
-  font-size: 1.2rem;
+  width: 22px;
+  height: 16px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.82);
   opacity: 0.8;
+  font-size: 0;
 }
 
 .level-folder-card strong {
-  font-size: 1rem;
+  font-size: 0.98rem;
+  line-height: 1.1;
 }
 
 .level-folder-card small {
-  color: rgba(255,255,255,0.62);
+  color: rgba(255, 255, 255, 0.62);
   font-weight: 800;
+  font-size: 0.72rem;
 }
 
 .recordings-content-head {
@@ -831,15 +858,72 @@ body{
 .recordings-content-head > span {
   padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   font-weight: 900;
-  color: rgba(255,255,255,0.82);
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
 }
 
 .recording-upload-card {
-  padding: 20px;
-  margin-bottom: 22px;
+  padding: 22px;
+  margin-bottom: 24px;
+  border-radius: 26px;
+  background: rgba(9, 13, 25, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.recording-upload-card h3 {
+  margin: 0 0 18px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.25rem;
+}
+
+.recording-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.recording-upload-card label {
+  display: grid;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 800;
+  font-size: 0.86rem;
+}
+
+.recording-upload-card input,
+.recording-upload-card textarea {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 17px;
+  padding: 14px 15px;
+  color: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  outline: none;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.recording-upload-card textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.recording-upload-card input[type="file"] {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.full-field {
+  margin-top: 16px;
+}
+
+.recording-upload-card .start-class-button {
+  margin-top: 18px;
 }
 
 .recording-list-grid {
@@ -849,10 +933,16 @@ body{
 
 .recording-media-card {
   overflow: hidden;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 .recording-media-preview {
-  background: rgba(0,0,0,0.28);
+  background: rgba(0, 0, 0, 0.28);
   padding: 14px;
 }
 
@@ -870,7 +960,7 @@ body{
 .recording-media-body h3 {
   margin: 0 0 14px;
   font-size: 1.25rem;
-  color: rgba(255,255,255,0.94);
+  color: rgba(255, 255, 255, 0.94);
 }
 
 .recording-mini-grid {
@@ -881,13 +971,35 @@ body{
   margin: 0;
   padding: 12px;
   border-radius: 15px;
-  background: rgba(255,255,255,0.07);
-  color: rgba(255,255,255,0.82);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.82);
   font-weight: 700;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .recordings-shell {
     grid-template-columns: 1fr;
+  }
+
+  .recordings-folder-panel {
+    position: static;
+  }
+
+  .level-folder-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .recording-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .level-folder-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recordings-content-head {
+    flex-direction: column;
   }
 }
