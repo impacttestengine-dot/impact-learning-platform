@@ -2,7 +2,15 @@
 
 const form = document.getElementById("classForm");
 const classList = document.getElementById("classList") || document.getElementById("classesList");
+const classCount = document.getElementById("classCount");
 const formStatus = document.getElementById("formStatus") || document.getElementById("classStatus");
+
+const meetRoomNames = {
+  "https://meet.google.com/ukw-macm-cvo": "Impact Meet Room 1",
+  "https://meet.google.com/fxh-gazg-jpp": "Impact Meet Room 2",
+  "https://meet.google.com/rps-qrqe-upw": "Impact Meet Room 3",
+  "https://meet.google.com/mea-ihvu-jhi": "Impact Meet Room 4"
+};
 
 function value(id){
   return (document.getElementById(id)?.value || "").trim();
@@ -22,6 +30,10 @@ function durationToNumber(value){
   return match ? Number(match[0]) : 45;
 }
 
+function getMeetRoomName(link){
+  return meetRoomNames[link] || "Selected Meet Room";
+}
+
 function getClassData(){
   return {
     classTitle: value("classTitle"),
@@ -37,6 +49,11 @@ function getClassData(){
 }
 
 async function startClass(classId, meetingLink, duration){
+  if(!meetingLink){
+    alert("No Google Meet room is attached to this class.");
+    return;
+  }
+
   const expectedDuration = durationToNumber(duration);
 
   try{
@@ -46,10 +63,11 @@ async function startClass(classId, meetingLink, duration){
     });
 
     const startedAt = Date.now();
-    const meetWindow = window.open(meetingLink, "_blank", "noopener,noreferrer");
+    const meetWindow = window.open(meetingLink, "_blank");
 
     if(!meetWindow){
       alert("The class has been marked as started, but the browser blocked the Meet window. Please allow popups and click Start Class again.");
+      await loadClasses();
       return;
     }
 
@@ -60,7 +78,6 @@ async function startClass(classId, meetingLink, duration){
         const endedAt = Date.now();
         const actualMinutes = Math.max(1, Math.round((endedAt - startedAt) / 60000));
         const earlyThreshold = Math.max(10, Math.round(expectedDuration * 0.75));
-
         const endedEarly = actualMinutes < earlyThreshold;
 
         await fetch(`${API_BASE_URL}/api/classes/${classId}/end`, {
@@ -78,9 +95,11 @@ async function startClass(classId, meetingLink, duration){
           : "Class ended and has been logged successfully."
         );
 
-        loadClasses();
+        await loadClasses();
       }
     }, 1500);
+
+    await loadClasses();
 
   }catch(error){
     console.error(error);
@@ -101,13 +120,27 @@ async function loadClasses(){
 
     if(!data.ok){
       classList.innerHTML = `<div class="empty-state">${escapeHtml(data.message || "Could not load classes.")}</div>`;
+      if(classCount) classCount.textContent = "0 classes";
       return;
     }
 
-    const classes = data.classes || [];
+    const classes = (data.classes || []).filter((item) => {
+      const title = String(item.classTitle || "").trim();
+      const learner = String(item.learnerGroup || "").trim();
+      const teacher = String(item.teacher || "").trim();
+
+      if(!title && !learner && !teacher) return false;
+      if(title === "A0 Adult" && !learner && !teacher) return false;
+
+      return ["Scheduled", "In Progress"].includes(item.status || "Scheduled");
+    });
+
+    if(classCount){
+      classCount.textContent = `${classes.length} ${classes.length === 1 ? "class" : "classes"}`;
+    }
 
     if(!classes.length){
-      classList.innerHTML = `<div class="empty-state">No scheduled classes yet.</div>`;
+      classList.innerHTML = `<div class="empty-state">No class scheduled.</div>`;
       return;
     }
 
@@ -120,6 +153,7 @@ async function loadClasses(){
       const duration = escapeHtml(item.duration || "Duration not set");
       const status = escapeHtml(item.status || "Scheduled");
       const meetingLink = escapeHtml(item.meetingLink || "");
+      const roomName = escapeHtml(getMeetRoomName(item.meetingLink || ""));
 
       return `
         <article class="record-item class-item">
@@ -128,7 +162,8 @@ async function loadClasses(){
               <div class="record-name">${title}</div>
               <div class="record-meta">
                 ${learner} · ${teacher}<br>
-                ${day} at ${time} · ${duration}
+                ${day} at ${time} · ${duration}<br>
+                Meet Room: ${roomName}
               </div>
               <div class="class-actions">
                 <button class="glass-btn small-btn" type="button" onclick="startClass('${item.id}', '${meetingLink}', '${duration}')">
@@ -144,6 +179,7 @@ async function loadClasses(){
 
   }catch(error){
     console.error(error);
+    if(classCount) classCount.textContent = "0 classes";
     classList.innerHTML = `<div class="empty-state">Could not connect to backend.</div>`;
   }
 }
@@ -156,6 +192,11 @@ if(form){
 
     if(!classData.classTitle || !classData.learnerGroup || !classData.teacher){
       if(formStatus) formStatus.textContent = "Please enter class title, learner/group, and teacher.";
+      return;
+    }
+
+    if(!classData.meetingLink){
+      if(formStatus) formStatus.textContent = "Please select a Google Meet room.";
       return;
     }
 

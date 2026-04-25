@@ -460,3 +460,80 @@ body{
     font-size:2rem;
   }
 }
+
+/* Classes page tracker shortcut */
+.classes-top-row {
+  width: min(1120px, 92vw);
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+}
+
+.classes-top-row h1 {
+  margin: 0;
+}
+
+.class-tracker-card {
+  position: absolute;
+  top: 6px;
+  right: 0;
+  width: 82px;
+  height: 82px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(14, 18, 31, 0.74);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.class-tracker-card:hover,
+.class-tracker-card:focus {
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.class-tracker-card span {
+  display: block;
+  text-decoration: none;
+}
+
+.empty-state {
+  padding: 22px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.86);
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .classes-top-row {
+    justify-content: flex-start;
+    padding-right: 92px;
+  }
+
+  .class-tracker-card {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    font-size: 0.62rem;
+    top: 0;
+  }
+}
