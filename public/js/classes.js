@@ -14,6 +14,24 @@ const meetRoomNames = {
   "https://meet.google.com/mea-ihvu-jhi": "Impact Meet Room 4"
 };
 
+function notify(message, type = "success"){
+  let toast = document.getElementById("impactToast");
+
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "impactToast";
+    toast.className = "impact-toast";
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+  toast.className = `impact-toast show ${type}`;
+
+  setTimeout(() => {
+    toast.className = "impact-toast";
+  }, 2600);
+}
+
 function value(id){
   return (document.getElementById(id)?.value || "").trim();
 }
@@ -99,7 +117,7 @@ function updateRoomAvailability(){
 
 function getClassData(){
   return {
-    classTitle: value("classTitle") || value("level"),
+    classTitle: value("classTitle"),
     learnerGroup: value("learnerGroup"),
     teacher: value("teacher"),
     classDay: value("classDay"),
@@ -113,7 +131,7 @@ function getClassData(){
 
 async function startClass(classId, meetingLink, duration){
   if(!meetingLink){
-    alert("No Google Meet room is attached to this class.");
+    notify("No Google Meet room is attached to this class.", "error");
     return;
   }
 
@@ -129,10 +147,12 @@ async function startClass(classId, meetingLink, duration){
     const meetWindow = window.open(meetingLink, "_blank");
 
     if(!meetWindow){
-      alert("The class has started, but the browser blocked the Meet window. Please allow popups.");
+      notify("Popup blocked. Please allow popups and start again.", "error");
       await loadClasses();
       return;
     }
+
+    notify("Class started. Tracking has begun.");
 
     const tracker = setInterval(async () => {
       if(meetWindow.closed){
@@ -153,7 +173,7 @@ async function startClass(classId, meetingLink, duration){
           })
         });
 
-        alert(endedEarly ? "Class ended early and has been logged for review." : "Class ended and has been logged.");
+        notify(endedEarly ? "Class ended early and has been logged for review." : "Class ended and has been logged.");
         await loadClasses();
       }
     }, 1500);
@@ -162,7 +182,7 @@ async function startClass(classId, meetingLink, duration){
 
   }catch(error){
     console.error(error);
-    alert("Could not start class tracking.");
+    notify("Could not start class tracking.", "error");
   }
 }
 
@@ -216,23 +236,45 @@ async function loadClasses(){
       const roomName = escapeHtml(getMeetRoomName(item.meetingLink || ""));
 
       return `
-        <article class="record-item class-item">
-          <div class="record-top">
+        <article class="class-card-clean">
+          <div class="class-card-head">
             <div>
-              <div class="record-name">${title}</div>
-              <div class="record-meta">
-                ${learner} · ${teacher}<br>
-                ${day} at ${time} · ${duration}<br>
-                Meet Room: ${roomName}
-              </div>
-              <div class="class-actions">
-                <button class="glass-btn small-btn" type="button" onclick="startClass('${item.id}', '${meetingLink}', '${duration}')">
-                  Start Class
-                </button>
-              </div>
+              <p class="class-card-label">Level</p>
+              <h3>${title}</h3>
             </div>
-            <span class="badge">${status}</span>
+            <span class="class-status-pill">${status}</span>
           </div>
+
+          <div class="class-detail-grid">
+            <div>
+              <span>Learner / Group</span>
+              <strong>${learner}</strong>
+            </div>
+            <div>
+              <span>Teacher</span>
+              <strong>${teacher}</strong>
+            </div>
+            <div>
+              <span>Day</span>
+              <strong>${day}</strong>
+            </div>
+            <div>
+              <span>Time</span>
+              <strong>${time}</strong>
+            </div>
+            <div>
+              <span>Duration</span>
+              <strong>${duration}</strong>
+            </div>
+            <div>
+              <span>Google Meet Room</span>
+              <strong>${roomName}</strong>
+            </div>
+          </div>
+
+          <button class="start-class-button" type="button" onclick="startClass('${item.id}', '${meetingLink}', '${duration}')">
+            Start Class
+          </button>
         </article>
       `;
     }).join("");
@@ -251,12 +293,12 @@ if(form){
     const classData = getClassData();
 
     if(!classData.classTitle || !classData.learnerGroup || !classData.teacher){
-      alert("Please enter level, learner/group, and teacher.");
+      notify("Please enter level, learner/group, and teacher.", "error");
       return;
     }
 
     if(!classData.meetingLink){
-      alert("Please select a Google Meet room.");
+      notify("Please select a Google Meet room.", "error");
       return;
     }
 
@@ -270,21 +312,19 @@ if(form){
       const data = await response.json();
 
       if(!data.ok){
-        alert(data.message || "Could not save class.");
+        notify(data.message || "Could not save class.", "error");
         return;
       }
 
-      alert("Class saved.");
+      notify("Class saved.");
       form.reset();
       await loadClasses();
 
     }catch(error){
       console.error(error);
-      alert("Could not connect to backend.");
+      notify("Could not connect to backend.", "error");
     }
   });
 }
 
 loadClasses();
-
-
