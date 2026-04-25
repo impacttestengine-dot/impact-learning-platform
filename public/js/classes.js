@@ -3,8 +3,8 @@
 const form = document.getElementById("classForm");
 const classList = document.getElementById("classList") || document.getElementById("classesList");
 const classCount = document.getElementById("classCount");
-const formStatus = document.getElementById("formStatus") || document.getElementById("classStatus");
 const roomSelect = document.getElementById("meetingLink");
+
 let classesCache = [];
 
 const meetRoomNames = {
@@ -27,15 +27,6 @@ function escapeHtml(value){
     .replaceAll("'", "&#039;");
 }
 
-function durationToNumber(value){
-  const match = String(value || "").match(/\d+/);
-  return match ? Number(match[0]) : 45;
-}
-
-function getMeetRoomName(link){
-  return meetRoomNames[link] || "Selected Meet Room";
-}
-
 function minutesFromTime(timeValue){
   const parts = String(timeValue || "").split(":");
   if(parts.length < 2) return null;
@@ -44,7 +35,7 @@ function minutesFromTime(timeValue){
 
 function durationMinutes(value){
   const match = String(value || "").match(/\d+/);
-  return match ? Number(match[0]) : 45;
+  return match ? Number(match[0]) : 60;
 }
 
 function overlaps(startA, durationA, startB, durationB){
@@ -53,13 +44,16 @@ function overlaps(startA, durationA, startB, durationB){
   return startA < endB && startB < endA;
 }
 
+function getMeetRoomName(link){
+  return meetRoomNames[link] || "Selected Meet Room";
+}
+
 function updateRoomAvailability(){
   if(!roomSelect) return;
 
   const selectedDay = value("classDay");
   const selectedTime = value("time");
   const selectedDuration = value("duration");
-
   const newStart = minutesFromTime(selectedTime);
   const newDuration = durationMinutes(selectedDuration);
 
@@ -123,7 +117,7 @@ async function startClass(classId, meetingLink, duration){
     return;
   }
 
-  const expectedDuration = durationToNumber(duration);
+  const expectedDuration = durationMinutes(duration);
 
   try{
     await fetch(`${API_BASE_URL}/api/classes/${classId}/start`, {
@@ -135,7 +129,7 @@ async function startClass(classId, meetingLink, duration){
     const meetWindow = window.open(meetingLink, "_blank");
 
     if(!meetWindow){
-      alert("The class has been marked as started, but the browser blocked the Meet window. Please allow popups and click Start Class again.");
+      alert("The class has started, but the browser blocked the Meet window. Please allow popups.");
       await loadClasses();
       return;
     }
@@ -159,11 +153,7 @@ async function startClass(classId, meetingLink, duration){
           })
         });
 
-        alert(endedEarly
-          ? "Class ended early and has been logged for review."
-          : "Class ended and has been logged successfully."
-        );
-
+        alert(endedEarly ? "Class ended early and has been logged for review." : "Class ended and has been logged.");
         await loadClasses();
       }
     }, 1500);
@@ -188,8 +178,8 @@ async function loadClasses(){
     const data = await response.json();
 
     if(!data.ok){
-      classList.innerHTML = `<div class="empty-state">${escapeHtml(data.message || "Could not load classes.")}</div>`;
       if(classCount) classCount.textContent = "0 classes";
+      classList.innerHTML = `<div class="empty-state">Could not load classes.</div>`;
       return;
     }
 
@@ -201,9 +191,7 @@ async function loadClasses(){
       const learner = String(item.learnerGroup || "").trim();
       const teacher = String(item.teacher || "").trim();
 
-      if(!title && !learner && !teacher) return false;
-      if(title === "A0 Adult" && !learner && !teacher) return false;
-
+      if(!title || !learner || !teacher) return false;
       return ["Scheduled", "In Progress"].includes(item.status || "Scheduled");
     });
 
@@ -217,9 +205,9 @@ async function loadClasses(){
     }
 
     classList.innerHTML = classes.map((item) => {
-      const title = escapeHtml(item.classTitle || "Untitled Class");
-      const learner = escapeHtml(item.learnerGroup || "Learner / group not set");
-      const teacher = escapeHtml(item.teacher || "Teacher not assigned");
+      const title = escapeHtml(item.classTitle);
+      const learner = escapeHtml(item.learnerGroup);
+      const teacher = escapeHtml(item.teacher);
       const day = escapeHtml(item.classDay || "Day not set");
       const time = escapeHtml(item.time || "Time not set");
       const duration = escapeHtml(item.duration || "Duration not set");
@@ -263,16 +251,14 @@ if(form){
     const classData = getClassData();
 
     if(!classData.classTitle || !classData.learnerGroup || !classData.teacher){
-      if(formStatus) formStatus.textContent = "Please enter class title, learner/group, and teacher.";
+      alert("Please enter class title, learner/group, and teacher.");
       return;
     }
 
     if(!classData.meetingLink){
-      if(formStatus) formStatus.textContent = "Please select a Google Meet room.";
+      alert("Please select a Google Meet room.");
       return;
     }
-
-    if(formStatus) formStatus.textContent = "Saving class...";
 
     try{
       const response = await fetch(`${API_BASE_URL}/api/classes/create`, {
@@ -284,20 +270,19 @@ if(form){
       const data = await response.json();
 
       if(!data.ok){
-        if(formStatus) formStatus.textContent = data.message || "Could not save class.";
+        alert(data.message || "Could not save class.");
         return;
       }
 
-      if(formStatus) formStatus.textContent = "Class saved.";
+      alert("Class saved.");
       form.reset();
       await loadClasses();
 
     }catch(error){
       console.error(error);
-      if(formStatus) formStatus.textContent = "Could not connect to backend.";
+      alert("Could not connect to backend.");
     }
   });
 }
 
 loadClasses();
-

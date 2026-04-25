@@ -537,3 +537,9 @@ body{
     top: 0;
   }
 }
+
+/* hide class save status text under button */
+#formStatus,
+#classStatus {
+  display: none !important;
+}
