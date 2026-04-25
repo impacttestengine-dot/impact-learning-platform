@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activities | Impact Learning Platform</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/teacher-dashboard.css">
+</head>
+<body>
+  <main class="teacher-page activities-page">
+    <a class="home-link" href="/teacher/dashboard.html">Dashboard</a>
+
+    <section class="teacher-hero activities-hero">
+      <div class="eyebrow">Teacher Workspace</div>
+      <h1>Activities</h1>
+      <p>Create quizzes, homework, oral tasks, surveys, and learner practice activities.</p>
+    </section>
+
+    <section class="activity-builder-shell">
+      <aside class="activity-template-panel">
+        <h2>Activity Templates</h2>
+        <p>Choose a format and build a learner activity.</p>
+
+        <div class="activity-template-grid">
+          <button class="activity-template-card active" data-type="Quiz">Quiz</button>
+          <button class="activity-template-card" data-type="Homework">Homework</button>
+          <button class="activity-template-card" data-type="Oral Practice">Oral Practice</button>
+          <button class="activity-template-card" data-type="Reading">Reading</button>
+          <button class="activity-template-card" data-type="Listening">Listening</button>
+          <button class="activity-template-card" data-type="Survey">Survey</button>
+          <button class="activity-template-card" data-type="File Upload">File Upload</button>
+          <button class="activity-template-card" data-type="Custom">Custom</button>
+        </div>
+      </aside>
+
+      <section class="activity-form-panel">
+        <div class="activity-form-head">
+          <div>
+            <p class="class-card-label">Selected Template</p>
+            <h2 id="selectedActivityType">Quiz</h2>
+          </div>
+          <span id="activityCount">0 activities</span>
+        </div>
+
+        <form id="activityForm" class="activity-form-card">
+          <div class="recording-form-grid">
+            <label>
+              Activity Title
+              <input id="activityTitle" type="text">
+            </label>
+
+            <label>
+              Level
+              <select id="activityLevel">
+                <option value="">Select Level</option>
+                <option>Absolute Beginner</option>
+                <option>A0</option>
+                <option>A1</option>
+                <option>A1.1</option>
+                <option>A2</option>
+                <option>B1</option>
+                <option>B2</option>
+              </select>
+            </label>
+
+            <label>
+              Assigned Teacher
+              <input id="teacher" type="text">
+            </label>
+
+            <label>
+              Learner / Group
+              <input id="learnerGroup" type="text">
+            </label>
+          </div>
+
+          <label class="full-field">
+            Instructions
+            <textarea id="instructions" rows="4"></textarea>
+          </label>
+
+          <div class="question-builder-card">
+            <div class="question-builder-head">
+              <h3>Activity Questions / Tasks</h3>
+              <button id="addQuestionBtn" type="button">Add Question</button>
+            </div>
+
+            <div id="questionList" class="question-list"></div>
+          </div>
+
+          <button class="start-class-button" type="submit">Save Activity</button>
+        </form>
+
+        <div id="activityList" class="activity-list-grid">
+          <div class="empty-state">Loading activities...</div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="/js/activities.js"></script>
+</body>
+</html>

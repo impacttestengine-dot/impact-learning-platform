@@ -1039,3 +1039,175 @@ body{
   margin-left: auto;
   margin-right: auto;
 }
+
+/* Activities module */
+.activities-page .home-link {
+  position: fixed;
+  top: 18px;
+  left: 22px;
+  z-index: 20;
+  padding: 8px 13px;
+  border-radius: 14px;
+  font-size: 0.78rem;
+}
+
+.activities-hero {
+  width: min(1180px, 92vw);
+  margin: 34px auto 28px;
+  text-align: center;
+}
+
+.activities-hero p {
+  margin: 10px auto 0;
+  max-width: 680px;
+  color: rgba(255,255,255,0.72);
+  font-weight: 700;
+}
+
+.activity-builder-shell {
+  width: min(1180px, 92vw);
+  margin: 0 auto 70px;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 24px;
+}
+
+.activity-template-panel,
+.activity-form-panel,
+.activity-form-card,
+.question-builder-card,
+.activity-saved-card {
+  border-radius: 30px;
+  background: rgba(255,255,255,0.075);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.10);
+  backdrop-filter: blur(18px);
+}
+
+.activity-template-panel,
+.activity-form-panel {
+  padding: 24px;
+}
+
+.activity-template-panel h2 {
+  margin: 0;
+}
+
+.activity-template-panel p {
+  color: rgba(255,255,255,0.72);
+  font-weight: 700;
+}
+
+.activity-template-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.activity-template-card {
+  min-height: 58px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.13);
+  background: rgba(10,14,26,0.34);
+  color: rgba(255,255,255,0.9);
+  font-weight: 900;
+  text-align: left;
+  padding: 0 18px;
+  cursor: pointer;
+}
+
+.activity-template-card.active {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.28);
+}
+
+.activity-form-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.activity-form-head h2 {
+  margin: 0;
+}
+
+.activity-form-head span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.14);
+  font-weight: 900;
+}
+
+.activity-form-card {
+  padding: 22px;
+  margin-bottom: 24px;
+}
+
+.question-builder-card {
+  padding: 18px;
+  margin-top: 18px;
+  background: rgba(9,13,25,0.32);
+}
+
+.question-builder-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.question-builder-head h3 {
+  margin: 0;
+}
+
+.question-builder-head button,
+.remove-question {
+  border: 0;
+  border-radius: 14px;
+  padding: 10px 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.question-list {
+  display: grid;
+  gap: 12px;
+}
+
+.question-item {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.075);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.question-number {
+  color: rgba(255,255,255,0.7);
+  font-weight: 900;
+  font-size: 0.78rem;
+}
+
+.activity-saved-card {
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.activity-instructions {
+  margin: 0;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.82);
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .activity-builder-shell {
+    grid-template-columns: 1fr;
+  }
+}
