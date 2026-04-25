@@ -451,11 +451,66 @@ app.patch("/api/classes/:id/status", async (req, res) => {
   }
 });
 // CLASSES API END
+
+// CLASS TRACKING API START
+app.patch("/api/classes/:id/start", async (req, res) => {
+  try {
+    const db = getDb();
+    const { id } = req.params;
+
+    await db.collection("classes").doc(id).update({
+      status: "In Progress",
+      startedAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    res.json({
+      ok: true,
+      message: "Class started."
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      message: "Could not start class."
+    });
+  }
+});
+
+app.patch("/api/classes/:id/end", async (req, res) => {
+  try {
+    const db = getDb();
+    const { id } = req.params;
+
+    await db.collection("classes").doc(id).update({
+      status: req.body.status || "Completed",
+      completedAt: admin.firestore.FieldValue.serverTimestamp(),
+      actualDurationMinutes: req.body.actualDurationMinutes || "",
+      reviewReason: req.body.reviewReason || "",
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    res.json({
+      ok: true,
+      message: "Class ended and logged."
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      message: "Could not end class."
+    });
+  }
+});
+// CLASS TRACKING API END
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Impact backend running on port ${PORT}`);
 });
+
 
 
 

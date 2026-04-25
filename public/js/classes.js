@@ -17,6 +17,11 @@ function escapeHtml(value){
     .replaceAll("'", "&#039;");
 }
 
+function durationToNumber(value){
+  const match = String(value || "").match(/\d+/);
+  return match ? Number(match[0]) : 45;
+}
+
 function getClassData(){
   return {
     classTitle: value("classTitle"),
@@ -30,6 +35,60 @@ function getClassData(){
     notes: value("notes")
   };
 }
+
+async function startClass(classId, meetingLink, duration){
+  const expectedDuration = durationToNumber(duration);
+
+  try{
+    await fetch(`${API_BASE_URL}/api/classes/${classId}/start`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" }
+    });
+
+    const startedAt = Date.now();
+    const meetWindow = window.open(meetingLink, "_blank", "noopener,noreferrer");
+
+    if(!meetWindow){
+      alert("The class has been marked as started, but the browser blocked the Meet window. Please allow popups and click Start Class again.");
+      return;
+    }
+
+    const tracker = setInterval(async () => {
+      if(meetWindow.closed){
+        clearInterval(tracker);
+
+        const endedAt = Date.now();
+        const actualMinutes = Math.max(1, Math.round((endedAt - startedAt) / 60000));
+        const earlyThreshold = Math.max(10, Math.round(expectedDuration * 0.75));
+
+        const endedEarly = actualMinutes < earlyThreshold;
+
+        await fetch(`${API_BASE_URL}/api/classes/${classId}/end`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status: endedEarly ? "Needs Review" : "Completed",
+            actualDurationMinutes: String(actualMinutes),
+            reviewReason: endedEarly ? "Class ended earlier than expected. Teacher review required." : ""
+          })
+        });
+
+        alert(endedEarly
+          ? "Class ended early and has been logged for review."
+          : "Class ended and has been logged successfully."
+        );
+
+        loadClasses();
+      }
+    }, 1500);
+
+  }catch(error){
+    console.error(error);
+    alert("Could not start class tracking.");
+  }
+}
+
+window.startClass = startClass;
 
 async function loadClasses(){
   if(!classList) return;
@@ -69,8 +128,12 @@ async function loadClasses(){
               <div class="record-name">${title}</div>
               <div class="record-meta">
                 ${learner} · ${teacher}<br>
-                ${day} at ${time} · ${duration}<br>
-                ${meetingLink ? `<a href="${meetingLink}" target="_blank" rel="noopener">Open Class Link</a>` : "No meeting link"}
+                ${day} at ${time} · ${duration}
+              </div>
+              <div class="class-actions">
+                <button class="glass-btn small-btn" type="button" onclick="startClass('${item.id}', '${meetingLink}', '${duration}')">
+                  Start Class
+                </button>
               </div>
             </div>
             <span class="badge">${status}</span>
@@ -101,9 +164,7 @@ if(form){
     try{
       const response = await fetch(`${API_BASE_URL}/api/classes/create`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(classData)
       });
 
@@ -116,7 +177,6 @@ if(form){
 
       if(formStatus) formStatus.textContent = "Class saved.";
       form.reset();
-
       await loadClasses();
 
     }catch(error){
