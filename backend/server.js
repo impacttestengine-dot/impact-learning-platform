@@ -523,51 +523,66 @@ app.patch("/api/classes/:id/status", async (req, res) => {
 });
 // CLASSES API END
 
+
 // RECORDINGS API START
 app.get("/api/recordings", async (req, res) => {
   try {
     const db = getDb();
-
-    const snapshot = await db.collection("recordings")
-      .orderBy("createdAt", "desc")
-      .get();
+    const snapshot = await db.collection("recordings").orderBy("createdAt", "desc").get();
 
     const recordings = [];
+    snapshot.forEach((doc) => recordings.push({ id: doc.id, ...doc.data() }));
 
-    snapshot.forEach((doc) => {
-      recordings.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-
-    res.json({
-      ok: true,
-      recordings
-    });
-
+    res.json({ ok: true, recordings });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not load recordings."
-    });
+    res.status(500).json({ ok: false, message: "Could not load recordings." });
   }
 });
 
-app.post("/api/recordings/create", async (req, res) => {
+app.post("/api/recordings/upload", upload.single("recording"), async (req, res) => {
   try {
     const db = getDb();
 
+    if (!req.file) {
+      return res.status(400).json({ ok: false, message: "No recording file uploaded." });
+    }
+
+    const level = req.body.level || "Unsorted";
+    const title = req.body.title || req.file.originalname;
+    const teacher = req.body.teacher || "";
+    const learnerGroup = req.body.learnerGroup || "";
+    const notes = req.body.notes || "";
+    const fileType = req.file.mimetype || "";
+    const safeName = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const filePath = `recordings/${level}/${Date.now()}-${safeName}`;
+
+    const bucketName = process.env.FIREBASE_STORAGE_BUCKET || `${process.env.FIREBASE_PROJECT_ID}.appspot.com`;
+    const bucket = admin.storage().bucket(bucketName);
+    const file = bucket.file(filePath);
+
+    await file.save(req.file.buffer, {
+      metadata: {
+        contentType: fileType
+      },
+      resumable: false
+    });
+
+    await file.makePublic();
+
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
+
     const recordingData = {
-      level: req.body.level || "",
-      learnerGroup: req.body.learnerGroup || "",
-      teacher: req.body.teacher || "",
-      classDay: req.body.classDay || "",
-      classDate: req.body.classDate || "",
-      recordingLink: req.body.recordingLink || "",
-      notes: req.body.notes || "",
-      status: req.body.status || "Saved",
+      level,
+      title,
+      teacher,
+      learnerGroup,
+      notes,
+      fileName: req.file.originalname,
+      fileType,
+      filePath,
+      publicUrl,
+      status: "Uploaded",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
     };
@@ -577,15 +592,12 @@ app.post("/api/recordings/create", async (req, res) => {
     res.json({
       ok: true,
       id: docRef.id,
-      message: "Recording saved."
+      recording: recordingData,
+      message: "Recording uploaded."
     });
-
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      ok: false,
-      message: "Could not save recording."
-    });
+    res.status(500).json({ ok: false, message: "Could not upload recording." });
   }
 });
 // RECORDINGS API END
@@ -594,6 +606,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Impact backend running on port ${PORT}`);
 });
+
 
 
 

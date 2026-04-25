@@ -16,16 +16,29 @@
       <h1>Recordings</h1>
     </section>
 
-    <section class="dashboard-grid recordings-layout">
-      <div class="dashboard-card">
-        <h2>Add Recording</h2>
-        <p>Save class recording links and notes for learner reference.</p>
+    <section class="recordings-shell">
+      <div class="recordings-folder-panel">
+        <h2>Level Folders</h2>
+        <p>Select a level to view or upload class recordings.</p>
+        <div id="levelFolders" class="level-folder-grid"></div>
+      </div>
 
-        <form id="recordingForm" class="teacher-form">
+      <div class="recordings-content-panel">
+        <div class="recordings-content-head">
+          <div>
+            <p class="class-card-label">Selected Folder</p>
+            <h2 id="selectedLevelTitle">Absolute Beginner</h2>
+          </div>
+          <span id="recordingCount">0 recordings</span>
+        </div>
+
+        <form id="recordingForm" class="recording-upload-card">
+          <input type="hidden" id="level" value="Absolute Beginner">
+
           <div class="form-grid">
             <label>
-              Level
-              <input id="level" type="text">
+              Recording Title
+              <input id="title" type="text">
             </label>
 
             <label>
@@ -39,55 +52,20 @@
             </label>
 
             <label>
-              Day
-              <select id="classDay">
-                <option value="">Select Day</option>
-                <option>Monday</option>
-                <option>Tuesday</option>
-                <option>Wednesday</option>
-                <option>Thursday</option>
-                <option>Friday</option>
-                <option>Saturday</option>
-                <option>Sunday</option>
-              </select>
-            </label>
-
-            <label>
-              Date
-              <input id="classDate" type="date">
-            </label>
-
-            <label>
-              Status
-              <select id="status">
-                <option>Saved</option>
-                <option>Needs Review</option>
-                <option>Shared</option>
-              </select>
+              Upload Video / Audio
+              <input id="recordingFile" type="file" accept="video/*,audio/*">
             </label>
           </div>
-
-          <label>
-            Recording Link
-            <input id="recordingLink" type="url">
-          </label>
 
           <label>
             Notes
             <textarea id="notes" rows="4"></textarea>
           </label>
 
-          <button class="start-class-button" type="submit">Save Recording</button>
+          <button class="start-class-button" type="submit">Upload Recording</button>
         </form>
-      </div>
 
-      <div class="dashboard-card">
-        <div class="module-card-head">
-          <h2>Saved Recordings</h2>
-          <span id="recordingCount">0 recordings</span>
-        </div>
-
-        <div id="recordingList" class="records-list">
+        <div id="recordingList" class="recording-list-grid">
           <div class="empty-state">Loading recordings...</div>
         </div>
       </div>
