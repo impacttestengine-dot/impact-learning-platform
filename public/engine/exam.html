@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Exam Engine</title>
+</head>
+<body>
+
+<h1 id="title">Loading exam...</h1>
+<div id="content"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { firebaseConfig } from "../js/firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const params = new URLSearchParams(window.location.search);
+const code = params.get("code");
+
+async function loadExam(){
+
+  const q = query(collection(db, "examTemplates"), where("code", "==", code));
+  const snap = await getDocs(q);
+
+  if(snap.empty){
+    document.getElementById("title").innerText = "Invalid exam code";
+    return;
+  }
+
+  const exam = snap.docs[0].data();
+  document.getElementById("title").innerText = exam.title;
+
+  document.getElementById("content").innerHTML =
+    "<p>Level: " + exam.level + "</p>" +
+    "<p>Sections loading...</p>";
+}
+
+loadExam();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Impact <span class="learning">Learning</span> Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/homepage.css?v=impact-photo-home-01">
+</head>
+<body>
+  <main class="home-page">
+
+    <div class="bg-layer"></div>
+    <div class="dark-layer"></div>
+
+    <header class="top-bar">
+      <div class="menu-wrap">
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open access menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="access-menu" id="accessMenu">
+          <a href="/gate/teachers.html">Teachers</a>
+          <a href="/gate/learners.html">Impact Learners</a>
+        </div>
+      </div>
+
+      <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
+    </header>
+
+    <section class="hero-content">
+      <h1>
+  <span class="title-strong">IMPACT</span>
+  <span class="title-slim">LEARNING</span>
+  <span class="title-strong">PLATFORM</span>
+</h1>
+    </section>
+
+  </main>
+
+  <script>
+    const toggle = document.getElementById("menuToggle");
+    const menu = document.getElementById("accessMenu");
+
+    toggle.addEventListener("click", function () {
+      menu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest(".menu-wrap")) {
+        menu.classList.remove("show");
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Records | Impact Learning Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/records.css?v=records-module-01">
+</head>
+<body>
+  <main class="records-page">
+    <div class="bg-layer"></div>
+    <div class="shade-layer"></div>
+
+    <header class="topbar">
+      <a class="glass-link" href="/teacher/dashboard.html">Dashboard</a>
+      <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
+    </header>
+
+    <section class="records-shell">
+      <div class="records-head">
+        <p class="eyebrow">Teacher Workspace</p>
+        <h1>Records</h1>
+      </div>
+
+      <div class="records-layout">
+        <section class="form-card">
+          <div class="editor-head">
+  <div>
+    <h2 id="editorTitle">New Record</h2>
+    <p id="editorHint">Create a new learner record</p>
+  </div>
+
+  <button class="mini-glass-btn" type="button" onclick="newRecord()">New</button>
+</div>
+
+          <form id="recordForm">
+            <div class="field-grid">
+              <label>
+                Full Name
+                <input id="fullName" type="text" required>
+              </label>
+
+              <label>
+                Age
+                <input id="age" type="number" min="1">
+              </label>
+
+              <label>
+                Date of Enrollment
+                <input id="enrollmentDate" type="date">
+              </label>
+
+              <label>
+                Current Level
+                <select id="level">
+  <option value="">Select level</option>
+  <option>Absolute Beginner</option>
+  <option>A0</option>
+  <option>A1</option>
+  <option>A1.1</option>
+  <option>A2</option>
+  <option>B1</option>
+  <option>B2</option>
+</select>
+              </label>
+
+              <label>
+                Assigned Teacher
+                <input id="teacher" type="text">
+              </label>
+
+              <label>
+                Parent / Guardian
+                <input id="parentName" type="text">
+              </label>
+
+              <label>
+                Parent Phone
+                <input id="parentPhone" type="tel">
+              </label>
+
+              <label class="wide">
+                Parent Email
+                <input id="parentEmail" type="email">
+              </label>
+
+              <label>
+                Class Days
+                <input id="classDays" type="text" placeholder="e.g. Mondays & Wednesdays">
+              </label>
+
+              <label>
+                Status
+                <select id="status">
+                  <option>Active</option>
+                  <option>Paused</option>
+                  <option>Completed</option>
+                </select>
+              </label>
+
+              <label class="wide">
+                Notes
+                <textarea id="notes" rows="4"></textarea>
+              </label>
+            </div>
+
+            <div class="form-actions">
+  <button class="glass-btn" type="submit">Save Record</button>
+  <button class="ghost-btn" type="button" onclick="cancelEdit()">Clear Form</button>
+</div>
+            <p id="formStatus" class="form-status"></p>
+          </form>
+        </section>
+
+        <section class="list-card">
+          <div class="list-head">
+            <h2>Learner Records</h2>
+            <span id="recordCount">0 records</span>
+          </div>
+
+          <div id="recordsList" class="records-list">
+            <div class="empty-state">No records yet.</div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/records.js?v=records-module-01"></script>
+</body>
+</html>
+
+
+
+
+

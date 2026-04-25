@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Classes | Impact Learning Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/classes.css?v=classes-module-01">
+</head>
+<body>
+  <main class="classes-page">
+    <div class="bg-layer"></div>
+    <div class="shade-layer"></div>
+
+    <header class="topbar">
+      <a class="glass-link" href="/teacher/dashboard.html">Dashboard</a>
+      <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
+    </header>
+
+    <section class="classes-shell">
+      <div class="classes-head">
+        <p class="eyebrow">Teacher Workspace</p>
+        <h1>Classes</h1>
+      </div>
+
+      <div class="classes-layout">
+        <section class="form-card">
+          <div class="editor-head">
+            <div>
+              <h2>Schedule Class</h2>
+              <p>Create an upcoming online class session.</p>
+            </div>
+          </div>
+
+          <form id="classForm">
+            <label>
+              Class Title
+              <input id="classTitle" type="text" required placeholder="e.g. A1 Speaking Practice">
+            </label>
+
+            <label>
+              Learner / Group
+              <input id="learnerName" type="text" required placeholder="e.g. Ama Mensah / A1 Group">
+            </label>
+
+            <label>
+              Teacher
+              <input id="teacherName" type="text" placeholder="Assigned teacher">
+            </label>
+
+            <label>
+              Day
+              <select id="classDay" required>
+  <option value="">Select Day</option>
+  <option>Monday</option>
+  <option>Tuesday</option>
+  <option>Wednesday</option>
+  <option>Thursday</option>
+  <option>Friday</option>
+  <option>Saturday</option>
+  <option>Sunday</option>
+</select>
+            </label>
+
+            <label>
+              Time
+              <input id="classTime" type="time" required>
+            </label>
+
+            <label>
+              Duration
+              <input id="duration" type="text" placeholder="e.g. 45 minutes">
+            </label>
+
+            <label class="wide">
+              Meeting Link
+              <input id="meetingLink" type="url" placeholder="Paste Zoom / Google Meet link">
+            </label>
+
+            <label>
+              Status
+              <select id="status">
+                <option>Scheduled</option>
+                <option>Completed</option>
+                <option>Cancelled</option>
+              </select>
+            </label>
+
+            <label class="wide">
+              Class Notes
+              <textarea id="notes" rows="4" placeholder="Optional preparation notes"></textarea>
+            </label>
+
+            <button class="glass-btn" type="submit">Save Class</button>
+            <p id="formStatus" class="form-status"></p>
+          </form>
+        </section>
+
+        <section class="list-card">
+          <div class="list-head">
+            <h2>Scheduled Classes</h2>
+            <span id="classCount">0 classes</span>
+          </div>
+
+          <div id="classesList" class="classes-list">
+            <div class="empty-state">No classes yet.</div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/classes.js?v=classes-module-01"></script>
+</body>
+</html>
+

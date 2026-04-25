@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Teacher Dashboard | Impact Learning Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/teacher-dashboard.css?v=teacher-dashboard-luxury-01">
+</head>
+<body>
+  <main class="dashboard-page">
+    <div class="bg-layer"></div>
+    <div class="shade-layer"></div>
+
+    <header class="topbar">
+      <a class="home-link" href="/">Home</a>
+      <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
+    </header>
+
+    <section class="dashboard-shell">
+      <div class="dashboard-intro">
+        <p class="eyebrow">Teacher Workspace</p>
+<p class="welcome-line" id="welcomeLine">Welcome</p>
+        
+        
+      </div>
+
+      <section class="module-grid">
+        <a class="module-card" href="/teacher/records.html">
+          
+          <h2>Records</h2>
+          <p>Create and manage learner records, levels, notes, and assigned teachers.</p>
+        </a>
+
+        <a class="module-card" href="/teacher/lesson-plans.html">
+          
+          <h2>Lesson Plans</h2>
+          <p>Build structured lesson plans for one-on-one and group learning sessions.</p>
+        </a>
+
+        <a class="module-card" href="/teacher/classes.html">
+          
+          <h2>Classes</h2>
+          <p>Schedule classes, attach meeting links, and manage upcoming sessions.</p>
+        </a>
+
+        <a class="module-card" href="/teacher/recordings.html">
+          
+          <h2>Recordings</h2>
+          <p>Store class recording links, notes, and learner access references.</p>
+        </a>
+
+        <a class="module-card" href="/teacher/exercises.html">
+          
+          <h2>Activities</h2>
+          <p>Create practice activities for learners and review submitted responses.</p>
+        </a>
+
+        <a class="module-card" href="/teacher/tests.html">
+          
+          <h2>Test Engine</h2>
+          <p>Create assessments, mock exams, test sections, and learner attempts.</p>
+        </a>
+
+        <a class="module-card" href="/teacher/progress.html">
+          
+          <h2>Progress</h2>
+          <p>Review learner growth, teacher comments, scores, and recommendations.</p>
+        </a>
+
+        <a class="module-card muted" href="/teacher/configuration.html">
+          
+          <h2>Configuration</h2>
+          <p>Platform configuration, access rules, and future admin controls.</p>
+        </a>
+      </section>
+    </section>
+  </main>
+<script>
+  const accessName = sessionStorage.getItem("impactAccessName") || "";
+  const welcomeLine = document.getElementById("welcomeLine");
+
+  if (welcomeLine && accessName) {
+    welcomeLine.textContent = `Welcome, ${accessName}`;
+  }
+</script>
+</body>
+</html>
+
+
+
+
+
+

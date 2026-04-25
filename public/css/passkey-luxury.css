@@ -1,0 +1,275 @@
+﻿*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html,body{
+  min-height:100%;
+}
+
+body{
+  font-family:Inter,system-ui,sans-serif;
+  background:#160f0c;
+  color:#fff;
+  overflow:hidden;
+}
+
+.access-page{
+  min-height:100vh;
+  min-height:100svh;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  overflow:hidden;
+}
+
+.bg-layer{
+  position:absolute;
+  inset:-24px;
+  background:url("/assets/images/homepage.jpg") center/cover no-repeat;
+  filter:blur(10px);
+  transform:scale(1.06);
+  z-index:0;
+}
+
+.shade-layer{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,.08), transparent 30%),
+    linear-gradient(180deg, rgba(20,12,8,.34), rgba(20,12,8,.62));
+  z-index:1;
+}
+
+.back-link{
+  position:absolute;
+  top:26px;
+  left:26px;
+  z-index:5;
+  min-height:48px;
+  padding:0 20px;
+  border-radius:16px;
+  color:#fff;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(18px);
+  box-shadow:0 14px 30px rgba(0,0,0,.22);
+}
+
+.corner-logo{
+  position:absolute;
+  top:26px;
+  right:26px;
+  z-index:5;
+  width:54px;
+  height:54px;
+  object-fit:cover;
+  border-radius:15px;
+  box-shadow:0 14px 30px rgba(0,0,0,.25);
+}
+
+.access-card{
+  position:relative;
+  z-index:3;
+  width:min(520px,100%);
+  padding:46px 34px 38px;
+  border-radius:34px;
+  text-align:center;
+  background:rgba(0,0,0,.72);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(32px);
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.58),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  animation:enter .65s ease both;
+}
+
+.small-title{
+  margin-bottom:18px;
+  font-size:.78rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.72);
+  font-weight:600;
+}
+
+.access-card h1{
+  font-family:"Sorts Mill Goudy","Goudy Old Style",serif;
+  font-size:clamp(3rem,7vw,5rem);
+  font-weight:400;
+  line-height:1;
+  color:#fbfbf8;
+  text-shadow:0 8px 20px rgba(0,0,0,.45);
+  margin-bottom:34px;
+}
+
+.access-card input{
+  width:100%;
+  height:58px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.30);
+  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.07));
+  color:#fff;
+  padding:0 18px;
+  outline:none;
+  font-size:1rem;
+  font-weight:500;
+  backdrop-filter:blur(18px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    0 14px 30px rgba(0,0,0,.18);
+}
+
+.access-card input::placeholder{
+  color:rgba(255,255,255,.66);
+}
+
+.access-card button{
+  width:100%;
+  height:58px;
+  margin-top:16px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.26);
+  color:#fff;
+  background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.08));
+  backdrop-filter:blur(18px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.34),
+    0 18px 34px rgba(0,0,0,.28);
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.access-card button:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.08);
+}
+
+.access-card button:active{
+  transform:translateY(1px) scale(.99);
+}
+
+.status{
+  min-height:22px;
+  margin-top:16px;
+  font-size:.92rem;
+  color:#f4d7d7;
+  font-weight:600;
+}
+
+@keyframes enter{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:640px){
+  .access-page{
+    padding:18px;
+  }
+
+  .back-link{
+    top:18px;
+    left:18px;
+    min-height:44px;
+    padding:0 16px;
+    border-radius:14px;
+    font-size:.92rem;
+  }
+
+  .corner-logo{
+    top:18px;
+    right:18px;
+    width:46px;
+    height:46px;
+    border-radius:13px;
+  }
+
+  .access-card{
+    padding:40px 20px 30px;
+    border-radius:28px;
+  }
+
+  .small-title{
+    font-size:.72rem;
+    letter-spacing:.2em;
+  }
+
+  .access-card h1{
+    font-size:3.2rem;
+    margin-bottom:30px;
+  }
+
+  .access-card input,
+  .access-card button{
+    height:54px;
+    border-radius:16px;
+  }
+}
+
+@media(max-width:390px){
+  .access-card{
+    padding:36px 16px 28px;
+  }
+
+  .access-card h1{
+    font-size:2.8rem;
+  }
+}
+
+/* ==========================================
+   SHOW / HIDE PASSKEY INPUT
+   ========================================== */
+
+.passkey-row{
+  width:100%;
+  height:58px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:0;
+}
+
+.passkey-row input{
+  flex:1;
+  height:58px;
+  margin:0 !important;
+}
+
+.toggle-passkey{
+  width:auto !important;
+  min-width:76px;
+  height:58px !important;
+  margin:0 !important;
+  padding:0 14px;
+  border-radius:18px;
+  font-size:.86rem !important;
+  font-weight:800 !important;
+}
+
+@media(max-width:640px){
+  .passkey-row{
+    height:54px;
+    gap:8px;
+  }
+
+  .passkey-row input,
+  .toggle-passkey{
+    height:54px !important;
+    border-radius:16px;
+  }
+
+  .toggle-passkey{
+    min-width:68px;
+    font-size:.8rem !important;
+  }
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Exam</title>
+</head>
+<body>
+
+<h2>Create Exam</h2>
+
+<input id="title" placeholder="Title"/><br/>
+<input id="level" placeholder="Level"/><br/>
+<input id="code" placeholder="Exam Code"/><br/>
+
+<button onclick="save()">Save</button>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { firebaseConfig } from "../js/firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.save = async function(){
+
+  const title = document.getElementById("title").value;
+  const level = document.getElementById("level").value;
+  const code = document.getElementById("code").value;
+
+  if(!title || !code){
+    alert("Missing fields");
+    return;
+  }
+
+  await addDoc(collection(db, "examTemplates"), {
+    title,
+    level,
+    code,
+    createdAt: Date.now()
+  });
+
+  alert("Exam created");
+}
+
+</script>
+
+</body>
+</html>

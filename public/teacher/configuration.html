@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Access Configuration | Impact Learning Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/configuration.css?v=config-passkeys-02">
+</head>
+<body>
+  <main class="config-page">
+    <div class="bg-layer"></div>
+    <div class="shade-layer"></div>
+
+    <header class="topbar">
+      <a class="glass-link" href="/teacher/dashboard.html">Dashboard</a>
+      <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
+    </header>
+
+    <section class="config-shell compact-config">
+      <div class="config-layout single">
+        <section class="form-card">
+          <h2>Create Team Passkey</h2>
+
+          <form id="passkeyForm">
+            <label>
+              Team Member Name
+              <input id="ownerName" type="text" required placeholder="Enter team member name">
+            </label>
+
+            <label>
+              Role
+              <select id="role" required>
+                <option value="">Select role</option>
+                <option value="teacher">Teacher</option>
+                <option value="academic-team-lead">Academic Team Lead</option>
+                <option value="operations">Operations</option>
+                <option value="impact-team-lead">Impact Team Lead</option>
+              </select>
+            </label>
+
+            <label>
+              Status
+              <select id="status">
+                <option value="active">Active</option>
+                <option value="disabled">Disabled</option>
+              </select>
+            </label>
+
+            <button class="glass-btn" type="submit">Generate Passkey</button>
+            <p id="formStatus" class="form-status"></p>
+          </form>
+
+          <div id="generatedBox" class="generated-box hidden">
+            <p class="generated-label">Generated Passkey</p>
+            <div class="generated-key-row">
+              <code id="generatedKey"></code>
+              <button id="copyBtn" type="button">Copy Passkey</button>
+            </div>
+            <p id="copyStatus" class="copy-status"></p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/configuration.js?v=config-passkeys-02"></script>
+</body>
+</html>

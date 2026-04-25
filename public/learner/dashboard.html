@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Learner Workspace | Impact Learning Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/learner-dashboard.css?v=learner-workspace-01">
+</head>
+<body>
+  <main class="dashboard-page">
+    <div class="bg-layer"></div>
+    <div class="shade-layer"></div>
+
+    <header class="topbar">
+      <a class="home-link" href="/">Home</a>
+      <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
+    </header>
+
+    <section class="dashboard-shell">
+      <div class="dashboard-intro">
+        <p class="eyebrow">Learner Workspace</p>
+<p class="welcome-line" id="welcomeLine">Welcome</p>
+        
+        
+      </div>
+
+      <section class="module-grid">
+        <a class="module-card" href="/learner/classes.html">
+          
+          <h2>Classes</h2>
+          <p>View upcoming online classes, meeting links, and class schedules.</p>
+        </a>
+
+        <a class="module-card" href="/learner/lesson-plans.html">
+          
+          <h2>Lesson Notes</h2>
+          <p>Review lesson summaries, objectives, and materials shared by your teacher.</p>
+        </a>
+
+        <a class="module-card" href="/learner/activities.html">
+          
+          <h2>Activities</h2>
+          <p>Complete assigned practice tasks, speaking prompts, and written exercises.</p>
+        </a>
+
+        <a class="module-card" href="/learner/recordings.html">
+          
+          <h2>Recordings</h2>
+          <p>Watch class recordings and revisit important learning moments.</p>
+        </a>
+
+        <a class="module-card" href="/learner/tests.html">
+          
+          <h2>Assessments</h2>
+          <p>Take assigned tests, mock exams, and placement assessments.</p>
+        </a>
+
+        <a class="module-card" href="/learner/progress.html">
+          
+          <h2>Progress</h2>
+          <p>Track scores, teacher comments, completed work, and next recommendations.</p>
+        </a>
+      </section>
+    </section>
+  </main>
+<script>
+  const accessName = sessionStorage.getItem("impactAccessName") || "";
+  const welcomeLine = document.getElementById("welcomeLine");
+
+  if (welcomeLine && accessName) {
+    welcomeLine.textContent = `Welcome, ${accessName}`;
+  }
+</script>
+</body>
+</html>
+
+
