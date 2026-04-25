@@ -99,7 +99,7 @@ function updateRoomAvailability(){
 
 function getClassData(){
   return {
-    classTitle: value("classTitle"),
+    classTitle: value("classTitle") || value("level"),
     learnerGroup: value("learnerGroup"),
     teacher: value("teacher"),
     classDay: value("classDay"),
@@ -251,7 +251,7 @@ if(form){
     const classData = getClassData();
 
     if(!classData.classTitle || !classData.learnerGroup || !classData.teacher){
-      alert("Please enter class title, learner/group, and teacher.");
+      alert("Please enter level, learner/group, and teacher.");
       return;
     }
 
@@ -286,3 +286,4 @@ if(form){
 }
 
 loadClasses();
+
