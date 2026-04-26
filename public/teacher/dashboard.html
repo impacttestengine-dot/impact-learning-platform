@@ -2,143 +2,181 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teacher Dashboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Personnel & Learner Hub</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 
 body{
-  font-family: 'Inter', sans-serif;
-  color:#fff;
-  background: url('/assets/images/bg.jpg') center/cover no-repeat fixed;
+  min-height:100vh;
+  font-family:Inter,system-ui,sans-serif;
+  color:#f7f8ff;
+  background:#05060b;
+  overflow-x:hidden;
 }
 
-.overlay{
+.bg{
   position:fixed;
   inset:0;
-  background: rgba(10,10,20,0.65);
-  backdrop-filter: blur(20px);
+  background:
+    linear-gradient(rgba(5,6,12,.62),rgba(5,6,12,.86)),
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%);
+  transform:scale(1.06);
+  filter:blur(10px) brightness(.78);
+  z-index:0;
 }
 
-.wrapper{
+.page{
   position:relative;
-  max-width:1100px;
-  margin:80px auto;
-  padding:40px;
+  z-index:2;
+  width:min(980px,88vw);
+  margin:0 auto;
+  padding:70px 0;
 }
 
-.title-top{
-  text-align:center;
-  font-size:12px;
-  letter-spacing:3px;
-  opacity:0.6;
+.home{
+  position:fixed;
+  top:24px;
+  left:28px;
+  z-index:5;
+  text-decoration:none;
+  color:white;
+  font-size:.72rem;
+  font-weight:900;
+  padding:10px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,255,255,.13);
 }
 
-h1{
-  font-family:'Sorts Mill Goudy', serif;
+.header{
   text-align:center;
-  font-size:48px;
-  margin-top:10px;
-  margin-bottom:50px;
+  margin-bottom:34px;
+}
+
+.header p{
+  text-transform:uppercase;
+  letter-spacing:.34em;
+  font-size:.68rem;
+  font-weight:900;
+  color:rgba(235,240,255,.64);
+  margin-bottom:10px;
+}
+
+.header h1{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:clamp(2.8rem,5.2vw,4.5rem);
+  font-weight:400;
+  line-height:1;
 }
 
 .grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:25px;
+  gap:22px;
 }
 
 .card{
-  background: rgba(255,255,255,0.06);
-  border-radius:20px;
-  padding:25px;
-  backdrop-filter: blur(12px);
-  border:1px solid rgba(255,255,255,0.08);
-  transition:0.3s;
+  min-height:150px;
+  padding:24px;
+  border-radius:28px;
+  background:rgba(255,255,255,.058);
+  border:1px solid rgba(255,255,255,.105);
+  box-shadow:0 22px 64px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
   cursor:pointer;
+  transition:.2s ease;
 }
 
 .card:hover{
-  transform: translateY(-4px);
-  background: rgba(255,255,255,0.1);
+  background:rgba(255,255,255,.09);
+  transform:translateY(-2px);
 }
 
 .card h2{
-  font-family:'Sorts Mill Goudy', serif;
-  font-size:22px;
-  margin-bottom:10px;
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:1.7rem;
+  font-weight:400;
+  margin-bottom:34px;
 }
 
 .card p{
-  font-size:14px;
-  opacity:0.7;
-  line-height:1.4;
+  color:rgba(255,255,255,.64);
+  font-size:.78rem;
+  font-weight:700;
+  line-height:1.55;
+}
+
+@media(max-width:850px){
+  .grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
-<div class="overlay"></div>
+<div class="bg"></div>
 
-<div class="wrapper">
+<a class="home" href="/">Home</a>
 
-<div class="title-top">TEACHER WORKSPACE</div>
-<h1>Welcome</h1>
+<main class="page">
+  <section class="header">
+    <p>Teacher Workspace</p>
+    <h1>Welcome</h1>
+  </section>
 
-<div class="grid">
+  <section class="grid">
+    <article class="card" onclick="go('records')">
+      <h2>Personnel</h2>
+      <p>Manage personnel records, assigned learners, notes, and teaching responsibilities.</p>
+    </article>
 
-<div class="card" onclick="go('Personnel')">
-<h2>Personnel</h2>
-<p>Create and manage Learner Hub Personnel, levels, notes, and assigned personnel.</p>
-</div>
+    <article class="card" onclick="go('lessons')">
+      <h2>Lesson Plans</h2>
+      <p>Build structured lesson plans for one-on-one and group learning sessions.</p>
+    </article>
 
-<div class="card" onclick="go('lessons')">
-<h2>Lesson Plans</h2>
-<p>Build structured lesson plans for one-on-one and group learning sessions.</p>
-</div>
+    <article class="card" onclick="go('classes')">
+      <h2>Classes</h2>
+      <p>Schedule classes, attach meeting links, and manage upcoming sessions.</p>
+    </article>
 
-<div class="card" onclick="go('classes')">
-<h2>Classes</h2>
-<p>Schedule classes, attach meeting links, and manage upcoming sessions.</p>
-</div>
+    <article class="card" onclick="go('recordings')">
+      <h2>Recordings</h2>
+      <p>Store class recordings, notes, and Learner Hub access references.</p>
+    </article>
 
-<div class="card" onclick="go('recordings')">
-<h2>Recordings</h2>
-<p>Store class recording links, notes, and Learner Hub access references.</p>
-</div>
+    <article class="card" onclick="go('exercises')">
+      <h2>Activities</h2>
+      <p>Create practice activities for Learner Hub and review submitted responses.</p>
+    </article>
 
-<div class="card" onclick="go('exercises')">
-<h2>Activities</h2>
-<p>Create practice activities for Learner Hub and review submissions.</p>
-</div>
+    <article class="card" onclick="go('tests')">
+      <h2>Test Engine</h2>
+      <p>Create assessments, mock exams, test sections, and Learner Hub attempts.</p>
+    </article>
 
-<div class="card" onclick="go('tests')">
-<h2>Test Engine</h2>
-<p>Create assessments, mock exams, and track Learner Hub attempts.</p>
-</div>
+    <article class="card" onclick="go('progress')">
+      <h2>Progress</h2>
+      <p>Review Learner Hub growth, personnel comments, scores, and recommendations.</p>
+    </article>
 
-<div class="card" onclick="go('progress')">
-<h2>Progress</h2>
-<p>Review Learner Hub growth, personnel comments, scores, and insights.</p>
-</div>
-
-<div class="card" onclick="go('settings')">
-<h2>Configuration</h2>
-<p>Platform configuration, access rules, and system settings.</p>
-</div>
-
-</div>
-</div>
+    <article class="card" onclick="go('settings')">
+      <h2>Configuration</h2>
+      <p>Platform configuration, access rules, and future admin controls.</p>
+    </article>
+  </section>
+</main>
 
 <script>
 function go(page){
   window.location.href = "/teacher/" + page + ".html";
 }
 </script>
-
 </body>
 </html>
-
