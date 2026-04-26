@@ -1,35 +1,28 @@
-﻿rules_version = '2';
-
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ===== PASSKEYS =====
     match /passkeys/{docId} {
       allow read: if true;
       allow write: if false;
     }
 
-    // ===== ACTIVITIES =====
     match /activities/{docId} {
       allow read, write: if true;
     }
 
-    // ===== FOLDERS =====
     match /folders/{docId} {
       allow read, write: if true;
     }
 
-    // ===== RECORDS =====
     match /records/{docId} {
       allow read, write: if true;
     }
 
-    // ===== CLASSES =====
     match /classes/{docId} {
       allow read, write: if true;
     }
 
-    // ===== KPI DATA =====
     match /kpi/{docId} {
       allow read, write: if true;
     }
