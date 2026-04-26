@@ -5,6 +5,14 @@
 
 import { db } from "/js/firebase-app.js";
 
+const LOCAL_PASSKEYS = [
+  {
+    passkey: "IMP-PBN8329-YX",
+    role: "personnel",
+    ownerName: "Personnel"
+  }
+];
+
 function normalize(value) {
   return String(value || "").trim();
 }
@@ -28,6 +36,29 @@ function roleAliases(role) {
   return [role];
 }
 
+function checkLocalPasskeys(entered, requestedRole) {
+  const allowedRoles = roleAliases(requestedRole).map(r => normalize(r).toLowerCase());
+
+  const match = LOCAL_PASSKEYS.find(item => normalize(item.passkey) === entered);
+
+  if (!match) return null;
+
+  const savedRole = normalize(match.role).toLowerCase();
+
+  if (!savedRole || allowedRoles.includes(savedRole)) {
+    return {
+      ok: true,
+      role: requestedRole,
+      ownerName: match.ownerName || "User"
+    };
+  }
+
+  return {
+    ok: false,
+    message: "This passkey exists but is not assigned to this access area."
+  };
+}
+
 export async function validatePasskey(inputPasskey, requestedRole) {
   const entered = normalize(inputPasskey);
 
@@ -37,6 +68,9 @@ export async function validatePasskey(inputPasskey, requestedRole) {
       message: "Please enter your passkey."
     };
   }
+
+  const localResult = checkLocalPasskeys(entered, requestedRole);
+  if (localResult) return localResult;
 
   try {
     const allowedRoles = roleAliases(requestedRole).map(r => normalize(r).toLowerCase());
@@ -52,14 +86,17 @@ export async function validatePasskey(inputPasskey, requestedRole) {
         data.key ||
         data.code ||
         data.password ||
-        data.pin
+        data.pin ||
+        data.passKey ||
+        data.accessCode
       );
 
       const savedRole = normalize(
         data.role ||
         data.category ||
         data.accessType ||
-        data.type
+        data.type ||
+        data.userType
       ).toLowerCase();
 
       const ownerName = normalize(
@@ -97,6 +134,9 @@ export async function validatePasskey(inputPasskey, requestedRole) {
 
   } catch (error) {
     console.error("Passkey validation failed:", error);
+
+    const backupResult = checkLocalPasskeys(entered, requestedRole);
+    if (backupResult) return backupResult;
 
     return {
       ok: false,
