@@ -1,4 +1,15 @@
-﻿import { API_BASE_URL } from "/js/api-config.js";
+﻿import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { db } from "/js/firebase-app.js";
 
 const form = document.getElementById("recordForm");
 const formStatus = document.getElementById("formStatus");
@@ -30,24 +41,25 @@ function escapeHtml(value) {
 
 function collectRecordData() {
   return {
-    fullName: getValue("fullName"),
-    age: getValue("age"),
-    enrollmentDate: getValue("enrollmentDate"),
-    level: getValue("level"),
-    placementResult: getValue("placementResult"),
-    progressionCount: getValue("progressionCount") || "0",
-    teacher: getValue("teacher"),
-    parentName: getValue("parentName"),
-    parentPhone: getValue("parentPhone"),
-    parentEmail: getValue("parentEmail"),
-    classDays: getValue("classDays"),
-    status: getValue("status") || "Active",
-    notes: getValue("notes")
+    fullName:getValue("fullName"),
+    age:getValue("age"),
+    enrollmentDate:getValue("enrollmentDate"),
+    level:getValue("level"),
+    placementResult:getValue("placementResult"),
+    progressionCount:getValue("progressionCount") || "0",
+    teacher:getValue("teacher"),
+    parentName:getValue("parentName"),
+    parentPhone:getValue("parentPhone"),
+    parentEmail:getValue("parentEmail"),
+    classDays:getValue("classDays"),
+    status:getValue("status") || "Active",
+    notes:getValue("notes"),
+    updatedAt:serverTimestamp()
   };
 }
 
 function setEditorMode(mode, recordName = "") {
-  const button = form.querySelector(".glass-btn");
+  const button = form?.querySelector(".glass-btn");
 
   if (mode === "edit") {
     editorTitle.textContent = "Edit Record";
@@ -97,7 +109,7 @@ function enterEditMode(recordId) {
   setEditorMode("edit", record.fullName || "record");
   formStatus.textContent = "";
 
-  document.querySelector(".form-card")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  document.querySelector(".form-card")?.scrollIntoView({ behavior:"smooth", block:"nearest" });
   renderRecords();
 }
 
@@ -149,24 +161,23 @@ async function loadRecords() {
   recordsList.innerHTML = '<div class="empty-state">Loading records...</div>';
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/records`);
-    const data = await response.json();
+    const q = query(collection(db, "learners"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
 
-    if (!data.ok) {
-      recordsList.innerHTML = `<div class="empty-state">${escapeHtml(data.message || "Could not load records.")}</div>`;
-      return;
-    }
+    recordsCache = [];
+    snapshot.forEach((docSnap) => {
+      recordsCache.push({ id:docSnap.id, ...docSnap.data() });
+    });
 
-    recordsCache = data.records || [];
     renderRecords();
 
   } catch (error) {
     console.error(error);
-    recordsList.innerHTML = '<div class="empty-state">Could not connect to backend. Make sure backend is running.</div>';
+    recordsList.innerHTML = '<div class="empty-state">Could not load records from Firestore.</div>';
   }
 }
 
-form.addEventListener("submit", async (event) => {
+form?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const fullName = getValue("fullName");
@@ -179,41 +190,17 @@ form.addEventListener("submit", async (event) => {
   const record = collectRecordData();
 
   try {
-    let response;
-
     if (editingRecordId) {
       formStatus.textContent = "Updating record...";
-
-      response = await fetch(`${API_BASE_URL}/api/records/${editingRecordId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(record)
-      });
-
+      await updateDoc(doc(db, "learners", editingRecordId), record);
+      formStatus.textContent = "Record updated.";
     } else {
       formStatus.textContent = "Saving record...";
-
-      response = await fetch(`${API_BASE_URL}/api/records/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(record)
+      await addDoc(collection(db, "learners"), {
+        ...record,
+        createdAt:serverTimestamp()
       });
-    }
-
-    const data = await response.json();
-
-    if (!data.ok) {
-      formStatus.textContent = data.message || "Could not save record.";
-      return;
-    }
-
-    formStatus.textContent = editingRecordId ? "Record updated." : "Record saved.";
-
-    if (!editingRecordId) {
+      formStatus.textContent = "Record saved.";
       resetEditMode();
     }
 
@@ -221,9 +208,8 @@ form.addEventListener("submit", async (event) => {
 
   } catch (error) {
     console.error(error);
-    formStatus.textContent = "Could not connect to backend. Make sure backend is running.";
+    formStatus.textContent = "Could not save record to Firestore.";
   }
 });
 
 loadRecords();
-

@@ -1,4 +1,15 @@
-﻿import { API_BASE_URL } from "/js/api-config.js";
+﻿import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { db } from "/js/firebase-app.js";
 
 const form = document.getElementById("classForm");
 const classList = document.getElementById("classList") || document.getElementById("classesList");
@@ -8,10 +19,10 @@ const roomSelect = document.getElementById("meetingLink");
 let classesCache = [];
 
 const meetRoomNames = {
-  "https://meet.google.com/ukw-macm-cvo": "Impact Meet Room 1",
-  "https://meet.google.com/fxh-gazg-jpp": "Impact Meet Room 2",
-  "https://meet.google.com/rps-qrqe-upw": "Impact Meet Room 3",
-  "https://meet.google.com/mea-ihvu-jhi": "Impact Meet Room 4"
+  "https://meet.google.com/ukw-macm-cvo":"Impact Meet Room 1",
+  "https://meet.google.com/fxh-gazg-jpp":"Impact Meet Room 2",
+  "https://meet.google.com/rps-qrqe-upw":"Impact Meet Room 3",
+  "https://meet.google.com/mea-ihvu-jhi":"Impact Meet Room 4"
 };
 
 function notify(message, type = "success"){
@@ -38,17 +49,17 @@ function value(id){
 
 function escapeHtml(value){
   return String(value || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
 function minutesFromTime(timeValue){
   const parts = String(timeValue || "").split(":");
   if(parts.length < 2) return null;
-  return (Number(parts[0]) * 60) + Number(parts[1]);
+  return Number(parts[0]) * 60 + Number(parts[1]);
 }
 
 function durationMinutes(value){
@@ -79,7 +90,6 @@ function updateRoomAvailability(){
     if(!option.value) return;
 
     const originalName = meetRoomNames[option.value] || option.textContent.replace(" — room unavailable at this period", "");
-
     option.disabled = false;
     option.textContent = originalName;
 
@@ -117,15 +127,15 @@ function updateRoomAvailability(){
 
 function getClassData(){
   return {
-    classTitle: value("classTitle"),
-    learnerGroup: value("learnerGroup"),
-    teacher: value("teacher"),
-    classDay: value("classDay"),
-    time: value("time"),
-    duration: value("duration"),
-    meetingLink: value("meetingLink"),
-    status: value("status") || "Scheduled",
-    notes: value("notes")
+    classTitle:value("classTitle"),
+    learnerGroup:value("learnerGroup"),
+    teacher:value("teacher"),
+    classDay:value("classDay"),
+    time:value("time"),
+    duration:value("duration"),
+    meetingLink:value("meetingLink"),
+    status:value("status") || "Scheduled",
+    notes:value("notes")
   };
 }
 
@@ -138,9 +148,10 @@ async function startClass(classId, meetingLink, duration){
   const expectedDuration = durationMinutes(duration);
 
   try{
-    await fetch(`${API_BASE_URL}/api/classes/${classId}/start`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" }
+    await updateDoc(doc(db, "classes", classId), {
+      status:"In Progress",
+      startedAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
     });
 
     const startedAt = Date.now();
@@ -163,14 +174,12 @@ async function startClass(classId, meetingLink, duration){
         const earlyThreshold = Math.max(10, Math.round(expectedDuration * 0.75));
         const endedEarly = actualMinutes < earlyThreshold;
 
-        await fetch(`${API_BASE_URL}/api/classes/${classId}/end`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            status: endedEarly ? "Needs Review" : "Completed",
-            actualDurationMinutes: String(actualMinutes),
-            reviewReason: endedEarly ? "Class ended earlier than expected. Teacher review required." : ""
-          })
+        await updateDoc(doc(db, "classes", classId), {
+          status:endedEarly ? "Needs Review" : "Completed",
+          completedAt:serverTimestamp(),
+          actualDurationMinutes:String(actualMinutes),
+          reviewReason:endedEarly ? "Class ended earlier than expected. Teacher review required." : "",
+          updatedAt:serverTimestamp()
         });
 
         notify(endedEarly ? "Class ended early and has been logged for review." : "Class ended and has been logged.");
@@ -194,16 +203,14 @@ async function loadClasses(){
   classList.innerHTML = `<div class="empty-state">Loading classes...</div>`;
 
   try{
-    const response = await fetch(`${API_BASE_URL}/api/classes`);
-    const data = await response.json();
+    const q = query(collection(db, "classes"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
 
-    if(!data.ok){
-      if(classCount) classCount.textContent = "0 classes";
-      classList.innerHTML = `<div class="empty-state">Could not load classes.</div>`;
-      return;
-    }
+    classesCache = [];
+    snapshot.forEach((docSnap) => {
+      classesCache.push({ id:docSnap.id, ...docSnap.data() });
+    });
 
-    classesCache = data.classes || [];
     updateRoomAvailability();
 
     const classes = classesCache.filter((item) => {
@@ -246,30 +253,12 @@ async function loadClasses(){
           </div>
 
           <div class="class-detail-grid">
-            <div>
-              <span>Learner / Group</span>
-              <strong>${learner}</strong>
-            </div>
-            <div>
-              <span>Teacher</span>
-              <strong>${teacher}</strong>
-            </div>
-            <div>
-              <span>Day</span>
-              <strong>${day}</strong>
-            </div>
-            <div>
-              <span>Time</span>
-              <strong>${time}</strong>
-            </div>
-            <div>
-              <span>Duration</span>
-              <strong>${duration}</strong>
-            </div>
-            <div>
-              <span>Google Meet Room</span>
-              <strong>${roomName}</strong>
-            </div>
+            <div><span>Learner / Group</span><strong>${learner}</strong></div>
+            <div><span>Teacher</span><strong>${teacher}</strong></div>
+            <div><span>Day</span><strong>${day}</strong></div>
+            <div><span>Time</span><strong>${time}</strong></div>
+            <div><span>Duration</span><strong>${duration}</strong></div>
+            <div><span>Google Meet Room</span><strong>${roomName}</strong></div>
           </div>
 
           <button class="start-class-button" type="button" onclick="startClass('${item.id}', '${meetingLink}', '${duration}')">
@@ -282,49 +271,66 @@ async function loadClasses(){
   }catch(error){
     console.error(error);
     if(classCount) classCount.textContent = "0 classes";
-    classList.innerHTML = `<div class="empty-state">Could not connect to backend.</div>`;
+    classList.innerHTML = `<div class="empty-state">Could not load classes from Firestore.</div>`;
   }
 }
 
-if(form){
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+form?.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-    const classData = getClassData();
+  const classData = getClassData();
 
-    if(!classData.classTitle || !classData.learnerGroup || !classData.teacher){
-      notify("Please enter level, learner/group, and teacher.", "error");
-      return;
-    }
+  if(!classData.classTitle || !classData.learnerGroup || !classData.teacher){
+    notify("Please enter level, learner/group, and teacher.", "error");
+    return;
+  }
 
-    if(!classData.meetingLink){
-      notify("Please select a Google Meet room.", "error");
-      return;
-    }
+  if(!classData.meetingLink){
+    notify("Please select a Google Meet room.", "error");
+    return;
+  }
 
-    try{
-      const response = await fetch(`${API_BASE_URL}/api/classes/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(classData)
-      });
+  const newStart = minutesFromTime(classData.time);
+  const newDuration = durationMinutes(classData.duration);
 
-      const data = await response.json();
+  const roomConflict = classesCache.some((item) => {
+    const status = item.status || "Scheduled";
+    if(!["Scheduled", "In Progress"].includes(status)) return false;
+    if(item.classDay !== classData.classDay) return false;
+    if(item.meetingLink !== classData.meetingLink) return false;
 
-      if(!data.ok){
-        notify(data.message || "Could not save class.", "error");
-        return;
-      }
+    const existingStart = minutesFromTime(item.time);
+    const existingDuration = durationMinutes(item.duration);
+    if(newStart === null || existingStart === null) return false;
 
-      notify("Class saved.");
-      form.reset();
-      await loadClasses();
-
-    }catch(error){
-      console.error(error);
-      notify("Could not connect to backend.", "error");
-    }
+    return overlaps(newStart, newDuration, existingStart, existingDuration);
   });
-}
+
+  if(roomConflict){
+    notify("This room is unavailable at this period. Please choose another room.", "error");
+    updateRoomAvailability();
+    return;
+  }
+
+  try{
+    await addDoc(collection(db, "classes"), {
+      ...classData,
+      startedAt:"",
+      completedAt:"",
+      actualDurationMinutes:"",
+      reviewReason:"",
+      createdAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
+    });
+
+    notify("Class saved.");
+    form.reset();
+    await loadClasses();
+
+  }catch(error){
+    console.error(error);
+    notify("Could not save class to Firestore.", "error");
+  }
+});
 
 loadClasses();

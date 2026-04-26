@@ -1,4 +1,15 @@
-﻿const templates = document.querySelectorAll(".activity-template-card");
+﻿import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { db } from "/js/firebase-app.js";
+
+const templates = document.querySelectorAll(".activity-template-card");
 const selectedActivityType = document.getElementById("selectedActivityType");
 const questionList = document.getElementById("questionList");
 const addQuestionBtn = document.getElementById("addQuestionBtn");
@@ -7,7 +18,7 @@ const activityList = document.getElementById("activityList");
 const activityCount = document.getElementById("activityCount");
 
 let selectedType = "Quiz";
-let activities = JSON.parse(localStorage.getItem("impactActivities") || "[]");
+let activities = [];
 
 function notify(message){
   let toast = document.getElementById("impactToast");
@@ -28,11 +39,11 @@ function value(id){
 
 function escapeHtml(value){
   return String(value || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
 function addQuestion(text = ""){
@@ -82,13 +93,30 @@ function renderActivities(){
       <div class="class-detail-grid">
         <div><span>Teacher</span><strong>${escapeHtml(item.teacher || "Not set")}</strong></div>
         <div><span>Learner / Group</span><strong>${escapeHtml(item.learnerGroup || "Not set")}</strong></div>
-        <div><span>Questions / Tasks</span><strong>${item.questions.length}</strong></div>
-        <div><span>Status</span><strong>Draft</strong></div>
+        <div><span>Questions / Tasks</span><strong>${(item.questions || []).length}</strong></div>
+        <div><span>Status</span><strong>${escapeHtml(item.status || "Draft")}</strong></div>
       </div>
 
       <p class="activity-instructions">${escapeHtml(item.instructions || "No instructions added.")}</p>
     </article>
   `).join("");
+}
+
+async function loadActivities(){
+  try{
+    const q = query(collection(db, "activities"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+
+    activities = [];
+    snapshot.forEach((docSnap) => {
+      activities.push({ id:docSnap.id, ...docSnap.data() });
+    });
+
+    renderActivities();
+  }catch(error){
+    console.error(error);
+    activityList.innerHTML = `<div class="empty-state">Could not load activities from Firestore.</div>`;
+  }
 }
 
 templates.forEach((button) => {
@@ -102,7 +130,7 @@ templates.forEach((button) => {
 
 addQuestionBtn?.addEventListener("click", () => addQuestion());
 
-form?.addEventListener("submit", (event) => {
+form?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const questions = [...questionList.querySelectorAll("textarea")]
@@ -110,14 +138,16 @@ form?.addEventListener("submit", (event) => {
     .filter(Boolean);
 
   const activity = {
-    id: crypto.randomUUID(),
-    type: selectedType,
-    title: value("activityTitle"),
-    level: value("activityLevel"),
-    teacher: value("teacher"),
-    learnerGroup: value("learnerGroup"),
-    instructions: value("instructions"),
-    questions
+    type:selectedType,
+    title:value("activityTitle"),
+    level:value("activityLevel"),
+    teacher:value("teacher"),
+    learnerGroup:value("learnerGroup"),
+    instructions:value("instructions"),
+    questions,
+    status:"Draft",
+    createdAt:serverTimestamp(),
+    updatedAt:serverTimestamp()
   };
 
   if(!activity.title || !activity.level){
@@ -130,15 +160,20 @@ form?.addEventListener("submit", (event) => {
     return;
   }
 
-  activities.unshift(activity);
-  localStorage.setItem("impactActivities", JSON.stringify(activities));
+  try{
+    await addDoc(collection(db, "activities"), activity);
 
-  form.reset();
-  questionList.innerHTML = "";
-  addQuestion();
-  notify("Activity saved.");
-  renderActivities();
+    form.reset();
+    questionList.innerHTML = "";
+    addQuestion();
+    notify("Activity saved.");
+    await loadActivities();
+
+  }catch(error){
+    console.error(error);
+    notify("Could not save activity to Firestore.");
+  }
 });
 
 addQuestion();
-renderActivities();
+loadActivities();

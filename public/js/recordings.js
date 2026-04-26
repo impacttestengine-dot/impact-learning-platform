@@ -1,4 +1,19 @@
-﻿import { API_BASE_URL } from "/js/api-config.js";
+﻿import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+import { db, storage } from "/js/firebase-app.js";
 
 const levels = [
   "Absolute Beginner",
@@ -43,11 +58,15 @@ function value(id){
 
 function escapeHtml(value){
   return String(value || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function safePathPart(value){
+  return String(value || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
 }
 
 function renderFolders(){
@@ -57,7 +76,7 @@ function renderFolders(){
 
     return `
       <button class="level-folder-card ${active}" type="button" data-level="${escapeHtml(level)}">
-        <span class="folder-icon">▰</span>
+        <span class="folder-icon"></span>
         <strong>${escapeHtml(level)}</strong>
         <small>${count} ${count === 1 ? "recording" : "recordings"}</small>
       </button>
@@ -90,31 +109,26 @@ function renderRecordings(){
   recordingList.innerHTML = recordings.map((item) => {
     const isVideo = String(item.fileType || "").startsWith("video/");
     const isAudio = String(item.fileType || "").startsWith("audio/");
+
     const media = isVideo
-      ? `<video controls src="${escapeHtml(item.publicUrl)}"></video>`
+      ? `<video controls src="${escapeHtml(item.downloadUrl)}"></video>`
       : isAudio
-        ? `<audio controls src="${escapeHtml(item.publicUrl)}"></audio>`
-        : `<a class="start-class-button recording-link-button" href="${escapeHtml(item.publicUrl)}" target="_blank" rel="noopener">Open File</a>`;
+        ? `<audio controls src="${escapeHtml(item.downloadUrl)}"></audio>`
+        : `<a class="start-class-button recording-link-button" href="${escapeHtml(item.downloadUrl)}" target="_blank" rel="noopener">Open File</a>`;
 
     return `
       <article class="recording-media-card">
-        <div class="recording-media-preview">
-          ${media}
-        </div>
+        <div class="recording-media-preview">${media}</div>
 
         <div class="recording-media-body">
           <p class="class-card-label">Class Recording</p>
           <h3>${escapeHtml(item.title || item.fileName || "Untitled Recording")}</h3>
 
           <div class="class-detail-grid recording-mini-grid">
-            <div>
-              <span>Learner / Group</span>
-              <strong>${escapeHtml(item.learnerGroup || "Not set")}</strong>
-            </div>
-            <div>
-              <span>Teacher</span>
-              <strong>${escapeHtml(item.teacher || "Not set")}</strong>
-            </div>
+            <div><span>Learner / Group</span><strong>${escapeHtml(item.learnerGroup || "Not set")}</strong></div>
+            <div><span>Teacher</span><strong>${escapeHtml(item.teacher || "Not set")}</strong></div>
+            <div><span>File Type</span><strong>${escapeHtml(item.fileType || "Not set")}</strong></div>
+            <div><span>Level Folder</span><strong>${escapeHtml(item.level || "Not set")}</strong></div>
           </div>
 
           ${item.notes ? `<p class="recording-note-text">${escapeHtml(item.notes)}</p>` : ""}
@@ -128,69 +142,90 @@ async function loadRecordings(){
   recordingList.innerHTML = `<div class="empty-state">Loading recordings...</div>`;
 
   try{
-    const response = await fetch(`${API_BASE_URL}/api/recordings`);
-    const data = await response.json();
+    const q = query(collection(db, "recordings"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
 
-    if(!data.ok){
-      recordingList.innerHTML = `<div class="empty-state">Could not load recordings.</div>`;
-      return;
-    }
+    recordingsCache = [];
+    snapshot.forEach((docSnap) => {
+      recordingsCache.push({ id:docSnap.id, ...docSnap.data() });
+    });
 
-    recordingsCache = data.recordings || [];
     renderFolders();
     renderRecordings();
 
   }catch(error){
     console.error(error);
-    recordingList.innerHTML = `<div class="empty-state">Could not connect to backend.</div>`;
+    recordingList.innerHTML = `<div class="empty-state">Could not load recordings from Firestore.</div>`;
   }
 }
 
-if(form){
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+form?.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-    const file = document.getElementById("recordingFile")?.files?.[0];
+  const file = document.getElementById("recordingFile")?.files?.[0];
 
-    if(!file){
-      notify("Please choose a video or audio file.", "error");
-      return;
-    }
+  if(!file){
+    notify("Please choose a video or audio file.", "error");
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append("level", selectedLevel);
-    formData.append("title", value("title") || file.name);
-    formData.append("learnerGroup", value("learnerGroup"));
-    formData.append("teacher", value("teacher"));
-    formData.append("notes", value("notes"));
-    formData.append("recording", file);
+  const level = selectedLevel;
+  const title = value("title") || file.name;
+  const learnerGroup = value("learnerGroup");
+  const teacher = value("teacher");
+  const notes = value("notes");
+  const fileType = file.type || "application/octet-stream";
+  const fileName = file.name;
+  const filePath = `recordings/${safePathPart(level)}/${Date.now()}-${safePathPart(fileName)}`;
 
-    notify("Uploading recording... please wait.");
+  try{
+    notify("Uploading recording...");
 
-    try{
-      const response = await fetch(`${API_BASE_URL}/api/recordings/upload`, {
-        method: "POST",
-        body: formData
-      });
+    const storageRef = ref(storage, filePath);
+    const uploadTask = uploadBytesResumable(storageRef, file, {
+      contentType:fileType
+    });
 
-      const data = await response.json();
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        notify(`Uploading recording... ${progress}%`);
+      },
+      (error) => {
+        console.error(error);
+        notify("Could not upload recording to Firebase Storage.", "error");
+      },
+      async () => {
+        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
 
-      if(!data.ok){
-        notify(data.message || "Could not upload recording.", "error");
-        return;
+        await addDoc(collection(db, "recordings"), {
+          title,
+          level,
+          teacher,
+          learnerGroup,
+          notes,
+          fileName,
+          fileType,
+          filePath,
+          downloadUrl,
+          status:"Uploaded",
+          createdAt:serverTimestamp(),
+          updatedAt:serverTimestamp()
+        });
+
+        notify("Recording uploaded.");
+        form.reset();
+        levelInput.value = selectedLevel;
+        await loadRecordings();
       }
+    );
 
-      notify("Recording uploaded.");
-      form.reset();
-      levelInput.value = selectedLevel;
-      await loadRecordings();
-
-    }catch(error){
-      console.error(error);
-      notify("Could not connect to backend.", "error");
-    }
-  });
-}
+  }catch(error){
+    console.error(error);
+    notify("Could not upload recording.", "error");
+  }
+});
 
 levelInput.value = selectedLevel;
 selectedLevelTitle.textContent = selectedLevel;

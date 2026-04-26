@@ -1,4 +1,10 @@
-﻿import { API_BASE_URL } from "/js/api-config.js";
+﻿import {
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { db } from "/js/firebase-app.js";
 
 const form = document.getElementById("passkeyForm");
 const formStatus = document.getElementById("formStatus");
@@ -13,7 +19,20 @@ function value(id){
   return (document.getElementById(id)?.value || "").trim();
 }
 
-form.addEventListener("submit", async (event) => {
+function generatePasskey(){
+  const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  const numbers = "23456789";
+  const symbols = "$&";
+
+  const partA = Array.from({length:3}, () => letters[Math.floor(Math.random() * letters.length)]).join("");
+  const partB = Array.from({length:3}, () => numbers[Math.floor(Math.random() * numbers.length)]).join("");
+  const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+  const partC = Array.from({length:2}, () => letters[Math.floor(Math.random() * letters.length)]).join("");
+
+  return `IMP-${partA}${symbol}${partB}-${partC}`;
+}
+
+form?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const ownerName = value("ownerName");
@@ -27,39 +46,42 @@ form.addEventListener("submit", async (event) => {
 
   formStatus.textContent = "Generating passkey...";
 
+  const teamRoles = [
+    "teacher",
+    "academic-team-lead",
+    "operations",
+    "impact-team-lead"
+  ];
+
+  const isTeamRole = teamRoles.includes(role);
+  const passkey = generatePasskey();
+
   try{
-    const response = await fetch(`${API_BASE_URL}/api/passkeys/create`, {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        ownerName,
-        role,
-        status
-      })
+    await addDoc(collection(db, "accessPasskeys"), {
+      ownerName,
+      role,
+      passkey,
+      status,
+      accessScope:isTeamRole ? "team" : "learner",
+      canAccessTeacher:isTeamRole,
+      canAccessLearner:true,
+      createdAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
     });
 
-    const data = await response.json();
-
-    if(!data.ok){
-      formStatus.textContent = data.message || "Could not generate passkey.";
-      return;
-    }
-
-    currentGeneratedPasskey = data.passkey;
-    generatedKey.textContent = data.passkey;
+    currentGeneratedPasskey = passkey;
+    generatedKey.textContent = passkey;
     generatedBox.classList.remove("hidden");
     formStatus.textContent = "Passkey generated and saved.";
     copyStatus.textContent = "";
 
   }catch(error){
     console.error(error);
-    formStatus.textContent = "Could not connect to backend. Make sure backend is running.";
+    formStatus.textContent = "Could not generate passkey in Firestore.";
   }
 });
 
-copyBtn.addEventListener("click", async () => {
+copyBtn?.addEventListener("click", async () => {
   if(!currentGeneratedPasskey){
     copyStatus.textContent = "No passkey to copy.";
     return;

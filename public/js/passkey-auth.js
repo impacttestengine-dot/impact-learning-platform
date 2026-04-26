@@ -1,4 +1,11 @@
-﻿import { API_BASE_URL } from "/js/api-config.js";
+﻿import {
+  collection,
+  query,
+  where,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+import { db } from "/js/firebase-app.js";
 
 export async function validatePasskey(inputPasskey, targetSide){
   const passkey = String(inputPasskey || "").trim();
@@ -8,26 +15,40 @@ export async function validatePasskey(inputPasskey, targetSide){
   }
 
   try{
-    const response = await fetch(`${API_BASE_URL}/api/passkeys/validate`, {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        passkey,
-        targetSide
-      })
-    });
+    const q = query(
+      collection(db, "accessPasskeys"),
+      where("passkey", "==", passkey),
+      where("status", "==", "active")
+    );
 
-    const data = await response.json();
+    const snapshot = await getDocs(q);
 
-    return data;
+    if(snapshot.empty){
+      return { ok:false, message:"Invalid passkey." };
+    }
+
+    const data = snapshot.docs[0].data();
+
+    if(targetSide === "teacher" && data.canAccessTeacher !== true){
+      return { ok:false, message:"This passkey cannot open the teacher side." };
+    }
+
+    if(targetSide === "learner" && data.canAccessLearner !== true){
+      return { ok:false, message:"This passkey cannot open the learner side." };
+    }
+
+    return {
+      ok:true,
+      role:data.role || "",
+      ownerName:data.ownerName || "",
+      message:"Access granted."
+    };
 
   }catch(error){
     console.error(error);
     return {
       ok:false,
-      message:"Could not connect to backend. Make sure the backend is running."
+      message:"Could not validate passkey from Firestore."
     };
   }
 }
