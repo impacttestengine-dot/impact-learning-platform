@@ -4,22 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Access | Impact Learning Platform</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/platform.css">
+  <link rel="stylesheet" href="/css/teacher-gate.css">
 </head>
 <body>
-  <main class="gate-page teacher-gate-page">
-    <section class="teacher-access-card">
-      <div class="teacher-access-eyebrow">Teacher Access</div>
+  <main class="teacher-gate-page">
+    <section class="teacher-gate-card">
+      <div class="teacher-gate-label">Teacher Access</div>
+
       <h1>Welcome</h1>
 
-      <form id="teacherGateForm" class="teacher-access-form">
-        <div class="teacher-passkey-row">
+      <form id="teacherGateForm" class="teacher-gate-form">
+        <div class="teacher-gate-row">
           <input id="passkeyInput" type="password" autocomplete="off">
           <button id="togglePasskey" type="button">Show</button>
         </div>
 
-        <button type="submit" class="teacher-signin-btn">Sign In</button>
+        <button type="submit" class="teacher-gate-submit">Sign In</button>
         <p id="gateStatus" class="teacher-gate-status"></p>
       </form>
     </section>

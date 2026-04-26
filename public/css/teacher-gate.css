@@ -1,0 +1,147 @@
+﻿* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #f5f7ff;
+  background:
+    linear-gradient(rgba(8, 9, 17, 0.58), rgba(8, 9, 17, 0.72)),
+    url("/assets/images/impact-bg.jpg") center / cover no-repeat fixed,
+    radial-gradient(circle at center, #22283d 0%, #05060b 70%);
+}
+
+.teacher-gate-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.teacher-gate-card {
+  width: min(690px, 88vw);
+  min-height: 470px;
+  padding: 54px 56px 46px;
+  border-radius: 38px;
+  text-align: center;
+  background: rgba(8, 10, 18, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.105);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.teacher-gate-label {
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.34em;
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: rgba(232, 238, 255, 0.88);
+}
+
+.teacher-gate-card h1 {
+  margin: 0 0 44px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(5.3rem, 9.8vw, 7.4rem);
+  font-weight: 400;
+  line-height: 0.78;
+  letter-spacing: -0.055em;
+  color: rgba(242, 246, 255, 0.98);
+  text-shadow: 0 0 24px rgba(210, 224, 255, 0.18);
+}
+
+.teacher-gate-form {
+  width: 100%;
+  display: grid;
+  gap: 18px;
+}
+
+.teacher-gate-row {
+  display: grid;
+  grid-template-columns: 1fr 118px;
+  gap: 14px;
+}
+
+.teacher-gate-row input,
+.teacher-gate-row button,
+.teacher-gate-submit {
+  height: 66px;
+  border-radius: 24px;
+  border: 1px solid rgba(210, 222, 255, 0.28);
+  background: rgba(255, 255, 255, 0.105);
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 1rem;
+  font-weight: 900;
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 12px 28px rgba(0, 0, 0, 0.16);
+}
+
+.teacher-gate-row input {
+  padding: 0 24px;
+}
+
+.teacher-gate-row button,
+.teacher-gate-submit {
+  cursor: pointer;
+}
+
+.teacher-gate-submit {
+  width: 100%;
+}
+
+.teacher-gate-row button:hover,
+.teacher-gate-submit:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.teacher-gate-row button:active,
+.teacher-gate-submit:active {
+  transform: scale(0.985);
+}
+
+.teacher-gate-status {
+  min-height: 30px;
+  margin: 2px 0 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+@media (max-width: 620px) {
+  .teacher-gate-page {
+    padding: 18px;
+  }
+
+  .teacher-gate-card {
+    width: min(430px, 94vw);
+    min-height: auto;
+    padding: 42px 24px 34px;
+    border-radius: 30px;
+  }
+
+  .teacher-gate-card h1 {
+    font-size: clamp(4.2rem, 18vw, 5.3rem);
+    margin-bottom: 34px;
+  }
+
+  .teacher-gate-row {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-gate-row input,
+  .teacher-gate-row button,
+  .teacher-gate-submit {
+    height: 58px;
+  }
+}
