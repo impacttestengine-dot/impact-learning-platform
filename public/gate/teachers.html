@@ -2,72 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Teacher Access</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/passkey-luxury.css?v=teacher-firestore-passkeys-01">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Access | Impact Learning Platform</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/platform.css">
 </head>
 <body>
-  <main class="access-page">
-    <div class="bg-layer"></div>
-    <div class="shade-layer"></div>
-
-    <a class="back-link" href="/">Home</a>
-    <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
-
-    <section class="access-card">
-      <p class="small-title">Teacher Access</p>
+  <main class="gate-page">
+    <section class="gate-card">
+      <div class="eyebrow">Teacher Access</div>
       <h1>Welcome</h1>
 
-      <div class="passkey-row">
-  <input id="passkey" type="password" placeholder="Enter your passkey" autocomplete="off">
-  <button class="toggle-passkey" id="togglePasskey" type="button">Show</button>
-</div>
+      <form id="teacherGateForm">
+        <div class="passkey-row">
+          <input id="passkeyInput" type="password" autocomplete="off">
+          <button id="togglePasskey" type="button">Show</button>
+        </div>
 
-      <button id="signInBtn" type="button">Sign In</button>
-
-      <p id="status" class="status"></p>
+        <button type="submit" class="glass-btn">Sign In</button>
+        <p id="gateStatus" class="gate-status"></p>
+      </form>
     </section>
   </main>
 
   <script type="module">
-    import { validatePasskey } from "/js/passkey-auth.js?v=teacher-firestore-passkeys-01";
+    import { validatePasskey } from "/js/passkey-auth.js";
 
-    const input = document.getElementById("passkey");
-    const status = document.getElementById("status");
-    const button = document.getElementById("signInBtn");
-    const togglePasskey = document.getElementById("togglePasskey");
+    const form = document.getElementById("teacherGateForm");
+    const input = document.getElementById("passkeyInput");
+    const status = document.getElementById("gateStatus");
+    const toggle = document.getElementById("togglePasskey");
 
-    togglePasskey.addEventListener("click", function(){
-      if(input.type === "password"){
-        input.type = "text";
-        togglePasskey.textContent = "Hide";
-      }else{
-        input.type = "password";
-        togglePasskey.textContent = "Show";
-      }
+    toggle.addEventListener("click", () => {
+      input.type = input.type === "password" ? "text" : "password";
+      toggle.textContent = input.type === "password" ? "Show" : "Hide";
     });
 
-    async function loginTeacher(){
-      status.textContent = "Checking passkey...";
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      status.textContent = "Checking access...";
+
       const result = await validatePasskey(input.value, "teacher");
 
-      if(result.ok){
-        sessionStorage.setItem("impactAccessRole", result.role);
-        sessionStorage.setItem("impactAccessName", result.ownerName);
-        window.location.href = "/teacher/dashboard.html";
-      }else{
+      if (!result.ok) {
         status.textContent = result.message;
+        return;
       }
-    }
 
-    button.addEventListener("click", loginTeacher);
-    input.addEventListener("keydown", function(e){
-      if(e.key === "Enter") loginTeacher();
+      sessionStorage.setItem("impactTeacherAccess", "granted");
+      sessionStorage.setItem("impactTeacherName", result.ownerName || "");
+      window.location.href = "/teacher/dashboard.html";
     });
   </script>
 </body>
 </html>
-
