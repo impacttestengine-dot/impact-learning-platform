@@ -1,97 +1,113 @@
-﻿.activities-page {
+﻿/* =========================================================
+   ACTIVITIES FINAL POLISH
+   Matches Teacher Dashboard feel:
+   calm, centered, spacious, classic, glass, not crowded
+   ========================================================= */
+
+.activities-page {
   min-height: 100vh;
-  padding: 28px 0 80px;
+  padding: 34px 0 90px;
   color: #f5f7ff;
 }
 
 .activities-page .home-link {
   position: fixed;
-  top: 24px;
-  left: 28px;
-  z-index: 10;
+  top: 28px;
+  left: 30px;
+  z-index: 20;
   text-decoration: none;
   font-size: 0.72rem;
   font-weight: 800;
-  color: rgba(245, 248, 255, 0.72);
+  color: rgba(245, 248, 255, 0.76);
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.11);
   border-radius: 14px;
-  padding: 9px 13px;
+  padding: 10px 14px;
 }
 
 .activities-hero {
   width: min(780px, 88vw);
-  margin: 18px auto 24px;
+  margin: 24px auto 30px;
   text-align: center;
 }
 
 .activities-hero .eyebrow,
 .mini-label {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   text-transform: uppercase;
-  letter-spacing: 0.28em;
-  font-size: 0.62rem;
+  letter-spacing: 0.34em;
+  font-size: 0.68rem;
   font-weight: 900;
-  color: rgba(235,240,255,0.58);
+  color: rgba(235,240,255,0.62);
 }
 
 .activities-hero h1 {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2.9rem, 6vw, 4.6rem);
+  font-size: clamp(3.25rem, 6.5vw, 5.25rem);
   font-weight: 400;
-  line-height: 0.98;
+  line-height: 0.95;
   letter-spacing: -0.045em;
   color: rgba(246,248,255,0.96);
 }
 
 .activities-hero > p:last-child {
-  margin: 13px auto 0;
-  max-width: 520px;
+  margin: 15px auto 0;
+  max-width: 560px;
   color: rgba(255,255,255,0.58);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 .activities-toolbar {
-  width: min(600px, 86vw);
-  margin: 0 auto 28px;
+  width: min(640px, 86vw);
+  margin: 0 auto 34px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 11px;
+  gap: 12px;
 }
 
 .activities-toolbar button,
 .primary-action {
-  min-height: 44px;
+  min-height: 46px;
   border: 1px solid rgba(220,230,255,0.16);
-  border-radius: 15px;
+  border-radius: 16px;
   background: rgba(255,255,255,0.075);
   color: rgba(255,255,255,0.9);
-  padding: 10px 12px;
+  padding: 10px 13px;
   font-size: 0.72rem;
   font-weight: 900;
   cursor: pointer;
 }
 
+.activities-toolbar button:hover,
+.primary-action:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+.activities-toolbar button:active,
+.primary-action:active {
+  transform: scale(0.985);
+}
+
 .activities-shell {
-  width: min(820px, 88vw);
+  width: min(880px, 88vw);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: 255px minmax(0, 1fr);
+  gap: 22px;
   align-items: start;
 }
 
 .activities-folder-panel,
 .activities-main-panel,
 .activity-modal-card {
-  border-radius: 26px;
+  border-radius: 28px;
   background: rgba(255,255,255,0.055);
   border: 1px solid rgba(255,255,255,0.10);
   box-shadow:
-    0 18px 52px rgba(0,0,0,0.24),
+    0 20px 58px rgba(0,0,0,0.24),
     inset 0 1px 0 rgba(255,255,255,0.07);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -99,7 +115,7 @@
 
 .activities-folder-panel,
 .activities-main-panel {
-  padding: 20px;
+  padding: 22px;
 }
 
 .panel-head,
@@ -117,7 +133,7 @@
 .builder-head h2 {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.55rem;
+  font-size: 1.65rem;
   font-weight: 400;
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -138,14 +154,14 @@
 .folder-list {
   display: grid;
   gap: 10px;
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
 .activity-folder {
   width: 100%;
   border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 18px;
-  padding: 12px;
+  border-radius: 19px;
+  padding: 13px;
   display: flex;
   gap: 11px;
   align-items: center;
@@ -162,8 +178,8 @@
 
 .activity-folder span,
 .folder-icon {
-  width: 21px;
-  height: 15px;
+  width: 22px;
+  height: 16px;
   border-radius: 5px;
   background: rgba(220,230,255,0.72);
   display: block;
@@ -171,7 +187,8 @@
 }
 
 .activity-folder strong {
-  font-size: 0.78rem;
+  display: block;
+  font-size: 0.8rem;
 }
 
 .activity-folder small {
@@ -183,9 +200,73 @@
 }
 
 .activity-list {
-  margin-top: 18px;
+  margin-top: 20px;
   display: grid;
   gap: 12px;
+}
+
+.activity-card {
+  border-radius: 22px;
+  background: rgba(8,11,22,0.22);
+  border: 1px solid rgba(255,255,255,0.10);
+  padding: 17px;
+}
+
+.activity-card-top p {
+  margin: 0 0 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.64rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.54);
+}
+
+.activity-card-top h3 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+
+.activity-meta-grid,
+.tracker-summary,
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.activity-meta-grid {
+  margin: 15px 0;
+}
+
+.activity-meta-grid div,
+.tracker-summary div {
+  border-radius: 15px;
+  background: rgba(255,255,255,0.052);
+  padding: 11px;
+}
+
+.activity-meta-grid small,
+.tracker-summary span {
+  display: block;
+  color: rgba(255,255,255,0.52);
+  font-size: 0.68rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.activity-meta-grid strong {
+  color: rgba(255,255,255,0.86);
+  font-size: 0.78rem;
+}
+
+.activity-note {
+  margin: 0;
+  color: rgba(255,255,255,0.68);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.55;
 }
 
 .empty-state {
@@ -198,7 +279,7 @@
   font-weight: 900;
 }
 
-/* Modal stays premium but less bulky */
+/* MODALS */
 .activity-modal {
   position: fixed;
   inset: 0;
@@ -268,14 +349,6 @@
 .type-card.active {
   background: rgba(255,255,255,0.12);
   border-color: rgba(255,255,255,0.22);
-}
-
-.form-grid,
-.activity-meta-grid,
-.tracker-summary {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
 }
 
 .builder-form label,
@@ -369,14 +442,6 @@
   border-radius: 16px;
   background: rgba(255,255,255,0.055);
   padding: 12px;
-}
-
-.tracker-summary span {
-  display: block;
-  color: rgba(255,255,255,0.52);
-  font-size: 0.7rem;
-  font-weight: 800;
-  margin-bottom: 4px;
 }
 
 .tracker-summary strong {
