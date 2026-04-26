@@ -275,41 +275,47 @@ body{
   }
 }
 
+
+
 /* Decorative divider replacing LEARNING */
 .impact-divider {
   display: block;
-  width: min(420px, 68vw);
-  height: 14px;
-  margin: 28px auto 26px;
+  width: min(460px, 72vw);
+  height: 22px;
+  margin: 34px auto 34px;
   position: relative;
 }
 
-.impact-divider::before,
+.impact-divider::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(210, 222, 255, 0.20) 12%,
+    rgba(210, 222, 255, 0.92) 50%,
+    rgba(210, 222, 255, 0.20) 88%,
+    transparent 100%
+  );
+  box-shadow: 0 0 18px rgba(190, 210, 255, 0.65);
+}
+
 .impact-divider::after {
   content: "";
   position: absolute;
+  left: 50%;
   top: 50%;
-  width: 44%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(220, 230, 255, 0.72),
-    transparent
-  );
-}
-
-.impact-divider::before {
-  left: 0;
-}
-
-.impact-divider::after {
-  right: 0;
-}
-
-.impact-divider {
-  background:
-    radial-gradient(circle at center, rgba(220, 230, 255, 0.95) 0 3px, transparent 4px),
-    radial-gradient(circle at 46% 50%, rgba(220, 230, 255, 0.55) 0 2px, transparent 3px),
-    radial-gradient(circle at 54% 50%, rgba(220, 230, 255, 0.55) 0 2px, transparent 3px);
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: rgba(218, 228, 255, 0.96);
+  box-shadow:
+    -92px 92px 0 -4px rgba(218, 228, 255, 0.75),
+    92px -92px 0 -4px rgba(218, 228, 255, 0.75),
+    0 0 22px rgba(190, 210, 255, 0.9);
 }
