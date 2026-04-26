@@ -4,11 +4,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Teacher Access</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/passkey-luxury.css?v=teacher-firestore-passkeys-01">
+
+  <link rel="stylesheet" href="/css/passkey-luxury.css?v=eye-icon-upgrade-01">
+
+  <style>
+    .passkey-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toggle-passkey {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-passkey:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .toggle-passkey svg {
+      color: white;
+    }
+  </style>
 </head>
+
 <body>
   <main class="access-page">
     <div class="bg-layer"></div>
@@ -18,12 +51,18 @@
     <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
 
     <section class="access-card">
-      <p class="small-title">Teacher Access</p>
+      <p class="small-title">TEACHER ACCESS</p>
       <h1>Welcome</h1>
 
       <div class="passkey-row">
         <input id="passkey" type="password" placeholder="Enter your passkey" autocomplete="off">
-        <button class="toggle-passkey" id="togglePasskey" type="button">Show</button>
+
+        <button class="toggle-passkey" id="togglePasskey" type="button">
+          <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
       </div>
 
       <button id="signInBtn" type="button">Sign In</button>
@@ -33,20 +72,21 @@
   </main>
 
   <script type="module">
-    import { validatePasskey } from "/js/passkey-auth.js?v=teacher-firestore-passkeys-01";
+    import { validatePasskey } from "/js/passkey-auth.js?v=eye-icon-upgrade-01";
 
     const input = document.getElementById("passkey");
     const status = document.getElementById("status");
     const button = document.getElementById("signInBtn");
     const togglePasskey = document.getElementById("togglePasskey");
+    const eyeIcon = document.getElementById("eyeIcon");
 
     togglePasskey.addEventListener("click", function(){
       if(input.type === "password"){
         input.type = "text";
-        togglePasskey.textContent = "Hide";
-      }else{
+        eyeIcon.style.opacity = "0.4";
+      } else {
         input.type = "password";
-        togglePasskey.textContent = "Show";
+        eyeIcon.style.opacity = "1";
       }
     });
 
@@ -58,7 +98,7 @@
         sessionStorage.setItem("impactAccessRole", result.role);
         sessionStorage.setItem("impactAccessName", result.ownerName);
         window.location.href = "/teacher/dashboard.html";
-      }else{
+      } else {
         status.textContent = result.message;
       }
     }
