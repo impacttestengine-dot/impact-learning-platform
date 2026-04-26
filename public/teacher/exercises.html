@@ -4,147 +4,652 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Activities & Exercises | Impact Learning Platform</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/teacher-dashboard.css">
-  <link rel="stylesheet" href="/css/activities.css">
-  <link rel="stylesheet" href="/css/teacher-system.css">
 
-<style id="activities-direct-fix">
-  body .activities-page{
-    max-width: 920px !important;
-    margin: 0 auto !important;
-    padding: 32px 0 80px !important;
-  }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  body .activities-hero{
-    width: min(720px, 88vw) !important;
-    margin: 24px auto 26px !important;
-    text-align: center !important;
-  }
-
-  body .activities-hero h1{
-    font-size: clamp(3rem, 6vw, 4.8rem) !important;
-    line-height: .95 !important;
-  }
-
-  body .activities-hero p:last-child{
-    max-width: 520px !important;
-    margin: 14px auto 0 !important;
-    font-size: .82rem !important;
-    line-height: 1.55 !important;
-    opacity: .72 !important;
-  }
-
-  body .activities-toolbar{
-    width: min(620px, 88vw) !important;
-    margin: 0 auto 30px !important;
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 12px !important;
-  }
-
-  body .activities-toolbar button{
-    min-height: 44px !important;
-    padding: 10px 12px !important;
-    font-size: .72rem !important;
-    border-radius: 15px !important;
-  }
-
-  body .activities-shell{
-    width: min(840px, 88vw) !important;
-    margin: 0 auto !important;
-    display: grid !important;
-    grid-template-columns: 250px minmax(0, 1fr) !important;
-    gap: 20px !important;
-  }
-
-  body .activities-folder-panel,
-  body .activities-main-panel{
-    padding: 20px !important;
-    border-radius: 26px !important;
-  }
-
-  body .panel-head h2{
-    font-size: 1.55rem !important;
-  }
-
-  body .folder-list,
-  body .activity-list{
-    gap: 10px !important;
-    margin-top: 18px !important;
-  }
-
-  body .activity-folder{
-    padding: 12px !important;
-    border-radius: 18px !important;
-  }
-
-  body .activity-folder strong{
-    font-size: .78rem !important;
-  }
-
-  body .activity-folder small,
-  body .empty-state{
-    font-size: .68rem !important;
-  }
-
-  body .empty-state{
-    padding: 18px !important;
-    border-radius: 18px !important;
-  }
-
-  @media(max-width:900px){
-    body .activities-toolbar,
-    body .activities-shell{
-      grid-template-columns: 1fr !important;
+  <style>
+    * {
+      box-sizing: border-box;
     }
-  }
-</style>
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #f6f7ff;
+      background: #05060b;
+      overflow-x: hidden;
+    }
+
+    .teacher-bg {
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(5, 6, 12, 0.62), rgba(5, 6, 12, 0.82)),
+        url("/assets/images/teacher-bg.jpg") center / cover no-repeat,
+        url("/assets/images/bg.jpg") center / cover no-repeat,
+        radial-gradient(circle at center, #27304a 0%, #05060b 72%);
+      transform: scale(1.06);
+      filter: blur(10px) brightness(0.76);
+      z-index: 0;
+    }
+
+    .teacher-shade {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 34%),
+        linear-gradient(to bottom, rgba(5,6,12,0.30), rgba(5,6,12,0.82));
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .teacher-page {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      padding: 34px 0 88px;
+    }
+
+    .home-link {
+      position: fixed;
+      top: 24px;
+      left: 28px;
+      z-index: 20;
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: rgba(246, 248, 255, 0.78);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 10px 14px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .workspace-hero {
+      width: min(760px, 88vw);
+      margin: 22px auto 34px;
+      text-align: center;
+    }
+
+    .workspace-hero .eyebrow {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.34em;
+      font-size: 0.7rem;
+      font-weight: 900;
+      color: rgba(235, 240, 255, 0.66);
+    }
+
+    .workspace-hero h1 {
+      margin: 0;
+      font-family: "Sorts Mill Goudy", Georgia, serif;
+      font-size: clamp(3.4rem, 7.5vw, 5.8rem);
+      font-weight: 400;
+      line-height: 0.94;
+      letter-spacing: -0.045em;
+      color: rgba(248, 250, 255, 0.98);
+    }
+
+    .workspace-hero .subtitle {
+      margin: 16px auto 0;
+      max-width: 560px;
+      color: rgba(255,255,255,0.64);
+      font-size: 0.86rem;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .quick-actions {
+      width: min(680px, 88vw);
+      margin: 0 auto 30px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .quick-actions button,
+    .primary-action {
+      min-height: 46px;
+      border: 1px solid rgba(220,230,255,0.17);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.075);
+      color: rgba(255,255,255,0.92);
+      padding: 10px 13px;
+      font-size: 0.73rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow:
+        0 16px 38px rgba(0,0,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .quick-actions button:hover,
+    .primary-action:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .quick-actions button:active,
+    .primary-action:active {
+      transform: scale(0.985);
+    }
+
+    .workspace-shell {
+      width: min(880px, 88vw);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 255px minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .glass-panel,
+    .modal-card {
+      border-radius: 28px;
+      background: rgba(255,255,255,0.058);
+      border: 1px solid rgba(255,255,255,0.105);
+      box-shadow:
+        0 22px 64px rgba(0,0,0,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .glass-panel {
+      padding: 22px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .mini-label {
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.26em;
+      font-size: 0.62rem;
+      font-weight: 900;
+      color: rgba(235,240,255,0.55);
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-family: "Sorts Mill Goudy", Georgia, serif;
+      font-size: 1.65rem;
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: rgba(248,250,255,0.96);
+    }
+
+    .count-pill {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.075);
+      border: 1px solid rgba(255,255,255,0.10);
+      font-weight: 900;
+      font-size: 0.66rem;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .folder-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .activity-folder {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 19px;
+      padding: 13px;
+      display: flex;
+      gap: 11px;
+      align-items: center;
+      text-align: left;
+      background: rgba(8,11,22,0.21);
+      color: white;
+      cursor: pointer;
+    }
+
+    .activity-folder.active {
+      background: rgba(255,255,255,0.115);
+      border-color: rgba(255,255,255,0.21);
+    }
+
+    .folder-icon {
+      width: 22px;
+      height: 16px;
+      border-radius: 5px;
+      background: rgba(220,230,255,0.72);
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .activity-folder strong {
+      display: block;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .activity-folder small {
+      display: block;
+      margin-top: 3px;
+      color: rgba(255,255,255,0.48);
+      font-size: 0.64rem;
+      font-weight: 800;
+    }
+
+    .activity-list {
+      margin-top: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .activity-card {
+      border-radius: 22px;
+      background: rgba(8,11,22,0.23);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 17px;
+    }
+
+    .activity-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .activity-card-top p {
+      margin: 0 0 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.64rem;
+      font-weight: 900;
+      color: rgba(255,255,255,0.54);
+    }
+
+    .activity-card-top h3 {
+      margin: 0;
+      font-family: "Sorts Mill Goudy", Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 400;
+      color: rgba(248,250,255,0.94);
+    }
+
+    .activity-card-top span {
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.075);
+      border: 1px solid rgba(255,255,255,0.10);
+      font-weight: 900;
+      font-size: 0.66rem;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .activity-meta-grid,
+    .tracker-summary,
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .activity-meta-grid {
+      margin: 15px 0;
+    }
+
+    .activity-meta-grid div,
+    .tracker-summary div {
+      border-radius: 15px;
+      background: rgba(255,255,255,0.052);
+      padding: 11px;
+    }
+
+    .activity-meta-grid small,
+    .tracker-summary span {
+      display: block;
+      color: rgba(255,255,255,0.52);
+      font-size: 0.68rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .activity-meta-grid strong {
+      color: rgba(255,255,255,0.86);
+      font-size: 0.78rem;
+    }
+
+    .activity-note {
+      margin: 0;
+      color: rgba(255,255,255,0.68);
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .empty-state {
+      border-radius: 18px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 18px;
+      color: rgba(255,255,255,0.62);
+      font-size: 0.76rem;
+      font-weight: 900;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(0,0,0,0.56);
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-card {
+      width: min(900px, 92vw);
+      max-height: 86vh;
+      overflow: auto;
+      padding: 26px;
+      position: relative;
+    }
+
+    .modal-card.small {
+      width: min(420px, 90vw);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.13);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .builder-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding-right: 46px;
+    }
+
+    .builder-head h2 {
+      margin: 0;
+      font-family: "Sorts Mill Goudy", Georgia, serif;
+      font-size: 1.85rem;
+      font-weight: 400;
+    }
+
+    .builder-head span {
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.075);
+      border: 1px solid rgba(255,255,255,0.10);
+      font-weight: 900;
+      font-size: 0.66rem;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .builder-layout {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .builder-types {
+      display: grid;
+      gap: 9px;
+      align-content: start;
+    }
+
+    .type-card {
+      min-height: 46px;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(8,11,22,0.22);
+      color: white;
+      text-align: left;
+      padding: 0 13px;
+      font-size: 0.76rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .type-card.active {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.22);
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: rgba(255,255,255,0.68);
+      font-size: 0.74rem;
+      font-weight: 900;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border-radius: 15px;
+      border: 1px solid rgba(220,230,255,0.14);
+      background: rgba(255,255,255,0.08);
+      color: white;
+      padding: 12px;
+      outline: none;
+      font-size: 0.78rem;
+      font-weight: 800;
+      font-family: inherit;
+    }
+
+    option {
+      color: #111827;
+    }
+
+    .full-field {
+      margin-top: 12px;
+    }
+
+    .question-builder {
+      margin: 16px 0;
+      border-radius: 20px;
+      background: rgba(8,11,22,0.22);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 16px;
+    }
+
+    .question-builder-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .question-builder h3 {
+      margin: 0;
+      font-family: "Sorts Mill Goudy", Georgia, serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+    }
+
+    .question-builder-head button,
+    .question-top button {
+      border: 0;
+      border-radius: 12px;
+      padding: 8px 11px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .question-item {
+      border-radius: 16px;
+      background: rgba(255,255,255,0.055);
+      padding: 12px;
+    }
+
+    .question-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .form-note {
+      min-height: 22px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: rgba(255,255,255,0.66);
+    }
+
+    .tracker-summary {
+      margin: 18px 0;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .tracker-summary strong {
+      font-size: 1.55rem;
+    }
+
+    .tracker-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tracker-row {
+      border-radius: 18px;
+      background: rgba(8,11,22,0.22);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .tracker-row p,
+    .tracker-row h3 {
+      margin: 0 0 4px;
+    }
+
+    .tracker-row h3 {
+      font-size: 1rem;
+    }
+
+    .tracker-row small {
+      color: rgba(255,255,255,0.52);
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    @media (max-width: 900px) {
+      .home-link {
+        position: static;
+        display: inline-flex;
+        margin-left: 6vw;
+        margin-bottom: 18px;
+      }
+
+      .quick-actions,
+      .workspace-shell,
+      .builder-layout,
+      .form-grid,
+      .activity-meta-grid,
+      .tracker-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace-hero h1 {
+        font-size: clamp(3rem, 12vw, 4.1rem);
+      }
+
+      .tracker-row {
+        display: grid;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <main class="teacher-page activities-page">
+  <div class="teacher-bg"></div>
+  <div class="teacher-shade"></div>
+
+  <main class="teacher-page">
     <a class="home-link" href="/teacher/dashboard.html">Dashboard</a>
 
-    <section class="activities-hero">
+    <section class="workspace-hero">
       <p class="eyebrow">Teacher Workspace</p>
       <h1>Activities & Exercises</h1>
-      <p>Create, organize, publish, and track learner activities and exercises.</p>
+      <p class="subtitle">Create, organize, publish, and track learner activities with a calm, refined workspace.</p>
     </section>
 
-    <section class="activities-toolbar">
+    <section class="quick-actions">
       <button id="openFolderBtn" type="button">Create Folder</button>
-      <button id="openBuilderBtn" type="button">Create Activity / Exercise</button>
+      <button id="openBuilderBtn" type="button">Create Activity</button>
       <button id="openTrackerBtn" type="button">Activity Tracker</button>
     </section>
 
-    <section class="activities-shell">
-      <aside class="activities-folder-panel">
+    <section class="workspace-shell">
+      <aside class="glass-panel">
         <div class="panel-head">
           <div>
             <p class="mini-label">Folders</p>
-            <h2>Activity Library</h2>
+            <h2>Library</h2>
           </div>
-          <span id="folderCount">0</span>
+          <span id="folderCount" class="count-pill">0</span>
         </div>
 
         <div id="folderList" class="folder-list"></div>
       </aside>
 
-      <section class="activities-main-panel">
+      <section class="glass-panel">
         <div class="panel-head">
           <div>
             <p class="mini-label">Selected Folder</p>
             <h2 id="selectedFolderTitle">All Activities</h2>
           </div>
-          <span id="activityCount">0 activities</span>
+          <span id="activityCount" class="count-pill">0 activities</span>
         </div>
 
         <div id="activityList" class="activity-list"></div>
       </section>
     </section>
 
-    <section id="folderModal" class="activity-modal hidden">
-      <div class="activity-modal-card small">
+    <section id="folderModal" class="modal hidden">
+      <div class="modal-card small">
         <button class="modal-close" data-close="folderModal" type="button">×</button>
         <p class="mini-label">New Folder</p>
         <h2>Create Folder</h2>
@@ -159,8 +664,8 @@
       </div>
     </section>
 
-    <section id="builderModal" class="activity-modal hidden">
-      <div class="activity-modal-card builder">
+    <section id="builderModal" class="modal hidden">
+      <div class="modal-card">
         <button class="modal-close" data-close="builderModal" type="button">×</button>
 
         <div class="builder-head">
@@ -168,7 +673,7 @@
             <p class="mini-label">Activity Builder</p>
             <h2>Create Activity / Exercise</h2>
           </div>
-          <span>Aida-style front-end builder</span>
+          <span>Front-end builder</span>
         </div>
 
         <div class="builder-layout">
@@ -250,8 +755,8 @@
       </div>
     </section>
 
-    <section id="trackerModal" class="activity-modal hidden">
-      <div class="activity-modal-card tracker">
+    <section id="trackerModal" class="modal hidden">
+      <div class="modal-card">
         <button class="modal-close" data-close="trackerModal" type="button">×</button>
 
         <div class="builder-head">
@@ -273,11 +778,6 @@
     </section>
   </main>
 
-  <script type="module" src="/js/activities.js"></script>
+  <script type="module" src="/js/activities.js?v=workspace-direct-001"></script>
 </body>
 </html>
-
-
-
-
-
