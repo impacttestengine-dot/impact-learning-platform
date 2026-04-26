@@ -3,31 +3,34 @@
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    match /accessPasskeys/{docId} {
-      allow read, write: if true;
+    // ===== PASSKEYS =====
+    match /passkeys/{docId} {
+      allow read: if true;
+      allow write: if false;
     }
 
-    match /learners/{docId} {
-      allow read, write: if true;
-    }
-
-    match /classes/{docId} {
-      allow read, write: if true;
-    }
-
+    // ===== ACTIVITIES =====
     match /activities/{docId} {
       allow read, write: if true;
     }
 
-    match /recordings/{docId} {
+    // ===== FOLDERS =====
+    match /folders/{docId} {
       allow read, write: if true;
     }
 
-    match /classLogs/{docId} {
+    // ===== RECORDS =====
+    match /records/{docId} {
       allow read, write: if true;
     }
 
-    match /kpiSnapshots/{docId} {
+    // ===== CLASSES =====
+    match /classes/{docId} {
+      allow read, write: if true;
+    }
+
+    // ===== KPI DATA =====
+    match /kpi/{docId} {
       allow read, write: if true;
     }
   }
