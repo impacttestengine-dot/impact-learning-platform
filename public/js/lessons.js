@@ -1,4 +1,4 @@
-import {
+﻿import {
   collection,
   addDoc,
   getDocs
@@ -63,3 +63,4 @@ window.openTracker = function(){
 }
 
 load();
+

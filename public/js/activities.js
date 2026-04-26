@@ -1,4 +1,4 @@
-import {
+ï»¿import {
   collection,
   addDoc,
   getDocs,
@@ -138,9 +138,9 @@ function renderActivities(){
         <span class="status-pill">${escapeHtml(item.status || "Created")}</span>
       </div>
       <p class="activity-note">
-        ${escapeHtml(item.level || "Level not set")} ·
-        ${escapeHtml(item.personnel || "personnel not set")} ·
-        ${escapeHtml(item.impactLearnersGroup || "impactLearners/group not set")} ·
+        ${escapeHtml(item.level || "Level not set")} ï¿½
+        ${escapeHtml(item.personnel || "personnel not set")} ï¿½
+        ${escapeHtml(item.impactLearnersGroup || "impactLearners/group not set")} ï¿½
         ${item.fields?.length || 0} blocks
       </p>
       <p class="activity-note">${escapeHtml(item.instructions || "No instructions added.")}</p>
@@ -168,9 +168,9 @@ function renderTracker(){
     return `
       <article class="tracker-row">
         <div>
-          <p>${escapeHtml(item.status || "Created")} · ${escapeHtml(item.type || "Activity")}</p>
+          <p>${escapeHtml(item.status || "Created")} ï¿½ ${escapeHtml(item.type || "Activity")}</p>
           <h3>${escapeHtml(item.title || "Untitled Activity")}</h3>
-          <small>${escapeHtml(folder?.name || "No folder")} · ${escapeHtml(item.level || "No level")}</small>
+          <small>${escapeHtml(folder?.name || "No folder")} ï¿½ ${escapeHtml(item.level || "No level")}</small>
         </div>
         <div>
           <strong>${docDate(item.createdAt)}</strong>
@@ -390,3 +390,4 @@ async function init(){
 }
 
 init();
+
