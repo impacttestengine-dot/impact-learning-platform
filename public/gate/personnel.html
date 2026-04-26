@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/passkey-luxury.css?v=personnel-direct-gate-001">
+  <link rel="stylesheet" href="/css/passkey-luxury.css?v=personnel-inline-final-001">
 </head>
 
 <body>
@@ -33,34 +33,45 @@
     </section>
   </main>
 
-  <script type="module">
-    import { validatePasskey } from "/js/passkey-auth.js?v=personnel-direct-gate-001";
+  <script>
+    const VALID_PERSONNEL_PASSKEYS = [
+      "IMP-PBN8329-YX",
+      "IMP-PBN&329-YX",
+      "IMP-PBN8329-XX",
+      "IMP-PBN&329-XX"
+    ];
 
     const input = document.getElementById("passkey");
     const status = document.getElementById("status");
     const button = document.getElementById("signInBtn");
     const togglePasskey = document.getElementById("togglePasskey");
 
+    function clean(value){
+      return String(value || "").trim().toUpperCase();
+    }
+
     togglePasskey.addEventListener("click", () => {
       input.type = input.type === "password" ? "text" : "password";
     });
 
-    async function login(){
-      status.textContent = "Checking passkey...";
+    function login(){
+      const entered = clean(input.value);
 
-      let result = await validatePasskey(input.value, "personnel");
-
-      if(!result.ok){
-        result = await validatePasskey(input.value, "teacher");
+      if(!entered){
+        status.textContent = "Please enter your passkey.";
+        return;
       }
 
-      if(result.ok){
+      const allowed = VALID_PERSONNEL_PASSKEYS.map(clean);
+
+      if(allowed.includes(entered)){
         sessionStorage.setItem("impactAccessRole", "personnel");
-        sessionStorage.setItem("impactAccessName", result.ownerName || "Personnel");
-        window.location.href = "/teacher/dashboard.html";
-      }else{
-        status.textContent = result.message || "Invalid passkey.";
+        sessionStorage.setItem("impactAccessName", "Personnel");
+        window.location.href = "/teacher/dashboard.html?v=personnel-access-ok";
+        return;
       }
+
+      status.textContent = "Invalid passkey.";
     }
 
     button.addEventListener("click", login);
@@ -70,4 +81,3 @@
   </script>
 </body>
 </html>
-
