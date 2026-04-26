@@ -8,19 +8,19 @@
   <link rel="stylesheet" href="/css/platform.css">
 </head>
 <body>
-  <main class="gate-page">
-    <section class="gate-card premium-gate-card">
-      <div class="eyebrow">Teacher Access</div>
+  <main class="gate-page teacher-gate-page">
+    <section class="teacher-access-card">
+      <div class="teacher-access-eyebrow">Teacher Access</div>
       <h1>Welcome</h1>
 
-      <form id="teacherGateForm" class="premium-gate-form">
-        <div class="passkey-row">
+      <form id="teacherGateForm" class="teacher-access-form">
+        <div class="teacher-passkey-row">
           <input id="passkeyInput" type="password" autocomplete="off">
           <button id="togglePasskey" type="button">Show</button>
         </div>
 
-        <button type="submit" class="glass-btn gate-submit">Sign In</button>
-        <p id="gateStatus" class="gate-status"></p>
+        <button type="submit" class="teacher-signin-btn">Sign In</button>
+        <p id="gateStatus" class="teacher-gate-status"></p>
       </form>
     </section>
   </main>
@@ -40,6 +40,7 @@
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
+
       status.textContent = "Checking access...";
 
       const result = await validatePasskey(input.value, "teacher");
