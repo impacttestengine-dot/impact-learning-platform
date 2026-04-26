@@ -8,6 +8,97 @@
   <link rel="stylesheet" href="/css/teacher-dashboard.css">
   <link rel="stylesheet" href="/css/activities.css">
   <link rel="stylesheet" href="/css/teacher-system.css">
+<style id="activities-direct-fix">
+  body .activities-page{
+    max-width: 920px !important;
+    margin: 0 auto !important;
+    padding: 32px 0 80px !important;
+  }
+
+  body .activities-hero{
+    width: min(720px, 88vw) !important;
+    margin: 24px auto 26px !important;
+    text-align: center !important;
+  }
+
+  body .activities-hero h1{
+    font-size: clamp(3rem, 6vw, 4.8rem) !important;
+    line-height: .95 !important;
+  }
+
+  body .activities-hero p:last-child{
+    max-width: 520px !important;
+    margin: 14px auto 0 !important;
+    font-size: .82rem !important;
+    line-height: 1.55 !important;
+    opacity: .72 !important;
+  }
+
+  body .activities-toolbar{
+    width: min(620px, 88vw) !important;
+    margin: 0 auto 30px !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  body .activities-toolbar button{
+    min-height: 44px !important;
+    padding: 10px 12px !important;
+    font-size: .72rem !important;
+    border-radius: 15px !important;
+  }
+
+  body .activities-shell{
+    width: min(840px, 88vw) !important;
+    margin: 0 auto !important;
+    display: grid !important;
+    grid-template-columns: 250px minmax(0, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  body .activities-folder-panel,
+  body .activities-main-panel{
+    padding: 20px !important;
+    border-radius: 26px !important;
+  }
+
+  body .panel-head h2{
+    font-size: 1.55rem !important;
+  }
+
+  body .folder-list,
+  body .activity-list{
+    gap: 10px !important;
+    margin-top: 18px !important;
+  }
+
+  body .activity-folder{
+    padding: 12px !important;
+    border-radius: 18px !important;
+  }
+
+  body .activity-folder strong{
+    font-size: .78rem !important;
+  }
+
+  body .activity-folder small,
+  body .empty-state{
+    font-size: .68rem !important;
+  }
+
+  body .empty-state{
+    padding: 18px !important;
+    border-radius: 18px !important;
+  }
+
+  @media(max-width:900px){
+    body .activities-toolbar,
+    body .activities-shell{
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
 </head>
 <body>
   <main class="teacher-page activities-page">
@@ -184,6 +275,7 @@
   <script type="module" src="/js/activities.js"></script>
 </body>
 </html>
+
 
 
 
