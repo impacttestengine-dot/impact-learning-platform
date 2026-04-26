@@ -4,14 +4,22 @@ service cloud.firestore {
 
     match /passkeys/{docId} {
       allow read: if true;
-      allow write: if false;
+      allow write: if true;
     }
 
     match /activities/{docId} {
       allow read, write: if true;
     }
 
-    match /folders/{docId} {
+    match /activityFolders/{docId} {
+      allow read, write: if true;
+    }
+
+    match /lessonFolders/{docId} {
+      allow read, write: if true;
+    }
+
+    match /lessons/{docId} {
       allow read, write: if true;
     }
 
