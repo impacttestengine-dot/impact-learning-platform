@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "/js/api-config.js";
+﻿import { API_BASE_URL } from "/js/api-config.js";
 
 const loggerList = document.getElementById("loggerList");
 
@@ -70,3 +70,5 @@ async function loadLogs(){
 }
 
 loadLogs();
+
+

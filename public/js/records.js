@@ -1,4 +1,4 @@
-import {
+ï»¿import {
   collection,
   addDoc,
   getDocs,
@@ -143,11 +143,11 @@ function renderRecords() {
           <div>
             <div class="record-name">${name}</div>
             <div class="record-meta">
-              ${level} · ${personnel}<br>
+              ${level} ï¿½ ${personnel}<br>
               Placement: ${placement}<br>
               Progressions: ${progressionCount}<br>
               Enrolled: ${enrollment}<br>
-              Parent: ${parent} · ${phone}
+              Parent: ${parent} ï¿½ ${phone}
             </div>
           </div>
           <span class="badge">${status}</span>
@@ -161,7 +161,7 @@ async function loadRecords() {
   recordsList.innerHTML = '<div class="empty-state">Loading records...</div>';
 
   try {
-    const q = query(collection(db, "impactLearnerss"), orderBy("createdAt", "desc"));
+    const q = query(collection(db, "Learner Hub"), orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
 
     recordsCache = [];
@@ -192,11 +192,11 @@ form?.addEventListener("submit", async (event) => {
   try {
     if (editingRecordId) {
       formStatus.textContent = "Updating record...";
-      await updateDoc(doc(db, "impactLearnerss", editingRecordId), record);
+      await updateDoc(doc(db, "Learner Hub", editingRecordId), record);
       formStatus.textContent = "Record updated.";
     } else {
       formStatus.textContent = "Saving record...";
-      await addDoc(collection(db, "impactLearnerss"), {
+      await addDoc(collection(db, "Learner Hub"), {
         ...record,
         createdAt:serverTimestamp()
       });
@@ -213,3 +213,5 @@ form?.addEventListener("submit", async (event) => {
 });
 
 loadRecords();
+
+

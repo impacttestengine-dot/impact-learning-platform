@@ -51,7 +51,7 @@ window.openBuilder = function(){
     content,
     resource,
     personnel:"assigned",
-    impactimpactLearnerss:"group",
+    impactLearner Hub:"group",
     createdAt:new Date().toISOString()
   });
 
@@ -63,4 +63,6 @@ window.openTracker = function(){
 }
 
 load();
+
+
 

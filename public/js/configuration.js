@@ -1,4 +1,4 @@
-import {
+﻿import {
   collection,
   addDoc,
   serverTimestamp
@@ -106,3 +106,5 @@ copyBtn?.addEventListener("click", async () => {
     copyStatus.textContent = "Could not copy. Please copy manually.";
   }
 });
+
+

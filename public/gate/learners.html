@@ -1,59 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>impactLearners Access | Impact Learning Platform</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/platform.css">
+  <meta http-equiv="refresh" content="0; url=/gate/learner-hub.html">
+  <title>Redirecting...</title>
 </head>
 <body>
-  <main class="gate-page">
-    <section class="gate-card">
-      <div class="eyebrow">impactLearners Access</div>
-      <h1>Welcome</h1>
-
-      <form id="impactLearnersGateForm">
-        <div class="passkey-row">
-          <input id="passkeyInput" type="password" autocomplete="off">
-          <button id="togglePasskey" type="button">Show</button>
-        </div>
-
-        <button type="submit" class="glass-btn">Sign In</button>
-        <p id="gateStatus" class="gate-status"></p>
-      </form>
-    </section>
-  </main>
-
-  <script type="module">
-    import { validatePasskey } from "/js/passkey-auth.js";
-
-    const form = document.getElementById("impactLearnersGateForm");
-    const input = document.getElementById("passkeyInput");
-    const status = document.getElementById("gateStatus");
-    const toggle = document.getElementById("togglePasskey");
-
-    toggle.addEventListener("click", () => {
-      input.type = input.type === "password" ? "text" : "password";
-      toggle.textContent = input.type === "password" ? "Show" : "Hide";
-    });
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      status.textContent = "Checking access...";
-
-      const result = await validatePasskey(input.value, "impactLearners");
-
-      if (!result.ok) {
-        status.textContent = result.message;
-        return;
-      }
-
-      sessionStorage.setItem("impactimpactLearnersAccess", "granted");
-      sessionStorage.setItem("impactimpactLearnersName", result.ownerName || "");
-      window.location.href = "/impactLearners/dashboard.html";
-    });
-  </script>
+  <script>window.location.replace("/gate/learner-hub.html");</script>
 </body>
 </html>

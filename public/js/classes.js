@@ -1,4 +1,4 @@
-import {
+ï»¿import {
   collection,
   addDoc,
   getDocs,
@@ -89,7 +89,7 @@ function updateRoomAvailability(){
   Array.from(roomSelect.options).forEach((option) => {
     if(!option.value) return;
 
-    const originalName = meetRoomNames[option.value] || option.textContent.replace(" — room unavailable at this period", "");
+    const originalName = meetRoomNames[option.value] || option.textContent.replace(" ï¿½ room unavailable at this period", "");
     option.disabled = false;
     option.textContent = originalName;
 
@@ -111,7 +111,7 @@ function updateRoomAvailability(){
 
     if(unavailable){
       option.disabled = true;
-      option.textContent = `${originalName} — room unavailable at this period`;
+      option.textContent = `${originalName} ï¿½ room unavailable at this period`;
     }
   });
 
@@ -334,3 +334,5 @@ form?.addEventListener("submit", async (event) => {
 });
 
 loadClasses();
+
+

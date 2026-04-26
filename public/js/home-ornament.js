@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+﻿document.addEventListener("DOMContentLoaded", () => {
   const bodyText = document.body.innerText || "";
   if (!bodyText.toUpperCase().includes("IMPACT") || !bodyText.toUpperCase().includes("PLATFORM")) return;
 
@@ -21,3 +21,5 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 });
+
+
