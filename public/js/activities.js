@@ -9,156 +9,105 @@
 
 import { db } from "/js/firebase-app.js";
 
-const folderList = document.getElementById("folderList");
-const folderCount = document.getElementById("folderCount");
-const activityList = document.getElementById("activityList");
-const activityCount = document.getElementById("activityCount");
-const selectedFolderTitle = document.getElementById("selectedFolderTitle");
-const activityFolder = document.getElementById("activityFolder");
-
-const folderModal = document.getElementById("folderModal");
-const builderModal = document.getElementById("builderModal");
-const trackerModal = document.getElementById("trackerModal");
-
-const openFolderBtn = document.getElementById("openFolderBtn");
-const openBuilderBtn = document.getElementById("openBuilderBtn");
-const openTrackerBtn = document.getElementById("openTrackerBtn");
-
-const saveFolderBtn = document.getElementById("saveFolderBtn");
-const folderName = document.getElementById("folderName");
-const folderStatus = document.getElementById("folderStatus");
-
-const form = document.getElementById("activityForm");
-const activityStatusText = document.getElementById("activityStatusText");
-const questionList = document.getElementById("questionList");
-const addQuestionBtn = document.getElementById("addQuestionBtn");
-
-const trackerList = document.getElementById("trackerList");
-const trackerCount = document.getElementById("trackerCount");
-const createdCount = document.getElementById("createdCount");
-const publishedCount = document.getElementById("publishedCount");
-const completedCount = document.getElementById("completedCount");
+const STORAGE_KEYS = {
+  folders: "impactActivityFolders",
+  activities: "impactActivities"
+};
 
 let folders = [];
 let activities = [];
 let selectedFolderId = "all";
-let selectedType = "Quiz";
+let fields = [];
+
+const $ = (id) => document.getElementById(id);
+
+function toast(message){
+  const box = $("toast");
+  if(!box) return;
+  box.textContent = message;
+  box.classList.add("show");
+  setTimeout(() => box.classList.remove("show"), 2200);
+}
 
 function escapeHtml(value){
   return String(value || "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 
-function value(id){
-  return (document.getElementById(id)?.value || "").trim();
+function localRead(key){
+  try { return JSON.parse(localStorage.getItem(key) || "[]"); }
+  catch { return []; }
 }
 
-function openModal(modal){
-  modal.classList.remove("hidden");
+function localWrite(key, data){
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
-function closeModal(modal){
-  modal.classList.add("hidden");
-}
-
-function formatDate(value){
-  if(!value) return "Date not available";
+function docDate(value){
+  if(!value) return new Date().toLocaleString();
   if(value.toDate) return value.toDate().toLocaleString();
+  if(value.seconds) return new Date(value.seconds * 1000).toLocaleString();
   return String(value);
 }
 
-document.querySelectorAll("[data-close]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const modal = document.getElementById(button.dataset.close);
-    if(modal) closeModal(modal);
-  });
-});
-
-openFolderBtn.addEventListener("click", () => openModal(folderModal));
-openBuilderBtn.addEventListener("click", () => openModal(builderModal));
-openTrackerBtn.addEventListener("click", () => {
-  renderTracker();
-  openModal(trackerModal);
-});
-
-document.querySelectorAll(".type-card").forEach((button) => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll(".type-card").forEach((item) => item.classList.remove("active"));
-    button.classList.add("active");
-    selectedType = button.dataset.type;
-  });
-});
-
-function addQuestion(text = ""){
-  const item = document.createElement("div");
-  item.className = "question-item";
-  item.innerHTML = `
-    <div class="question-top">
-      <strong></strong>
-      <button type="button">Remove</button>
-    </div>
-    <textarea rows="3">${escapeHtml(text)}</textarea>
-  `;
-
-  item.querySelector("button").addEventListener("click", () => {
-    item.remove();
-    renumberQuestions();
-  });
-
-  questionList.appendChild(item);
-  renumberQuestions();
+function fieldId(){
+  return "field_" + Date.now() + "_" + Math.random().toString(16).slice(2);
 }
 
-function renumberQuestions(){
-  [...questionList.querySelectorAll(".question-item")].forEach((item, index) => {
-    item.querySelector("strong").textContent = `Question / Task ${index + 1}`;
-  });
+async function loadFolders(){
+  try{
+    const snap = await getDocs(query(collection(db, "activityFolders"), orderBy("createdAt", "desc")));
+    folders = [];
+    snap.forEach((doc) => folders.push({ id: doc.id, ...doc.data() }));
+    localWrite(STORAGE_KEYS.folders, folders);
+  }catch(err){
+    folders = localRead(STORAGE_KEYS.folders);
+  }
 }
 
-addQuestionBtn.addEventListener("click", () => addQuestion());
+async function loadActivities(){
+  try{
+    const snap = await getDocs(query(collection(db, "activities"), orderBy("createdAt", "desc")));
+    activities = [];
+    snap.forEach((doc) => activities.push({ id: doc.id, ...doc.data() }));
+    localWrite(STORAGE_KEYS.activities, activities);
+  }catch(err){
+    activities = localRead(STORAGE_KEYS.activities);
+  }
+}
 
 function renderFolderOptions(){
-  activityFolder.innerHTML = `
-    <option value="">Select Folder</option>
-    ${folders.map((folder) => `<option value="${folder.id}">${escapeHtml(folder.name)}</option>`).join("")}
-  `;
+  const select = $("activityFolder");
+  select.innerHTML = `<option value="">Select Folder</option>` + folders.map(folder =>
+    `<option value="${folder.id}">${escapeHtml(folder.name)}</option>`
+  ).join("");
 }
 
 function renderFolders(){
-  folderCount.textContent = String(folders.length);
+  $("folderCount").textContent = folders.length;
 
   const allCount = activities.length;
-
-  folderList.innerHTML = `
+  $("folderList").innerHTML = `
     <button class="activity-folder ${selectedFolderId === "all" ? "active" : ""}" data-id="all" data-name="All Activities" type="button">
-      <span></span>
-      <div>
-        <strong>All Activities</strong>
-        <small>${allCount} ${allCount === 1 ? "activity" : "activities"}</small>
-      </div>
+      <span class="folder-icon"></span>
+      <div><strong>All Activities</strong><small>${allCount} activities</small></div>
     </button>
-    ${folders.map((folder) => {
-      const count = activities.filter((item) => item.folderId === folder.id).length;
+    ${folders.map(folder => {
+      const count = activities.filter(item => item.folderId === folder.id).length;
       return `
         <button class="activity-folder ${selectedFolderId === folder.id ? "active" : ""}" data-id="${folder.id}" data-name="${escapeHtml(folder.name)}" type="button">
-          <span></span>
-          <div>
-            <strong>${escapeHtml(folder.name)}</strong>
-            <small>${count} ${count === 1 ? "activity" : "activities"}</small>
-          </div>
+          <span class="folder-icon"></span>
+          <div><strong>${escapeHtml(folder.name)}</strong><small>${count} activities</small></div>
         </button>
       `;
     }).join("")}
   `;
 
-  folderList.querySelectorAll(".activity-folder").forEach((button) => {
-    button.addEventListener("click", () => {
-      selectedFolderId = button.dataset.id;
-      selectedFolderTitle.textContent = button.dataset.name;
+  document.querySelectorAll(".activity-folder").forEach(btn => {
+    btn.addEventListener("click", () => {
+      selectedFolderId = btn.dataset.id;
+      $("selectedFolderTitle").textContent = btn.dataset.name;
       renderFolders();
       renderActivities();
     });
@@ -170,63 +119,61 @@ function renderFolders(){
 function renderActivities(){
   const visible = selectedFolderId === "all"
     ? activities
-    : activities.filter((item) => item.folderId === selectedFolderId);
+    : activities.filter(item => item.folderId === selectedFolderId);
 
-  activityCount.textContent = `${visible.length} ${visible.length === 1 ? "activity" : "activities"}`;
+  $("activityCount").textContent = `${visible.length} ${visible.length === 1 ? "activity" : "activities"}`;
 
   if(!visible.length){
-    activityList.innerHTML = `<div class="empty-state">No activity saved in this folder yet.</div>`;
+    $("activityList").innerHTML = `<div class="empty-state">No activity saved in this folder yet.</div>`;
     return;
   }
 
-  activityList.innerHTML = visible.map((item) => `
+  $("activityList").innerHTML = visible.map(item => `
     <article class="activity-card">
       <div class="activity-card-top">
         <div>
           <p>${escapeHtml(item.type || "Activity")}</p>
           <h3>${escapeHtml(item.title || "Untitled Activity")}</h3>
         </div>
-        <span>${escapeHtml(item.status || "Created")}</span>
+        <span class="status-pill">${escapeHtml(item.status || "Created")}</span>
       </div>
-
-      <div class="activity-meta-grid">
-        <div><small>Level</small><strong>${escapeHtml(item.level || "Not set")}</strong></div>
-        <div><small>Teacher</small><strong>${escapeHtml(item.teacher || "Not set")}</strong></div>
-        <div><small>Learner / Group</small><strong>${escapeHtml(item.learnerGroup || "Not set")}</strong></div>
-        <div><small>Questions</small><strong>${(item.questions || []).length}</strong></div>
-      </div>
-
+      <p class="activity-note">
+        ${escapeHtml(item.level || "Level not set")} ·
+        ${escapeHtml(item.teacher || "Teacher not set")} ·
+        ${escapeHtml(item.learnerGroup || "Learner/group not set")} ·
+        ${item.fields?.length || 0} blocks
+      </p>
       <p class="activity-note">${escapeHtml(item.instructions || "No instructions added.")}</p>
     </article>
   `).join("");
 }
 
 function renderTracker(){
-  const created = activities.filter((item) => item.status === "Created").length;
-  const published = activities.filter((item) => item.status === "Published").length;
-  const completed = activities.filter((item) => item.status === "Completed").length;
+  const created = activities.filter(a => a.status === "Created").length;
+  const published = activities.filter(a => a.status === "Published").length;
+  const completed = activities.filter(a => a.status === "Completed").length;
 
-  trackerCount.textContent = `${activities.length} ${activities.length === 1 ? "record" : "records"}`;
-  createdCount.textContent = created;
-  publishedCount.textContent = published;
-  completedCount.textContent = completed;
+  $("createdCount").textContent = created;
+  $("publishedCount").textContent = published;
+  $("completedCount").textContent = completed;
+  $("trackerCount").textContent = `${activities.length} records`;
 
   if(!activities.length){
-    trackerList.innerHTML = `<div class="empty-state">No activity records yet.</div>`;
+    $("trackerList").innerHTML = `<div class="empty-state">No activity records yet.</div>`;
     return;
   }
 
-  trackerList.innerHTML = activities.map((item) => {
-    const folder = folders.find((f) => f.id === item.folderId);
+  $("trackerList").innerHTML = activities.map(item => {
+    const folder = folders.find(f => f.id === item.folderId);
     return `
       <article class="tracker-row">
         <div>
-          <p>${escapeHtml(item.type || "Activity")} · ${escapeHtml(item.status || "Created")}</p>
+          <p>${escapeHtml(item.status || "Created")} · ${escapeHtml(item.type || "Activity")}</p>
           <h3>${escapeHtml(item.title || "Untitled Activity")}</h3>
-          <small>Folder: ${escapeHtml(folder?.name || "No folder")} · Level: ${escapeHtml(item.level || "Not set")}</small>
+          <small>${escapeHtml(folder?.name || "No folder")} · ${escapeHtml(item.level || "No level")}</small>
         </div>
         <div>
-          <strong>${formatDate(item.createdAt)}</strong>
+          <strong>${docDate(item.createdAt)}</strong>
           <small>Created timestamp</small>
         </div>
       </article>
@@ -234,102 +181,212 @@ function renderTracker(){
   }).join("");
 }
 
-async function loadFolders(){
-  const q = query(collection(db, "activityFolders"), orderBy("createdAt", "desc"));
-  const snapshot = await getDocs(q);
+function renderCanvas(){
+  const canvas = $("canvasList");
 
-  folders = [];
-  snapshot.forEach((docSnap) => {
-    folders.push({ id:docSnap.id, ...docSnap.data() });
-  });
-}
-
-async function loadActivities(){
-  const q = query(collection(db, "activities"), orderBy("createdAt", "desc"));
-  const snapshot = await getDocs(q);
-
-  activities = [];
-  snapshot.forEach((docSnap) => {
-    activities.push({ id:docSnap.id, ...docSnap.data() });
-  });
-}
-
-saveFolderBtn.addEventListener("click", async () => {
-  const name = folderName.value.trim();
-
-  if(!name){
-    folderStatus.textContent = "Please enter a folder name.";
+  if(!fields.length){
+    canvas.innerHTML = `<div class="empty-state">Add blocks from the left to build the activity.</div>`;
     return;
   }
 
-  folderStatus.textContent = "Saving folder...";
+  canvas.innerHTML = fields.map((field, index) => `
+    <article class="field-card" data-id="${field.id}">
+      <div class="field-top">
+        <strong>${index + 1}. ${escapeHtml(field.type)}</strong>
+        <div class="field-actions">
+          <button type="button" data-up="${field.id}">↑</button>
+          <button type="button" data-down="${field.id}">↓</button>
+          <button type="button" data-remove="${field.id}">Remove</button>
+        </div>
+      </div>
+      <label>Question / Prompt
+        <input data-field-label="${field.id}" type="text" value="${escapeHtml(field.label)}">
+      </label>
+      ${(field.type === "Multiple Choice" || field.type === "Checkboxes" || field.type === "Dropdown") ? `
+        <label>Options
+          <textarea data-field-options="${field.id}" rows="3">${escapeHtml((field.options || []).join("\n"))}</textarea>
+        </label>
+      ` : ""}
+      <label>
+        <select data-field-required="${field.id}">
+          <option value="false" ${!field.required ? "selected" : ""}>Optional</option>
+          <option value="true" ${field.required ? "selected" : ""}>Required</option>
+        </select>
+      </label>
+    </article>
+  `).join("");
 
-  await addDoc(collection(db, "activityFolders"), {
-    name,
-    createdAt:serverTimestamp(),
-    updatedAt:serverTimestamp()
+  canvas.querySelectorAll("[data-field-label]").forEach(input => {
+    input.addEventListener("input", () => {
+      const field = fields.find(f => f.id === input.dataset.fieldLabel);
+      if(field) field.label = input.value;
+    });
   });
 
-  folderName.value = "";
-  folderStatus.textContent = "Folder saved.";
+  canvas.querySelectorAll("[data-field-options]").forEach(input => {
+    input.addEventListener("input", () => {
+      const field = fields.find(f => f.id === input.dataset.fieldOptions);
+      if(field) field.options = input.value.split("\n").map(v => v.trim()).filter(Boolean);
+    });
+  });
 
-  await refreshAll();
-  setTimeout(() => closeModal(folderModal), 700);
-});
+  canvas.querySelectorAll("[data-field-required]").forEach(input => {
+    input.addEventListener("change", () => {
+      const field = fields.find(f => f.id === input.dataset.fieldRequired);
+      if(field) field.required = input.value === "true";
+    });
+  });
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+  canvas.querySelectorAll("[data-remove]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      fields = fields.filter(f => f.id !== btn.dataset.remove);
+      renderCanvas();
+    });
+  });
 
-  const questions = [...questionList.querySelectorAll("textarea")]
-    .map((box) => box.value.trim())
-    .filter(Boolean);
+  canvas.querySelectorAll("[data-up]").forEach(btn => {
+    btn.addEventListener("click", () => moveField(btn.dataset.up, -1));
+  });
 
-  const folderId = value("activityFolder");
-  const title = value("activityTitle");
-  const level = value("activityLevel");
+  canvas.querySelectorAll("[data-down]").forEach(btn => {
+    btn.addEventListener("click", () => moveField(btn.dataset.down, 1));
+  });
+}
+
+function moveField(id, direction){
+  const index = fields.findIndex(f => f.id === id);
+  const next = index + direction;
+  if(index < 0 || next < 0 || next >= fields.length) return;
+  [fields[index], fields[next]] = [fields[next], fields[index]];
+  renderCanvas();
+}
+
+function addField(type){
+  fields.push({
+    id: fieldId(),
+    type,
+    label: `${type} prompt`,
+    required: false,
+    options: type === "Multiple Choice" || type === "Checkboxes" || type === "Dropdown"
+      ? ["Option 1", "Option 2"]
+      : []
+  });
+  renderCanvas();
+}
+
+async function saveFolder(){
+  const name = $("folderName").value.trim();
+  if(!name){
+    toast("Please enter a folder name.");
+    return;
+  }
+
+  const payload = { name, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+
+  try{
+    const ref = await addDoc(collection(db, "activityFolders"), {
+      name,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    folders.unshift({ id: ref.id, ...payload });
+  }catch(err){
+    folders.unshift({ id: "local_" + Date.now(), ...payload });
+  }
+
+  localWrite(STORAGE_KEYS.folders, folders);
+  $("folderName").value = "";
+  closeModal("folderModal");
+  renderFolders();
+  toast("Folder saved.");
+}
+
+async function saveActivity(){
+  const title = $("activityTitle").value.trim();
+  const folderId = $("activityFolder").value;
+  const level = $("activityLevel").value;
 
   if(!title || !folderId || !level){
-    activityStatusText.textContent = "Please enter title, folder, and level.";
+    toast("Please add title, folder, and level.");
     return;
   }
 
-  if(!questions.length){
-    activityStatusText.textContent = "Please add at least one question or task.";
+  if(!fields.length){
+    toast("Please add at least one form block.");
     return;
   }
 
-  activityStatusText.textContent = "Saving activity...";
-
-  await addDoc(collection(db, "activities"), {
-    type:selectedType,
+  const payload = {
+    type: "Activity Form",
     title,
     folderId,
     level,
-    teacher:value("activityTeacher"),
-    learnerGroup:value("activityLearner"),
-    status:value("activityStatus") || "Created",
-    instructions:value("activityInstructions"),
-    questions,
-    createdAt:serverTimestamp(),
-    updatedAt:serverTimestamp()
+    teacher: $("activityTeacher").value.trim(),
+    learnerGroup: $("activityLearner").value.trim(),
+    status: $("activityStatus").value || "Created",
+    instructions: $("activityInstructions").value.trim(),
+    fields: JSON.parse(JSON.stringify(fields)),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  try{
+    const ref = await addDoc(collection(db, "activities"), {
+      ...payload,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    activities.unshift({ id: ref.id, ...payload });
+  }catch(err){
+    activities.unshift({ id: "local_" + Date.now(), ...payload });
+  }
+
+  localWrite(STORAGE_KEYS.activities, activities);
+  clearBuilder();
+  closeModal("builderModal");
+  renderFolders();
+  renderActivities();
+  renderTracker();
+  toast("Activity saved.");
+}
+
+function clearBuilder(){
+  ["activityTitle","activityTeacher","activityLearner","activityInstructions"].forEach(id => $(id).value = "");
+  $("activityFolder").value = "";
+  $("activityLevel").value = "";
+  $("activityStatus").value = "Created";
+  fields = [];
+  renderCanvas();
+}
+
+function openModal(id){ $(id).classList.remove("hidden"); }
+function closeModal(id){ $(id).classList.add("hidden"); }
+
+function bind(){
+  $("backBtn").addEventListener("click", () => history.back());
+  $("openFolderBtn").addEventListener("click", () => openModal("folderModal"));
+  $("openBuilderBtn").addEventListener("click", () => openModal("builderModal"));
+  $("openTrackerBtn").addEventListener("click", () => { renderTracker(); openModal("trackerModal"); });
+  $("saveFolderBtn").addEventListener("click", saveFolder);
+  $("saveActivityBtn").addEventListener("click", saveActivity);
+
+  document.querySelectorAll("[data-close]").forEach(btn => {
+    btn.addEventListener("click", () => closeModal(btn.dataset.close));
   });
 
-  form.reset();
-  questionList.innerHTML = "";
-  addQuestion();
-  activityStatusText.textContent = "Activity saved.";
+  document.querySelectorAll("[data-add]").forEach(btn => {
+    btn.addEventListener("click", () => addField(btn.dataset.add));
+  });
+}
 
-  await refreshAll();
-  setTimeout(() => closeModal(builderModal), 700);
-});
-
-async function refreshAll(){
+async function init(){
+  bind();
   await loadFolders();
   await loadActivities();
   renderFolders();
   renderActivities();
   renderTracker();
+  renderCanvas();
 }
 
-addQuestion();
-refreshAll();
+init();
