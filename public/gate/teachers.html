@@ -9,17 +9,17 @@
 </head>
 <body>
   <main class="gate-page">
-    <section class="gate-card">
+    <section class="gate-card premium-gate-card">
       <div class="eyebrow">Teacher Access</div>
       <h1>Welcome</h1>
 
-      <form id="teacherGateForm">
+      <form id="teacherGateForm" class="premium-gate-form">
         <div class="passkey-row">
           <input id="passkeyInput" type="password" autocomplete="off">
           <button id="togglePasskey" type="button">Show</button>
         </div>
 
-        <button type="submit" class="glass-btn">Sign In</button>
+        <button type="submit" class="glass-btn gate-submit">Sign In</button>
         <p id="gateStatus" class="gate-status"></p>
       </form>
     </section>
@@ -40,7 +40,6 @@
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-
       status.textContent = "Checking access...";
 
       const result = await validatePasskey(input.value, "teacher");

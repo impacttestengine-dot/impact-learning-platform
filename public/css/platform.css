@@ -201,3 +201,103 @@ h1{
     font-size:.9rem;
   }
 }
+
+/* Premium Firestore gate fix */
+.gate-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+}
+
+.premium-gate-card {
+  width: min(720px, 90vw);
+  padding: 58px 58px 50px;
+  border-radius: 38px;
+  text-align: center;
+  background: rgba(8, 10, 18, 0.58);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow:
+    0 28px 90px rgba(0,0,0,0.38),
+    inset 0 1px 0 rgba(255,255,255,0.10);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.premium-gate-card .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: rgba(230,236,255,0.82);
+  margin-bottom: 18px;
+}
+
+.premium-gate-card h1 {
+  margin: 0 0 42px;
+  font-size: clamp(4.2rem, 10vw, 7.6rem);
+  line-height: 0.85;
+  color: rgba(240,244,255,0.96);
+}
+
+.premium-gate-form {
+  display: grid;
+  gap: 18px;
+}
+
+.passkey-row {
+  display: grid;
+  grid-template-columns: 1fr 116px;
+  gap: 14px;
+}
+
+.passkey-row input,
+.passkey-row button,
+.gate-submit {
+  min-height: 68px;
+  border-radius: 24px;
+  border: 1px solid rgba(210,222,255,0.22);
+  background: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.95);
+  font-size: 1.02rem;
+  font-weight: 900;
+  outline: none;
+}
+
+.passkey-row input {
+  padding: 0 24px;
+}
+
+.passkey-row button,
+.gate-submit {
+  cursor: pointer;
+}
+
+.gate-submit {
+  width: 100%;
+}
+
+.gate-status {
+  min-height: 28px;
+  margin: 4px 0 0;
+  color: rgba(255,255,255,0.84);
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+@media (max-width: 620px) {
+  .premium-gate-card {
+    padding: 42px 24px 34px;
+    border-radius: 30px;
+  }
+
+  .passkey-row {
+    grid-template-columns: 1fr;
+  }
+
+  .passkey-row input,
+  .passkey-row button,
+  .gate-submit {
+    min-height: 58px;
+  }
+}
