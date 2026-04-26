@@ -1,0 +1,408 @@
+﻿.activities-page {
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.activities-hero {
+  width: min(1180px, 92vw);
+  margin: 40px auto 24px;
+  text-align: center;
+}
+
+.activities-hero .eyebrow,
+.mini-label {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: rgba(235,240,255,0.72);
+}
+
+.activities-hero h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(4.2rem, 9vw, 7rem);
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.activities-hero > p:last-child {
+  margin: 16px auto 0;
+  max-width: 760px;
+  color: rgba(255,255,255,0.72);
+  font-weight: 700;
+}
+
+.activities-toolbar {
+  width: min(1180px, 92vw);
+  margin: 0 auto 24px;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.activities-toolbar button,
+.primary-action {
+  border: 1px solid rgba(220,230,255,0.22);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.96);
+  padding: 14px 18px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.activities-shell {
+  width: min(1180px, 92vw);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  gap: 24px;
+}
+
+.activities-folder-panel,
+.activities-main-panel,
+.activity-modal-card {
+  border-radius: 32px;
+  background: rgba(255,255,255,0.075);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.activities-folder-panel,
+.activities-main-panel {
+  padding: 24px;
+}
+
+.panel-head,
+.builder-head,
+.activity-card-top,
+.question-builder-head,
+.tracker-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.panel-head h2,
+.builder-head h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.1rem;
+  font-weight: 400;
+}
+
+.panel-head span,
+.builder-head span,
+.activity-card-top span {
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.14);
+  font-weight: 900;
+  font-size: 0.82rem;
+}
+
+.folder-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.activity-folder {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 22px;
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  background: rgba(8,11,22,0.28);
+  color: white;
+  cursor: pointer;
+}
+
+.activity-folder.active {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.28);
+}
+
+.activity-folder span,
+.folder-icon {
+  width: 28px;
+  height: 20px;
+  border-radius: 7px;
+  background: rgba(220,230,255,0.88);
+  display: block;
+}
+
+.activity-folder strong,
+.activity-folder small {
+  display: block;
+}
+
+.activity-folder small {
+  margin-top: 4px;
+  color: rgba(255,255,255,0.62);
+  font-weight: 800;
+}
+
+.activity-list {
+  margin-top: 22px;
+  display: grid;
+  gap: 16px;
+}
+
+.activity-card {
+  border-radius: 26px;
+  background: rgba(8,11,22,0.30);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 20px;
+}
+
+.activity-card-top p {
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.62);
+}
+
+.activity-card-top h3 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.activity-meta-grid,
+.tracker-summary,
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.activity-meta-grid {
+  margin: 18px 0;
+}
+
+.activity-meta-grid div,
+.tracker-summary div {
+  border-radius: 18px;
+  background: rgba(255,255,255,0.07);
+  padding: 13px;
+}
+
+.activity-meta-grid small,
+.tracker-summary span {
+  display: block;
+  color: rgba(255,255,255,0.60);
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.activity-note {
+  margin: 0;
+  color: rgba(255,255,255,0.76);
+  font-weight: 700;
+}
+
+.activity-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0,0,0,0.50);
+}
+
+.activity-modal.hidden {
+  display: none;
+}
+
+.activity-modal-card {
+  width: min(1180px, 94vw);
+  max-height: 88vh;
+  overflow: auto;
+  padding: 26px;
+  position: relative;
+}
+
+.activity-modal-card.small {
+  width: min(460px, 92vw);
+}
+
+.modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.10);
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.builder-layout {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 22px;
+}
+
+.builder-types {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.type-card {
+  min-height: 54px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(8,11,22,0.28);
+  color: white;
+  text-align: left;
+  padding: 0 16px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.type-card.active {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.28);
+}
+
+.builder-form label,
+.activity-modal-card.small label {
+  display: grid;
+  gap: 8px;
+  color: rgba(255,255,255,0.76);
+  font-weight: 900;
+}
+
+.builder-form input,
+.builder-form select,
+.builder-form textarea,
+.activity-modal-card.small input {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid rgba(220,230,255,0.18);
+  background: rgba(255,255,255,0.10);
+  color: white;
+  padding: 14px;
+  outline: none;
+  font-weight: 800;
+}
+
+.full-field {
+  margin-top: 14px;
+}
+
+.question-builder {
+  margin: 18px 0;
+  border-radius: 24px;
+  background: rgba(8,11,22,0.28);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 18px;
+}
+
+.question-builder h3 {
+  margin: 0;
+}
+
+.question-builder-head button,
+.question-top button {
+  border: 0;
+  border-radius: 14px;
+  padding: 10px 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.question-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.question-item {
+  border-radius: 18px;
+  background: rgba(255,255,255,0.07);
+  padding: 14px;
+}
+
+.question-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.form-note {
+  min-height: 24px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.74);
+}
+
+.tracker-summary {
+  margin: 22px 0;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.tracker-summary strong {
+  font-size: 2rem;
+}
+
+.tracker-list {
+  display: grid;
+  gap: 12px;
+}
+
+.tracker-row {
+  border-radius: 20px;
+  background: rgba(8,11,22,0.28);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 16px;
+}
+
+.tracker-row p,
+.tracker-row h3 {
+  margin: 0 0 5px;
+}
+
+.tracker-row small {
+  color: rgba(255,255,255,0.60);
+  font-weight: 800;
+}
+
+.empty-state {
+  border-radius: 22px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 22px;
+  color: rgba(255,255,255,0.72);
+  font-weight: 900;
+}
+
+@media (max-width: 900px) {
+  .activities-shell,
+  .builder-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid,
+  .activity-meta-grid,
+  .tracker-summary {
+    grid-template-columns: 1fr;
+  }
+}

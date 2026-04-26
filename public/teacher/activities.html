@@ -2,100 +2,181 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Activities | Impact Learning Platform</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/teacher-dashboard.css">
+  <link rel="stylesheet" href="/css/activities.css">
 </head>
 <body>
   <main class="teacher-page activities-page">
     <a class="home-link" href="/teacher/dashboard.html">Dashboard</a>
 
-    <section class="teacher-hero activities-hero">
-      <div class="eyebrow">Teacher Workspace</div>
+    <section class="activities-hero">
+      <p class="eyebrow">Teacher Workspace</p>
       <h1>Activities</h1>
-      <p>Create quizzes, homework, oral tasks, surveys, and learner practice activities.</p>
+      <p>Create, organize, publish, and track learner activities and exercises.</p>
     </section>
 
-    <section class="activity-builder-shell">
-      <aside class="activity-template-panel">
-        <h2>Activity Templates</h2>
-        <p>Choose a format and build a learner activity.</p>
+    <section class="activities-toolbar">
+      <button id="openFolderBtn" type="button">Create Folder</button>
+      <button id="openBuilderBtn" type="button">Create Activity / Exercise</button>
+      <button id="openTrackerBtn" type="button">Activity Tracker</button>
+    </section>
 
-        <div class="activity-template-grid">
-          <button class="activity-template-card active" data-type="Quiz">Quiz</button>
-          <button class="activity-template-card" data-type="Homework">Homework</button>
-          <button class="activity-template-card" data-type="Oral Practice">Oral Practice</button>
-          <button class="activity-template-card" data-type="Reading">Reading</button>
-          <button class="activity-template-card" data-type="Listening">Listening</button>
-          <button class="activity-template-card" data-type="Survey">Survey</button>
-          <button class="activity-template-card" data-type="File Upload">File Upload</button>
-          <button class="activity-template-card" data-type="Custom">Custom</button>
+    <section class="activities-shell">
+      <aside class="activities-folder-panel">
+        <div class="panel-head">
+          <div>
+            <p class="mini-label">Folders</p>
+            <h2>Activity Library</h2>
+          </div>
+          <span id="folderCount">0</span>
         </div>
+
+        <div id="folderList" class="folder-list"></div>
       </aside>
 
-      <section class="activity-form-panel">
-        <div class="activity-form-head">
+      <section class="activities-main-panel">
+        <div class="panel-head">
           <div>
-            <p class="class-card-label">Selected Template</p>
-            <h2 id="selectedActivityType">Quiz</h2>
+            <p class="mini-label">Selected Folder</p>
+            <h2 id="selectedFolderTitle">All Activities</h2>
           </div>
           <span id="activityCount">0 activities</span>
         </div>
 
-        <form id="activityForm" class="activity-form-card">
-          <div class="recording-form-grid">
-            <label>
-              Activity Title
-              <input id="activityTitle" type="text">
-            </label>
+        <div id="activityList" class="activity-list"></div>
+      </section>
+    </section>
 
-            <label>
-              Level
-              <select id="activityLevel">
-                <option value="">Select Level</option>
-                <option>Absolute Beginner</option>
-                <option>A0</option>
-                <option>A1</option>
-                <option>A1.1</option>
-                <option>A2</option>
-                <option>B1</option>
-                <option>B2</option>
-              </select>
-            </label>
+    <section id="folderModal" class="activity-modal hidden">
+      <div class="activity-modal-card small">
+        <button class="modal-close" data-close="folderModal" type="button">×</button>
+        <p class="mini-label">New Folder</p>
+        <h2>Create Folder</h2>
 
-            <label>
-              Assigned Teacher
-              <input id="teacher" type="text">
-            </label>
+        <label>
+          Folder Name
+          <input id="folderName" type="text">
+        </label>
 
-            <label>
-              Learner / Group
-              <input id="learnerGroup" type="text">
-            </label>
+        <button id="saveFolderBtn" type="button" class="primary-action">Save Folder</button>
+        <p id="folderStatus" class="form-note"></p>
+      </div>
+    </section>
+
+    <section id="builderModal" class="activity-modal hidden">
+      <div class="activity-modal-card builder">
+        <button class="modal-close" data-close="builderModal" type="button">×</button>
+
+        <div class="builder-head">
+          <div>
+            <p class="mini-label">Activity Builder</p>
+            <h2>Create Activity / Exercise</h2>
           </div>
+          <span>Aida-style front-end builder</span>
+        </div>
 
-          <label class="full-field">
-            Instructions
-            <textarea id="instructions" rows="4"></textarea>
-          </label>
+        <div class="builder-layout">
+          <aside class="builder-types">
+            <button class="type-card active" data-type="Quiz" type="button">Quiz</button>
+            <button class="type-card" data-type="Exercise" type="button">Exercise</button>
+            <button class="type-card" data-type="Homework" type="button">Homework</button>
+            <button class="type-card" data-type="Oral Practice" type="button">Oral Practice</button>
+            <button class="type-card" data-type="Reading" type="button">Reading</button>
+            <button class="type-card" data-type="Listening" type="button">Listening</button>
+            <button class="type-card" data-type="Survey" type="button">Survey</button>
+            <button class="type-card" data-type="Custom" type="button">Custom</button>
+          </aside>
 
-          <div class="question-builder-card">
-            <div class="question-builder-head">
-              <h3>Activity Questions / Tasks</h3>
-              <button id="addQuestionBtn" type="button">Add Question</button>
+          <form id="activityForm" class="builder-form">
+            <div class="form-grid">
+              <label>
+                Activity Title
+                <input id="activityTitle" type="text">
+              </label>
+
+              <label>
+                Save Into Folder
+                <select id="activityFolder"></select>
+              </label>
+
+              <label>
+                Level
+                <select id="activityLevel">
+                  <option value="">Select Level</option>
+                  <option>Absolute Beginner</option>
+                  <option>A0</option>
+                  <option>A1</option>
+                  <option>A1.1</option>
+                  <option>A2</option>
+                  <option>B1</option>
+                  <option>B2</option>
+                </select>
+              </label>
+
+              <label>
+                Assigned Teacher
+                <input id="activityTeacher" type="text">
+              </label>
+
+              <label>
+                Learner / Group
+                <input id="activityLearner" type="text">
+              </label>
+
+              <label>
+                Status
+                <select id="activityStatus">
+                  <option>Created</option>
+                  <option>Published</option>
+                  <option>Completed</option>
+                </select>
+              </label>
             </div>
 
-            <div id="questionList" class="question-list"></div>
-          </div>
+            <label class="full-field">
+              Instructions
+              <textarea id="activityInstructions" rows="4"></textarea>
+            </label>
 
-          <button class="start-class-button" type="submit">Save Activity</button>
-        </form>
+            <div class="question-builder">
+              <div class="question-builder-head">
+                <h3>Questions / Tasks</h3>
+                <button id="addQuestionBtn" type="button">Add Question</button>
+              </div>
 
-        <div id="activityList" class="activity-list-grid">
-          <div class="empty-state">Loading activities...</div>
+              <div id="questionList" class="question-list"></div>
+            </div>
+
+            <button type="submit" class="primary-action">Save Activity</button>
+            <p id="activityStatusText" class="form-note"></p>
+          </form>
         </div>
-      </section>
+      </div>
+    </section>
+
+    <section id="trackerModal" class="activity-modal hidden">
+      <div class="activity-modal-card tracker">
+        <button class="modal-close" data-close="trackerModal" type="button">×</button>
+
+        <div class="builder-head">
+          <div>
+            <p class="mini-label">Activity Tracker</p>
+            <h2>Activity Records</h2>
+          </div>
+          <span id="trackerCount">0 records</span>
+        </div>
+
+        <div class="tracker-summary">
+          <div><span>Created</span><strong id="createdCount">0</strong></div>
+          <div><span>Published</span><strong id="publishedCount">0</strong></div>
+          <div><span>Completed</span><strong id="completedCount">0</strong></div>
+        </div>
+
+        <div id="trackerList" class="tracker-list"></div>
+      </div>
     </section>
   </main>
 
