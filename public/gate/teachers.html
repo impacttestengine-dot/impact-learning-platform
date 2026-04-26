@@ -2,57 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teacher Access | Impact Learning Platform</title>
-  <link rel="stylesheet" href="/css/teacher-gate.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Teacher Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/passkey-luxury.css?v=teacher-firestore-passkeys-01">
 </head>
 <body>
-  <main class="teacher-gate-page">
-    <section class="teacher-gate-card">
-      <div class="teacher-gate-label">Teacher Access</div>
+  <main class="access-page">
+    <div class="bg-layer"></div>
+    <div class="shade-layer"></div>
 
+    <a class="back-link" href="/">Home</a>
+    <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
+
+    <section class="access-card">
+      <p class="small-title">Teacher Access</p>
       <h1>Welcome</h1>
 
-      <form id="teacherGateForm" class="teacher-gate-form">
-        <div class="teacher-gate-row">
-          <input id="passkeyInput" type="password" autocomplete="off">
-          <button id="togglePasskey" type="button">Show</button>
-        </div>
+      <div class="passkey-row">
+        <input id="passkey" type="password" placeholder="Enter your passkey" autocomplete="off">
+        <button class="toggle-passkey" id="togglePasskey" type="button">Show</button>
+      </div>
 
-        <button type="submit" class="teacher-gate-submit">Sign In</button>
-        <p id="gateStatus" class="teacher-gate-status"></p>
-      </form>
+      <button id="signInBtn" type="button">Sign In</button>
+
+      <p id="status" class="status"></p>
     </section>
   </main>
 
   <script type="module">
-    import { validatePasskey } from "/js/passkey-auth.js";
+    import { validatePasskey } from "/js/passkey-auth.js?v=teacher-firestore-passkeys-01";
 
-    const form = document.getElementById("teacherGateForm");
-    const input = document.getElementById("passkeyInput");
-    const status = document.getElementById("gateStatus");
-    const toggle = document.getElementById("togglePasskey");
+    const input = document.getElementById("passkey");
+    const status = document.getElementById("status");
+    const button = document.getElementById("signInBtn");
+    const togglePasskey = document.getElementById("togglePasskey");
 
-    toggle.addEventListener("click", () => {
-      input.type = input.type === "password" ? "text" : "password";
-      toggle.textContent = input.type === "password" ? "Show" : "Hide";
+    togglePasskey.addEventListener("click", function(){
+      if(input.type === "password"){
+        input.type = "text";
+        togglePasskey.textContent = "Hide";
+      }else{
+        input.type = "password";
+        togglePasskey.textContent = "Show";
+      }
     });
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      status.textContent = "Checking access...";
-
+    async function loginTeacher(){
+      status.textContent = "Checking passkey...";
       const result = await validatePasskey(input.value, "teacher");
 
-      if (!result.ok) {
+      if(result.ok){
+        sessionStorage.setItem("impactAccessRole", result.role);
+        sessionStorage.setItem("impactAccessName", result.ownerName);
+        window.location.href = "/teacher/dashboard.html";
+      }else{
         status.textContent = result.message;
-        return;
       }
+    }
 
-      sessionStorage.setItem("impactTeacherAccess", "granted");
-      sessionStorage.setItem("impactTeacherName", result.ownerName || "");
-      window.location.href = "/teacher/dashboard.html";
+    button.addEventListener("click", loginTeacher);
+    input.addEventListener("keydown", function(e){
+      if(e.key === "Enter") loginTeacher();
     });
   </script>
 </body>
