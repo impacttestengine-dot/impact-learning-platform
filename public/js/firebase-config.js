@@ -1,4 +1,4 @@
-﻿export const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDCD7B1lgBB8iSt9Y1GoncjQupZ_-O5emA",
   authDomain: "impact-test-engine.firebaseapp.com",
   projectId: "impact-test-engine",

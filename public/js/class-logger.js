@@ -1,4 +1,4 @@
-﻿import { API_BASE_URL } from "/js/api-config.js";
+import { API_BASE_URL } from "/js/api-config.js";
 
 const loggerList = document.getElementById("loggerList");
 
@@ -47,8 +47,8 @@ async function loadLogs(){
             <div>
               <div class="record-name">${escapeHtml(item.classTitle || "Untitled Class")}</div>
               <div class="record-meta">
-                Learner/Group: ${escapeHtml(item.learnerGroup || "Not set")}<br>
-                Teacher: ${escapeHtml(item.teacher || "Not set")}<br>
+                impactLearners/Group: ${escapeHtml(item.impactLearnersGroup || "Not set")}<br>
+                personnel: ${escapeHtml(item.personnel || "Not set")}<br>
                 Scheduled: ${escapeHtml(item.classDay || "Day not set")} at ${escapeHtml(item.time || "Time not set")}<br>
                 Expected Duration: ${escapeHtml(item.duration || "Not set")}<br>
                 Actual Duration: ${escapeHtml(item.actualDurationMinutes || "Not logged")} minutes<br>

@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Teacher Access</title>
+  <title>personnel Access</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,7 +51,7 @@
     <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
 
     <section class="access-card">
-      <p class="small-title">TEACHER ACCESS</p>
+      <p class="small-title">personnel ACCESS</p>
       <h1>Welcome</h1>
 
       <div class="passkey-row">
@@ -90,22 +90,22 @@
       }
     });
 
-    async function loginTeacher(){
+    async function loginpersonnel(){
       status.textContent = "Checking passkey...";
-      const result = await validatePasskey(input.value, "teacher");
+      const result = await validatePasskey(input.value, "personnel");
 
       if(result.ok){
         sessionStorage.setItem("impactAccessRole", result.role);
         sessionStorage.setItem("impactAccessName", result.ownerName);
-        window.location.href = "/teacher/dashboard.html";
+        window.location.href = "/personnel/dashboard.html";
       } else {
         status.textContent = result.message;
       }
     }
 
-    button.addEventListener("click", loginTeacher);
+    button.addEventListener("click", loginpersonnel);
     input.addEventListener("keydown", function(e){
-      if(e.key === "Enter") loginTeacher();
+      if(e.key === "Enter") loginpersonnel();
     });
   </script>
 </body>

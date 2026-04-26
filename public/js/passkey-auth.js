@@ -1,4 +1,4 @@
-﻿import {
+import {
   collection,
   query,
   where,
@@ -29,12 +29,12 @@ export async function validatePasskey(inputPasskey, targetSide){
 
     const data = snapshot.docs[0].data();
 
-    if(targetSide === "teacher" && data.canAccessTeacher !== true){
-      return { ok:false, message:"This passkey cannot open the teacher side." };
+    if(targetSide === "personnel" && data.canAccesspersonnel !== true){
+      return { ok:false, message:"This passkey cannot open the personnel side." };
     }
 
-    if(targetSide === "learner" && data.canAccessLearner !== true){
-      return { ok:false, message:"This passkey cannot open the learner side." };
+    if(targetSide === "impactLearners" && data.canAccessimpactLearners !== true){
+      return { ok:false, message:"This passkey cannot open the impactLearners side." };
     }
 
     return {

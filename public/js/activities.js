@@ -1,4 +1,4 @@
-ï»¿import {
+import {
   collection,
   addDoc,
   getDocs,
@@ -138,9 +138,9 @@ function renderActivities(){
         <span class="status-pill">${escapeHtml(item.status || "Created")}</span>
       </div>
       <p class="activity-note">
-        ${escapeHtml(item.level || "Level not set")} Â·
-        ${escapeHtml(item.teacher || "Teacher not set")} Â·
-        ${escapeHtml(item.learnerGroup || "Learner/group not set")} Â·
+        ${escapeHtml(item.level || "Level not set")} ·
+        ${escapeHtml(item.personnel || "personnel not set")} ·
+        ${escapeHtml(item.impactLearnersGroup || "impactLearners/group not set")} ·
         ${item.fields?.length || 0} blocks
       </p>
       <p class="activity-note">${escapeHtml(item.instructions || "No instructions added.")}</p>
@@ -168,9 +168,9 @@ function renderTracker(){
     return `
       <article class="tracker-row">
         <div>
-          <p>${escapeHtml(item.status || "Created")} Â· ${escapeHtml(item.type || "Activity")}</p>
+          <p>${escapeHtml(item.status || "Created")} · ${escapeHtml(item.type || "Activity")}</p>
           <h3>${escapeHtml(item.title || "Untitled Activity")}</h3>
-          <small>${escapeHtml(folder?.name || "No folder")} Â· ${escapeHtml(item.level || "No level")}</small>
+          <small>${escapeHtml(folder?.name || "No folder")} · ${escapeHtml(item.level || "No level")}</small>
         </div>
         <div>
           <strong>${docDate(item.createdAt)}</strong>
@@ -194,8 +194,8 @@ function renderCanvas(){
       <div class="field-top">
         <strong>${index + 1}. ${escapeHtml(field.type)}</strong>
         <div class="field-actions">
-          <button type="button" data-up="${field.id}">â†‘</button>
-          <button type="button" data-down="${field.id}">â†“</button>
+          <button type="button" data-up="${field.id}">?</button>
+          <button type="button" data-down="${field.id}">?</button>
           <button type="button" data-remove="${field.id}">Remove</button>
         </div>
       </div>
@@ -321,8 +321,8 @@ async function saveActivity(){
     title,
     folderId,
     level,
-    teacher: $("activityTeacher").value.trim(),
-    learnerGroup: $("activityLearner").value.trim(),
+    personnel: $("activitypersonnel").value.trim(),
+    impactLearnersGroup: $("activityimpactLearners").value.trim(),
     status: $("activityStatus").value || "Created",
     instructions: $("activityInstructions").value.trim(),
     fields: JSON.parse(JSON.stringify(fields)),
@@ -351,7 +351,7 @@ async function saveActivity(){
 }
 
 function clearBuilder(){
-  ["activityTitle","activityTeacher","activityLearner","activityInstructions"].forEach(id => $(id).value = "");
+  ["activityTitle","activitypersonnel","activityimpactLearners","activityInstructions"].forEach(id => $(id).value = "");
   $("activityFolder").value = "";
   $("activityLevel").value = "";
   $("activityStatus").value = "Created";

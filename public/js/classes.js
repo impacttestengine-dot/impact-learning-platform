@@ -1,4 +1,4 @@
-ï»¿import {
+import {
   collection,
   addDoc,
   getDocs,
@@ -89,7 +89,7 @@ function updateRoomAvailability(){
   Array.from(roomSelect.options).forEach((option) => {
     if(!option.value) return;
 
-    const originalName = meetRoomNames[option.value] || option.textContent.replace(" â€” room unavailable at this period", "");
+    const originalName = meetRoomNames[option.value] || option.textContent.replace(" — room unavailable at this period", "");
     option.disabled = false;
     option.textContent = originalName;
 
@@ -111,7 +111,7 @@ function updateRoomAvailability(){
 
     if(unavailable){
       option.disabled = true;
-      option.textContent = `${originalName} â€” room unavailable at this period`;
+      option.textContent = `${originalName} — room unavailable at this period`;
     }
   });
 
@@ -128,8 +128,8 @@ function updateRoomAvailability(){
 function getClassData(){
   return {
     classTitle:value("classTitle"),
-    learnerGroup:value("learnerGroup"),
-    teacher:value("teacher"),
+    impactLearnersGroup:value("impactLearnersGroup"),
+    personnel:value("personnel"),
     classDay:value("classDay"),
     time:value("time"),
     duration:value("duration"),
@@ -178,7 +178,7 @@ async function startClass(classId, meetingLink, duration){
           status:endedEarly ? "Needs Review" : "Completed",
           completedAt:serverTimestamp(),
           actualDurationMinutes:String(actualMinutes),
-          reviewReason:endedEarly ? "Class ended earlier than expected. Teacher review required." : "",
+          reviewReason:endedEarly ? "Class ended earlier than expected. personnel review required." : "",
           updatedAt:serverTimestamp()
         });
 
@@ -215,10 +215,10 @@ async function loadClasses(){
 
     const classes = classesCache.filter((item) => {
       const title = String(item.classTitle || "").trim();
-      const learner = String(item.learnerGroup || "").trim();
-      const teacher = String(item.teacher || "").trim();
+      const impactLearners = String(item.impactLearnersGroup || "").trim();
+      const personnel = String(item.personnel || "").trim();
 
-      if(!title || !learner || !teacher) return false;
+      if(!title || !impactLearners || !personnel) return false;
       return ["Scheduled", "In Progress"].includes(item.status || "Scheduled");
     });
 
@@ -233,8 +233,8 @@ async function loadClasses(){
 
     classList.innerHTML = classes.map((item) => {
       const title = escapeHtml(item.classTitle);
-      const learner = escapeHtml(item.learnerGroup);
-      const teacher = escapeHtml(item.teacher);
+      const impactLearners = escapeHtml(item.impactLearnersGroup);
+      const personnel = escapeHtml(item.personnel);
       const day = escapeHtml(item.classDay || "Day not set");
       const time = escapeHtml(item.time || "Time not set");
       const duration = escapeHtml(item.duration || "Duration not set");
@@ -253,8 +253,8 @@ async function loadClasses(){
           </div>
 
           <div class="class-detail-grid">
-            <div><span>Learner / Group</span><strong>${learner}</strong></div>
-            <div><span>Teacher</span><strong>${teacher}</strong></div>
+            <div><span>impactLearners / Group</span><strong>${impactLearners}</strong></div>
+            <div><span>personnel</span><strong>${personnel}</strong></div>
             <div><span>Day</span><strong>${day}</strong></div>
             <div><span>Time</span><strong>${time}</strong></div>
             <div><span>Duration</span><strong>${duration}</strong></div>
@@ -280,8 +280,8 @@ form?.addEventListener("submit", async (event) => {
 
   const classData = getClassData();
 
-  if(!classData.classTitle || !classData.learnerGroup || !classData.teacher){
-    notify("Please enter level, learner/group, and teacher.", "error");
+  if(!classData.classTitle || !classData.impactLearnersGroup || !classData.personnel){
+    notify("Please enter level, impactLearners/group, and personnel.", "error");
     return;
   }
 

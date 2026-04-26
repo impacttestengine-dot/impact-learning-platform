@@ -1,4 +1,4 @@
-﻿import {
+import {
   collection,
   addDoc,
   getDocs,
@@ -125,8 +125,8 @@ function renderRecordings(){
           <h3>${escapeHtml(item.title || item.fileName || "Untitled Recording")}</h3>
 
           <div class="class-detail-grid recording-mini-grid">
-            <div><span>Learner / Group</span><strong>${escapeHtml(item.learnerGroup || "Not set")}</strong></div>
-            <div><span>Teacher</span><strong>${escapeHtml(item.teacher || "Not set")}</strong></div>
+            <div><span>impactLearners / Group</span><strong>${escapeHtml(item.impactLearnersGroup || "Not set")}</strong></div>
+            <div><span>personnel</span><strong>${escapeHtml(item.personnel || "Not set")}</strong></div>
             <div><span>File Type</span><strong>${escapeHtml(item.fileType || "Not set")}</strong></div>
             <div><span>Level Folder</span><strong>${escapeHtml(item.level || "Not set")}</strong></div>
           </div>
@@ -171,8 +171,8 @@ form?.addEventListener("submit", async (event) => {
 
   const level = selectedLevel;
   const title = value("title") || file.name;
-  const learnerGroup = value("learnerGroup");
-  const teacher = value("teacher");
+  const impactLearnersGroup = value("impactLearnersGroup");
+  const personnel = value("personnel");
   const notes = value("notes");
   const fileType = file.type || "application/octet-stream";
   const fileName = file.name;
@@ -202,8 +202,8 @@ form?.addEventListener("submit", async (event) => {
         await addDoc(collection(db, "recordings"), {
           title,
           level,
-          teacher,
-          learnerGroup,
+          personnel,
+          impactLearnersGroup,
           notes,
           fileName,
           fileType,

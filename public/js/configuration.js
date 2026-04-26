@@ -1,4 +1,4 @@
-﻿import {
+import {
   collection,
   addDoc,
   serverTimestamp
@@ -47,7 +47,7 @@ form?.addEventListener("submit", async (event) => {
   formStatus.textContent = "Generating passkey...";
 
   const teamRoles = [
-    "teacher",
+    "personnel",
     "academic-team-lead",
     "operations",
     "impact-team-lead"
@@ -62,9 +62,9 @@ form?.addEventListener("submit", async (event) => {
       role,
       passkey,
       status,
-      accessScope:isTeamRole ? "team" : "learner",
-      canAccessTeacher:isTeamRole,
-      canAccessLearner:true,
+      accessScope:isTeamRole ? "team" : "impactLearners",
+      canAccesspersonnel:isTeamRole,
+      canAccessimpactLearners:true,
       createdAt:serverTimestamp(),
       updatedAt:serverTimestamp()
     });

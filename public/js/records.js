@@ -1,4 +1,4 @@
-ï»¿import {
+import {
   collection,
   addDoc,
   getDocs,
@@ -47,7 +47,7 @@ function collectRecordData() {
     level:getValue("level"),
     placementResult:getValue("placementResult"),
     progressionCount:getValue("progressionCount") || "0",
-    teacher:getValue("teacher"),
+    personnel:getValue("personnel"),
     parentName:getValue("parentName"),
     parentPhone:getValue("parentPhone"),
     parentEmail:getValue("parentEmail"),
@@ -67,7 +67,7 @@ function setEditorMode(mode, recordName = "") {
     if (button) button.textContent = "Update Record";
   } else {
     editorTitle.textContent = "New Record";
-    editorHint.textContent = "Create a new learner record";
+    editorHint.textContent = "Create a new impactLearners record";
     if (button) button.textContent = "Save Record";
   }
 }
@@ -98,7 +98,7 @@ function enterEditMode(recordId) {
   setValue("level", record.level);
   setValue("placementResult", record.placementResult);
   setValue("progressionCount", record.progressionCount || "0");
-  setValue("teacher", record.teacher);
+  setValue("personnel", record.personnel);
   setValue("parentName", record.parentName);
   setValue("parentPhone", record.parentPhone);
   setValue("parentEmail", record.parentEmail);
@@ -126,12 +126,12 @@ function renderRecords() {
   }
 
   recordsList.innerHTML = recordsCache.map((record) => {
-    const name = escapeHtml(record.fullName || "Unnamed Learner");
+    const name = escapeHtml(record.fullName || "Unnamed impactLearners");
     const level = escapeHtml(record.level || "Level not set");
     const placement = escapeHtml(record.placementResult || "Placement not entered");
     const progressionCount = escapeHtml(record.progressionCount || "0");
     const enrollment = escapeHtml(record.enrollmentDate || "Enrollment date not set");
-    const teacher = escapeHtml(record.teacher || "Teacher not assigned");
+    const personnel = escapeHtml(record.personnel || "personnel not assigned");
     const parent = escapeHtml(record.parentName || "Parent not added");
     const phone = escapeHtml(record.parentPhone || "Phone not added");
     const status = escapeHtml(record.status || "Active");
@@ -143,11 +143,11 @@ function renderRecords() {
           <div>
             <div class="record-name">${name}</div>
             <div class="record-meta">
-              ${level} Â· ${teacher}<br>
+              ${level} · ${personnel}<br>
               Placement: ${placement}<br>
               Progressions: ${progressionCount}<br>
               Enrolled: ${enrollment}<br>
-              Parent: ${parent} Â· ${phone}
+              Parent: ${parent} · ${phone}
             </div>
           </div>
           <span class="badge">${status}</span>
@@ -161,7 +161,7 @@ async function loadRecords() {
   recordsList.innerHTML = '<div class="empty-state">Loading records...</div>';
 
   try {
-    const q = query(collection(db, "learners"), orderBy("createdAt", "desc"));
+    const q = query(collection(db, "impactLearnerss"), orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
 
     recordsCache = [];
@@ -183,7 +183,7 @@ form?.addEventListener("submit", async (event) => {
   const fullName = getValue("fullName");
 
   if (!fullName) {
-    formStatus.textContent = "Please enter the learner name.";
+    formStatus.textContent = "Please enter the impactLearners name.";
     return;
   }
 
@@ -192,11 +192,11 @@ form?.addEventListener("submit", async (event) => {
   try {
     if (editingRecordId) {
       formStatus.textContent = "Updating record...";
-      await updateDoc(doc(db, "learners", editingRecordId), record);
+      await updateDoc(doc(db, "impactLearnerss", editingRecordId), record);
       formStatus.textContent = "Record updated.";
     } else {
       formStatus.textContent = "Saving record...";
-      await addDoc(collection(db, "learners"), {
+      await addDoc(collection(db, "impactLearnerss"), {
         ...record,
         createdAt:serverTimestamp()
       });

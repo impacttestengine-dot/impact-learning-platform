@@ -1,4 +1,4 @@
-﻿const express = require("express");
+const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
 const multer = require("multer");
@@ -85,7 +85,7 @@ app.post("/api/records/create", async (req, res) => {
       age: req.body.age || "",
       enrollmentDate: req.body.enrollmentDate || "",
       currentLevel: req.body.currentLevel || "",
-      assignedTeacher: req.body.assignedTeacher || "",
+      assignedpersonnel: req.body.assignedpersonnel || "",
       parentGuardian: req.body.parentGuardian || "",
       parentPhone: req.body.parentPhone || "",
       parentEmail: req.body.parentEmail || "",
@@ -195,8 +195,8 @@ app.post("/api/classes/create", async (req, res) => {
 
     const classData = {
       classTitle: req.body.classTitle || "",
-      learnerGroup: req.body.learnerGroup || "",
-      teacher: req.body.teacher || "",
+      impactLearnersGroup: req.body.impactLearnersGroup || "",
+      personnel: req.body.personnel || "",
       classDay,
       time,
       duration,
@@ -290,8 +290,8 @@ app.post("/api/recordings/upload", upload.single("recording"), async (req, res) 
 
     const level = req.body.level || "Unsorted";
     const title = req.body.title || req.file.originalname;
-    const teacher = req.body.teacher || "";
-    const learnerGroup = req.body.learnerGroup || "";
+    const personnel = req.body.personnel || "";
+    const impactLearnersGroup = req.body.impactLearnersGroup || "";
     const notes = req.body.notes || "";
     const fileType = req.file.mimetype || "application/octet-stream";
 
@@ -317,8 +317,8 @@ app.post("/api/recordings/upload", upload.single("recording"), async (req, res) 
     const recordingData = {
       level,
       title,
-      teacher,
-      learnerGroup,
+      personnel,
+      impactLearnersGroup,
       notes,
       fileName: req.file.originalname,
       fileType,

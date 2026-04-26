@@ -1,4 +1,4 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -14,23 +14,23 @@
     html,body{margin:0;min-height:100%}
     body{font-family:Inter,system-ui,sans-serif;color:#f7f8ff;background:#05060b;overflow-x:hidden}
 
-    .teacher-bg{
+    .personnel-bg{
       position:fixed;inset:0;z-index:0;
       background:
         linear-gradient(rgba(5,6,12,.62),rgba(5,6,12,.86)),
-        url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+        url("/assets/images/personnel-bg.jpg") center/cover no-repeat,
         url("/assets/images/bg.jpg") center/cover no-repeat,
         radial-gradient(circle at center,#29304a 0%,#05060b 72%);
       transform:scale(1.06);
       filter:blur(10px) brightness(.78);
     }
 
-    .teacher-shade{
+    .personnel-shade{
       position:fixed;inset:0;z-index:1;pointer-events:none;
       background:linear-gradient(to bottom,rgba(5,6,12,.2),rgba(5,6,12,.82));
     }
 
-    .teacher-page{position:relative;z-index:2;min-height:100vh;padding:32px 0 80px}
+    .personnel-page{position:relative;z-index:2;min-height:100vh;padding:32px 0 80px}
 
     .nav-pill{
       position:fixed;top:24px;z-index:20;
@@ -170,17 +170,17 @@
 </head>
 
 <body>
-  <div class="teacher-bg"></div>
-  <div class="teacher-shade"></div>
+  <div class="personnel-bg"></div>
+  <div class="personnel-shade"></div>
 
-  <main class="teacher-page">
-    <a class="nav-pill dashboard-link" href="/teacher/dashboard.html">Dashboard</a>
+  <main class="personnel-page">
+    <a class="nav-pill dashboard-link" href="/personnel/dashboard.html">Dashboard</a>
     <button class="nav-pill back-link" type="button" id="backBtn">Back</button>
 
     <section class="workspace-hero">
-      <p class="eyebrow">Teacher Workspace</p>
+      <p class="eyebrow">personnel Workspace</p>
       <h1>Activities & Exercises</h1>
-      <p class="subtitle">Create, organize, publish, and track learner activities with a calm, refined workspace.</p>
+      <p class="subtitle">Create, organize, publish, and track impactLearners activities with a calm, refined workspace.</p>
     </section>
 
     <section class="quick-actions">
@@ -209,7 +209,7 @@
 
     <section id="folderModal" class="modal hidden">
       <div class="modal-card small">
-        <button class="modal-close" data-close="folderModal" type="button">Ã—</button>
+        <button class="modal-close" data-close="folderModal" type="button">×</button>
         <p class="mini-label">New Folder</p>
         <h2>Create Folder</h2>
         <label>Folder Name<input id="folderName" type="text"></label>
@@ -219,7 +219,7 @@
 
     <section id="builderModal" class="modal hidden">
       <div class="modal-card">
-        <button class="modal-close" data-close="builderModal" type="button">Ã—</button>
+        <button class="modal-close" data-close="builderModal" type="button">×</button>
         <div class="builder-head">
           <div><p class="mini-label">No-Code Builder</p><h2>Create Activity / Exercise</h2></div>
           <span>Aida-style builder</span>
@@ -256,8 +256,8 @@
                 <option>A2</option><option>B1</option><option>B2</option>
               </select>
             </label>
-            <label>Teacher<input id="activityTeacher" type="text"></label>
-            <label>Learner / Group<input id="activityLearner" type="text"></label>
+            <label>personnel<input id="activitypersonnel" type="text"></label>
+            <label>impactLearners / Group<input id="activityimpactLearners" type="text"></label>
             <label>Status
               <select id="activityStatus">
                 <option>Created</option><option>Published</option><option>Completed</option>
@@ -272,7 +272,7 @@
 
     <section id="trackerModal" class="modal hidden">
       <div class="modal-card">
-        <button class="modal-close" data-close="trackerModal" type="button">Ã—</button>
+        <button class="modal-close" data-close="trackerModal" type="button">×</button>
         <div class="builder-head">
           <div><p class="mini-label">Activity Tracker</p><h2>Activity Records</h2></div>
           <span id="trackerCount">0 records</span>

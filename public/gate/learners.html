@@ -1,19 +1,19 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learner Access | Impact Learning Platform</title>
+  <title>impactLearners Access | Impact Learning Platform</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/platform.css">
 </head>
 <body>
   <main class="gate-page">
     <section class="gate-card">
-      <div class="eyebrow">Learner Access</div>
+      <div class="eyebrow">impactLearners Access</div>
       <h1>Welcome</h1>
 
-      <form id="learnerGateForm">
+      <form id="impactLearnersGateForm">
         <div class="passkey-row">
           <input id="passkeyInput" type="password" autocomplete="off">
           <button id="togglePasskey" type="button">Show</button>
@@ -28,7 +28,7 @@
   <script type="module">
     import { validatePasskey } from "/js/passkey-auth.js";
 
-    const form = document.getElementById("learnerGateForm");
+    const form = document.getElementById("impactLearnersGateForm");
     const input = document.getElementById("passkeyInput");
     const status = document.getElementById("gateStatus");
     const toggle = document.getElementById("togglePasskey");
@@ -43,16 +43,16 @@
 
       status.textContent = "Checking access...";
 
-      const result = await validatePasskey(input.value, "learner");
+      const result = await validatePasskey(input.value, "impactLearners");
 
       if (!result.ok) {
         status.textContent = result.message;
         return;
       }
 
-      sessionStorage.setItem("impactLearnerAccess", "granted");
-      sessionStorage.setItem("impactLearnerName", result.ownerName || "");
-      window.location.href = "/learner/dashboard.html";
+      sessionStorage.setItem("impactimpactLearnersAccess", "granted");
+      sessionStorage.setItem("impactimpactLearnersName", result.ownerName || "");
+      window.location.href = "/impactLearners/dashboard.html";
     });
   </script>
 </body>
