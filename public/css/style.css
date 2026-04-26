@@ -364,3 +364,70 @@ body{
 .impact-ornament span::after {
   right: 46%;
 }
+
+/* Forced visible Impact ornament */
+.impact-visible-ornament {
+  width: min(440px, 72vw);
+  margin: 30px auto 30px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative;
+  z-index: 999;
+}
+
+.impact-visible-ornament .ornament-line {
+  display: block;
+  width: 170px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #dce6ff,
+    transparent
+  );
+  box-shadow: 0 0 18px rgba(220, 230, 255, 0.95);
+}
+
+.impact-visible-ornament .ornament-diamond {
+  width: 14px;
+  height: 14px;
+  display: block;
+  transform: rotate(45deg);
+  background: #dce6ff;
+  box-shadow: 0 0 22px rgba(220, 230, 255, 1);
+}
+
+.impact-visible-ornament {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 18px !important;
+  width: min(420px, 72vw) !important;
+  margin: 24px auto !important;
+  height: 24px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.impact-visible-ornament .line {
+  display: block !important;
+  width: 170px !important;
+  height: 3px !important;
+  border-radius: 999px !important;
+  background: #dce6ff !important;
+  box-shadow: 0 0 18px rgba(220, 230, 255, 0.95) !important;
+}
+
+.impact-visible-ornament .diamond {
+  display: block !important;
+  width: 14px !important;
+  height: 14px !important;
+  transform: rotate(45deg) !important;
+  background: #dce6ff !important;
+  box-shadow: 0 0 22px rgba(220, 230, 255, 1) !important;
+}
