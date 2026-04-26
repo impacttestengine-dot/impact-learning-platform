@@ -1,0 +1,90 @@
+﻿/* ACTIVITIES PAGE FINAL OVERRIDE — LOADS LAST */
+
+.activities-page {
+  max-width: 920px !important;
+  margin: 0 auto !important;
+  padding: 32px 0 80px !important;
+}
+
+.activities-hero {
+  width: min(720px, 88vw) !important;
+  margin: 24px auto 26px !important;
+  text-align: center !important;
+}
+
+.activities-hero h1 {
+  font-size: clamp(3rem, 6vw, 4.8rem) !important;
+  line-height: .95 !important;
+}
+
+.activities-hero p:last-child {
+  max-width: 520px !important;
+  font-size: .82rem !important;
+  line-height: 1.55 !important;
+  opacity: .72 !important;
+}
+
+.activities-toolbar {
+  width: min(620px, 88vw) !important;
+  margin: 0 auto 30px !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 12px !important;
+}
+
+.activities-toolbar button {
+  min-height: 44px !important;
+  padding: 10px 12px !important;
+  font-size: .72rem !important;
+  border-radius: 15px !important;
+}
+
+.activities-shell {
+  width: min(840px, 88vw) !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  grid-template-columns: 250px minmax(0, 1fr) !important;
+  gap: 20px !important;
+}
+
+.activities-folder-panel,
+.activities-main-panel {
+  padding: 20px !important;
+  border-radius: 26px !important;
+}
+
+.panel-head h2 {
+  font-size: 1.55rem !important;
+}
+
+.folder-list,
+.activity-list {
+  gap: 10px !important;
+  margin-top: 18px !important;
+}
+
+.activity-folder {
+  padding: 12px !important;
+  border-radius: 18px !important;
+}
+
+.activity-folder strong {
+  font-size: .78rem !important;
+}
+
+.activity-folder small,
+.empty-state {
+  font-size: .68rem !important;
+}
+
+.empty-state {
+  padding: 18px !important;
+  border-radius: 18px !important;
+}
+
+@media (max-width: 900px) {
+  .activities-toolbar,
+  .activities-shell {
+    grid-template-columns: 1fr !important;
+  }
+}
