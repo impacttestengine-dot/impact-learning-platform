@@ -1,101 +1,143 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>personnel Dashboard | Impact Learning Platform</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/css/personnel-dashboard.css?v=personnel-dashboard-luxury-01">
-  <link rel="stylesheet" href="/css/personnel-system.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family: 'Inter', sans-serif;
+  color:#fff;
+  background: url('/assets/images/bg.jpg') center/cover no-repeat fixed;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background: rgba(10,10,20,0.65);
+  backdrop-filter: blur(20px);
+}
+
+.wrapper{
+  position:relative;
+  max-width:1100px;
+  margin:80px auto;
+  padding:40px;
+}
+
+.title-top{
+  text-align:center;
+  font-size:12px;
+  letter-spacing:3px;
+  opacity:0.6;
+}
+
+h1{
+  font-family:'Sorts Mill Goudy', serif;
+  text-align:center;
+  font-size:48px;
+  margin-top:10px;
+  margin-bottom:50px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:25px;
+}
+
+.card{
+  background: rgba(255,255,255,0.06);
+  border-radius:20px;
+  padding:25px;
+  backdrop-filter: blur(12px);
+  border:1px solid rgba(255,255,255,0.08);
+  transition:0.3s;
+  cursor:pointer;
+}
+
+.card:hover{
+  transform: translateY(-4px);
+  background: rgba(255,255,255,0.1);
+}
+
+.card h2{
+  font-family:'Sorts Mill Goudy', serif;
+  font-size:22px;
+  margin-bottom:10px;
+}
+
+.card p{
+  font-size:14px;
+  opacity:0.7;
+  line-height:1.4;
+}
+</style>
 </head>
+
 <body>
-  <main class="dashboard-page">
-    <div class="bg-layer"></div>
-    <div class="shade-layer"></div>
+<div class="overlay"></div>
 
-    <header class="topbar">
-      <a class="home-link" href="/">Home</a>
-      <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
-    </header>
+<div class="wrapper">
 
-    <section class="dashboard-shell">
-      <div class="dashboard-intro">
-        <p class="eyebrow">personnel Workspace</p>
-<p class="welcome-line" id="welcomeLine">Welcome</p>
-        
-        
-      </div>
+<div class="title-top">TEACHER WORKSPACE</div>
+<h1>Welcome</h1>
 
-      <section class="module-grid">
-        <a class="module-card" href="/personnel/records.html">
-          
-          <h2>Records</h2>
-          <p>Create and manage impactLearners records, levels, notes, and assigned personnels.</p>
-        </a>
+<div class="grid">
 
-        <a class="module-card" href="/personnel/lesson-plans.html">
-          
-          <h2>Lesson Plans</h2>
-          <p>Build structured lesson plans for one-on-one and group learning sessions.</p>
-        </a>
+<div class="card" onclick="go('records')">
+<h2>Records</h2>
+<p>Create and manage impact learners records, levels, notes, and assigned personnel.</p>
+</div>
 
-        <a class="module-card" href="/personnel/classes.html">
-          
-          <h2>Classes</h2>
-          <p>Schedule classes, attach meeting links, and manage upcoming sessions.</p>
-        </a>
+<div class="card" onclick="go('lessons')">
+<h2>Lesson Plans</h2>
+<p>Build structured lesson plans for one-on-one and group learning sessions.</p>
+</div>
 
-        <a class="module-card" href="/personnel/recordings.html">
-          
-          <h2>Recordings</h2>
-          <p>Store class recording links, notes, and impactLearners access references.</p>
-        </a>
+<div class="card" onclick="go('classes')">
+<h2>Classes</h2>
+<p>Schedule classes, attach meeting links, and manage upcoming sessions.</p>
+</div>
 
-        <a class="module-card" href="/personnel/exercises.html">
-          
-          <h2>Activities</h2>
-          <p>Create practice activities for impactLearnerss and review submitted responses.</p>
-        </a>
+<div class="card" onclick="go('recordings')">
+<h2>Recordings</h2>
+<p>Store class recording links, notes, and impact learners access references.</p>
+</div>
 
-        <a class="module-card" href="/personnel/tests.html">
-          
-          <h2>Test Engine</h2>
-          <p>Create assessments, mock exams, test sections, and impactLearners attempts.</p>
-        </a>
+<div class="card" onclick="go('exercises')">
+<h2>Activities</h2>
+<p>Create practice activities for impact learners and review submissions.</p>
+</div>
 
-        <a class="module-card" href="/personnel/progress.html">
-          
-          <h2>Progress</h2>
-          <p>Review impactLearners growth, personnel comments, scores, and recommendations.</p>
-        </a>
+<div class="card" onclick="go('tests')">
+<h2>Test Engine</h2>
+<p>Create assessments, mock exams, and track impact learners attempts.</p>
+</div>
 
-        <a class="module-card muted" href="/personnel/configuration.html">
-          
-          <h2>Configuration</h2>
-          <p>Platform configuration, access rules, and future admin controls.</p>
-        </a>
-      </section>
-    </section>
-  </main>
+<div class="card" onclick="go('progress')">
+<h2>Progress</h2>
+<p>Review impact learners growth, personnel comments, scores, and insights.</p>
+</div>
+
+<div class="card" onclick="go('settings')">
+<h2>Configuration</h2>
+<p>Platform configuration, access rules, and system settings.</p>
+</div>
+
+</div>
+</div>
+
 <script>
-  const accessName = sessionStorage.getItem("impactAccessName") || "";
-  const welcomeLine = document.getElementById("welcomeLine");
-
-  if (welcomeLine && accessName) {
-    welcomeLine.textContent = `Welcome, ${accessName}`;
-  }
+function go(page){
+  window.location.href = "/teacher/" + page + ".html";
+}
 </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
