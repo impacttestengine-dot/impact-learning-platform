@@ -1,55 +1,57 @@
-﻿:root{
-  --impact-glass: rgba(255,255,255,.075);
-  --impact-border: rgba(255,255,255,.14);
-}
-
+﻿html,
 body{
+  min-height:100% !important;
   background:#05060b !important;
   color:#f7f8ff;
 }
 
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-10;
+.impact-photo-bg{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:0 !important;
+  pointer-events:none !important;
   background:
-    linear-gradient(rgba(5,6,12,.58),rgba(5,6,12,.84)),
+    linear-gradient(rgba(5,6,12,.42),rgba(5,6,12,.74)),
     url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
     url("/assets/images/bg.jpg") center/cover no-repeat,
-    radial-gradient(circle at center,#29304a 0%,#05060b 72%);
-  transform:scale(1.06);
-  filter:blur(10px) brightness(.78);
-  pointer-events:none;
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%) !important;
+  transform:scale(1.08) !important;
+  filter:blur(12px) brightness(.78) saturate(.95) !important;
 }
 
-.impact-top-btn{
-  position:fixed;
-  top:24px;
-  z-index:999999;
-  text-decoration:none;
-  color:white;
-  font-family:Inter,system-ui,sans-serif;
-  font-size:.72rem;
-  font-weight:900;
-  padding:10px 14px;
-  border-radius:14px;
-  background:rgba(255,255,255,.085);
-  border:1px solid rgba(255,255,255,.16);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  box-shadow:0 14px 40px rgba(0,0,0,.18);
-  cursor:pointer;
+body > *:not(.impact-photo-bg):not(.impact-nav-btn){
+  position:relative;
+  z-index:2;
 }
 
-.impact-top-btn:hover{
-  background:rgba(255,255,255,.13);
+.impact-nav-btn{
+  position:fixed !important;
+  top:24px !important;
+  z-index:999999 !important;
+  text-decoration:none !important;
+  color:white !important;
+  font-family:Inter,system-ui,sans-serif !important;
+  font-size:.72rem !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  padding:10px 14px !important;
+  border-radius:14px !important;
+  background:rgba(255,255,255,.085) !important;
+  border:1px solid rgba(255,255,255,.16) !important;
+  backdrop-filter:blur(18px) !important;
+  -webkit-backdrop-filter:blur(18px) !important;
+  box-shadow:0 14px 40px rgba(0,0,0,.18) !important;
+  cursor:pointer !important;
 }
 
-.impact-dashboard-btn{
-  left:28px;
+.impact-nav-btn:hover{
+  background:rgba(255,255,255,.13) !important;
 }
 
-.impact-back-btn{
-  right:28px;
+.impact-left-btn{
+  left:28px !important;
+}
+
+.impact-right-btn{
+  right:28px !important;
 }

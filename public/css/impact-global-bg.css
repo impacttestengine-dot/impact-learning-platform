@@ -1,0 +1,39 @@
+﻿html,
+body{
+  min-height:100%;
+  background:#05060b !important;
+  color:#f7f8ff;
+}
+
+.impact-global-blur-bg{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:0 !important;
+  pointer-events:none !important;
+  background:
+    linear-gradient(rgba(5,6,12,.42),rgba(5,6,12,.74)),
+    url("/assets/images/homepage.jpg") center/cover no-repeat,
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%) !important;
+  transform:scale(1.08) !important;
+  filter:blur(12px) brightness(.78) saturate(.95) !important;
+}
+
+body > *:not(.impact-global-blur-bg){
+  position:relative;
+  z-index:2;
+}
+
+.bg-layer,
+.page-bg,
+.background,
+.app-bg{
+  background:
+    linear-gradient(rgba(5,6,12,.42),rgba(5,6,12,.74)),
+    url("/assets/images/homepage.jpg") center/cover no-repeat,
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%) !important;
+  filter:blur(12px) brightness(.78) saturate(.95) !important;
+}

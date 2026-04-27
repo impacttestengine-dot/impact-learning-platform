@@ -5,9 +5,10 @@ build/
 .env
 *.env
 backend/.env
+backend/firebase-adminsdk.json
+backend/*firebase-adminsdk*.json
 serviceAccountKey.json
-firebase-adminsdk*.json
-_organized-dump/
+_organized-dump*/
 safe-backups/
 *.zip
 *.log

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lesson Editor</title>
+
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+
+<style>
+body{
+  margin:0;
+  font-family:Inter,sans-serif;
+  color:#fff;
+}
+
+.topbar{
+  display:flex;
+  gap:12px;
+  padding:16px;
+  position:fixed;
+  top:0;
+  width:100%;
+  z-index:10;
+}
+
+.topbar button{
+  padding:10px 14px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+}
+
+.editor{
+  display:flex;
+  margin-top:80px;
+}
+
+.slide{
+  flex:1;
+  height:70vh;
+  margin:20px;
+  border-radius:20px;
+  background:rgba(255,255,255,.08);
+  padding:20px;
+  overflow:auto;
+}
+
+.panel{
+  width:260px;
+  padding:20px;
+  background:rgba(0,0,0,.6);
+}
+
+.panel button{
+  width:100%;
+  margin-bottom:10px;
+}
+</style>
+  <link rel="stylesheet" href="/css/impact-page-nav.css?v=nav-global-001">
+</head>
+
+<body>
+
+<div class="topbar">
+  <button onclick="newDoc()">New</button>
+  <button onclick="saveDoc()">Save As</button>
+  <button onclick="viewDoc()">View</button>
+  <button onclick="editDoc()">Edit</button>
+</div>
+
+<div class="editor">
+
+<div class="slide" id="slide"></div>
+
+<div class="panel">
+  <button onclick="addText()">Text</button>
+  <button onclick="addHeader()">Header</button>
+  <button onclick="addSub()">Sub Header</button>
+  <button onclick="addImage()">Image</button>
+  <button onclick="addVideo()">Video</button>
+  <button onclick="addAudio()">Audio</button>
+</div>
+
+</div>
+
+<script src="/js/impact-global-bg.js"></script>
+
+<script>
+let currentDoc = "";
+
+function addText(){
+  const el = document.createElement("p");
+  el.innerText = "Text...";
+  document.getElementById("slide").appendChild(el);
+  autosave();
+}
+
+function addHeader(){
+  const el = document.createElement("h1");
+  el.innerText = "Header";
+  document.getElementById("slide").appendChild(el);
+  autosave();
+}
+
+function addSub(){
+  const el = document.createElement("h3");
+  el.innerText = "Sub Header";
+  document.getElementById("slide").appendChild(el);
+  autosave();
+}
+
+function addImage(){
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept="image/*";
+  input.onchange = e=>{
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(e.target.files[0]);
+    img.style.maxWidth="100%";
+    document.getElementById("slide").appendChild(img);
+    autosave();
+  }
+  input.click();
+}
+
+function addVideo(){
+  const url = prompt("Paste video URL");
+  if(!url)return;
+  const vid = document.createElement("video");
+  vid.src = url;
+  vid.controls = true;
+  vid.style.maxWidth="100%";
+  document.getElementById("slide").appendChild(vid);
+  autosave();
+}
+
+function addAudio(){
+  const url = prompt("Paste audio URL");
+  if(!url)return;
+  const aud = document.createElement("audio");
+  aud.src = url;
+  aud.controls = true;
+  document.getElementById("slide").appendChild(aud);
+  autosave();
+}
+
+function saveDoc(){
+  const name = prompt("Name this lesson");
+  if(!name)return;
+  currentDoc = name;
+  localStorage.setItem("lesson_"+name, document.getElementById("slide").innerHTML);
+}
+
+function autosave(){
+  if(currentDoc){
+    localStorage.setItem("lesson_"+currentDoc, document.getElementById("slide").innerHTML);
+  }
+}
+
+function newDoc(){
+  document.getElementById("slide").innerHTML="";
+  currentDoc="";
+}
+
+function editDoc(){
+  const name = prompt("Enter lesson name");
+  const data = localStorage.getItem("lesson_"+name);
+  if(data){
+    currentDoc = name;
+    document.getElementById("slide").innerHTML = data;
+  }
+}
+
+function viewDoc(){
+  alert("View mode coming next");
+}
+</script>
+
+  <script src="/js/impact-page-nav.js?v=nav-global-001"></script>
+</body>
+</html>

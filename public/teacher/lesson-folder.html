@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lesson Folder | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css?v=lesson-folder-001">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:white;background:#05060b}
+.page{position:relative;z-index:2;min-height:100vh;display:grid;place-items:center;padding:40px}
+.card{width:min(680px,92vw);text-align:center;padding:42px;border-radius:34px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(22px);box-shadow:0 28px 80px rgba(0,0,0,.34)}
+.eyebrow{text-transform:uppercase;letter-spacing:.3em;font-size:.7rem;font-weight:900;color:rgba(255,255,255,.62);margin-bottom:14px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.4rem,6vw,4.2rem);font-weight:400}
+p{margin-top:14px;color:rgba(255,255,255,.7);font-weight:700;line-height:1.6}
+</style>
+  <link rel="stylesheet" href="/css/impact-page-nav.css?v=nav-global-001">
+</head>
+<body>
+<main class="page">
+  <section class="card">
+    <p class="eyebrow">Lesson Folder</p>
+    <h1 id="folderTitle">Lesson Plans</h1>
+    <p>This folder is ready. Saved lesson plans for this level will appear here.</p>
+  </section>
+</main>
+<script src="/js/impact-global-bg.js?v=lesson-folder-001"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const level = params.get("level") || sessionStorage.getItem("impactSelectedLessonLevel") || "Selected Level";
+document.getElementById("folderTitle").textContent = level;
+</script>
+  <script src="/js/impact-page-nav.js?v=nav-global-001"></script>
+</body>
+</html>

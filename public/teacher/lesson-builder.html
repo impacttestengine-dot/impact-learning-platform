@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lesson Builder</title>
+<link rel="stylesheet" href="/css/teacher-dashboard.css"/>
+
+<style>
+
+/* Layout (Activity-style) */
+.builder-shell{
+  width:min(1180px,92vw);
+  margin:60px auto;
+  display:grid;
+  grid-template-columns:240px 1fr 280px;
+  gap:20px;
+}
+
+.panel{
+  border-radius:24px;
+  padding:20px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(18px);
+}
+
+.block-btn{
+  width:100%;
+  padding:14px;
+  margin-bottom:10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.08);
+  color:white;
+  cursor:pointer;
+}
+
+.canvas{
+  min-height:400px;
+  padding:18px;
+  border-radius:18px;
+  background:rgba(0,0,0,0.35);
+}
+
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.toolbar select,
+.toolbar button{
+  padding:8px 10px;
+  border-radius:10px;
+  border:none;
+  background:rgba(255,255,255,0.15);
+  color:white;
+  cursor:pointer;
+}
+
+.canvas-area{
+  min-height:320px;
+  padding:12px;
+  background:white;
+  color:black;
+  border-radius:12px;
+}
+
+.top-controls{
+  position:fixed;
+  top:18px;
+  right:22px;
+  display:flex;
+  gap:10px;
+  z-index:50;
+}
+
+.top-controls button{
+  padding:8px 12px;
+  border-radius:12px;
+  border:none;
+  background:rgba(255,255,255,0.15);
+  color:white;
+  cursor:pointer;
+}
+
+.nav-buttons{
+  position:fixed;
+  top:18px;
+  left:22px;
+  display:flex;
+  gap:10px;
+  z-index:50;
+}
+
+.nav-buttons button{
+  padding:8px 12px;
+  border-radius:12px;
+  border:none;
+  background:rgba(255,255,255,0.15);
+  color:white;
+  cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg-layer"></div>
+<div class="shade-layer"></div>
+
+<!-- NAV -->
+<div class="nav-buttons">
+  <button onclick="goDashboard()">Dashboard</button>
+  <button onclick="goBack()">Back</button>
+</div>
+
+<!-- TOP CONTROLS -->
+<div class="top-controls">
+  <button onclick="newDoc()">New</button>
+  <button onclick="saveDoc()">Save</button>
+  <button onclick="editDoc()">Edit</button>
+  <button onclick="viewMode()">View</button>
+</div>
+
+<div class="builder-shell">
+
+  <!-- LEFT PANEL -->
+  <div class="panel">
+    <h3>Blocks</h3>
+
+    <button class="block-btn" onclick="addBlock('header')">Header</button>
+    <button class="block-btn" onclick="addBlock('text')">Text</button>
+    <button class="block-btn" onclick="addBlock('image')">Image</button>
+    <button class="block-btn" onclick="addBlock('audio')">Audio</button>
+    <button class="block-btn" onclick="addBlock('video')">Video</button>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="panel">
+    
+    <div class="toolbar">
+
+      <select onchange="setFont(this.value)">
+        <option>Arial</option>
+        <option>Verdana</option>
+        <option>Times New Roman</option>
+        <option>Georgia</option>
+        <option>Courier New</option>
+      </select>
+
+      <select onchange="setSize(this.value)">
+        <option value="12">12</option>
+        <option value="14">14</option>
+        <option value="18">18</option>
+        <option value="24">24</option>
+      </select>
+
+      <button onclick="bold()">B</button>
+      <button onclick="italic()">I</button>
+      <button onclick="underline()">U</button>
+
+      <button onclick="align('left')">L</button>
+      <button onclick="align('center')">C</button>
+      <button onclick="align('right')">R</button>
+
+      <button onclick="changeColor()">Text Color</button>
+      <button onclick="changeBg()">Background</button>
+
+    </div>
+
+    <div id="canvas" class="canvas-area" contenteditable="true">
+      Start building your lesson...
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel">
+    <h3>Settings</h3>
+    <input placeholder="Lesson Title"/>
+    <br><br>
+    <select>
+      <option>Select Level</option>
+      <option>A0</option>
+      <option>A1</option>
+      <option>A2</option>
+      <option>B1</option>
+      <option>B2</option>
+    </select>
+  </div>
+
+</div>
+
+<script>
+
+function goDashboard(){
+  window.location.href="/teacher/dashboard.html";
+}
+
+function goBack(){
+  history.back();
+}
+
+function addBlock(type){
+  const canvas = document.getElementById("canvas");
+  let el;
+
+  if(type==="header"){
+    el = "<h2>New Header</h2>";
+  }
+  if(type==="text"){
+    el = "<p>New text...</p>";
+  }
+  if(type==="image"){
+    el = "<p>[Image Placeholder]</p>";
+  }
+  if(type==="audio"){
+    el = "<p>[Audio Placeholder]</p>";
+  }
+  if(type==="video"){
+    el = "<p>[Video Placeholder]</p>";
+  }
+
+  canvas.innerHTML += el;
+}
+
+function bold(){document.execCommand("bold")}
+function italic(){document.execCommand("italic")}
+function underline(){document.execCommand("underline")}
+
+function align(type){
+  document.execCommand("justify"+type)
+}
+
+function setFont(font){
+  document.execCommand("fontName",false,font)
+}
+
+function setSize(size){
+  document.execCommand("fontSize",false,"3")
+}
+
+function changeColor(){
+  const c = prompt("Enter color (e.g red or #000):");
+  document.execCommand("foreColor",false,c)
+}
+
+function changeBg(){
+  const c = prompt("Enter background color:");
+  document.execCommand("hiliteColor",false,c)
+}
+
+function newDoc(){
+  document.getElementById("canvas").innerHTML="";
+}
+
+function saveDoc(){
+  alert("Saved (placeholder)");
+}
+
+function editDoc(){
+  alert("Edit mode (placeholder)");
+}
+
+function viewMode(){
+  alert("View mode (placeholder)");
+}
+
+</script>
+
+</body>
+</html>

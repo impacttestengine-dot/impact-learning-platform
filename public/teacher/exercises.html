@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -452,11 +452,13 @@ textarea{resize:vertical}
   .hero h1{white-space:normal}
 }
 </style>
+  <link rel="stylesheet" href="/css/impact-global-bg.css?v=blur-bg-logo-clean-001">
+  <link rel="stylesheet" href="/css/impact-page-nav.css?v=nav-global-001">
 </head>
 
 <body>
 <div class="bg"></div>
-<a class="dashboard" href="/teacher/dashboard.html">Dashboard</a>
+
 
 <main class="page">
   <section class="hero">
@@ -594,7 +596,19 @@ textarea{resize:vertical}
 <div id="toast" class="toast"></div>
 
 <script type="module" src="/js/activities.js?v=activity-engine-001"></script>
+  <script src="/js/impact-global-bg.js?v=blur-bg-logo-clean-001"></script>
+  <script src="/js/impact-page-nav.js?v=nav-global-001"></script>
 </body>
 </html>
 
 
+
+<script>
+
+document.querySelectorAll("[data-route]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    window.location.href = btn.dataset.route;
+  });
+});
+
+</script>

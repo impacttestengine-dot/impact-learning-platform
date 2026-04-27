@@ -1,35 +1,114 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Lesson Plan Builder</title>
+<title>Lesson Plans | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
 
 <style>
 body{
-  margin:0;
-  font-family:Inter;
-  background:#05060b;
-  color:white;
+  font-family:Inter,sans-serif;
+  color:#fff;
 }
 
-.toolbar{
+.page{
+  width:min(1180px,92vw);
+  margin:40px auto;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+
+.top-actions{
   display:flex;
   gap:10px;
-  padding:16px;
-  background:rgba(255,255,255,.05);
 }
 
-.slide{
-  width:80%;
-  margin:30px auto;
-  height:400px;
-  border-radius:20px;
+button{
+  border-radius:12px;
+  padding:10px 14px;
+  border:1px solid rgba(255,255,255,.2);
   background:rgba(255,255,255,.08);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.shell{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:20px;
+}
+
+/* LEFT PANEL */
+.folder-panel{
+  padding:20px;
+  border-radius:24px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+}
+
+.level{
+  padding:14px;
+  border-radius:16px;
+  background:rgba(255,255,255,.08);
+  margin-bottom:10px;
+  cursor:pointer;
+  font-weight:800;
+}
+
+/* RIGHT PANEL */
+.builder{
+  padding:22px;
+  border-radius:26px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+}
+
+/* FORM */
+.field{
+  margin-bottom:16px;
+}
+
+.field label{
+  font-weight:800;
+  font-size:.85rem;
+}
+
+.field input,
+.field textarea{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+}
+
+/* TOOLBAR */
+.toolbar{
   display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:22px;
+  gap:6px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+
+.toolbar select,
+.toolbar button,
+.toolbar input{
+  border-radius:8px;
+  padding:6px 8px;
+  border:none;
+  background:rgba(255,255,255,.15);
+  color:#fff;
+  font-weight:700;
 }
 
 </style>
@@ -37,35 +116,145 @@ body{
 
 <body>
 
-<div class="toolbar">
-<button onclick="addSlide()">Add Slide</button>
-<button onclick="insertMedia()">Insert Media</button>
-<button onclick="viewMode()">View Mode</button>
+<div class="page">
+
+<div class="topbar">
+  <div class="top-actions">
+    <button onclick="newLesson()">New</button>
+    <button onclick="saveLesson()">Save</button>
+    <button onclick="loadLesson()">Edit</button>
+    <button onclick="viewMode()">View</button>
+  </div>
 </div>
 
-<div id="slides"></div>
+<div class="shell">
+
+<!-- LEFT -->
+<div class="folder-panel" id="folders"></div>
+
+<!-- RIGHT -->
+<div class="builder">
+
+<div class="toolbar">
+<select onchange="format('fontName',this.value)">
+<option>Arial</option>
+<option>Georgia</option>
+<option>Times New Roman</option>
+</select>
+
+<select onchange="format('fontSize',this.value)">
+<option value="3">Normal</option>
+<option value="5">Large</option>
+<option value="7">Huge</option>
+</select>
+
+<button onclick="format('bold')">B</button>
+<button onclick="format('italic')">I</button>
+<button onclick="format('underline')">U</button>
+
+<input type="color" onchange="format('foreColor',this.value)">
+
+<button onclick="format('justifyLeft')">L</button>
+<button onclick="format('justifyCenter')">C</button>
+<button onclick="format('justifyRight')">R</button>
+</div>
+
+<div class="field">
+<label>Lesson Title</label>
+<input id="title">
+</div>
+
+<div class="field">
+<label>Objective</label>
+<textarea id="objective"></textarea>
+</div>
+
+<div class="field">
+<label>Warm Up</label>
+<textarea id="warmup"></textarea>
+</div>
+
+<div class="field">
+<label>Main Lesson</label>
+<textarea id="main"></textarea>
+</div>
+
+<div class="field">
+<label>Practice</label>
+<textarea id="practice"></textarea>
+</div>
+
+<div class="field">
+<label>Notes</label>
+<textarea id="notes"></textarea>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
 
 <script>
-let slides = []
+const levels = ["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
+let selectedLevel = levels[0];
 
-function addSlide(){
-  slides.push("New Slide")
-  render()
+const folderEl = document.getElementById("folders");
+
+levels.forEach(l=>{
+  const d=document.createElement("div");
+  d.className="level";
+  d.innerText=l;
+  d.onclick=()=>selectedLevel=l;
+  folderEl.appendChild(d);
+});
+
+function format(cmd,val=null){
+  document.execCommand(cmd,false,val);
 }
 
-function render(){
-  document.getElementById("slides").innerHTML = slides.map(s=>`<div class="slide">${s}</div>`).join("")
+function newLesson(){
+  document.querySelectorAll("input,textarea").forEach(e=>e.value="");
 }
 
-function insertMedia(){
-  alert("Upload / Google Search / Stock coming next phase")
+function saveLesson(){
+  const data={
+    level:selectedLevel,
+    title:title.value,
+    objective:objective.value,
+    warmup:warmup.value,
+    main:main.value,
+    practice:practice.value,
+    notes:notes.value
+  };
+
+  let list = JSON.parse(localStorage.getItem("lessons")||"[]");
+  list.push(data);
+  localStorage.setItem("lessons",JSON.stringify(list));
+  alert("Saved");
+}
+
+function loadLesson(){
+  let list = JSON.parse(localStorage.getItem("lessons")||"[]");
+  if(!list.length) return alert("No lessons");
+
+  let l = list[0];
+
+  title.value=l.title;
+  objective.value=l.objective;
+  warmup.value=l.warmup;
+  main.value=l.main;
+  practice.value=l.practice;
+  notes.value=l.notes;
 }
 
 function viewMode(){
-  alert("Viewing slides mode")
+  alert("View mode coming next");
 }
 </script>
 
 </body>
 </html>
-

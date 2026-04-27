@@ -1212,3 +1212,48 @@ body{
   }
 }
 
+
+/* FINAL DASHBOARD STRAY BUTTON KILL */
+body .topbar,
+body .home-link,
+body .corner-logo,
+body a.home-link,
+body a[class*="home-link"],
+body a[class*="back-link"],
+body a[class*="dashboard"]:not(.dashboard-home-btn),
+body button[class*="dashboard"]:not(.dashboard-toggle-btn){
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+/* Keep only restored dashboard controls */
+.dashboard-home-btn,
+.dashboard-toggle-btn{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
+
+/* ==========================================
+   DASHBOARD GLOBAL SHELL KILL SWITCH
+   Prevents ghost shell buttons on dashboard
+========================================== */
+.dashboard-page .impact-nav-btn,
+.dashboard-page .impact-top-btn,
+.dashboard-page .impact-dashboard-btn,
+.dashboard-page .impact-back-btn,
+.dashboard-page .impact-home-btn,
+.dashboard-page .impact-left-btn,
+.dashboard-page .impact-right-btn,
+.dashboard-page [class*="impact-nav"],
+.dashboard-page [class*="impact-top"],
+.dashboard-page [class*="impact-back"],
+.dashboard-page [class*="impact-dashboard"]{
+  display:none !important;
+  visibility:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}

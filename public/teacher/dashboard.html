@@ -3,63 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Personnel Dashboard | Impact Learning Platform</title>
+<title>Teacher Dashboard | Impact</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css?v=dashboard-reset-001">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 
+html,body{
+  min-height:100%;
+}
+
 body{
   min-height:100vh;
   font-family:Inter,system-ui,sans-serif;
-  color:#f7f8ff;
+  color:#fff;
   background:#05060b;
   overflow-x:hidden;
 }
 
-.bg{
-  position:fixed;
-  inset:0;
-  background:
-    linear-gradient(rgba(5,6,12,.62),rgba(5,6,12,.86)),
-    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
-    url("/assets/images/bg.jpg") center/cover no-repeat,
-    radial-gradient(circle at center,#29304a 0%,#05060b 72%);
-  transform:scale(1.06);
-  filter:blur(10px) brightness(.78);
-  z-index:0;
-}
-
-.page{
-  position:relative;
-  z-index:2;
-  width:min(980px,88vw);
-  margin:0 auto;
-  padding:70px 0;
-}
-
-.home{
+.dashboard-home-btn{
   position:fixed;
   top:24px;
   left:28px;
-  z-index:5;
+  z-index:2147483647;
   text-decoration:none;
-  color:white;
+  color:#fff;
   font-size:.72rem;
   font-weight:900;
   padding:10px 14px;
   border-radius:14px;
-  background:rgba(255,255,255,.075);
-  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(18px);
 }
 
-.header{
+.dashboard-menu-wrap{
+  position:fixed !important;
+  top:24px !important;
+  right:28px !important;
+  z-index:2147483647 !important;
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+
+.dashboard-toggle-btn{
+  width:46px !important;
+  height:46px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border:1px solid rgba(255,255,255,.22) !important;
+  border-radius:16px !important;
+  background:rgba(255,255,255,.16) !important;
+  color:#fff !important;
+  font-size:28px !important;
+  font-weight:900 !important;
+  cursor:pointer !important;
+  backdrop-filter:blur(18px) !important;
+}
+
+.dashboard-toggle-menu{
+  position:absolute;
+  top:52px;
+  right:0;
+  display:none;
+  min-width:240px;
+  padding:10px;
+  border-radius:18px;
+  background:rgba(8,10,18,.94);
+  border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(18px);
+}
+
+.dashboard-menu-wrap.open .dashboard-toggle-menu{
+  display:grid;
+  gap:8px;
+}
+
+.dashboard-toggle-menu a{
+  color:#fff;
+  text-decoration:none;
+  padding:10px 12px;
+  border-radius:12px;
+  font-size:.78rem;
+  font-weight:800;
+}
+
+.dashboard-toggle-menu a:hover{
+  background:rgba(255,255,255,.12);
+}
+
+.dashboard-page{
+  position:relative;
+  z-index:2;
+  width:min(1060px,88vw);
+  margin:0 auto;
+  padding:78px 0 80px;
+}
+
+.dashboard-header{
   text-align:center;
-  margin-bottom:34px;
+  margin-bottom:36px;
 }
 
-.header p{
+.dashboard-header .eyebrow{
   text-transform:uppercase;
   letter-spacing:.34em;
   font-size:.68rem;
@@ -68,258 +118,152 @@ body{
   margin-bottom:10px;
 }
 
-.header h1{
+.dashboard-header h1{
   font-family:"Sorts Mill Goudy",Georgia,serif;
-  font-size:clamp(2.8rem,5.2vw,4.5rem);
+  font-size:clamp(2.8rem,5.5vw,4.8rem);
   font-weight:400;
   line-height:1;
 }
 
-.grid{
+.dashboard-grid{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:22px;
 }
 
-.card{
+.dashboard-card{
+  min-height:154px;
   display:block;
   text-decoration:none;
-  color:white;
-  min-height:150px;
-  padding:24px;
+  color:#fff;
+  padding:25px;
   border-radius:28px;
-  background:rgba(255,255,255,.058);
-  border:1px solid rgba(255,255,255,.105);
+  background:rgba(255,255,255,.065);
+  border:1px solid rgba(255,255,255,.12);
   box-shadow:0 22px 64px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
   backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  cursor:pointer;
   transition:.2s ease;
 }
 
-.card:hover{
-  background:rgba(255,255,255,.09);
+.dashboard-card:hover{
   transform:translateY(-2px);
+  background:rgba(255,255,255,.095);
 }
 
-.card h2{
+.dashboard-card h2{
   font-family:"Sorts Mill Goudy",Georgia,serif;
-  font-size:1.7rem;
+  font-size:1.85rem;
   font-weight:400;
-  margin-bottom:34px;
+  margin-bottom:32px;
 }
 
-.card p{
-  color:rgba(255,255,255,.64);
-  font-size:.78rem;
+.dashboard-card p{
+  color:rgba(255,255,255,.66);
+  font-size:.82rem;
   font-weight:700;
   line-height:1.55;
 }
 
-@media(max-width:850px){
-  .grid{grid-template-columns:1fr}
+@media(max-width:760px){
+  .dashboard-grid{grid-template-columns:1fr}
+  .dashboard-page{width:min(92vw,620px)}
 }
-.top-toggle{
-  position:fixed;
-  top:24px;
-  right:28px;
-  z-index:20;
-  padding:10px 14px;
-  border-radius:14px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.14);
-  cursor:pointer;
-}
-
-.toggle-menu{
-  position:absolute;
-  top:52px;
-  right:0;
-  display:none;
-  flex-direction:column;
-  gap:6px;
-  padding:10px;
-  border-radius:14px;
-  background:rgba(0,0,0,.85);
-}
-
-.top-toggle:hover .toggle-menu{
-  display:flex;
-}
-
-.toggle-menu a{
-  text-decoration:none;
-  color:white;
-  font-size:.72rem;
-  font-weight:800;
-  padding:8px 10px;
-  border-radius:10px;
-}
-
-.toggle-menu a:hover{
-  background:rgba(255,255,255,.12);
-}
-
-/* ===== TOP RIGHT ICON TOGGLE ===== */
-.workspace-toggle{
-  position:fixed;
-  top:24px;
-  right:28px;
-  z-index:999999;
-  width:42px;
-  height:42px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  font-weight:900;
-  color:white;
-  border-radius:14px;
-  background:rgba(255,255,255,.10);
-  border:1px solid rgba(255,255,255,.18);
-  cursor:pointer;
-  backdrop-filter:blur(16px);
-}
-
-.workspace-menu{
-  position:absolute;
-  top:52px;
-  right:0;
-  display:none;
-  flex-direction:column;
-  gap:6px;
-  min-width:220px;
-  padding:10px;
-  border-radius:16px;
-  background:rgba(10,12,20,.95);
-  border:1px solid rgba(255,255,255,.15);
-  backdrop-filter:blur(18px);
-}
-
-.workspace-toggle.open .workspace-menu{
-  display:flex;
-}
-
-.workspace-menu a{
-  text-decoration:none;
-  color:white;
-  font-size:.78rem;
-  font-weight:800;
-  padding:10px 12px;
-  border-radius:10px;
-}
-
-.workspace-menu a:hover{
-  background:rgba(255,255,255,.12);
-}
-
 </style>
 </head>
 
 <body>
+<a class="dashboard-home-btn" href="/">Home</a>
 
-<div class="workspace-toggle" id="workspaceToggle">
-  ⋮
-  <div class="workspace-menu">
+<div class="dashboard-menu-wrap" id="dashboardMenuWrap">
+  <button class="dashboard-toggle-btn" id="dashboardToggleBtn" type="button" aria-label="Dashboard menu">⋮</button>
+
+  <div class="dashboard-toggle-menu">
     <a href="/teacher/academic-calendar.html">Academic Calendar</a>
     <a href="/teacher/kpis.html">Team KPIs</a>
     <a href="/teacher/reports.html">Reports</a>
     <a href="/teacher/operations.html">Operations</a>
   </div>
 </div>
-<div class="bg"></div>
 
-<a class="home" href="/">Home</a>
-
-<main class="page">
-  <section class="header">
-    <p>Teacher Workspace</p>
+<main class="dashboard-page">
+  <header class="dashboard-header">
+    <p class="eyebrow">Teacher Workspace</p>
     <h1 id="welcomeLine">Welcome</h1>
-  </section>
+  </header>
 
-  <section class="grid">
-    <a class="card" href="/teacher/records.html">
+  <section class="dashboard-grid">
+    <a class="dashboard-card" href="/teacher/records.html">
       <h2>Learner Records</h2>
-      <p>Manage personnel records, assigned learners, notes, and teaching responsibilities.</p>
+      <p>Create and manage learner records, levels, notes, and assigned teachers.</p>
     </a>
 
-    <a class="card" href="/teacher/lessons.html">
+    <a class="dashboard-card" href="/teacher/lesson-plans.html">
       <h2>Lesson Plans</h2>
       <p>Build structured lesson plans for one-on-one and group learning sessions.</p>
     </a>
 
-    <a class="card" href="/teacher/classes.html">
+    <a class="dashboard-card" href="/teacher/classes.html">
       <h2>Classes</h2>
       <p>Schedule classes, attach meeting links, and manage upcoming sessions.</p>
     </a>
 
-    <a class="card" href="/teacher/recordings.html">
+    <a class="dashboard-card" href="/teacher/recordings.html">
       <h2>Recordings</h2>
-      <p>Store class recordings, notes, folders, and Learner Hub references.</p>
+      <p>Store class recordings, notes, folders, and learner references.</p>
     </a>
 
-    <a class="card" href="/teacher/exercises.html">
+    <a class="dashboard-card" href="/teacher/exercises.html">
       <h2>Activities</h2>
-      <p>Create activities and exercises for Learner Hub and review submissions.</p>
+      <p>Create media-rich exercises for learners and review submitted responses.</p>
     </a>
 
-    <a class="card" href="/engine/exam.html">
+    <a class="dashboard-card" href="/teacher/delf-mocks.html">
       <h2>DELF Exam Mocks</h2>
-      <p>Create assessments, mock exams, test sections, and Learner Hub attempts.</p>
+      <p>Create assessments, mock exams, test sections, and learner attempts.</p>
     </a>
 
-    <a class="card" href="/teacher/progress.html">
+    <a class="dashboard-card" href="/teacher/progress.html">
       <h2>Progress</h2>
-      <p>Review Learner Hub growth, personnel comments, scores, and recommendations.</p>
+      <p>Review learner growth, teacher comments, scores, and recommendations.</p>
     </a>
 
-    <a class="card" href="/teacher/configuration.html">
+    <a class="dashboard-card" href="/teacher/configuration.html">
       <h2>Configuration</h2>
       <p>Manage access controls, passkeys, platform settings, and system rules.</p>
     </a>
   </section>
 </main>
 
+<script src="/js/impact-global-bg.js?v=dashboard-reset-001"></script>
+
 <script>
-const accessName = sessionStorage.getItem("impactAccessName") || "";
-const welcomeLine = document.getElementById("welcomeLine");
+(function(){
+  const wrap = document.getElementById("dashboardMenuWrap");
+  const btn = document.getElementById("dashboardToggleBtn");
 
-if (welcomeLine && accessName) {
-  welcomeLine.textContent = `Welcome, ${accessName}`;
-}
-</script>
-<script>
-const workspaceToggle = document.getElementById("workspaceToggle");
+  if(btn && wrap){
+    btn.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      wrap.classList.toggle("open");
+    });
 
-if (workspaceToggle) {
-  workspaceToggle.addEventListener("click", function(event) {
-    event.stopPropagation();
-    workspaceToggle.classList.toggle("open");
-  });
+    wrap.addEventListener("click", function(e){
+      e.stopPropagation();
+    });
 
-  document.addEventListener("click", function() {
-    workspaceToggle.classList.remove("open");
-  });
-
-  const menu = workspaceToggle.querySelector(".workspace-menu");
-  if (menu) {
-    menu.addEventListener("click", function(event) {
-      event.stopPropagation();
+    document.addEventListener("click", function(){
+      wrap.classList.remove("open");
     });
   }
-}
+
+  const name = sessionStorage.getItem("impactAccessName") || "";
+  const welcomeLine = document.getElementById("welcomeLine");
+  if(welcomeLine && name){
+    welcomeLine.textContent = "Welcome, " + name;
+  }
+})();
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
 
