@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lesson Plans | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:Inter;
+  background:#05060b;
+  color:white;
+}
+
+.bg{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.9)),
+  url("/assets/images/bg.jpg") center/cover;
+  filter:blur(8px);
+}
+
+.page{
+  position:relative;
+  z-index:2;
+  padding:40px;
+  text-align:center;
+}
+
+h1{
+  font-family:"Sorts Mill Goudy";
+  font-size:60px;
+  margin-bottom:10px;
+}
+
+.subtitle{
+  opacity:.6;
+  margin-bottom:30px;
+}
+
+.actions{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  margin-bottom:40px;
+}
+
+button{
+  padding:12px 20px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);
+  color:white;
+  cursor:pointer;
+}
+
+.workspace{
+  display:grid;
+  grid-template-columns:250px 1fr;
+  gap:20px;
+  max-width:900px;
+  margin:auto;
+}
+
+.card{
+  background:rgba(255,255,255,.05);
+  border-radius:20px;
+  padding:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<div class="page">
+  <h1>Lesson Plans</h1>
+  <div class="subtitle">Create structured lessons with resources</div>
+
+  <div class="actions">
+    <button onclick="openFolder()">Create Folder</button>
+    <button onclick="openBuilder()">Create Lesson</button>
+    <button onclick="openTracker()">Tracker</button>
+  </div>
+
+  <div class="workspace">
+    <div class="card">
+      <h3>Folders</h3>
+      <div id="folders"></div>
+    </div>
+
+    <div class="card">
+      <h3>Lessons</h3>
+      <div id="lessons"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/js/lessons.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+﻿node_modules/
+.firebase/
+dist/
+build/
+.env
+*.env
+backend/.env
+serviceAccountKey.json
+firebase-adminsdk*.json
+_organized-dump/
+safe-backups/
+*.zip
+*.log
+*.pem
+*.key

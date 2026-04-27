@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Classes | Impact Learning Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/classes.css?v=classes-module-01">
+  <link rel="stylesheet" href="/css/Teacher-system.css">
+</head>
+<body>
+  <main class="classes-page">
+    <div class="bg-layer"></div>
+    <div class="shade-layer"></div>
+
+    <header class="topbar">
+      <a class="glass-link" href="/teacher/dashboard.html">Dashboard</a>
+      <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
+    </header>
+
+    <section class="classes-shell">
+      <div class="classes-head">
+        <p class="eyebrow">Teacher Workspace</p>
+        <div class="classes-top-row">
+  <h1>Classes</h1>
+  <a class="class-tracker-card" href="/Teacher/class-logger.html" aria-label="Open class tracker">
+    <span>Class</span>
+    <span>Tracker</span>
+  </a>
+</div>
+      </div>
+
+      <div class="classes-layout">
+        <section class="form-card">
+          <div class="editor-head">
+            <div>
+              <h2>Schedule Class</h2>
+              <p>Create an upcoming online class session.</p>
+            </div>
+          </div>
+
+          <form id="classForm">
+            <label>Level<input id="classTitle" type="text">
+            </label>
+
+            <label>Learner<input id="impactLearnersGroup" type="text">
+            </label>
+
+            <label>Teacher<input id="Teacher" type="text">
+            </label>
+
+            <label>
+              Day
+              <select id="classDay" required>
+  <option value="">Select Day</option>
+  <option>Monday</option>
+  <option>Tuesday</option>
+  <option>Wednesday</option>
+  <option>Thursday</option>
+  <option>Friday</option>
+  <option>Saturday</option>
+  <option>Sunday</option>
+</select>
+            </label>
+
+            <label>
+              Time
+              <input id="classTime" type="time" required>
+            </label>
+
+            <label>
+              Duration
+              <input id="duration" type="text">
+            </label>
+
+            <label class="wide">
+              Google Meet Room
+              <select id="meetingLink">
+  <option value="">Select Google Meet Room</option>
+  <option value="https://meet.google.com/ukw-macm-cvo">Impact Meet Room 1</option>
+  <option value="https://meet.google.com/fxh-gazg-jpp">Impact Meet Room 2</option>
+  <option value="https://meet.google.com/rps-qrqe-upw">Impact Meet Room 3</option>
+  <option value="https://meet.google.com/mea-ihvu-jhi">Impact Meet Room 4</option>
+</select>
+            </label>
+
+            <label>
+              Status
+              <select id="status">
+                <option>Scheduled</option>
+                <option>Completed</option>
+                <option>Cancelled</option>
+              </select>
+            </label>
+
+            <label class="wide">
+              Class Notes
+              <textarea id="notes" rows="4"></textarea>
+            </label>
+
+            <button class="glass-btn" type="submit">Save Class</button>
+            <p id="formStatus" class="form-status"></p>
+          </form>
+        </section>
+
+        <section class="list-card">
+          <div class="list-head">
+            <h2>Scheduled Classes</h2>
+            <span id="classCount">0 classes</span>
+          </div>
+
+          <div id="classesList" class="classes-list">
+            <div class="empty-state">No classes yet.</div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/classes.js?v=classes-module-01"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,599 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Activities & Exercises | Impact Learning Platform</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  min-height:100vh;
+  font-family:Inter,system-ui,sans-serif;
+  color:#f7f8ff;
+  background:#05060b;
+  overflow-x:hidden;
+}
+
+.bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background:
+    linear-gradient(rgba(5,6,12,.62),rgba(5,6,12,.86)),
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%);
+  transform:scale(1.06);
+  filter:blur(10px) brightness(.78);
+}
+
+.page{
+  position:relative;
+  z-index:2;
+  width:min(1100px,90vw);
+  margin:0 auto;
+  padding:58px 0 90px;
+}
+
+.dashboard{
+  position:fixed;
+  top:24px;
+  left:28px;
+  z-index:10;
+  text-decoration:none;
+  color:white;
+  font-size:.72rem;
+  font-weight:900;
+  padding:10px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,255,255,.13);
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.hero p{
+  text-transform:uppercase;
+  letter-spacing:.34em;
+  font-size:.68rem;
+  font-weight:900;
+  color:rgba(235,240,255,.64);
+  margin-bottom:10px;
+}
+
+.hero h1{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:clamp(2.7rem,5vw,4.35rem);
+  font-weight:400;
+  line-height:1;
+  white-space:nowrap;
+}
+
+.hero .sub{
+  margin:12px auto 0;
+  max-width:620px;
+  color:rgba(255,255,255,.62);
+  font-size:.84rem;
+  font-weight:700;
+  line-height:1.55;
+  text-transform:none;
+  letter-spacing:0;
+}
+
+.actions{
+  width:min(720px,88vw);
+  margin:0 auto 26px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+button{
+  min-height:46px;
+  border:1px solid rgba(220,230,255,.16);
+  border-radius:16px;
+  background:rgba(255,255,255,.075);
+  color:rgba(255,255,255,.93);
+  padding:12px 15px;
+  font-size:.76rem;
+  font-weight:900;
+  cursor:pointer;
+  font-family:inherit;
+}
+
+button:hover{background:rgba(255,255,255,.12)}
+button:active{transform:scale(.985)}
+
+.shell{
+  display:grid;
+  grid-template-columns:280px minmax(0,1fr);
+  gap:22px;
+  align-items:start;
+}
+
+.panel{
+  border-radius:30px;
+  background:rgba(255,255,255,.058);
+  border:1px solid rgba(255,255,255,.105);
+  box-shadow:0 22px 64px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  padding:24px;
+}
+
+.panel-label{
+  text-transform:uppercase;
+  letter-spacing:.28em;
+  font-size:.64rem;
+  font-weight:900;
+  color:rgba(235,240,255,.55);
+  margin-bottom:9px;
+}
+
+.panel h2{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:1.8rem;
+  font-weight:400;
+  margin-bottom:18px;
+}
+
+.folder-list,.activity-list{
+  display:grid;
+  gap:10px;
+}
+
+.folder-btn{
+  width:100%;
+  text-align:left;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:space-between;
+  border-radius:18px;
+  background:rgba(8,11,22,.22);
+}
+
+.folder-btn.active{
+  background:rgba(255,255,255,.13);
+  border-color:rgba(255,255,255,.22);
+}
+
+.folder-btn span{
+  display:block;
+  color:rgba(255,255,255,.48);
+  font-size:.64rem;
+  margin-top:4px;
+}
+
+.activity-card{
+  border-radius:22px;
+  background:rgba(8,11,22,.22);
+  border:1px solid rgba(255,255,255,.1);
+  padding:18px;
+}
+
+.activity-card h3{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:1.4rem;
+  font-weight:400;
+  margin-bottom:8px;
+}
+
+.activity-card p{
+  color:rgba(255,255,255,.62);
+  font-size:.75rem;
+  font-weight:800;
+  line-height:1.55;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,255,255,.1);
+  padding:6px 10px;
+  color:rgba(255,255,255,.7);
+  font-size:.64rem;
+  font-weight:900;
+}
+
+.empty{
+  border-radius:18px;
+  background:rgba(255,255,255,.052);
+  border:1px solid rgba(255,255,255,.1);
+  padding:16px;
+  color:rgba(255,255,255,.6);
+  font-size:.76rem;
+  font-weight:900;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:rgba(0,0,0,.58);
+}
+
+.modal.hidden{display:none}
+
+.modal-card{
+  width:min(1120px,94vw);
+  max-height:90vh;
+  overflow:auto;
+  border-radius:32px;
+  background:rgba(20,23,38,.86);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 30px 90px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(24px);
+  padding:28px;
+  position:relative;
+}
+
+.modal-card.small{
+  width:min(440px,92vw);
+}
+
+.close-btn{
+  position:absolute;
+  top:18px;
+  right:18px;
+  width:36px;
+  min-height:36px;
+  padding:0;
+  border-radius:13px;
+}
+
+.builder-head{
+  padding-right:44px;
+  margin-bottom:22px;
+}
+
+.builder-head h2{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:2.25rem;
+  font-weight:400;
+}
+
+.builder-layout{
+  display:grid;
+  grid-template-columns:220px minmax(0,1fr) 260px;
+  gap:18px;
+  align-items:start;
+}
+
+.builder-panel{
+  border-radius:24px;
+  background:rgba(8,11,22,.24);
+  border:1px solid rgba(255,255,255,.1);
+  padding:18px;
+}
+
+.builder-panel h3{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:1.45rem;
+  font-weight:400;
+  margin-bottom:14px;
+}
+
+.block-list{
+  display:grid;
+  gap:9px;
+}
+
+.block-list button{
+  text-align:left;
+  min-height:42px;
+  border-radius:14px;
+  font-size:.72rem;
+}
+
+label{
+  display:grid;
+  gap:8px;
+  color:rgba(255,255,255,.72);
+  font-size:.74rem;
+  font-weight:900;
+  margin-bottom:12px;
+}
+
+input,select,textarea{
+  width:100%;
+  border-radius:15px;
+  border:1px solid rgba(220,230,255,.14);
+  background:rgba(255,255,255,.08);
+  color:white;
+  padding:12px;
+  outline:none;
+  font-size:.78rem;
+  font-weight:800;
+  font-family:inherit;
+}
+
+option{color:#111827}
+textarea{resize:vertical}
+
+.question-list{
+  display:grid;
+  gap:14px;
+}
+
+.question-card{
+  border-radius:22px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.1);
+  padding:16px;
+}
+
+.question-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  margin-bottom:12px;
+}
+
+.question-top strong{
+  font-size:.82rem;
+}
+
+.question-actions{
+  display:flex;
+  gap:6px;
+}
+
+.question-actions button{
+  min-height:30px;
+  width:34px;
+  padding:0;
+  border-radius:10px;
+}
+
+.response-options{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:10px;
+}
+
+.check-pill{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border-radius:14px;
+  background:rgba(255,255,255,.052);
+  border:1px solid rgba(255,255,255,.09);
+  padding:10px;
+  font-size:.72rem;
+  font-weight:900;
+}
+
+.check-pill input{
+  width:auto;
+  min-height:auto;
+}
+
+.media-row{
+  display:grid;
+  gap:8px;
+  margin-top:10px;
+}
+
+.media-preview{
+  border-radius:16px;
+  border:1px dashed rgba(255,255,255,.18);
+  background:rgba(0,0,0,.14);
+  padding:12px;
+  color:rgba(255,255,255,.56);
+  font-size:.72rem;
+  font-weight:800;
+}
+
+.tracker-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin:18px 0;
+}
+
+.tracker-box{
+  border-radius:18px;
+  background:rgba(255,255,255,.052);
+  border:1px solid rgba(255,255,255,.09);
+  padding:16px;
+}
+
+.tracker-box span{
+  display:block;
+  font-size:.68rem;
+  color:rgba(255,255,255,.52);
+  font-weight:900;
+  margin-bottom:6px;
+}
+
+.tracker-box strong{
+  font-size:1.7rem;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:28px;
+  transform:translateX(-50%) translateY(20px);
+  opacity:0;
+  z-index:80;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(18px);
+  padding:12px 16px;
+  border-radius:16px;
+  font-size:.78rem;
+  font-weight:900;
+  transition:.25s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+@media(max-width:1000px){
+  .shell,.builder-layout,.actions,.tracker-grid{grid-template-columns:1fr}
+  .hero h1{white-space:normal}
+}
+</style>
+</head>
+
+<body>
+<div class="bg"></div>
+<a class="dashboard" href="/teacher/dashboard.html">Dashboard</a>
+
+<main class="page">
+  <section class="hero">
+    <p>Teacher Workspace</p>
+    <h1>Activities & Exercises</h1>
+    <p class="sub">Create media-rich activities with video, audio, image, text, and flexible learner response modes.</p>
+  </section>
+
+  <section class="actions">
+    <button id="openFolderBtn" type="button">Create Folder</button>
+    <button id="openBuilderBtn" type="button">Create Activity</button>
+    <button id="openTrackerBtn" type="button">Activity Tracker</button>
+<button id="openPreviewBtn" type="button">Preview Exercises</button>
+  </section>
+
+  <section class="shell">
+    <aside class="panel">
+      <p class="panel-label">Folders</p>
+      <h2>Library</h2>
+      <div id="folderList" class="folder-list"></div>
+    </aside>
+
+    <section class="panel">
+      <p class="panel-label">Selected Folder</p>
+      <h2 id="selectedFolderTitle">All Activities</h2>
+      <div id="activityList" class="activity-list"></div>
+    </section>
+  </section>
+</main>
+
+<section id="folderModal" class="modal hidden">
+  <div class="modal-card small">
+    <button class="close-btn" data-close="folderModal" type="button">×</button>
+    <p class="panel-label">New Folder</p>
+    <h2>Create Folder</h2>
+    <label>Folder Name<input id="folderName" type="text"></label>
+    <button id="saveFolderBtn" type="button">Save Folder</button>
+  </div>
+</section>
+
+<section id="builderModal" class="modal hidden">
+  <div class="modal-card">
+    <button class="close-btn" data-close="builderModal" type="button">×</button>
+
+    <div class="builder-head">
+      <p class="panel-label">Activity Engine</p>
+      <h2>Create Media Activity</h2>
+    </div>
+
+    <div class="builder-layout">
+      <aside class="builder-panel">
+        <h3>Question Blocks</h3>
+        <div class="block-list">
+          <button data-add="Text Question" type="button">Text Question</button>
+          <button data-add="Image Question" type="button">Image Question</button>
+          <button data-add="Audio Question" type="button">Audio Question</button>
+          <button data-add="Video Question" type="button">Video Question</button>
+          <button data-add="Multiple Choice" type="button">Multiple Choice</button>
+          <button data-add="Dropdown" type="button">Dropdown</button>
+          <button data-add="Instruction Block" type="button">Instruction Block</button>
+          <button data-add="File Upload Prompt" type="button">File Upload Prompt</button>
+        </div>
+      </aside>
+
+      <section class="builder-panel">
+        <h3>Activity Canvas</h3>
+        <div id="questionList" class="question-list"></div>
+      </section>
+
+      <aside class="builder-panel">
+        <h3>Settings</h3>
+
+        <label>Activity Title<input id="activityTitle" type="text"></label>
+
+        <label>Folder<select id="activityFolder"></select></label>
+
+        <label>Level
+          <select id="activityLevel">
+            <option value="">Select level</option>
+            <option>Absolute Beginner</option>
+            <option>A0</option>
+            <option>A1</option>
+            <option>A1.1</option>
+            <option>A2</option>
+            <option>B1</option>
+            <option>B2</option>
+          </select>
+        </label>
+
+        <label>Teacher<input id="activityTeacher" type="text"></label>
+
+        <label>Learner / Group<input id="activityLearner" type="text"></label>
+
+        <label>Status
+          <select id="activityStatus">
+            <option>Draft</option>
+            <option>Published</option>
+            <option>Completed</option>
+          </select>
+        </label>
+
+        <label>Instructions<textarea id="activityInstructions" rows="4"></textarea></label>
+
+        <button id="saveActivityBtn" type="button">Save Activity</button>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="trackerModal" class="modal hidden">
+  <div class="modal-card">
+    <button class="close-btn" data-close="trackerModal" type="button">×</button>
+    <p class="panel-label">Activity Tracker</p>
+    <h2>Activity Records</h2>
+
+    <div class="tracker-grid">
+      <div class="tracker-box"><span>Created</span><strong id="createdCount">0</strong></div>
+      <div class="tracker-box"><span>Published</span><strong id="publishedCount">0</strong></div>
+      <div class="tracker-box"><span>Completed</span><strong id="completedCount">0</strong></div>
+    </div>
+
+    <div id="trackerList" class="activity-list"></div>
+  </div>
+</section>
+
+<section id="previewModal" class="modal hidden">
+  <div class="modal-card">
+    <button class="close-btn" data-close="previewModal" type="button">×</button>
+    <p class="panel-label">Preview Exercises</p>
+    <h2>Exercise Preview Library</h2>
+    <div id="previewList" class="activity-list"></div>
+  </div>
+</section>
+
+<div id="toast" class="toast"></div>
+
+<script type="module" src="/js/activities.js?v=activity-engine-001"></script>
+</body>
+</html>
+
