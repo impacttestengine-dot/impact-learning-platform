@@ -4,20 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Personnel Access</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/passkey-luxury.css?v=personnel-inline-final-001">
+  <link rel="stylesheet" href="/css/passkey-luxury.css?v=access-passkeys-final">
 </head>
-
 <body>
   <main class="access-page">
     <div class="bg-layer"></div>
     <div class="shade-layer"></div>
 
     <a class="back-link" href="/">Home</a>
-    <img class="corner-logo" src="/assets/images/logo.png" alt="Impact logo">
 
     <section class="access-card">
       <p class="small-title">PERSONNEL ACCESS</p>
@@ -33,45 +30,29 @@
     </section>
   </main>
 
-  <script>
-    const VALID_PERSONNEL_PASSKEYS = [
-      "IMP-PBN8329-YX",
-      "IMP-PBN&329-YX",
-      "IMP-PBN8329-XX",
-      "IMP-PBN&329-XX"
-    ];
+  <script type="module">
+    import { validatePasskey } from "/js/passkey-auth.js?v=access-passkeys-final";
 
     const input = document.getElementById("passkey");
     const status = document.getElementById("status");
     const button = document.getElementById("signInBtn");
-    const togglePasskey = document.getElementById("togglePasskey");
+    const toggle = document.getElementById("togglePasskey");
 
-    function clean(value){
-      return String(value || "").trim().toUpperCase();
-    }
-
-    togglePasskey.addEventListener("click", () => {
+    toggle.addEventListener("click", () => {
       input.type = input.type === "password" ? "text" : "password";
     });
 
-    function login(){
-      const entered = clean(input.value);
+    async function login(){
+      status.textContent = "Checking passkey...";
+      const result = await validatePasskey(input.value, "personnel");
 
-      if(!entered){
-        status.textContent = "Please enter your passkey.";
-        return;
-      }
-
-      const allowed = VALID_PERSONNEL_PASSKEYS.map(clean);
-
-      if(allowed.includes(entered)){
+      if(result.ok){
         sessionStorage.setItem("impactAccessRole", "personnel");
-        sessionStorage.setItem("impactAccessName", "Personnel");
-        window.location.href = "/teacher/dashboard.html?v=personnel-access-ok";
-        return;
+        sessionStorage.setItem("impactAccessName", result.ownerName || "Personnel");
+        window.location.href = "/teacher/dashboard.html";
+      }else{
+        status.textContent = result.message;
       }
-
-      status.textContent = "Invalid passkey.";
     }
 
     button.addEventListener("click", login);
@@ -81,5 +62,3 @@
   </script>
 </body>
 </html>
-
-

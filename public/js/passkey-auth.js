@@ -5,88 +5,57 @@
 
 import { db } from "/js/firebase-app.js";
 
-const PASSKEY_COLLECTIONS = [
-  "passkeys",
-  "access",
-  "teamPasskeys",
-  "personnelPasskeys",
-  "learnerPasskeys",
-  "configurationPasskeys"
-];
-
-function clean(value) {
+function clean(value){
   return String(value || "").trim();
 }
 
-function getPasskey(data) {
-  return clean(
-    data.passkey ||
-    data.passKey ||
-    data.key ||
-    data.code ||
-    data.accessCode ||
-    data.password ||
-    data.pin ||
-    data.generatedPasskey ||
-    data.generatedKey ||
-    data.teamPasskey ||
-    data.learnerPasskey
-  );
+function roleClean(value){
+  return clean(value).toLowerCase().replace(/\s+/g,"").replace(/-/g,"");
 }
 
-function getOwnerName(data) {
-  return clean(
-    data.ownerName ||
-    data.name ||
-    data.displayName ||
-    data.fullName ||
-    data.teamMemberName ||
-    data.memberName ||
-    data.learnerName ||
-    data.personnelName ||
-    "User"
-  );
-}
+function canEnterGate(data, gate){
+  const role = roleClean(data.role);
+  const scope = roleClean(data.accessScope);
+  const canAccessTeacher = data.canAccessTeacher === true;
+  const canAccessLearner = data.canAccessLearner === true;
 
-export async function validatePasskey(inputPasskey, requestedRole) {
-  const entered = clean(inputPasskey);
-
-  if (!entered) {
-    return {
-      ok: false,
-      message: "Please enter your passkey."
-    };
+  if(gate === "personnel"){
+    return canAccessTeacher || scope === "team" || role.includes("teacher") || role.includes("personnel") || role.includes("team") || role.includes("operations") || role.includes("lead");
   }
 
-  try {
-    for (const collectionName of PASSKEY_COLLECTIONS) {
-      const snapshot = await getDocs(collection(db, collectionName));
+  if(gate === "learnerHub"){
+    return canAccessLearner || scope === "learner" || scope === "team" || role.includes("learner") || role.includes("teacher") || role.includes("personnel") || role.includes("team") || role.includes("operations") || role.includes("lead");
+  }
 
-      for (const docSnap of snapshot.docs) {
-        const data = docSnap.data();
-        const savedPasskey = getPasskey(data);
+  return false;
+}
 
-        if (savedPasskey && savedPasskey === entered) {
-          return {
-            ok: true,
-            role: requestedRole,
-            ownerName: getOwnerName(data)
-          };
-        }
+export async function validatePasskey(inputPasskey, requestedGate){
+  const entered = clean(inputPasskey);
+
+  if(!entered){
+    return { ok:false, message:"Please enter your passkey." };
+  }
+
+  try{
+    const snap = await getDocs(collection(db, "accessPasskeys"));
+
+    for(const docSnap of snap.docs){
+      const data = docSnap.data();
+      const saved = clean(data.passkey);
+
+      if(saved === entered && canEnterGate(data, requestedGate)){
+        return {
+          ok:true,
+          role: requestedGate,
+          ownerName: data.ownerName || data.name || "User"
+        };
       }
     }
 
-    return {
-      ok: false,
-      message: "Invalid passkey."
-    };
-
-  } catch (error) {
-    console.error("Passkey validation failed:", error);
-
-    return {
-      ok: false,
-      message: "Could not validate passkey from Firestore."
-    };
+    return { ok:false, message:"Invalid passkey." };
+  }catch(error){
+    console.error(error);
+    return { ok:false, message:"Could not validate passkey from Firestore." };
   }
 }

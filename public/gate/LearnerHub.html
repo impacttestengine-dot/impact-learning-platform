@@ -2,16 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=/gate/learner-hub.html">
-  <title>Redirecting...</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Learner Hub Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/passkey-luxury.css?v=access-passkeys-final">
 </head>
 <body>
-  <script>
-    window.location.replace("/gate/learner-hub.html");
+  <main class="access-page">
+    <div class="bg-layer"></div>
+    <div class="shade-layer"></div>
+
+    <a class="back-link" href="/">Home</a>
+
+    <section class="access-card">
+      <p class="small-title">LEARNER HUB ACCESS</p>
+      <h1>Welcome</h1>
+
+      <div class="passkey-row">
+        <input id="passkey" type="password" autocomplete="off">
+        <button class="toggle-passkey" id="togglePasskey" type="button">👁</button>
+      </div>
+
+      <button id="signInBtn" type="button">Sign In</button>
+      <p id="status" class="status"></p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { validatePasskey } from "/js/passkey-auth.js?v=access-passkeys-final";
+
+    const input = document.getElementById("passkey");
+    const status = document.getElementById("status");
+    const button = document.getElementById("signInBtn");
+    const toggle = document.getElementById("togglePasskey");
+
+    toggle.addEventListener("click", () => {
+      input.type = input.type === "password" ? "text" : "password";
+    });
+
+    async function login(){
+      status.textContent = "Checking passkey...";
+      const result = await validatePasskey(input.value, "learnerHub");
+
+      if(result.ok){
+        sessionStorage.setItem("impactAccessRole", "learnerHub");
+        sessionStorage.setItem("impactAccessName", result.ownerName || "Learner Hub");
+        window.location.href = "/learner/dashboard.html";
+      }else{
+        status.textContent = result.message;
+      }
+    }
+
+    button.addEventListener("click", login);
+    input.addEventListener("keydown", e => {
+      if(e.key === "Enter") login();
+    });
   </script>
 </body>
 </html>
-
-
-
-
