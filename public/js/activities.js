@@ -390,6 +390,7 @@ async function saveActivity(){
     teacher: clean($("activityTeacher").value),
     learner: clean($("activityLearner").value),
     status: clean($("activityStatus").value) || "Draft",
+published: clean($("activityStatus").value) === "Published",
     instructions: clean($("activityInstructions").value),
     questions: finalQuestions,
     createdAt: new Date().toISOString()
@@ -476,3 +477,4 @@ async function init(){
 }
 
 init();
+
