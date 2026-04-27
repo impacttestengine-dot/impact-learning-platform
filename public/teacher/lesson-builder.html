@@ -1,276 +1,1030 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Lesson Builder</title>
-<link rel="stylesheet" href="/css/teacher-dashboard.css"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lesson Builder | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css?v=lesson-builder-final-003">
+<link rel="stylesheet" href="/css/impact-page-nav.css?v=lesson-builder-final-003">
 
 <style>
+*{box-sizing:border-box;margin:0;padding:0}
 
-/* Layout (Activity-style) */
-.builder-shell{
-  width:min(1180px,92vw);
-  margin:60px auto;
+html,body{min-height:100%}
+
+body{
+  font-family:Inter,system-ui,sans-serif;
+  color:#fff;
+  background:#05060b;
+  overflow-x:hidden;
+}
+
+.page{
+  position:relative;
+  z-index:20;
+  width:min(1220px,94vw);
+  margin:0 auto;
+  padding:128px 0 80px;
+}
+
+.workspace{
   display:grid;
-  grid-template-columns:240px 1fr 280px;
-  gap:20px;
+  grid-template-columns:260px minmax(0,1fr) 240px;
+  gap:22px;
+  align-items:start;
 }
 
 .panel{
-  border-radius:24px;
-  padding:20px;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.12);
+  border-radius:30px;
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 24px 70px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.10);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+
+.blocks-panel,
+.settings-panel{
+  padding:22px;
+}
+
+.block-list{
+  display:grid;
+  gap:12px;
+}
+
+.block-btn,
+.control-btn,
+.toolbar button,
+.toolbar select,
+.toolbar input,
+.settings-panel input,
+.settings-panel select,
+.modal button{
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  border-radius:16px;
+  padding:12px 14px;
+  font-family:Inter,system-ui,sans-serif;
+  font-weight:900;
+  cursor:pointer;
   backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  transition:transform .15s ease, background .15s ease, border-color .15s ease;
 }
 
 .block-btn{
   width:100%;
-  padding:14px;
-  margin-bottom:10px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,0.15);
-  background:rgba(255,255,255,0.08);
-  color:white;
-  cursor:pointer;
+  min-height:54px;
+  text-align:center;
 }
 
-.canvas{
-  min-height:400px;
+.block-btn:hover,
+.control-btn:hover,
+.toolbar button:hover{
+  background:rgba(255,255,255,.17);
+  border-color:rgba(232,216,166,.34);
+  transform:translateY(-1px);
+}
+
+.block-btn:active,
+.control-btn:active,
+.toolbar button:active{
+  transform:scale(.97);
+}
+
+.canvas-panel{
   padding:18px;
-  border-radius:18px;
-  background:rgba(0,0,0,0.35);
 }
 
 .toolbar{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
-  margin-bottom:12px;
+  gap:8px;
+  margin-bottom:14px;
 }
 
 .toolbar select,
-.toolbar button{
+.toolbar input{
+  min-height:40px;
   padding:8px 10px;
-  border-radius:10px;
-  border:none;
-  background:rgba(255,255,255,0.15);
-  color:white;
-  cursor:pointer;
 }
 
-.canvas-area{
-  min-height:320px;
-  padding:12px;
-  background:white;
-  color:black;
-  border-radius:12px;
+.toolbar option,
+.settings-panel option,
+.modal option{
+  color:#111827;
 }
 
-.top-controls{
+.canvas{
+  min-height:540px;
+  border-radius:26px;
+  padding:22px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,.09), transparent 28%),
+    linear-gradient(180deg, rgba(6,10,22,.88), rgba(9,12,24,.76));
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.empty-state{
+  padding:18px;
+  border-radius:20px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.10);
+  color:rgba(255,255,255,.74);
+  font-weight:800;
+  line-height:1.5;
+}
+
+.lesson-card{
+  margin-bottom:16px;
+  padding:20px;
+  border-radius:24px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.10);
+  color:#fff;
+  outline:none;
+}
+
+.lesson-card:focus,
+.lesson-card.active{
+  border-color:rgba(232,216,166,.44);
+  box-shadow:0 18px 44px rgba(0,0,0,.22), 0 0 0 2px rgba(232,216,166,.18), inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+.lesson-label{
+  margin-bottom:10px;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  font-size:.68rem;
+  font-weight:900;
+  color:rgba(232,216,166,.82);
+}
+
+.lesson-card h1,
+.lesson-card h2,
+.lesson-card h3{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-weight:400;
+  color:#fbfbf8;
+  margin-bottom:8px;
+}
+
+.lesson-card h1{font-size:2.2rem}
+.lesson-card h2{font-size:1.8rem}
+.lesson-card h3{font-size:1.45rem}
+
+.lesson-card p,
+.lesson-card li{
+  color:rgba(255,255,255,.82);
+  font-weight:700;
+  line-height:1.65;
+}
+
+.lesson-card ul{
+  margin:10px 0 0 22px;
+}
+
+.lesson-card img,
+.lesson-card video{
+  max-width:100%;
+  border-radius:16px;
+  display:block;
+  margin-top:12px;
+}
+
+.lesson-card audio{
+  width:100%;
+  margin-top:12px;
+}
+
+.settings-panel{
+  display:grid;
+  gap:16px;
+}
+
+.settings-label{
+  display:block;
+  margin-bottom:8px;
+  font-size:.82rem;
+  font-weight:900;
+  color:rgba(255,255,255,.78);
+}
+
+.settings-panel input,
+.settings-panel select{
+  width:100%;
+  min-height:50px;
+}
+
+.settings-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:4px;
+}
+
+.control-btn{
+  min-height:48px;
+}
+
+.modal{
   position:fixed;
-  top:18px;
-  right:22px;
-  display:flex;
+  inset:0;
+  z-index:2147483647;
+  display:none;
+  place-items:center;
+  padding:24px;
+  background:rgba(0,0,0,.68);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+
+.modal.show{
+  display:grid;
+}
+
+.modal-card{
+  width:min(620px,94vw);
+  max-height:86vh;
+  overflow:auto;
+  padding:28px;
+  border-radius:30px;
+  background:rgba(10,13,24,.96);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 30px 90px rgba(0,0,0,.45);
+}
+
+.modal-card h2{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:2rem;
+  font-weight:400;
+  margin-bottom:18px;
+}
+
+.modal-grid{
+  display:grid;
   gap:10px;
-  z-index:50;
 }
 
-.top-controls button{
-  padding:8px 12px;
-  border-radius:12px;
-  border:none;
-  background:rgba(255,255,255,0.15);
-  color:white;
-  cursor:pointer;
+.file-btn{
+  width:100%;
+  text-align:left;
+  margin-bottom:10px;
 }
 
-.nav-buttons{
+.view-document{
+  background:rgba(255,255,255,.07);
+  border-radius:24px;
+  padding:24px;
+}
+
+.view-document .lesson-card{
+  background:rgba(255,255,255,.10);
+}
+
+.hidden-file{display:none}
+
+@media(max-width:980px){
+  .page{padding-top:118px}
+  .workspace{grid-template-columns:1fr}
+}
+/* LESSON VIEW AND RESET FIX */
+
+.lesson-card .lesson-label{
+  display:none !important;
+}
+
+.lesson-card{
+  box-shadow:none !important;
+}
+
+#undoBtn{
+  background:rgba(255,255,255,.14) !important;
+}
+
+.canvas-file-hint{
   position:fixed;
-  top:18px;
-  left:22px;
-  display:flex;
-  gap:10px;
-  z-index:50;
+  top:88px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:2147483647;
+  padding:12px 18px;
+  border-radius:16px;
+  background:rgba(10,13,24,.94);
+  border:1px solid rgba(255,255,255,.16);
+  color:#fff;
+  font-weight:900;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  opacity:0;
+  pointer-events:none;
+  transition:.2s ease;
 }
 
-.nav-buttons button{
-  padding:8px 12px;
-  border-radius:12px;
-  border:none;
-  background:rgba(255,255,255,0.15);
-  color:white;
-  cursor:pointer;
+.canvas-file-hint.show{
+  opacity:1;
 }
 
+.view-document-clean{
+  max-width:900px;
+  margin:0 auto;
+  padding:70px;
+  color:#f8fafc;
+  font-family:Inter,system-ui,sans-serif;
+  line-height:1.75;
+}
+
+.view-document-clean h1,
+.view-document-clean h2,
+.view-document-clean h3{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-weight:400;
+  margin:24px 0 12px;
+}
+
+.view-document-clean p{
+  margin:10px 0;
+}
+
+.view-document-clean ul{
+  margin:10px 0 18px 26px;
+}
+
+.view-document-clean img,
+.view-document-clean video{
+  max-width:100%;
+  border-radius:18px;
+  margin:18px 0;
+}
+
+.view-document-clean audio{
+  width:100%;
+  margin:18px 0;
+}
 </style>
 </head>
 
 <body>
+<div id="fileHint" class="canvas-file-hint">Select a file from your device</div><main class="page">
+  <section class="workspace">
+    <aside class="panel blocks-panel">
+      <div class="block-list">
+        <button class="block-btn" data-block="header" type="button">Header</button>
+        <button class="block-btn" data-block="subheader" type="button">Sub Header</button>
+        <button class="block-btn" data-block="outline" type="button">Lesson Outline</button>
+        <button class="block-btn" data-block="title" type="button">Title</button>
+        <button class="block-btn" data-block="objectives" type="button">Objectives</button>
+        <button class="block-btn" data-block="text" type="button">Text</button>
+        <button class="block-btn" data-block="image" type="button">Image</button>
+        <button class="block-btn" data-block="audio" type="button">Audio</button>
+        <button class="block-btn" data-block="video" type="button">Video</button>
+      </div>
+    </aside>
 
-<div class="bg-layer"></div>
-<div class="shade-layer"></div>
+    <section class="panel canvas-panel">
+      <div class="toolbar"><button id="undoBtn" type="button">Undo</button>
+        <select id="fontFamily">
+          <option value="Inter">Inter</option>
+          <option value="Arial">Arial</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Tahoma">Tahoma</option>
+          <option value="Trebuchet MS">Trebuchet MS</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Garamond">Garamond</option>
+          <option value="Palatino Linotype">Palatino</option>
+          <option value="Comic Sans MS">Comic Sans</option>
+          <option value="Impact">Impact</option>
+        </select>
 
-<!-- NAV -->
-<div class="nav-buttons">
-  <button onclick="goDashboard()">Dashboard</button>
-  <button onclick="goBack()">Back</button>
+        <select id="fontSize">
+          <option value="14px">14</option>
+          <option value="16px" selected>16</option>
+          <option value="18px">18</option>
+          <option value="20px">20</option>
+          <option value="24px">24</option>
+          <option value="28px">28</option>
+          <option value="32px">32</option>
+          <option value="40px">40</option>
+        </select>
+
+        <select id="lineSpacing">
+          <option value="1.2">Line 1.2</option>
+          <option value="1.5" selected>Line 1.5</option>
+          <option value="1.8">Line 1.8</option>
+          <option value="2">Line 2</option>
+        </select>
+
+        <select id="letterSpacing">
+          <option value="0px">Letter 0</option>
+          <option value=".5px">Letter .5</option>
+          <option value="1px">Letter 1</option>
+          <option value="2px">Letter 2</option>
+        </select>
+
+        <button data-toggle="bold" type="button">B</button>
+        <button data-toggle="italic" type="button">I</button>
+        <button data-toggle="underline" type="button">U</button>
+
+        <select id="alignment">
+          <option value="left">Align Left</option>
+          <option value="center">Align Center</option>
+          <option value="right">Align Right</option>
+          <option value="justify">Justify</option>
+        </select>
+
+        <input id="fontColor" type="color" value="#ffffff" title="Font color">
+        <input id="backgroundColor" type="color" value="#24304f" title="Background color">
+      </div>
+
+      <div class="canvas" id="canvas">
+        <div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>
+      </div>
+    </section>
+
+    <aside class="panel settings-panel">
+      <div>
+        <label class="settings-label">Lesson Title</label>
+        <input id="lessonTitle" type="text" placeholder="Lesson Title">
+      </div>
+
+      <div>
+        <label class="settings-label">Select Level</label>
+        <select id="lessonLevel">
+          <option>Absolute Beginner</option>
+          <option>A0</option>
+          <option>A1</option>
+          <option>A1.1</option>
+          <option>A2</option>
+          <option>B1</option>
+          <option>B2</option>
+        </select>
+      </div>
+
+      <div class="settings-actions">
+        <button class="control-btn" id="newBtn" type="button">New +</button>
+        <button class="control-btn" id="editBtn" type="button">Edit</button>
+        <button class="control-btn" id="saveBtn" type="button">Save</button>
+        <button class="control-btn" id="viewBtn" type="button">View</button>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<input id="imageInput" class="hidden-file" type="file" accept="image/*">
+<input id="audioInput" class="hidden-file" type="file" accept="audio/*">
+<input id="videoInput" class="hidden-file" type="file" accept="video/*">
+
+<div class="modal" id="imageChoiceModal">
+  <div class="modal-card">
+    <h2>Add Image</h2>
+    <div class="modal-grid">
+      <button id="imageDeviceBtn" type="button">From Device</button>
+      <button id="imageGoogleBtn" type="button">From Google</button>
+      <button id="imageStockBtn" type="button">From Stock Photos</button>
+      <button id="closeImageChoiceBtn" type="button">Close</button>
+    </div>
+  </div>
 </div>
 
-<!-- TOP CONTROLS -->
-<div class="top-controls">
-  <button onclick="newDoc()">New</button>
-  <button onclick="saveDoc()">Save</button>
-  <button onclick="editDoc()">Edit</button>
-  <button onclick="viewMode()">View</button>
-</div>
-
-<div class="builder-shell">
-
-  <!-- LEFT PANEL -->
-  <div class="panel">
-    <h3>Blocks</h3>
-
-    <button class="block-btn" onclick="addBlock('header')">Header</button>
-    <button class="block-btn" onclick="addBlock('text')">Text</button>
-    <button class="block-btn" onclick="addBlock('image')">Image</button>
-    <button class="block-btn" onclick="addBlock('audio')">Audio</button>
-    <button class="block-btn" onclick="addBlock('video')">Video</button>
-  </div>
-
-  <!-- CANVAS -->
-  <div class="panel">
-    
-    <div class="toolbar">
-
-      <select onchange="setFont(this.value)">
-        <option>Arial</option>
-        <option>Verdana</option>
-        <option>Times New Roman</option>
-        <option>Georgia</option>
-        <option>Courier New</option>
-      </select>
-
-      <select onchange="setSize(this.value)">
-        <option value="12">12</option>
-        <option value="14">14</option>
-        <option value="18">18</option>
-        <option value="24">24</option>
-      </select>
-
-      <button onclick="bold()">B</button>
-      <button onclick="italic()">I</button>
-      <button onclick="underline()">U</button>
-
-      <button onclick="align('left')">L</button>
-      <button onclick="align('center')">C</button>
-      <button onclick="align('right')">R</button>
-
-      <button onclick="changeColor()">Text Color</button>
-      <button onclick="changeBg()">Background</button>
-
-    </div>
-
-    <div id="canvas" class="canvas-area" contenteditable="true">
-      Start building your lesson...
-    </div>
-
-  </div>
-
-  <!-- RIGHT PANEL -->
-  <div class="panel">
-    <h3>Settings</h3>
-    <input placeholder="Lesson Title"/>
-    <br><br>
-    <select>
-      <option>Select Level</option>
+<div class="modal" id="editModal">
+  <div class="modal-card">
+    <h2>Edit Lesson Plan</h2>
+    <label class="settings-label">Select Folder / Level</label>
+    <select id="editLevelSelect" class="settings-input">
+      <option>Absolute Beginner</option>
       <option>A0</option>
       <option>A1</option>
+      <option>A1.1</option>
       <option>A2</option>
       <option>B1</option>
       <option>B2</option>
     </select>
+    <div id="editFileList" style="margin-top:18px;"></div>
+    <div class="modal-actions" style="margin-top:18px;display:flex;justify-content:flex-end;">
+      <button id="closeEditBtn" type="button">Close</button>
+    </div>
   </div>
-
 </div>
 
+<div class="modal" id="viewModal">
+  <div class="modal-card">
+    <h2 id="viewTitle">Lesson Plan</h2>
+    <div class="view-document" id="viewDocument"></div>
+    <div class="modal-actions" style="margin-top:18px;display:flex;justify-content:flex-end;">
+      <button id="closeViewBtn" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/impact-global-bg.js?v=lesson-builder-final-003"></script>
+<script src="/js/impact-page-nav.js?v=lesson-builder-final-003"></script>
+
 <script>
-
-function goDashboard(){
-  window.location.href="/teacher/dashboard.html";
-}
-
-function goBack(){
-  history.back();
-}
-
-function addBlock(type){
+(function(){
   const canvas = document.getElementById("canvas");
-  let el;
+  const lessonTitle = document.getElementById("lessonTitle");
+  const lessonLevel = document.getElementById("lessonLevel");
 
-  if(type==="header"){
-    el = "<h2>New Header</h2>";
-  }
-  if(type==="text"){
-    el = "<p>New text...</p>";
-  }
-  if(type==="image"){
-    el = "<p>[Image Placeholder]</p>";
-  }
-  if(type==="audio"){
-    el = "<p>[Audio Placeholder]</p>";
-  }
-  if(type==="video"){
-    el = "<p>[Video Placeholder]</p>";
+  let selectedCard = null;
+  let currentId = null;
+
+  const params = new URLSearchParams(location.search);
+  const initialLevel = params.get("level") || sessionStorage.getItem("impactSelectedLessonLevel");
+  if(initialLevel) lessonLevel.value = initialLevel;
+
+  function getPlans(){
+    try{return JSON.parse(localStorage.getItem("impactLessonPlans") || "[]");}
+    catch(e){return [];}
   }
 
-  canvas.innerHTML += el;
-}
+  function setPlans(list){
+    localStorage.setItem("impactLessonPlans", JSON.stringify(list));
+  }
 
-function bold(){document.execCommand("bold")}
-function italic(){document.execCommand("italic")}
-function underline(){document.execCommand("underline")}
+  function uid(){
+    return "LP-" + Date.now().toString(36).toUpperCase();
+  }
 
-function align(type){
-  document.execCommand("justify"+type)
-}
+  let undoStack = [];
+  let undoTimer = null;
 
-function setFont(font){
-  document.execCommand("fontName",false,font)
-}
+  function pushUndo(){
+    undoStack.push(canvas.innerHTML);
+    if(undoStack.length > 40) undoStack.shift();
+  }
 
-function setSize(size){
-  document.execCommand("fontSize",false,"3")
-}
+  function pushUndoDebounced(){
+    clearTimeout(undoTimer);
+    undoTimer = setTimeout(pushUndo, 400);
+  }
 
-function changeColor(){
-  const c = prompt("Enter color (e.g red or #000):");
-  document.execCommand("foreColor",false,c)
-}
+  function undoCanvas(){
+    if(!undoStack.length) return;
+    const previous = undoStack.pop();
+    canvas.innerHTML = previous;
+    rebindCanvasCards();
+  }
 
-function changeBg(){
-  const c = prompt("Enter background color:");
-  document.execCommand("hiliteColor",false,c)
-}
+  function rebindCanvasCards(){
+    document.querySelectorAll(".lesson-card").forEach(card => {
+      card.addEventListener("click", () => selectCard(card));
+      card.addEventListener("focus", () => selectCard(card));
+      card.addEventListener("input", pushUndoDebounced);
+    });
+  }
 
-function newDoc(){
-  document.getElementById("canvas").innerHTML="";
-}
+  function resetToolbarDefaults(){
+    const fontFamily = document.getElementById("fontFamily");
+    const fontSize = document.getElementById("fontSize");
+    const lineSpacing = document.getElementById("lineSpacing");
+    const letterSpacing = document.getElementById("letterSpacing");
+    const alignment = document.getElementById("alignment");
+    const fontColor = document.getElementById("fontColor");
+    const backgroundColor = document.getElementById("backgroundColor");
 
-function saveDoc(){
-  alert("Saved (placeholder)");
-}
+    if(fontFamily) fontFamily.value = "Inter";
+    if(fontSize) fontSize.value = "16px";
+    if(lineSpacing) lineSpacing.value = "1.5";
+    if(letterSpacing) letterSpacing.value = "0px";
+    if(alignment) alignment.value = "left";
+    if(fontColor) fontColor.value = "#ffffff";
+    if(backgroundColor) backgroundColor.value = "#24304f";
+  }
 
-function editDoc(){
-  alert("Edit mode (placeholder)");
-}
+  function showFileHint(text){
+    const hint = document.getElementById("fileHint");
+    if(!hint) return;
+    hint.textContent = text;
+    hint.classList.add("show");
+    setTimeout(() => hint.classList.remove("show"), 1800);
+  }
 
-function viewMode(){
-  alert("View mode (placeholder)");
-}
+  function clearEmpty(){
+    const empty = canvas.querySelector(".empty-state");
+    if(empty) empty.remove();
+  }
 
+  function selectCard(card){
+    selectedCard = card;
+    document.querySelectorAll(".lesson-card").forEach(c => c.classList.remove("active"));
+    card.classList.add("active");
+  }
+
+  function addCard(type, innerHtml){
+    pushUndo();
+    resetToolbarDefaults();
+    clearEmpty();
+
+    const card = document.createElement("article");
+    card.className = "lesson-card";
+    card.contentEditable = "true";
+    card.dataset.blockType = type;
+    card.innerHTML = innerHtml.replace(/<div class="lesson-label">[\s\S]*?<\/div>/g, "");
+
+    card.style.fontFamily = "Inter";
+    card.style.fontSize = "16px";
+    card.style.lineHeight = "1.5";
+    card.style.letterSpacing = "0px";
+    card.style.textAlign = "left";
+    card.style.color = "#ffffff";
+    card.style.backgroundColor = "";
+
+    card.addEventListener("click", () => selectCard(card));
+    card.addEventListener("focus", () => selectCard(card));
+    card.addEventListener("input", pushUndoDebounced);
+
+    canvas.appendChild(card);
+    selectCard(card);
+    card.focus();
+  }
+
+  function blockTemplate(type){
+    const label = '';
+
+    if(type === "header"){
+      return label + '<h1>New Header</h1>';
+    }
+
+    if(type === "subheader"){
+      return label + '<h2>New Sub Header</h2>';
+    }
+
+    if(type === "outline"){
+      return label + '<h2>Lesson Outline</h2><ul><li>Warm-up</li><li>Main lesson</li><li>Practice</li><li>Review</li></ul>';
+    }
+
+    if(type === "title"){
+      return label + '<h1>Lesson Title</h1><p>Add a short description of the lesson here.</p>';
+    }
+
+    if(type === "objectives"){
+      return label + '<h2>Objectives</h2><p><strong>A la fin du cours, l’apprenant doit:</strong></p><ul><li>objectif 1</li><li>objectif 2</li><li>objectif 3</li></ul>';
+    }
+
+    if(type === "text"){
+      return label + '<p>Write lesson content here...</p>';
+    }
+
+    if(type === "image"){
+        showFileHint("Choose image source");
+        document.getElementById("imageChoiceModal").classList.add("show");
+        return;
+      }
+
+      if(type === "audio"){
+        showFileHint("Select an audio file from your device");
+        document.getElementById("audioInput").click();
+        return;
+      }
+
+      if(type === "video"){
+        showFileHint("Select a video file from your device");
+        document.getElementById("videoInput").click();
+        return;
+      }
+
+      addCard(type, blockTemplate(type));
+    });
+  });
+
+  function apply(prop, value){
+    if(!selectedCard){
+      alert("Select a card on the canvas first.");
+      return;
+    }
+    selectedCard.style[prop] = value;
+  }
+
+  document.getElementById("fontFamily").addEventListener("change", e => apply("fontFamily", e.target.value));
+  document.getElementById("fontSize").addEventListener("change", e => apply("fontSize", e.target.value));
+  document.getElementById("lineSpacing").addEventListener("change", e => apply("lineHeight", e.target.value));
+  document.getElementById("letterSpacing").addEventListener("change", e => apply("letterSpacing", e.target.value));
+  document.getElementById("alignment").addEventListener("change", e => apply("textAlign", e.target.value));
+  document.getElementById("fontColor").addEventListener("input", e => apply("color", e.target.value));
+  document.getElementById("backgroundColor").addEventListener("input", e => apply("backgroundColor", e.target.value));
+
+  document.querySelectorAll("[data-toggle]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if(!selectedCard){
+        alert("Select a card on the canvas first.");
+        return;
+      }
+
+      const t = btn.dataset.toggle;
+      if(t === "bold") selectedCard.style.fontWeight = selectedCard.style.fontWeight === "900" ? "700" : "900";
+      if(t === "italic") selectedCard.style.fontStyle = selectedCard.style.fontStyle === "italic" ? "normal" : "italic";
+      if(t === "underline") selectedCard.style.textDecoration = selectedCard.style.textDecoration === "underline" ? "none" : "underline";
+    });
+  });
+
+  document.getElementById("imageDeviceBtn").onclick = () => {
+    document.getElementById("imageChoiceModal").classList.remove("show");
+    document.getElementById("imageInput").click();
+  };
+
+  document.getElementById("imageGoogleBtn").onclick = () => {
+    const q = prompt("Search Google Images for:");
+    if(q) window.open("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(q), "_blank");
+  };
+
+  document.getElementById("imageStockBtn").onclick = () => {
+    const q = prompt("Search stock photos for:");
+    if(q) window.open("https://unsplash.com/s/photos/" + encodeURIComponent(q), "_blank");
+  };
+
+  document.getElementById("closeImageChoiceBtn").onclick = () => {
+    document.getElementById("imageChoiceModal").classList.remove("show");
+  };
+
+  function fileToDataUrl(file, cb){
+    const reader = new FileReader();
+    reader.onload = () => cb(reader.result);
+    reader.readAsDataURL(file);
+  }
+
+  document.getElementById("imageInput").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if(file) fileToDataUrl(file, src => addCard("image", '<div class="lesson-label">Image Resource</div><img src="'+src+'" alt="">'));
+    e.target.value = "";
+  });
+
+  document.getElementById("audioInput").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if(file) fileToDataUrl(file, src => addCard("audio", '<div class="lesson-label">Audio Resource</div><audio src="'+src+'" controls></audio>'));
+    e.target.value = "";
+  });
+
+  document.getElementById("videoInput").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if(file) fileToDataUrl(file, src => addCard("video", '<div class="lesson-label">Video Resource</div><video src="'+src+'" controls></video>'));
+    e.target.value = "";
+  });
+
+  document.getElementById("undoBtn").onclick = undoCanvas; document.getElementById("newBtn").onclick = () => {
+    if(!confirm("Start a new lesson plan?")) return;
+    currentId = null;
+    selectedCard = null; resetToolbarDefaults(); lessonTitle.value = "";
+    canvas.innerHTML = '<div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>';
+  };
+
+  document.getElementById("saveBtn").onclick = () => {
+    const title = lessonTitle.value.trim() || "Untitled Lesson Plan";
+    const level = lessonLevel.value;
+
+    if(!currentId) currentId = uid();
+
+    const record = {
+      id: currentId,
+      title,
+      name: title,
+      level,
+      content: canvas.innerHTML,
+      updatedAt: new Date().toISOString()
+    };
+
+    const list = getPlans();
+    const index = list.findIndex(p => p.id === currentId);
+    if(index >= 0) list[index] = record;
+    else list.push(record);
+
+    setPlans(list);
+    alert("Lesson saved to " + level + " folder.");
+  };
+
+  function renderEditFiles(){
+    const level = document.getElementById("editLevelSelect").value;
+    const files = getPlans().filter(p => p.level === level);
+    const box = document.getElementById("editFileList");
+
+    box.innerHTML = files.length
+      ? files.map(p => '<button class="file-btn" data-id="'+p.id+'" type="button">'+p.title+'</button>').join("")
+      : '<p style="color:rgba(255,255,255,.75);font-weight:800;">No files in this folder yet.</p>';
+
+    box.querySelectorAll(".file-btn").forEach(btn => {
+      btn.onclick = () => {
+        const file = getPlans().find(p => p.id === btn.dataset.id);
+        if(!file) return;
+        currentId = file.id;
+        lessonTitle.value = file.title || file.name || "";
+        lessonLevel.value = file.level || "Absolute Beginner";
+        canvas.innerHTML = file.content || ""; rebindCanvasCards(); rebindCanvasCards();
+        document.getElementById("editModal").classList.remove("show");
+      };
+    });
+  }
+
+  document.getElementById("editBtn").onclick = () => {
+    document.getElementById("editLevelSelect").value = lessonLevel.value;
+    renderEditFiles();
+    document.getElementById("editModal").classList.add("show");
+  };
+
+  document.getElementById("editLevelSelect").addEventListener("change", renderEditFiles);
+  document.getElementById("closeEditBtn").onclick = () => document.getElementById("editModal").classList.remove("show");
+
+  document.getElementById("viewBtn").onclick = () => {
+    const title = lessonTitle.value || "Lesson Plan";
+    const clean = canvas.innerHTML
+      .replace(/contenteditable="true"/g, "")
+      .replace(/class="lesson-card active"/g, "")
+      .replace(/class="lesson-card"/g, "")
+      .replace(/<article\s*>/g, "<section>")
+      .replace(/<\/article>/g, "</section>");
+
+    const w = window.open("", "_blank");
+    w.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>${title}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <style>
+          body{
+            margin:0;
+            min-height:100vh;
+            background:
+              radial-gradient(circle at 50% 10%, rgba(255,255,255,.08), transparent 28%),
+              linear-gradient(180deg,#111827,#05060b);
+            color:#f8fafc;
+          }
+          .doc{
+            max-width:900px;
+            margin:0 auto;
+            padding:70px 42px;
+            font-family:Inter,system-ui,sans-serif;
+            line-height:1.75;
+          }
+          h1,h2,h3{
+            font-family:"Sorts Mill Goudy",Georgia,serif;
+            font-weight:400;
+            margin:24px 0 12px;
+          }
+          h1{font-size:3rem}
+          h2{font-size:2.1rem}
+          h3{font-size:1.55rem}
+          p{margin:10px 0}
+          ul{margin:10px 0 18px 26px}
+          img,video{max-width:100%;border-radius:18px;margin:18px 0;display:block}
+          audio{width:100%;margin:18px 0}
+          section{
+            margin-bottom:22px;
+          }
+        </style>
+      </head>
+      <body>
+        <main class="doc">
+          <h1>${title}</h1>
+          ${clean}
+        </main>
+      <script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const canvas = document.getElementById("canvas");
+
+  function addCard(html){
+    const empty = canvas.querySelector(".empty-state");
+    if(empty) empty.remove();
+
+    const card = document.createElement("div");
+    card.className = "lesson-card";
+    card.contentEditable = "true";
+    card.innerHTML = html;
+
+    canvas.appendChild(card);
+    card.focus();
+  }
+
+  document.querySelectorAll(".block-btn").forEach(btn => {
+    btn.onclick = () => {
+      const type = btn.getAttribute("data-block");
+
+      btn.style.transform = "scale(.95)";
+      setTimeout(() => btn.style.transform = "", 120);
+
+      if(type === "header"){
+        addCard("<h1>New Header</h1>");
+      }
+
+      if(type === "subheader"){
+        addCard("<h2>New Sub Header</h2>");
+      }
+
+      if(type === "outline"){
+        addCard("<h2>Lesson Outline</h2><ul><li>Warm-up</li><li>Main lesson</li><li>Practice</li></ul>");
+      }
+
+      if(type === "title"){
+        addCard("<h1>Lesson Title</h1><p>Description...</p>");
+      }
+
+      if(type === "objectives"){
+        addCard("<h2>Objectives</h2><p><strong>A la fin du cours, l’apprenant doit:</strong></p><ul><li>...</li></ul>");
+      }
+
+      if(type === "text"){
+        addCard("<p>Write lesson content here...</p>");
+      }
+
+      if(type === "image"){
+        document.getElementById("imageInput").click();
+      }
+
+      if(type === "audio"){
+        document.getElementById("audioInput").click();
+      }
+
+      if(type === "video"){
+        document.getElementById("videoInput").click();
+      }
+    };
+  });
+
+});
 </script>
+</body>
+      </html>
+    `);
+    w.document.close();
+  };
 
+  document.getElementById("closeViewBtn").onclick = () => document.getElementById("viewModal").classList.remove("show");
+})();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const canvas = document.getElementById("canvas");
+
+  function addCard(html){
+    const empty = canvas.querySelector(".empty-state");
+    if(empty) empty.remove();
+
+    const card = document.createElement("div");
+    card.className = "lesson-card";
+    card.contentEditable = "true";
+    card.innerHTML = html;
+
+    canvas.appendChild(card);
+    card.focus();
+  }
+
+  document.querySelectorAll(".block-btn").forEach(btn => {
+    btn.onclick = () => {
+      const type = btn.getAttribute("data-block");
+
+      btn.style.transform = "scale(.95)";
+      setTimeout(() => btn.style.transform = "", 120);
+
+      if(type === "header"){
+        addCard("<h1>New Header</h1>");
+      }
+
+      if(type === "subheader"){
+        addCard("<h2>New Sub Header</h2>");
+      }
+
+      if(type === "outline"){
+        addCard("<h2>Lesson Outline</h2><ul><li>Warm-up</li><li>Main lesson</li><li>Practice</li></ul>");
+      }
+
+      if(type === "title"){
+        addCard("<h1>Lesson Title</h1><p>Description...</p>");
+      }
+
+      if(type === "objectives"){
+        addCard("<h2>Objectives</h2><p><strong>A la fin du cours, l’apprenant doit:</strong></p><ul><li>...</li></ul>");
+      }
+
+      if(type === "text"){
+        addCard("<p>Write lesson content here...</p>");
+      }
+
+      if(type === "image"){
+        document.getElementById("imageInput").click();
+      }
+
+      if(type === "audio"){
+        document.getElementById("audioInput").click();
+      }
+
+      if(type === "video"){
+        document.getElementById("videoInput").click();
+      }
+    };
+  });
+
+});
+</script>
 </body>
 </html>
+
+
+
