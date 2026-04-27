@@ -1,0 +1,55 @@
+﻿:root{
+  --impact-glass: rgba(255,255,255,.075);
+  --impact-border: rgba(255,255,255,.14);
+}
+
+body{
+  background:#05060b !important;
+  color:#f7f8ff;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-10;
+  background:
+    linear-gradient(rgba(5,6,12,.58),rgba(5,6,12,.84)),
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%);
+  transform:scale(1.06);
+  filter:blur(10px) brightness(.78);
+  pointer-events:none;
+}
+
+.impact-top-btn{
+  position:fixed;
+  top:24px;
+  z-index:999999;
+  text-decoration:none;
+  color:white;
+  font-family:Inter,system-ui,sans-serif;
+  font-size:.72rem;
+  font-weight:900;
+  padding:10px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.085);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 14px 40px rgba(0,0,0,.18);
+  cursor:pointer;
+}
+
+.impact-top-btn:hover{
+  background:rgba(255,255,255,.13);
+}
+
+.impact-dashboard-btn{
+  left:28px;
+}
+
+.impact-back-btn{
+  right:28px;
+}
