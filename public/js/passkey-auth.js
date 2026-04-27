@@ -5,96 +5,51 @@
 
 import { db } from "/js/firebase-app.js";
 
-function normalize(value) {
+const PASSKEY_COLLECTIONS = [
+  "passkeys",
+  "access",
+  "teamPasskeys",
+  "personnelPasskeys",
+  "learnerPasskeys",
+  "configurationPasskeys"
+];
+
+function clean(value) {
   return String(value || "").trim();
 }
 
-function normalizeRole(value) {
-  return normalize(value)
-    .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/-/g, "");
-}
-
-function readPasskey(data) {
-  return normalize(
+function getPasskey(data) {
+  return clean(
     data.passkey ||
     data.passKey ||
     data.key ||
     data.code ||
     data.accessCode ||
     data.password ||
-    data.pin
+    data.pin ||
+    data.generatedPasskey ||
+    data.generatedKey ||
+    data.teamPasskey ||
+    data.learnerPasskey
   );
 }
 
-function readRole(data) {
-  return normalizeRole(
-    data.role ||
-    data.category ||
-    data.accessType ||
-    data.type ||
-    data.userType ||
-    data.gate ||
-    data.access ||
-    ""
-  );
-}
-
-function readOwner(data) {
-  return normalize(
+function getOwnerName(data) {
+  return clean(
     data.ownerName ||
     data.name ||
     data.displayName ||
     data.fullName ||
     data.teamMemberName ||
+    data.memberName ||
     data.learnerName ||
+    data.personnelName ||
     "User"
   );
 }
 
-function allowedForGate(savedRole, requestedRole) {
-  const gate = normalizeRole(requestedRole);
-
-  const personnelRoles = [
-    "personnel",
-    "personnels",
-    "teacher",
-    "teachers",
-    "team",
-    "teammember",
-    "impactteamlead",
-    "admin"
-  ];
-
-  const learnerRoles = [
-    "learner",
-    "learners",
-    "learnerhub",
-    "impactlearner",
-    "impactlearners",
-    "student",
-    "students"
-  ];
-
-  // If role was not stored clearly, accept the passkey.
-  if (!savedRole) return true;
-
-  // Personnel gate accepts personnel/team passkeys AND learner passkeys.
-  if (gate === "personnel" || gate === "teacher") {
-    return personnelRoles.includes(savedRole) || learnerRoles.includes(savedRole);
-  }
-
-  // Learner Hub gate accepts learner passkeys AND personnel passkeys.
-  if (gate === "learnerhub" || gate === "learner" || gate === "impactlearner" || gate === "impactlearners") {
-    return learnerRoles.includes(savedRole) || personnelRoles.includes(savedRole);
-  }
-
-  return true;
-}
-
 export async function validatePasskey(inputPasskey, requestedRole) {
-  const entered = normalize(inputPasskey);
+  const entered = clean(inputPasskey);
 
   if (!entered) {
     return {
@@ -104,20 +59,20 @@ export async function validatePasskey(inputPasskey, requestedRole) {
   }
 
   try {
-    const snapshot = await getDocs(collection(db, "passkeys"));
+    for (const collectionName of PASSKEY_COLLECTIONS) {
+      const snapshot = await getDocs(collection(db, collectionName));
 
-    for (const docSnap of snapshot.docs) {
-      const data = docSnap.data();
-      const savedPasskey = readPasskey(data);
-      const savedRole = readRole(data);
-      const ownerName = readOwner(data);
+      for (const docSnap of snapshot.docs) {
+        const data = docSnap.data();
+        const savedPasskey = getPasskey(data);
 
-      if (savedPasskey === entered && allowedForGate(savedRole, requestedRole)) {
-        return {
-          ok: true,
-          role: requestedRole,
-          ownerName
-        };
+        if (savedPasskey && savedPasskey === entered) {
+          return {
+            ok: true,
+            role: requestedRole,
+            ownerName: getOwnerName(data)
+          };
+        }
       }
     }
 
@@ -128,6 +83,7 @@ export async function validatePasskey(inputPasskey, requestedRole) {
 
   } catch (error) {
     console.error("Passkey validation failed:", error);
+
     return {
       ok: false,
       message: "Could not validate passkey from Firestore."
