@@ -7,13 +7,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/passkey-luxury.css?v=access-passkeys-final">
+  <link rel="stylesheet" href="/css/passkey-luxury.css?v=gate-any-passkey-001">
 </head>
 <body>
   <main class="access-page">
     <div class="bg-layer"></div>
     <div class="shade-layer"></div>
-
     <a class="back-link" href="/">Home</a>
 
     <section class="access-card">
@@ -31,16 +30,14 @@
   </main>
 
   <script type="module">
-    import { validatePasskey } from "/js/passkey-auth.js?v=access-passkeys-final";
+    import { validatePasskey } from "/js/passkey-auth.js?v=gate-any-passkey-001";
 
     const input = document.getElementById("passkey");
     const status = document.getElementById("status");
     const button = document.getElementById("signInBtn");
     const toggle = document.getElementById("togglePasskey");
 
-    toggle.addEventListener("click", () => {
-      input.type = input.type === "password" ? "text" : "password";
-    });
+    toggle.addEventListener("click", () => input.type = input.type === "password" ? "text" : "password");
 
     async function login(){
       status.textContent = "Checking passkey...";
@@ -56,9 +53,7 @@
     }
 
     button.addEventListener("click", login);
-    input.addEventListener("keydown", e => {
-      if(e.key === "Enter") login();
-    });
+    input.addEventListener("keydown", e => { if(e.key === "Enter") login(); });
   </script>
 </body>
 </html>

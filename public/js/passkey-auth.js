@@ -6,25 +6,50 @@
 import { db } from "/js/firebase-app.js";
 
 function clean(value){
-  return String(value || "").trim();
+  return String(value || "").trim().toUpperCase();
 }
 
-function roleClean(value){
-  return clean(value).toLowerCase().replace(/\s+/g,"").replace(/-/g,"");
-}
+function flattenValues(obj){
+  const values = [];
 
-function canEnterGate(data, gate){
-  const role = roleClean(data.role);
-  const scope = roleClean(data.accessScope);
-  const canAccessTeacher = data.canAccessTeacher === true;
-  const canAccessLearner = data.canAccessLearner === true;
+  function walk(item){
+    if(item === null || item === undefined) return;
 
-  if(gate === "personnel"){
-    return canAccessTeacher || scope === "team" || role.includes("teacher") || role.includes("personnel") || role.includes("team") || role.includes("operations") || role.includes("lead");
+    if(typeof item === "string" || typeof item === "number"){
+      values.push(clean(item));
+      return;
+    }
+
+    if(Array.isArray(item)){
+      item.forEach(walk);
+      return;
+    }
+
+    if(typeof item === "object"){
+      Object.values(item).forEach(walk);
+    }
   }
 
-  if(gate === "learnerHub"){
-    return canAccessLearner || scope === "learner" || scope === "team" || role.includes("learner") || role.includes("teacher") || role.includes("personnel") || role.includes("team") || role.includes("operations") || role.includes("lead");
+  walk(obj);
+  return values;
+}
+
+function localPasskeyExists(entered){
+  const localKeys = [
+    "accessPasskeys",
+    "impactAccessPasskeys",
+    "personnelPasskeys",
+    "learnerPasskeys"
+  ];
+
+  for(const key of localKeys){
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) continue;
+
+      const values = flattenValues(JSON.parse(raw));
+      if(values.includes(entered)) return true;
+    }catch(e){}
   }
 
   return false;
@@ -37,18 +62,27 @@ export async function validatePasskey(inputPasskey, requestedGate){
     return { ok:false, message:"Please enter your passkey." };
   }
 
+  if(localPasskeyExists(entered)){
+    return {
+      ok:true,
+      role: requestedGate,
+      ownerName: requestedGate === "learnerHub" ? "Learner Hub" : "Personnel"
+    };
+  }
+
   try{
     const snap = await getDocs(collection(db, "accessPasskeys"));
 
     for(const docSnap of snap.docs){
       const data = docSnap.data();
-      const saved = clean(data.passkey);
+      const values = flattenValues(data);
+      values.push(clean(docSnap.id));
 
-      if(saved === entered && canEnterGate(data, requestedGate)){
+      if(values.includes(entered)){
         return {
           ok:true,
           role: requestedGate,
-          ownerName: data.ownerName || data.name || "User"
+          ownerName: data.ownerName || data.name || data.teamMemberName || data.learnerName || "User"
         };
       }
     }
