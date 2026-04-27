@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Settings | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  min-height:100vh;
+  font-family:Inter,system-ui,sans-serif;
+  color:#f7f8ff;
+  background:#05060b;
+  overflow-x:hidden;
+}
+
+.bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background:
+    linear-gradient(rgba(5,6,12,.62),rgba(5,6,12,.86)),
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%);
+  transform:scale(1.06);
+  filter:blur(10px) brightness(.78);
+}
+
+.page{
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:40px;
+}
+
+.card{
+  width:min(720px,90vw);
+  text-align:center;
+  padding:54px;
+  border-radius:34px;
+  background:rgba(255,255,255,.058);
+  border:1px solid rgba(255,255,255,.105);
+  box-shadow:0 22px 64px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.34em;
+  font-size:.68rem;
+  font-weight:900;
+  color:rgba(235,240,255,.64);
+  margin-bottom:12px;
+}
+
+h1{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:clamp(3rem,7vw,5rem);
+  font-weight:400;
+  line-height:.95;
+  margin-bottom:16px;
+}
+
+p{
+  max-width:520px;
+  margin:0 auto 26px;
+  color:rgba(255,255,255,.64);
+  font-size:.86rem;
+  font-weight:700;
+  line-height:1.65;
+}
+
+.actions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+a,button{
+  text-decoration:none;
+  border:1px solid rgba(220,230,255,.16);
+  border-radius:16px;
+  background:rgba(255,255,255,.075);
+  color:rgba(255,255,255,.93);
+  min-height:46px;
+  padding:13px 17px;
+  font-size:.76rem;
+  font-weight:900;
+  cursor:pointer;
+  font-family:inherit;
+}
+</style>
+</head>
+
+<body>
+<div class="bg"></div>
+
+<main class="page">
+  <section class="card">
+    <div class="eyebrow">Teacher Workspace</div>
+    <h1>Settings</h1>
+    <p>Platform settings will be expanded here. For now, use Configuration for access controls and passkey management.</p>
+
+    <div class="actions">
+      <button onclick="history.back()">Back</button>
+      <a href="/teacher/dashboard.html">Dashboard</a>
+    </div>
+  </section>
+</main>
+</body>
+</html>
+

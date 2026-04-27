@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Personnel & Learner Hub</title>
+<title>Personnel Dashboard | Impact Learning Platform</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
@@ -82,6 +82,9 @@ body{
 }
 
 .card{
+  display:block;
+  text-decoration:none;
+  color:white;
   min-height:150px;
   padding:24px;
   border-radius:28px;
@@ -127,60 +130,60 @@ body{
 <main class="page">
   <section class="header">
     <p>Teacher Workspace</p>
-    <h1>Welcome</h1>
+    <h1 id="welcomeLine">Welcome</h1>
   </section>
 
   <section class="grid">
-    <article class="card" onclick="go('records')">
+    <a class="card" href="/teacher/records.html">
       <h2>Personnel</h2>
       <p>Manage personnel records, assigned learners, notes, and teaching responsibilities.</p>
-    </article>
+    </a>
 
-    <article class="card" onclick="go('lessons')">
+    <a class="card" href="/teacher/lessons.html">
       <h2>Lesson Plans</h2>
       <p>Build structured lesson plans for one-on-one and group learning sessions.</p>
-    </article>
+    </a>
 
-    <article class="card" onclick="go('classes')">
+    <a class="card" href="/teacher/classes.html">
       <h2>Classes</h2>
       <p>Schedule classes, attach meeting links, and manage upcoming sessions.</p>
-    </article>
+    </a>
 
-    <article class="card" onclick="go('recordings')">
+    <a class="card" href="/teacher/recordings.html">
       <h2>Recordings</h2>
-      <p>Store class recordings, notes, and Learner Hub access references.</p>
-    </article>
+      <p>Store class recordings, notes, folders, and Learner Hub references.</p>
+    </a>
 
-    <article class="card" onclick="go('exercises')">
+    <a class="card" href="/teacher/exercises.html">
       <h2>Activities</h2>
-      <p>Create practice activities for Learner Hub and review submitted responses.</p>
-    </article>
+      <p>Create activities and exercises for Learner Hub and review submissions.</p>
+    </a>
 
-    <article class="card" onclick="go('tests')">
+    <a class="card" href="/engine/exam.html">
       <h2>Test Engine</h2>
       <p>Create assessments, mock exams, test sections, and Learner Hub attempts.</p>
-    </article>
+    </a>
 
-    <article class="card" onclick="go('progress')">
+    <a class="card" href="/teacher/progress.html">
       <h2>Progress</h2>
       <p>Review Learner Hub growth, personnel comments, scores, and recommendations.</p>
-    </article>
+    </a>
 
-    <article class="card" onclick="go('settings')">
+    <a class="card" href="/teacher/configuration.html">
       <h2>Configuration</h2>
-      <p>Platform configuration, access rules, and future admin controls.</p>
-    </article>
+      <p>Manage access controls, passkeys, platform settings, and system rules.</p>
+    </a>
   </section>
 </main>
 
 <script>
-function go(page){
-  window.location.href = "/teacher/" + page + ".html";
+const accessName = sessionStorage.getItem("impactAccessName") || "";
+const welcomeLine = document.getElementById("welcomeLine");
+
+if (welcomeLine && accessName) {
+  welcomeLine.textContent = `Welcome, ${accessName}`;
 }
 </script>
 </body>
 </html>
-
-
-
 
