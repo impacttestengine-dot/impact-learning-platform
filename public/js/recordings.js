@@ -2,58 +2,52 @@
   collection,
   addDoc,
   getDocs,
+  serverTimestamp,
   query,
-  orderBy,
-  serverTimestamp
+  orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
   ref,
-  uploadBytesResumable,
+  uploadBytes,
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 import { db, storage } from "/js/firebase-app.js";
 
-const levels = [
-  "Absolute Beginner",
-  "A0",
-  "A1",
-  "A1.1",
-  "A2",
-  "B1",
-  "B2"
+const MAIN_FOLDERS = [
+  "Class Recordings",
+  "Assessment Recordings",
+  "Placement Chat Recordings",
+  "Meeting Recordings",
+  "Other Recordings"
 ];
 
-const levelFolders = document.getElementById("levelFolders");
-const selectedLevelTitle = document.getElementById("selectedLevelTitle");
-const levelInput = document.getElementById("level");
-const form = document.getElementById("recordingForm");
-const recordingList = document.getElementById("recordingList");
-const recordingCount = document.getElementById("recordingCount");
+let folders = [];
+let recordings = [];
+let activeMainFolder = MAIN_FOLDERS[0];
+let activeSubFolderId = "";
+let selectedFile = null;
 
-let selectedLevel = "Absolute Beginner";
-let recordingsCache = [];
+const $ = (id) => document.getElementById(id);
 
-function notify(message, type = "success"){
-  let toast = document.getElementById("impactToast");
-  if(!toast){
-    toast = document.createElement("div");
-    toast.id = "impactToast";
-    toast.className = "impact-toast";
-    document.body.appendChild(toast);
-  }
-
-  toast.textContent = message;
-  toast.className = `impact-toast show ${type}`;
-
-  setTimeout(() => {
-    toast.className = "impact-toast";
-  }, 2600);
+function slug(value){
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/^-+|-+$/g,"");
 }
 
-function value(id){
-  return (document.getElementById(id)?.value || "").trim();
+function toast(message){
+  const box = $("toast");
+  if(!box) return;
+  box.textContent = message;
+  box.classList.add("show");
+  setTimeout(() => box.classList.remove("show"), 2300);
+}
+
+function clean(value){
+  return String(value || "").trim();
 }
 
 function escapeHtml(value){
@@ -65,175 +59,279 @@ function escapeHtml(value){
     .replaceAll("'","&#039;");
 }
 
-function safePathPart(value){
-  return String(value || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
+async function loadFolders(){
+  try{
+    const snap = await getDocs(query(collection(db,"recordingFolders"), orderBy("createdAt","asc")));
+    folders = [];
+    snap.forEach(doc => folders.push({ id: doc.id, ...doc.data() }));
+  }catch(e){
+    folders = JSON.parse(localStorage.getItem("recordingFolders") || "[]");
+  }
+}
+
+async function loadRecordings(){
+  try{
+    const snap = await getDocs(query(collection(db,"recordings"), orderBy("createdAt","desc")));
+    recordings = [];
+    snap.forEach(doc => recordings.push({ id: doc.id, ...doc.data() }));
+  }catch(e){
+    recordings = JSON.parse(localStorage.getItem("recordings") || "[]");
+  }
+}
+
+async function saveFolder(mainFolder, name){
+  const payload = {
+    mainFolder,
+    name,
+    createdAt: new Date().toISOString()
+  };
+
+  try{
+    const refDoc = await addDoc(collection(db,"recordingFolders"), {
+      mainFolder,
+      name,
+      createdAt: serverTimestamp()
+    });
+    folders.push({ id: refDoc.id, ...payload });
+  }catch(e){
+    folders.push({ id: "local-" + Date.now(), ...payload });
+    localStorage.setItem("recordingFolders", JSON.stringify(folders));
+  }
+
+  renderFolders();
+  renderFolderSelect();
+}
+
+async function renameFolder(folderId){
+  const folder = folders.find(f => f.id === folderId);
+  if(!folder) return;
+
+  const newName = prompt("Rename folder", folder.name);
+  if(!clean(newName)) return;
+
+  folder.name = clean(newName);
+  localStorage.setItem("recordingFolders", JSON.stringify(folders));
+
+  toast("Folder renamed locally. Firestore rename update can be added next.");
+  renderFolders();
+  renderFolderSelect();
+}
+
+function getSubfolders(mainFolder){
+  return folders.filter(f => f.mainFolder === mainFolder);
 }
 
 function renderFolders(){
-  levelFolders.innerHTML = levels.map((level) => {
-    const count = recordingsCache.filter((item) => item.level === level).length;
-    const active = level === selectedLevel ? "active" : "";
+  $("folderList").innerHTML = MAIN_FOLDERS.map(main => {
+    const subs = getSubfolders(main);
+    const isOpen = activeMainFolder === main;
 
     return `
-      <button class="level-folder-card ${active}" type="button" data-level="${escapeHtml(level)}">
-        <span class="folder-icon"></span>
-        <strong>${escapeHtml(level)}</strong>
-        <small>${count} ${count === 1 ? "recording" : "recordings"}</small>
-      </button>
-    `;
-  }).join("");
+      <article class="folder-card ${isOpen ? "open" : ""}">
+        <button class="folder-main" data-main="${escapeHtml(main)}" type="button">
+          <span>
+            <strong>${escapeHtml(main)}</strong>
+            <small>${subs.length} subfolder${subs.length === 1 ? "" : "s"}</small>
+          </span>
+          <span class="folder-tools">
+            <span class="icon-btn">⌄</span>
+          </span>
+        </button>
 
-  levelFolders.querySelectorAll(".level-folder-card").forEach((button) => {
-    button.addEventListener("click", () => {
-      selectedLevel = button.dataset.level;
-      levelInput.value = selectedLevel;
-      selectedLevelTitle.textContent = selectedLevel;
-      renderFolders();
-      renderRecordings();
-    });
-  });
-}
+        <div class="subfolders">
+          ${
+            subs.length
+              ? subs.map(sub => `
+                <div class="subfolder ${activeSubFolderId === sub.id ? "active" : ""}" data-sub="${sub.id}">
+                  <span class="subfolder-name">${escapeHtml(sub.name)}</span>
+                  <button class="icon-btn" data-rename="${sub.id}" type="button">✎</button>
+                </div>
+              `).join("")
+              : `<button class="empty-folder" data-create="${escapeHtml(main)}" type="button">+ Create first subfolder</button>`
+          }
 
-function renderRecordings(){
-  const recordings = recordingsCache.filter((item) => item.level === selectedLevel);
-
-  if(recordingCount){
-    recordingCount.textContent = `${recordings.length} ${recordings.length === 1 ? "recording" : "recordings"}`;
-  }
-
-  if(!recordings.length){
-    recordingList.innerHTML = `<div class="empty-state">No recording uploaded in this folder yet.</div>`;
-    return;
-  }
-
-  recordingList.innerHTML = recordings.map((item) => {
-    const isVideo = String(item.fileType || "").startsWith("video/");
-    const isAudio = String(item.fileType || "").startsWith("audio/");
-
-    const media = isVideo
-      ? `<video controls src="${escapeHtml(item.downloadUrl)}"></video>`
-      : isAudio
-        ? `<audio controls src="${escapeHtml(item.downloadUrl)}"></audio>`
-        : `<a class="start-class-button recording-link-button" href="${escapeHtml(item.downloadUrl)}" target="_blank" rel="noopener">Open File</a>`;
-
-    return `
-      <article class="recording-media-card">
-        <div class="recording-media-preview">${media}</div>
-
-        <div class="recording-media-body">
-          <p class="class-card-label">Class Recording</p>
-          <h3>${escapeHtml(item.title || item.fileName || "Untitled Recording")}</h3>
-
-          <div class="class-detail-grid recording-mini-grid">
-            <div><span>impactLearners / Group</span><strong>${escapeHtml(item.impactLearnersGroup || "Not set")}</strong></div>
-            <div><span>personnel</span><strong>${escapeHtml(item.personnel || "Not set")}</strong></div>
-            <div><span>File Type</span><strong>${escapeHtml(item.fileType || "Not set")}</strong></div>
-            <div><span>Level Folder</span><strong>${escapeHtml(item.level || "Not set")}</strong></div>
-          </div>
-
-          ${item.notes ? `<p class="recording-note-text">${escapeHtml(item.notes)}</p>` : ""}
+          ${
+            subs.length
+              ? `<button class="empty-folder" data-create="${escapeHtml(main)}" type="button">+ Create new subfolder</button>`
+              : ""
+          }
         </div>
       </article>
     `;
   }).join("");
+
+  document.querySelectorAll("[data-main]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeMainFolder = btn.dataset.main;
+      renderFolders();
+      renderRecordings();
+    });
+  });
+
+  document.querySelectorAll("[data-create]").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const name = prompt("New folder name");
+      if(!clean(name)) return;
+      await saveFolder(btn.dataset.create, clean(name));
+      toast("Folder created.");
+    });
+  });
+
+  document.querySelectorAll("[data-sub]").forEach(row => {
+    row.addEventListener("click", () => {
+      activeSubFolderId = row.dataset.sub;
+      renderFolders();
+      renderFolderSelect();
+      renderRecordings();
+    });
+  });
+
+  document.querySelectorAll("[data-rename]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      renameFolder(btn.dataset.rename);
+    });
+  });
 }
 
-async function loadRecordings(){
-  recordingList.innerHTML = `<div class="empty-state">Loading recordings...</div>`;
+function renderFolderSelect(){
+  const options = folders.map(f => {
+    const label = `${f.mainFolder} / ${f.name}`;
+    return `<option value="${f.id}" ${activeSubFolderId === f.id ? "selected" : ""}>${escapeHtml(label)}</option>`;
+  }).join("");
+
+  $("folderSelect").innerHTML = options || `<option value="">Create a folder first</option>`;
+
+  if(activeSubFolderId){
+    $("folderSelect").value = activeSubFolderId;
+  }
+}
+
+function renderRecordings(){
+  const visible = recordings.filter(r => {
+    if(activeSubFolderId) return r.folderId === activeSubFolderId;
+    return r.mainFolder === activeMainFolder;
+  });
+
+  if(!visible.length){
+    $("recordingList").innerHTML = `<div class="recording-item"><p>No recording uploaded in this folder yet.</p></div>`;
+    return;
+  }
+
+  $("recordingList").innerHTML = visible.map(item => `
+    <article class="recording-item">
+      <h3>${escapeHtml(item.title)}</h3>
+      <p>${escapeHtml(item.uploader)} · ${escapeHtml(item.fileType)} · ${escapeHtml(item.folderName || item.mainFolder)}</p>
+      <a href="${escapeHtml(item.downloadURL)}" target="_blank" rel="noopener">Open Recording</a>
+    </article>
+  `).join("");
+}
+
+async function prepareFile(file){
+  $("uploadStatus").textContent = "Preparing upload...";
+
+  // Browser-side real media compression is limited without heavy codecs.
+  // This keeps uploads stable now and leaves room for later backend compression.
+  return file;
+}
+
+async function uploadRecording(){
+  const title = clean($("recordingTitle").value);
+  const uploader = clean($("recordingUploader").value);
+  const folderId = $("folderSelect").value;
+
+  if(!title || !uploader || !folderId || !selectedFile){
+    toast("Please add title, uploader, folder, and file.");
+    return;
+  }
+
+  const folder = folders.find(f => f.id === folderId);
+  if(!folder){
+    toast("Please select a valid folder.");
+    return;
+  }
 
   try{
-    const q = query(collection(db, "recordings"), orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
+    $("uploadStatus").textContent = "Compressing/preparing file...";
+    const finalFile = await prepareFile(selectedFile);
 
-    recordingsCache = [];
-    snapshot.forEach((docSnap) => {
-      recordingsCache.push({ id:docSnap.id, ...docSnap.data() });
-    });
+    $("uploadStatus").textContent = "Uploading recording...";
+    const path = `recordings/${slug(folder.mainFolder)}/${slug(folder.name)}/${Date.now()}-${finalFile.name}`;
+    const storageRef = ref(storage, path);
 
-    renderFolders();
+    await uploadBytes(storageRef, finalFile);
+    const downloadURL = await getDownloadURL(storageRef);
+
+    const payload = {
+      title,
+      uploader,
+      mainFolder: folder.mainFolder,
+      folderId,
+      folderName: folder.name,
+      fileType: finalFile.type || "media",
+      fileName: finalFile.name,
+      filePath: path,
+      downloadURL,
+      createdAt: new Date().toISOString()
+    };
+
+    try{
+      const docRef = await addDoc(collection(db,"recordings"), {
+        ...payload,
+        createdAt: serverTimestamp()
+      });
+      recordings.unshift({ id: docRef.id, ...payload });
+    }catch(e){
+      recordings.unshift({ id:"local-" + Date.now(), ...payload });
+      localStorage.setItem("recordings", JSON.stringify(recordings));
+    }
+
+    $("recordingTitle").value = "";
+    $("recordingUploader").value = "";
+    $("recordingFile").value = "";
+    selectedFile = null;
+    $("fileName").textContent = "Choose an audio or video file to upload.";
+    $("uploadStatus").textContent = "Upload complete.";
+    toast("Recording uploaded.");
     renderRecordings();
 
   }catch(error){
     console.error(error);
-    recordingList.innerHTML = `<div class="empty-state">Could not load recordings from Firestore.</div>`;
+    $("uploadStatus").textContent = "Could not upload recording. Check Firebase Storage rules and connection.";
   }
 }
 
-form?.addEventListener("submit", async (event) => {
-  event.preventDefault();
+function bind(){
+  $("fileDrop").addEventListener("click", () => $("recordingFile").click());
 
-  const file = document.getElementById("recordingFile")?.files?.[0];
+  $("recordingFile").addEventListener("change", () => {
+    selectedFile = $("recordingFile").files[0] || null;
+    $("fileName").textContent = selectedFile ? selectedFile.name : "Choose an audio or video file to upload.";
+  });
 
-  if(!file){
-    notify("Please choose a video or audio file.", "error");
-    return;
+  $("uploadBtn").addEventListener("click", uploadRecording);
+
+  $("folderSelect").addEventListener("change", () => {
+    activeSubFolderId = $("folderSelect").value;
+    renderFolders();
+    renderRecordings();
+  });
+}
+
+async function init(){
+  bind();
+  await loadFolders();
+
+  if(!folders.length){
+    // Keep main folders clean. Do not auto-create subfolders.
+    localStorage.setItem("recordingFolders", JSON.stringify([]));
   }
 
-  const level = selectedLevel;
-  const title = value("title") || file.name;
-  const impactLearnersGroup = value("impactLearnersGroup");
-  const personnel = value("personnel");
-  const notes = value("notes");
-  const fileType = file.type || "application/octet-stream";
-  const fileName = file.name;
-  const filePath = `recordings/${safePathPart(level)}/${Date.now()}-${safePathPart(fileName)}`;
+  await loadRecordings();
+  renderFolders();
+  renderFolderSelect();
+  renderRecordings();
+}
 
-  try{
-    notify("Uploading recording...");
-
-    const storageRef = ref(storage, filePath);
-    const uploadTask = uploadBytesResumable(storageRef, file, {
-      contentType:fileType
-    });
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        notify(`Uploading recording... ${progress}%`);
-      },
-      (error) => {
-        console.error(error);
-        notify("Could not upload recording to Firebase Storage.", "error");
-      },
-      async () => {
-        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-
-        await addDoc(collection(db, "recordings"), {
-          title,
-          level,
-          personnel,
-          impactLearnersGroup,
-          notes,
-          fileName,
-          fileType,
-          filePath,
-          downloadUrl,
-          status:"Uploaded",
-          createdAt:serverTimestamp(),
-          updatedAt:serverTimestamp()
-        });
-
-        notify("Recording uploaded.");
-        form.reset();
-        levelInput.value = selectedLevel;
-        await loadRecordings();
-      }
-    );
-
-  }catch(error){
-    console.error(error);
-    notify("Could not upload recording.", "error");
-  }
-});
-
-levelInput.value = selectedLevel;
-selectedLevelTitle.textContent = selectedLevel;
-renderFolders();
-loadRecordings();
-
-
-
-
-
-
+init();

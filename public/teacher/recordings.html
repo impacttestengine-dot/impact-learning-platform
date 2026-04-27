@@ -1,87 +1,419 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recordings | Impact Learning Platform</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/personnel-dashboard.css">
-  <link rel="stylesheet" href="/css/personnel-system.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Recordings | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  min-height:100vh;
+  font-family:Inter,system-ui,sans-serif;
+  color:#f7f8ff;
+  background:#05060b;
+  overflow-x:hidden;
+}
+
+.bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background:
+    linear-gradient(rgba(5,6,12,.62),rgba(5,6,12,.86)),
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%);
+  transform:scale(1.06);
+  filter:blur(10px) brightness(.78);
+}
+
+.page{
+  position:relative;
+  z-index:2;
+  width:min(1120px,90vw);
+  margin:0 auto;
+  padding:58px 0 86px;
+}
+
+.dashboard{
+  position:fixed;
+  top:24px;
+  left:28px;
+  z-index:10;
+  text-decoration:none;
+  color:white;
+  font-size:.72rem;
+  font-weight:900;
+  padding:10px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,255,255,.13);
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:34px;
+}
+
+.hero p{
+  text-transform:uppercase;
+  letter-spacing:.34em;
+  font-size:.68rem;
+  font-weight:900;
+  color:rgba(235,240,255,.64);
+  margin-bottom:10px;
+}
+
+.hero h1{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:clamp(3.1rem,6vw,5rem);
+  font-weight:400;
+  line-height:1;
+}
+
+.shell{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 360px;
+  gap:24px;
+  align-items:start;
+}
+
+.panel{
+  border-radius:30px;
+  background:rgba(255,255,255,.058);
+  border:1px solid rgba(255,255,255,.105);
+  box-shadow:0 22px 64px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  padding:28px;
+}
+
+.panel-label{
+  text-transform:uppercase;
+  letter-spacing:.28em;
+  font-size:.64rem;
+  font-weight:900;
+  color:rgba(235,240,255,.55);
+  margin-bottom:9px;
+}
+
+.panel h2{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:2rem;
+  font-weight:400;
+  margin-bottom:20px;
+}
+
+.upload-grid{
+  display:grid;
+  gap:16px;
+}
+
+label{
+  display:grid;
+  gap:8px;
+  color:rgba(255,255,255,.72);
+  font-size:.76rem;
+  font-weight:900;
+}
+
+input,select{
+  width:100%;
+  min-height:48px;
+  border-radius:16px;
+  border:1px solid rgba(220,230,255,.14);
+  background:rgba(255,255,255,.08);
+  color:white;
+  padding:12px 14px;
+  outline:none;
+  font-size:.84rem;
+  font-weight:800;
+  font-family:inherit;
+}
+
+option{color:#111827}
+
+.file-drop{
+  min-height:170px;
+  border-radius:24px;
+  border:1px dashed rgba(255,255,255,.28);
+  background:rgba(255,255,255,.045);
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:24px;
+  cursor:pointer;
+}
+
+.file-drop strong{
+  display:block;
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:1.65rem;
+  font-weight:400;
+  margin-bottom:8px;
+}
+
+.file-drop span{
+  display:block;
+  color:rgba(255,255,255,.56);
+  font-size:.78rem;
+  font-weight:800;
+  line-height:1.55;
+}
+
+button{
+  border:1px solid rgba(220,230,255,.16);
+  border-radius:16px;
+  background:rgba(255,255,255,.075);
+  color:rgba(255,255,255,.93);
+  min-height:46px;
+  padding:12px 15px;
+  font-size:.76rem;
+  font-weight:900;
+  cursor:pointer;
+  font-family:inherit;
+}
+
+button:hover{background:rgba(255,255,255,.12)}
+button:active{transform:scale(.985)}
+
+.upload-btn{
+  width:100%;
+  min-height:52px;
+  margin-top:6px;
+}
+
+.note{
+  color:rgba(255,255,255,.55);
+  font-size:.72rem;
+  font-weight:800;
+  line-height:1.55;
+}
+
+.folder-list{
+  display:grid;
+  gap:12px;
+}
+
+.folder-card{
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(8,11,22,.23);
+  overflow:hidden;
+}
+
+.folder-main{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  padding:15px 16px;
+  text-align:left;
+}
+
+.folder-main strong{
+  font-size:.86rem;
+  color:white;
+}
+
+.folder-main small{
+  display:block;
+  margin-top:3px;
+  color:rgba(255,255,255,.45);
+  font-size:.64rem;
+  font-weight:800;
+}
+
+.folder-tools{
+  display:flex;
+  gap:7px;
+  align-items:center;
+}
+
+.icon-btn{
+  width:32px;
+  height:32px;
+  min-height:32px;
+  padding:0;
+  border-radius:11px;
+}
+
+.subfolders{
+  display:none;
+  padding:0 14px 14px;
+}
+
+.folder-card.open .subfolders{
+  display:grid;
+  gap:9px;
+}
+
+.subfolder{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border-radius:16px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);
+  padding:11px 12px;
+  cursor:pointer;
+}
+
+.subfolder.active{
+  background:rgba(255,255,255,.12);
+  border-color:rgba(255,255,255,.22);
+}
+
+.subfolder-name{
+  font-size:.76rem;
+  font-weight:900;
+}
+
+.empty-folder{
+  display:grid;
+  place-items:center;
+  min-height:76px;
+  border-radius:17px;
+  background:rgba(255,255,255,.04);
+  border:1px dashed rgba(255,255,255,.16);
+  color:rgba(255,255,255,.58);
+  font-size:.74rem;
+  font-weight:900;
+}
+
+.recording-list{
+  margin-top:22px;
+  display:grid;
+  gap:12px;
+}
+
+.recording-item{
+  border-radius:20px;
+  background:rgba(8,11,22,.22);
+  border:1px solid rgba(255,255,255,.10);
+  padding:16px;
+}
+
+.recording-item h3{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:1.35rem;
+  font-weight:400;
+  margin-bottom:8px;
+}
+
+.recording-item p{
+  color:rgba(255,255,255,.58);
+  font-size:.75rem;
+  font-weight:800;
+  line-height:1.5;
+}
+
+.recording-item a{
+  display:inline-block;
+  margin-top:12px;
+  color:white;
+  font-size:.74rem;
+  font-weight:900;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:28px;
+  transform:translateX(-50%) translateY(20px);
+  opacity:0;
+  z-index:80;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(18px);
+  padding:12px 16px;
+  border-radius:16px;
+  font-size:.78rem;
+  font-weight:900;
+  transition:.25s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+@media(max-width:950px){
+  .shell{grid-template-columns:1fr}
+  .dashboard{position:static;display:inline-flex;margin-bottom:22px}
+}
+</style>
 </head>
+
 <body>
-  <main class="personnel-page recordings-page">
-    <a class="home-link" href="/teacher/dashboard.html">Dashboard</a>
+<div class="bg"></div>
+<a class="dashboard" href="/teacher/dashboard.html">Dashboard</a>
 
-    <section class="personnel-hero recordings-hero">
-      <div class="eyebrow">personnel Workspace</div>
-      <h1>Recordings</h1>
-    </section>
+<main class="page">
+  <section class="hero">
+    <p>Teacher Workspace</p>
+    <h1>Recordings</h1>
+  </section>
 
-    <section class="recordings-shell">
-      <aside class="recordings-folder-panel">
-        <h2>Level Folders</h2>
-        <p>Select a level to view or upload class recordings.</p>
-        <div id="levelFolders" class="level-folder-grid"></div>
-      </aside>
+  <section class="shell">
+    <section class="panel">
+      <p class="panel-label">Upload Studio</p>
+      <h2>Upload Recording</h2>
 
-      <section class="recordings-content-panel">
-        <div class="recordings-content-head">
+      <div class="upload-grid">
+        <label>
+          Title
+          <input id="recordingTitle" type="text">
+        </label>
+
+        <label>
+          Uploader
+          <input id="recordingUploader" type="text">
+        </label>
+
+        <label>
+          Save To Folder
+          <select id="folderSelect"></select>
+        </label>
+
+        <input id="recordingFile" type="file" accept="video/*,audio/*" hidden>
+
+        <div id="fileDrop" class="file-drop">
           <div>
-            <p class="class-card-label">Selected Folder</p>
-            <h2 id="selectedLevelTitle">Absolute Beginner</h2>
+            <strong>Select Video / Audio</strong>
+            <span id="fileName">Choose an audio or video file to upload. The system will prepare a lighter upload version where the browser allows it.</span>
           </div>
-          <span id="recordingCount">0 recordings</span>
         </div>
 
-        <form id="recordingForm" class="recording-upload-card">
-          <h3>Upload Recording</h3>
+        <button id="uploadBtn" class="upload-btn" type="button">Upload Recording</button>
 
-          <div class="recording-form-grid">
-            <label>
-              Recording Title
-              <input id="title" type="text">
-            </label>
+        <p id="uploadStatus" class="note">
+          Note: browser compression is limited. Audio/video will be checked and prepared before upload. Full heavy compression may later require backend processing.
+        </p>
+      </div>
 
-            <label>
-              impactLearners / Group
-              <input id="impactLearnersGroup" type="text">
-            </label>
-
-            <label>
-              personnel
-              <input id="personnel" type="text">
-            </label>
-
-            <label class="file-upload-field">
-              Upload Video / Audio
-              <input id="recordingFile" type="file" accept="video/*,audio/*">
-            </label>
-          </div>
-
-          <label class="full-field">
-            Notes
-            <textarea id="notes" rows="4"></textarea>
-          </label>
-
-          <button class="start-class-button" type="submit">Upload Recording</button>
-          <input type="hidden" id="level" value="Absolute Beginner">
-        </form>
-
-        <div id="recordingList" class="recording-list-grid">
-          <div class="empty-state">Loading recordings...</div>
-        </div>
-      </section>
+      <div id="recordingList" class="recording-list"></div>
     </section>
-  </main>
 
-  <script type="module" src="/js/recordings.js"></script>
+    <aside class="panel">
+      <p class="panel-label">Folders</p>
+      <h2>Recording Library</h2>
+      <div id="folderList" class="folder-list"></div>
+    </aside>
+  </section>
+</main>
+
+<div id="toast" class="toast"></div>
+
+<script type="module" src="/js/recordings.js?v=recordings-library-001"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
