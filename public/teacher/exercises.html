@@ -91,7 +91,7 @@ body{
   width:min(720px,88vw);
   margin:0 auto 26px;
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(4,1fr);
   gap:12px;
 }
 
@@ -401,7 +401,7 @@ textarea{resize:vertical}
 
 .tracker-grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(4,1fr);
   gap:12px;
   margin:18px 0;
 }
@@ -469,6 +469,7 @@ textarea{resize:vertical}
     <button id="openFolderBtn" type="button">Create Folder</button>
     <button id="openBuilderBtn" type="button">Create Activity</button>
     <button id="openTrackerBtn" type="button">Activity Tracker</button>
+<button id="openPreviewBtn" type="button">Preview Exercises</button>
   </section>
 
   <section class="shell">
@@ -581,8 +582,18 @@ textarea{resize:vertical}
   </div>
 </section>
 
+<section id="previewModal" class="modal hidden">
+  <div class="modal-card">
+    <button class="close-btn" data-close="previewModal" type="button">×</button>
+    <p class="panel-label">Preview Exercises</p>
+    <h2>Exercise Preview Library</h2>
+    <div id="previewList" class="activity-list"></div>
+  </div>
+</section>
+
 <div id="toast" class="toast"></div>
 
 <script type="module" src="/js/activities.js?v=activity-engine-001"></script>
 </body>
 </html>
+

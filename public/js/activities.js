@@ -457,6 +457,36 @@ function renderTracker(){
   `).join("");
 }
 
+
+function renderPreview(){
+  const list = $("previewList");
+  if(!list) return;
+
+  if(!activities.length){
+    list.innerHTML = `<div class="empty">No exercises created yet.</div>`;
+    return;
+  }
+
+  list.innerHTML = activities.map(item => `
+    <article class="activity-card">
+      <h3>${escapeHtml(item.title || "Untitled Exercise")}</h3>
+      <p>${escapeHtml(item.status || "Draft")} · ${item.questions?.length || 0} question slides</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <button type="button" data-preview-id="${item.id}">Open Preview</button>
+      </div>
+    </article>
+  `).join("");
+
+  document.querySelectorAll("[data-preview-id]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const activity = activities.find(a => a.id === btn.dataset.previewId);
+      if(!activity) return;
+
+      sessionStorage.setItem("currentActivity", JSON.stringify(activity));
+      window.location.href = "/learner/activity.html";
+    });
+  });
+}
 function bind(){
   $("openFolderBtn").addEventListener("click", () => openModal("folderModal"));
   $("openBuilderBtn").addEventListener("click", () => openModal("builderModal"));
@@ -488,5 +518,6 @@ async function init(){
 }
 
 init();
+
 
 
