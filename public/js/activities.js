@@ -2,346 +2,410 @@
   collection,
   addDoc,
   getDocs,
+  serverTimestamp,
   query,
-  orderBy,
-  serverTimestamp
+  orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import { db } from "/js/firebase-app.js";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-const STORAGE_KEYS = {
-  folders: "impactActivityFolders",
-  activities: "impactActivities"
-};
+import { db, storage } from "/js/firebase-app.js";
 
 let folders = [];
 let activities = [];
+let questions = [];
 let selectedFolderId = "all";
-let fields = [];
 
 const $ = (id) => document.getElementById(id);
 
-function toast(message){
-  const box = $("toast");
-  if(!box) return;
-  box.textContent = message;
-  box.classList.add("show");
-  setTimeout(() => box.classList.remove("show"), 2200);
+function clean(value){
+  return String(value || "").trim();
 }
 
 function escapeHtml(value){
   return String(value || "")
-    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
-function localRead(key){
-  try { return JSON.parse(localStorage.getItem(key) || "[]"); }
-  catch { return []; }
+function uid(){
+  return "q-" + Date.now() + "-" + Math.random().toString(16).slice(2);
 }
 
-function localWrite(key, data){
-  localStorage.setItem(key, JSON.stringify(data));
+function slug(value){
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/^-+|-+$/g,"");
 }
 
-function docDate(value){
-  if(!value) return new Date().toLocaleString();
-  if(value.toDate) return value.toDate().toLocaleString();
-  if(value.seconds) return new Date(value.seconds * 1000).toLocaleString();
-  return String(value);
+function toast(message){
+  const box = $("toast");
+  box.textContent = message;
+  box.classList.add("show");
+  setTimeout(() => box.classList.remove("show"), 2300);
 }
 
-function fieldId(){
-  return "field_" + Date.now() + "_" + Math.random().toString(16).slice(2);
-}
+function openModal(id){ $(id).classList.remove("hidden"); }
+function closeModal(id){ $(id).classList.add("hidden"); }
 
 async function loadFolders(){
   try{
-    const snap = await getDocs(query(collection(db, "activityFolders"), orderBy("createdAt", "desc")));
+    const snap = await getDocs(query(collection(db,"activityFolders"), orderBy("createdAt","desc")));
     folders = [];
-    snap.forEach((doc) => folders.push({ id: doc.id, ...doc.data() }));
-    localWrite(STORAGE_KEYS.folders, folders);
-  }catch(err){
-    folders = localRead(STORAGE_KEYS.folders);
+    snap.forEach(doc => folders.push({ id:doc.id, ...doc.data() }));
+  }catch(e){
+    folders = JSON.parse(localStorage.getItem("activityFolders") || "[]");
   }
 }
 
 async function loadActivities(){
   try{
-    const snap = await getDocs(query(collection(db, "activities"), orderBy("createdAt", "desc")));
+    const snap = await getDocs(query(collection(db,"activities"), orderBy("createdAt","desc")));
     activities = [];
-    snap.forEach((doc) => activities.push({ id: doc.id, ...doc.data() }));
-    localWrite(STORAGE_KEYS.activities, activities);
-  }catch(err){
-    activities = localRead(STORAGE_KEYS.activities);
+    snap.forEach(doc => activities.push({ id:doc.id, ...doc.data() }));
+  }catch(e){
+    activities = JSON.parse(localStorage.getItem("activities") || "[]");
   }
 }
 
-function renderFolderOptions(){
-  const select = $("activityFolder");
-  select.innerHTML = `<option value="">Select Folder</option>` + folders.map(folder =>
-    `<option value="${folder.id}">${escapeHtml(folder.name)}</option>`
-  ).join("");
-}
-
 function renderFolders(){
-  $("folderCount").textContent = folders.length;
-
   const allCount = activities.length;
+
   $("folderList").innerHTML = `
-    <button class="activity-folder ${selectedFolderId === "all" ? "active" : ""}" data-id="all" data-name="All Activities" type="button">
-      <span class="folder-icon"></span>
-      <div><strong>All Activities</strong><small>${allCount} activities</small></div>
+    <button class="folder-btn ${selectedFolderId === "all" ? "active" : ""}" data-folder="all" data-name="All Activities" type="button">
+      <strong>All Activities<span>${allCount} activities</span></strong>
     </button>
     ${folders.map(folder => {
-      const count = activities.filter(item => item.folderId === folder.id).length;
+      const count = activities.filter(a => a.folderId === folder.id).length;
       return `
-        <button class="activity-folder ${selectedFolderId === folder.id ? "active" : ""}" data-id="${folder.id}" data-name="${escapeHtml(folder.name)}" type="button">
-          <span class="folder-icon"></span>
-          <div><strong>${escapeHtml(folder.name)}</strong><small>${count} activities</small></div>
+        <button class="folder-btn ${selectedFolderId === folder.id ? "active" : ""}" data-folder="${folder.id}" data-name="${escapeHtml(folder.name)}" type="button">
+          <strong>${escapeHtml(folder.name)}<span>${count} activities</span></strong>
         </button>
       `;
     }).join("")}
   `;
 
-  document.querySelectorAll(".activity-folder").forEach(btn => {
+  document.querySelectorAll("[data-folder]").forEach(btn => {
     btn.addEventListener("click", () => {
-      selectedFolderId = btn.dataset.id;
+      selectedFolderId = btn.dataset.folder;
       $("selectedFolderTitle").textContent = btn.dataset.name;
       renderFolders();
       renderActivities();
     });
   });
 
-  renderFolderOptions();
+  renderFolderSelect();
+}
+
+function renderFolderSelect(){
+  $("activityFolder").innerHTML = `<option value="">Select folder</option>` + folders.map(folder => {
+    return `<option value="${folder.id}">${escapeHtml(folder.name)}</option>`;
+  }).join("");
 }
 
 function renderActivities(){
   const visible = selectedFolderId === "all"
     ? activities
-    : activities.filter(item => item.folderId === selectedFolderId);
-
-  $("activityCount").textContent = `${visible.length} ${visible.length === 1 ? "activity" : "activities"}`;
+    : activities.filter(a => a.folderId === selectedFolderId);
 
   if(!visible.length){
-    $("activityList").innerHTML = `<div class="empty-state">No activity saved in this folder yet.</div>`;
+    $("activityList").innerHTML = `<div class="empty">No activity saved in this folder yet.</div>`;
     return;
   }
 
   $("activityList").innerHTML = visible.map(item => `
     <article class="activity-card">
-      <div class="activity-card-top">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
         <div>
-          <p>${escapeHtml(item.type || "Activity")}</p>
           <h3>${escapeHtml(item.title || "Untitled Activity")}</h3>
+          <p>${escapeHtml(item.level || "No level")} · ${escapeHtml(item.teacher || "No teacher")} · ${escapeHtml(item.learner || "No learner/group")}</p>
+          <p>${item.questions?.length || 0} question blocks · ${escapeHtml(item.instructions || "No instructions")}</p>
         </div>
-        <span class="status-pill">${escapeHtml(item.status || "Created")}</span>
+        <span class="badge">${escapeHtml(item.status || "Draft")}</span>
       </div>
-      <p class="activity-note">
-        ${escapeHtml(item.level || "Level not set")} �
-        ${escapeHtml(item.personnel || "personnel not set")} �
-        ${escapeHtml(item.impactLearnersGroup || "impactLearners/group not set")} �
-        ${item.fields?.length || 0} blocks
-      </p>
-      <p class="activity-note">${escapeHtml(item.instructions || "No instructions added.")}</p>
     </article>
   `).join("");
 }
 
-function renderTracker(){
-  const created = activities.filter(a => a.status === "Created").length;
-  const published = activities.filter(a => a.status === "Published").length;
-  const completed = activities.filter(a => a.status === "Completed").length;
-
-  $("createdCount").textContent = created;
-  $("publishedCount").textContent = published;
-  $("completedCount").textContent = completed;
-  $("trackerCount").textContent = `${activities.length} records`;
-
-  if(!activities.length){
-    $("trackerList").innerHTML = `<div class="empty-state">No activity records yet.</div>`;
+function renderQuestions(){
+  if(!questions.length){
+    $("questionList").innerHTML = `<div class="empty">Add a question block from the left to build your activity.</div>`;
     return;
   }
 
-  $("trackerList").innerHTML = activities.map(item => {
-    const folder = folders.find(f => f.id === item.folderId);
-    return `
-      <article class="tracker-row">
-        <div>
-          <p>${escapeHtml(item.status || "Created")} � ${escapeHtml(item.type || "Activity")}</p>
-          <h3>${escapeHtml(item.title || "Untitled Activity")}</h3>
-          <small>${escapeHtml(folder?.name || "No folder")} � ${escapeHtml(item.level || "No level")}</small>
-        </div>
-        <div>
-          <strong>${docDate(item.createdAt)}</strong>
-          <small>Created timestamp</small>
-        </div>
-      </article>
-    `;
-  }).join("");
-}
-
-function renderCanvas(){
-  const canvas = $("canvasList");
-
-  if(!fields.length){
-    canvas.innerHTML = `<div class="empty-state">Add blocks from the left to build the activity.</div>`;
-    return;
-  }
-
-  canvas.innerHTML = fields.map((field, index) => `
-    <article class="field-card" data-id="${field.id}">
-      <div class="field-top">
-        <strong>${index + 1}. ${escapeHtml(field.type)}</strong>
-        <div class="field-actions">
-          <button type="button" data-up="${field.id}">?</button>
-          <button type="button" data-down="${field.id}">?</button>
-          <button type="button" data-remove="${field.id}">Remove</button>
+  $("questionList").innerHTML = questions.map((q,index) => `
+    <article class="question-card" data-q="${q.id}">
+      <div class="question-top">
+        <strong>${index + 1}. ${escapeHtml(q.type)}</strong>
+        <div class="question-actions">
+          <button data-up="${q.id}" type="button">↑</button>
+          <button data-down="${q.id}" type="button">↓</button>
+          <button data-remove="${q.id}" type="button">×</button>
         </div>
       </div>
-      <label>Question / Prompt
-        <input data-field-label="${field.id}" type="text" value="${escapeHtml(field.label)}">
-      </label>
-      ${(field.type === "Multiple Choice" || field.type === "Checkboxes" || field.type === "Dropdown") ? `
-        <label>Options
-          <textarea data-field-options="${field.id}" rows="3">${escapeHtml((field.options || []).join("\n"))}</textarea>
-        </label>
-      ` : ""}
+
       <label>
-        <select data-field-required="${field.id}">
-          <option value="false" ${!field.required ? "selected" : ""}>Optional</option>
-          <option value="true" ${field.required ? "selected" : ""}>Required</option>
+        Question / Prompt Text
+        <textarea rows="3" data-field="prompt" data-id="${q.id}">${escapeHtml(q.prompt)}</textarea>
+      </label>
+
+      ${mediaUploadHtml(q)}
+
+      ${optionsHtml(q)}
+
+      <label>
+        Required?
+        <select data-field="required" data-id="${q.id}">
+          <option value="false" ${!q.required ? "selected" : ""}>Optional</option>
+          <option value="true" ${q.required ? "selected" : ""}>Required</option>
         </select>
       </label>
+
+      <div class="media-row">
+        <div class="panel-label">Allowed Learner Responses</div>
+        <div class="response-options">
+          ${responseCheck(q,"text","Text Response")}
+          ${responseCheck(q,"audio","Audio Response")}
+          ${responseCheck(q,"video","Video Response")}
+          ${responseCheck(q,"image","Photo/Image Response")}
+        </div>
+      </div>
     </article>
   `).join("");
 
-  canvas.querySelectorAll("[data-field-label]").forEach(input => {
-    input.addEventListener("input", () => {
-      const field = fields.find(f => f.id === input.dataset.fieldLabel);
-      if(field) field.label = input.value;
-    });
-  });
+  bindQuestionControls();
+}
 
-  canvas.querySelectorAll("[data-field-options]").forEach(input => {
-    input.addEventListener("input", () => {
-      const field = fields.find(f => f.id === input.dataset.fieldOptions);
-      if(field) field.options = input.value.split("\n").map(v => v.trim()).filter(Boolean);
-    });
-  });
+function mediaUploadHtml(q){
+  const mediaTypes = ["Image Question","Audio Question","Video Question"];
+  if(!mediaTypes.includes(q.type)) return "";
 
-  canvas.querySelectorAll("[data-field-required]").forEach(input => {
+  return `
+    <div class="media-row">
+      <label>
+        Upload ${q.type.replace(" Question","")} File
+        <input type="file" data-media="${q.id}" accept="${q.type === "Image Question" ? "image/*" : q.type === "Audio Question" ? "audio/*" : "video/*"}">
+      </label>
+      <div class="media-preview">${q.mediaName ? escapeHtml(q.mediaName) : "No media uploaded yet."}</div>
+    </div>
+  `;
+}
+
+function optionsHtml(q){
+  if(!["Multiple Choice","Dropdown"].includes(q.type)) return "";
+
+  return `
+    <label>
+      Options — one per line
+      <textarea rows="4" data-field="options" data-id="${q.id}">${escapeHtml((q.options || []).join("\n"))}</textarea>
+    </label>
+  `;
+}
+
+function responseCheck(q,key,label){
+  const checked = q.responses?.includes(key) ? "checked" : "";
+  return `
+    <label class="check-pill">
+      <input type="checkbox" data-response="${key}" data-id="${q.id}" ${checked}>
+      ${label}
+    </label>
+  `;
+}
+
+function bindQuestionControls(){
+  document.querySelectorAll("[data-field]").forEach(input => {
+    input.addEventListener("input", () => {
+      const q = questions.find(item => item.id === input.dataset.id);
+      if(!q) return;
+
+      if(input.dataset.field === "prompt") q.prompt = input.value;
+      if(input.dataset.field === "required") q.required = input.value === "true";
+      if(input.dataset.field === "options") q.options = input.value.split("\n").map(v => clean(v)).filter(Boolean);
+    });
+
     input.addEventListener("change", () => {
-      const field = fields.find(f => f.id === input.dataset.fieldRequired);
-      if(field) field.required = input.value === "true";
+      const q = questions.find(item => item.id === input.dataset.id);
+      if(!q) return;
+      if(input.dataset.field === "required") q.required = input.value === "true";
     });
   });
 
-  canvas.querySelectorAll("[data-remove]").forEach(btn => {
+  document.querySelectorAll("[data-response]").forEach(input => {
+    input.addEventListener("change", () => {
+      const q = questions.find(item => item.id === input.dataset.id);
+      if(!q) return;
+
+      q.responses = q.responses || [];
+
+      if(input.checked && !q.responses.includes(input.dataset.response)){
+        q.responses.push(input.dataset.response);
+      }
+
+      if(!input.checked){
+        q.responses = q.responses.filter(r => r !== input.dataset.response);
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-media]").forEach(input => {
+    input.addEventListener("change", () => {
+      const q = questions.find(item => item.id === input.dataset.media);
+      if(!q) return;
+
+      q.mediaFile = input.files[0] || null;
+      q.mediaName = q.mediaFile ? q.mediaFile.name : "";
+      renderQuestions();
+    });
+  });
+
+  document.querySelectorAll("[data-remove]").forEach(btn => {
     btn.addEventListener("click", () => {
-      fields = fields.filter(f => f.id !== btn.dataset.remove);
-      renderCanvas();
+      questions = questions.filter(q => q.id !== btn.dataset.remove);
+      renderQuestions();
     });
   });
 
-  canvas.querySelectorAll("[data-up]").forEach(btn => {
-    btn.addEventListener("click", () => moveField(btn.dataset.up, -1));
+  document.querySelectorAll("[data-up]").forEach(btn => {
+    btn.addEventListener("click", () => moveQuestion(btn.dataset.up,-1));
   });
 
-  canvas.querySelectorAll("[data-down]").forEach(btn => {
-    btn.addEventListener("click", () => moveField(btn.dataset.down, 1));
+  document.querySelectorAll("[data-down]").forEach(btn => {
+    btn.addEventListener("click", () => moveQuestion(btn.dataset.down,1));
   });
 }
 
-function moveField(id, direction){
-  const index = fields.findIndex(f => f.id === id);
-  const next = index + direction;
-  if(index < 0 || next < 0 || next >= fields.length) return;
-  [fields[index], fields[next]] = [fields[next], fields[index]];
-  renderCanvas();
+function moveQuestion(id,dir){
+  const index = questions.findIndex(q => q.id === id);
+  const next = index + dir;
+  if(index < 0 || next < 0 || next >= questions.length) return;
+  [questions[index],questions[next]] = [questions[next],questions[index]];
+  renderQuestions();
 }
 
-function addField(type){
-  fields.push({
-    id: fieldId(),
+function addQuestion(type){
+  let responses = ["text"];
+
+  if(type === "Audio Question") responses = ["audio","text"];
+  if(type === "Video Question") responses = ["video","audio","text"];
+  if(type === "Image Question") responses = ["text","audio"];
+  if(type === "File Upload Prompt") responses = ["image","video","audio"];
+
+  questions.push({
+    id: uid(),
     type,
-    label: `${type} prompt`,
+    prompt: "",
     required: false,
-    options: type === "Multiple Choice" || type === "Checkboxes" || type === "Dropdown"
-      ? ["Option 1", "Option 2"]
-      : []
+    responses,
+    options: ["Option 1","Option 2"],
+    mediaURL: "",
+    mediaName: ""
   });
-  renderCanvas();
+
+  renderQuestions();
+}
+
+async function uploadQuestionMedia(activitySlug){
+  const uploaded = [];
+
+  for(const q of questions){
+    const copy = { ...q };
+    delete copy.mediaFile;
+
+    if(q.mediaFile){
+      const path = `activity-question-media/${activitySlug}/${q.id}-${q.mediaFile.name}`;
+      const storageRef = ref(storage,path);
+      await uploadBytes(storageRef,q.mediaFile);
+      copy.mediaURL = await getDownloadURL(storageRef);
+      copy.mediaPath = path;
+      copy.mediaType = q.mediaFile.type;
+    }
+
+    uploaded.push(copy);
+  }
+
+  return uploaded;
 }
 
 async function saveFolder(){
-  const name = $("folderName").value.trim();
+  const name = clean($("folderName").value);
   if(!name){
     toast("Please enter a folder name.");
     return;
   }
 
-  const payload = { name, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  const payload = {
+    name,
+    createdAt: new Date().toISOString()
+  };
 
   try{
-    const ref = await addDoc(collection(db, "activityFolders"), {
+    const docRef = await addDoc(collection(db,"activityFolders"), {
       name,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
+      createdAt: serverTimestamp()
     });
-    folders.unshift({ id: ref.id, ...payload });
-  }catch(err){
-    folders.unshift({ id: "local_" + Date.now(), ...payload });
+    folders.unshift({ id: docRef.id, ...payload });
+  }catch(e){
+    folders.unshift({ id:"local-" + Date.now(), ...payload });
+    localStorage.setItem("activityFolders", JSON.stringify(folders));
   }
 
-  localWrite(STORAGE_KEYS.folders, folders);
   $("folderName").value = "";
   closeModal("folderModal");
   renderFolders();
-  toast("Folder saved.");
+  toast("Folder created.");
 }
 
 async function saveActivity(){
-  const title = $("activityTitle").value.trim();
+  const title = clean($("activityTitle").value);
   const folderId = $("activityFolder").value;
-  const level = $("activityLevel").value;
+  const level = clean($("activityLevel").value);
 
   if(!title || !folderId || !level){
     toast("Please add title, folder, and level.");
     return;
   }
 
-  if(!fields.length){
-    toast("Please add at least one form block.");
+  if(!questions.length){
+    toast("Please add at least one question.");
     return;
   }
 
+  toast("Saving activity...");
+
+  const activitySlug = slug(title) + "-" + Date.now();
+  const finalQuestions = await uploadQuestionMedia(activitySlug);
+
   const payload = {
-    type: "Activity Form",
     title,
     folderId,
     level,
-    personnel: $("activitypersonnel").value.trim(),
-    impactLearnersGroup: $("activityimpactLearners").value.trim(),
-    status: $("activityStatus").value || "Created",
-    instructions: $("activityInstructions").value.trim(),
-    fields: JSON.parse(JSON.stringify(fields)),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    teacher: clean($("activityTeacher").value),
+    learner: clean($("activityLearner").value),
+    status: clean($("activityStatus").value) || "Draft",
+    instructions: clean($("activityInstructions").value),
+    questions: finalQuestions,
+    createdAt: new Date().toISOString()
   };
 
   try{
-    const ref = await addDoc(collection(db, "activities"), {
+    const docRef = await addDoc(collection(db,"activities"), {
       ...payload,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
+      createdAt: serverTimestamp()
     });
-    activities.unshift({ id: ref.id, ...payload });
-  }catch(err){
-    activities.unshift({ id: "local_" + Date.now(), ...payload });
+    activities.unshift({ id: docRef.id, ...payload });
+  }catch(e){
+    activities.unshift({ id:"local-" + Date.now(), ...payload });
+    localStorage.setItem("activities", JSON.stringify(activities));
   }
 
-  localWrite(STORAGE_KEYS.activities, activities);
   clearBuilder();
   closeModal("builderModal");
   renderFolders();
@@ -351,22 +415,44 @@ async function saveActivity(){
 }
 
 function clearBuilder(){
-  ["activityTitle","activitypersonnel","activityimpactLearners","activityInstructions"].forEach(id => $(id).value = "");
+  ["activityTitle","activityTeacher","activityLearner","activityInstructions"].forEach(id => $(id).value = "");
   $("activityFolder").value = "";
   $("activityLevel").value = "";
-  $("activityStatus").value = "Created";
-  fields = [];
-  renderCanvas();
+  $("activityStatus").value = "Draft";
+  questions = [];
+  renderQuestions();
 }
 
-function openModal(id){ $(id).classList.remove("hidden"); }
-function closeModal(id){ $(id).classList.add("hidden"); }
+function renderTracker(){
+  const created = activities.length;
+  const published = activities.filter(a => a.status === "Published").length;
+  const completed = activities.filter(a => a.status === "Completed").length;
+
+  $("createdCount").textContent = created;
+  $("publishedCount").textContent = published;
+  $("completedCount").textContent = completed;
+
+  if(!activities.length){
+    $("trackerList").innerHTML = `<div class="empty">No activity records yet.</div>`;
+    return;
+  }
+
+  $("trackerList").innerHTML = activities.map(item => `
+    <article class="activity-card">
+      <h3>${escapeHtml(item.title)}</h3>
+      <p>${escapeHtml(item.status)} · ${escapeHtml(item.level)} · ${item.questions?.length || 0} questions</p>
+    </article>
+  `).join("");
+}
 
 function bind(){
-  $("backBtn").addEventListener("click", () => history.back());
   $("openFolderBtn").addEventListener("click", () => openModal("folderModal"));
   $("openBuilderBtn").addEventListener("click", () => openModal("builderModal"));
-  $("openTrackerBtn").addEventListener("click", () => { renderTracker(); openModal("trackerModal"); });
+  $("openTrackerBtn").addEventListener("click", () => {
+    renderTracker();
+    openModal("trackerModal");
+  });
+
   $("saveFolderBtn").addEventListener("click", saveFolder);
   $("saveActivityBtn").addEventListener("click", saveActivity);
 
@@ -375,7 +461,7 @@ function bind(){
   });
 
   document.querySelectorAll("[data-add]").forEach(btn => {
-    btn.addEventListener("click", () => addField(btn.dataset.add));
+    btn.addEventListener("click", () => addQuestion(btn.dataset.add));
   });
 }
 
@@ -385,15 +471,8 @@ async function init(){
   await loadActivities();
   renderFolders();
   renderActivities();
+  renderQuestions();
   renderTracker();
-  renderCanvas();
 }
 
 init();
-
-
-
-
-
-
-
