@@ -122,7 +122,7 @@ function renderActivities(){
   }
 
   $("activityList").innerHTML = visible.map(item => `
-    <article class="activity-card">
+    <article class="activity-card" data-activity-id="${item.id}">
       <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
         <div>
           <h3>${escapeHtml(item.title || "Untitled Activity")}</h3>
@@ -133,6 +133,17 @@ function renderActivities(){
       </div>
     </article>
   `).join("");
+  // Attach click to open learner slide view
+  document.querySelectorAll(".activity-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const id = card.getAttribute("data-activity-id");
+      const activity = activities.find(a => a.id === id);
+      if(!activity) return;
+
+      sessionStorage.setItem("currentActivity", JSON.stringify(activity));
+      window.location.href = "/learner/activity.html";
+    });
+  });
 }
 
 function renderQuestions(){
@@ -439,7 +450,7 @@ function renderTracker(){
   }
 
   $("trackerList").innerHTML = activities.map(item => `
-    <article class="activity-card">
+    <article class="activity-card" data-activity-id="${item.id}">
       <h3>${escapeHtml(item.title)}</h3>
       <p>${escapeHtml(item.status)} · ${escapeHtml(item.level)} · ${item.questions?.length || 0} questions</p>
     </article>
@@ -477,4 +488,5 @@ async function init(){
 }
 
 init();
+
 
