@@ -1,14 +1,8 @@
 ﻿export const firebaseConfig = {
-  apiKey: "AIzaSyDCD7B1lgBB8iSt9Y1GoncjQupZ_-O5emA",
-  authDomain: "impact-test-engine.firebaseapp.com",
-  projectId: "impact-test-engine",
-  storageBucket: "impact-test-engine.firebasestorage.app",
-  messagingSenderId: "606769875493",
-  appId: "1:606769875493:web:04932e1dbc99fb6b3b0dcc"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
 };
-
-
-
-
-
-

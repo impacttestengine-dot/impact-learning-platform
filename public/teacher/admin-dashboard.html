@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin</title>
+<style>
+body{
+  background:#160f0c;
+  color:#fff;
+  font-family:Inter;
+  padding:30px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+.card{
+  padding:20px;
+  border-radius:20px;
+  background:rgba(255,255,255,.08);
+}
+button{
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<h2>Admin Control</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>Passkeys</h3>
+<div id="keys"></div>
+</div>
+
+<div class="card">
+<h3>Usage</h3>
+<div id="usage"></div>
+</div>
+
+</div>
+
+<script>
+let keys = JSON.parse(localStorage.getItem("impact_keys") || "[]");
+let usage = JSON.parse(localStorage.getItem("impact_usage") || "[]");
+
+function render(){
+  document.getElementById("keys").innerHTML =
+    keys.map((k,i)=>
+      <div>
+         ()
+        <button onclick="deactivate()">Deactivate</button>
+      </div>
+    ).join("");
+
+  document.getElementById("usage").innerHTML =
+    usage.map(u=>
+      <div>
+         -  - 
+      </div>
+    ).join("");
+}
+
+function deactivate(i){
+  keys[i].active = false;
+  localStorage.setItem("impact_keys", JSON.stringify(keys));
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>

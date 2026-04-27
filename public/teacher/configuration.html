@@ -1,87 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Access Configuration | Impact Learning Platform</title>
+<meta charset="UTF-8">
+<title>Configuration</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{
+  background:#0f172a;
+  font-family:Inter, sans-serif;
+  color:white;
+}
 
-  <link rel="stylesheet" href="/css/configuration.css?v=config-passkeys-02">
-  <link rel="stylesheet" href="/css/personnel-system.css">
-  <link rel="stylesheet" href="/css/impact-global-bg.css?v=blur-bg-logo-clean-001">
-  <link rel="stylesheet" href="/css/impact-page-nav.css?v=nav-global-001">
+.card{
+  width:400px;
+  margin:100px auto;
+  padding:30px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.05);
+}
+
+input, select{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:10px;
+  border:none;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:20px;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+.settings-icon{
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  font-size:26px;
+  cursor:pointer;
+}
+</style>
 </head>
+
 <body>
-  <main class="config-page">
-    <div class="bg-layer"></div>
-    <div class="shade-layer"></div>
 
-    <header class="topbar">
-      
-      
-    </header>
+<div class="card">
+<h2>Create Team Passkey</h2>
 
-    <section class="config-shell compact-config">
-      <div class="config-layout single">
-        <section class="form-card">
-          <h2>Create Team Passkey</h2>
+<input id="name" placeholder="Team Member Name">
+<select id="role">
+  <option value="teacher">Teacher</option>
+</select>
 
-          <form id="passkeyForm">
-            <label>
-              Team Member Name
-              <input id="ownerName" type="text" required placeholder="Enter team member name">
-            </label>
+<select id="status">
+  <option value="active">Active</option>
+</select>
 
-            <label>
-              Role
-              <select id="role" required>
-                <option value="">Select role</option>
-                <option value="personnel">personnel</option>
-                <option value="academic-team-lead">Academic Team Lead</option>
-                <option value="operations">Operations</option>
-                <option value="impact-team-lead">Impact Team Lead</option>
-              </select>
-            </label>
+<button onclick="createPasskey()">Generate Passkey</button>
+</div>
 
-            <label>
-              Status
-              <select id="status">
-                <option value="active">Active</option>
-                <option value="disabled">Disabled</option>
-              </select>
-            </label>
+<div class="settings-icon" onclick="openAdmin()">⚙️</div>
 
-            <button class="glass-btn" type="submit">Generate Passkey</button>
-            <p id="formStatus" class="form-status"></p>
-          </form>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { firebaseConfig } from "../js/firebase-config.js";
 
-          <div id="generatedBox" class="generated-box hidden">
-            <p class="generated-label">Generated Passkey</p>
-            <div class="generated-key-row">
-              <code id="generatedKey"></code>
-              <button id="copyBtn" type="button">Copy Passkey</button>
-            </div>
-            <p id="copyStatus" class="copy-status"></p>
-          </div>
-        </section>
-      </div>
-    </section>
-  </main>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  <script type="module" src="/js/configuration.js?v=config-passkeys-02"></script>
-  <script src="/js/impact-global-bg.js?v=blur-bg-logo-clean-001"></script>
-  <script src="/js/impact-page-nav.js?v=nav-global-001"></script>
+window.createPasskey = async () => {
+  const name = document.getElementById("name").value;
+
+  const key = "IMP-" + Math.random().toString(36).substring(2,8).toUpperCase();
+
+  await addDoc(collection(db,"passkeys"),{
+    name,
+    role:"teacher",
+    key,
+    status:"active",
+    created:Date.now()
+  });
+
+  alert("Passkey created: " + key);
+};
+
+window.openAdmin = () => {
+  const input = prompt("Enter master passkey");
+
+  if(input === "IMP-ZXJ-AM"){
+    window.location.href = "/teacher/admin.html";
+  } else {
+    alert("Access denied");
+  }
+};
+</script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-

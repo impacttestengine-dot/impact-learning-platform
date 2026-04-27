@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin</title>
+
+<style>
+body{
+  background:#0f172a;
+  color:white;
+  font-family:Inter;
+  padding:40px;
+}
+
+.container{
+  display:flex;
+  gap:40px;
+}
+
+.card{
+  flex:1;
+  background:rgba(255,255,255,0.05);
+  padding:20px;
+  border-radius:20px;
+}
+
+.inactive{
+  opacity:0.4;
+}
+
+button{
+  padding:6px 12px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Impact Admin</h1>
+
+<div class="container">
+
+<div class="card">
+<h3>Passkeys</h3>
+<div id="passkeys"></div>
+</div>
+
+<div class="card">
+<h3>Usage</h3>
+<div id="usage"></div>
+</div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { firebaseConfig } from "../js/firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const passkeysDiv = document.getElementById("passkeys");
+const usageDiv = document.getElementById("usage");
+
+async function loadPasskeys(){
+  const querySnapshot = await getDocs(collection(db,"passkeys"));
+
+  let active = [];
+  let inactive = [];
+
+  querySnapshot.forEach((docSnap)=>{
+    const data = docSnap.data();
+    data.id = docSnap.id;
+
+    if(data.status === "active"){
+      active.push(data);
+    } else {
+      inactive.push(data);
+    }
+  });
+
+  const sorted = [...active, ...inactive];
+
+  passkeysDiv.innerHTML = "";
+
+  sorted.forEach(p=>{
+    const div = document.createElement("div");
+
+    div.className = p.status === "inactive" ? "inactive" : "";
+
+    div.innerHTML = 
+      <p><b>\</b> - \ - \</p>
+      <button onclick="deactivate('\')">Deactivate</button>
+      <hr>
+    ;
+
+    passkeysDiv.appendChild(div);
+  });
+}
+
+window.deactivate = async (id)=>{
+  await updateDoc(doc(db,"passkeys",id),{
+    status:"inactive"
+  });
+  loadPasskeys();
+};
+
+async function loadUsage(){
+  const querySnapshot = await getDocs(collection(db,"usage"));
+
+  let personnel = 0;
+  let learners = 0;
+
+  querySnapshot.forEach(doc=>{
+    const d = doc.data();
+    if(d.type === "personnel") personnel++;
+    if(d.type === "learner") learners++;
+  });
+
+  usageDiv.innerHTML = 
+    Personnel Visits: \ <br>
+    Learner Visits: \
+  ;
+}
+
+loadPasskeys();
+loadUsage();
+</script>
+
+</body>
+</html>

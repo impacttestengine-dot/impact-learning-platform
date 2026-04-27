@@ -5,256 +5,263 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Lesson Plans | Impact</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/impact-global-bg.css">
-<link rel="stylesheet" href="/css/impact-page-nav.css">
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css?v=lesson-plans-folders-final-001">
+<link rel="stylesheet" href="/css/impact-page-nav.css?v=lesson-plans-folders-final-001">
 
 <style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,body{
+  min-height:100%;
+}
+
 body{
-  font-family:Inter,sans-serif;
+  font-family:Inter,system-ui,sans-serif;
   color:#fff;
+  background:#05060b;
+  overflow-x:hidden;
 }
 
 .page{
-  width:min(1180px,92vw);
-  margin:40px auto;
+  position:relative;
+  z-index:2;
+  width:min(1120px,92vw);
+  margin:0 auto;
+  padding:118px 0 80px;
 }
 
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:20px;
+.hero{
+  text-align:center;
+  margin-bottom:34px;
 }
 
-.top-actions{
-  display:flex;
-  gap:10px;
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.34em;
+  font-size:.68rem;
+  font-weight:900;
+  color:rgba(235,240,255,.62);
+  margin-bottom:12px;
 }
 
-button{
-  border-radius:12px;
-  padding:10px 14px;
-  border:1px solid rgba(255,255,255,.2);
-  background:rgba(255,255,255,.08);
-  color:#fff;
-  font-weight:800;
-  cursor:pointer;
+.hero h1{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:clamp(3rem,6vw,5.2rem);
+  font-weight:400;
+  line-height:1;
+  color:#fbfbf8;
 }
 
-.shell{
-  display:grid;
-  grid-template-columns:280px 1fr;
-  gap:20px;
-}
-
-/* LEFT PANEL */
-.folder-panel{
-  padding:20px;
-  border-radius:24px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.14);
-}
-
-.level{
-  padding:14px;
-  border-radius:16px;
-  background:rgba(255,255,255,.08);
-  margin-bottom:10px;
-  cursor:pointer;
-  font-weight:800;
-}
-
-/* RIGHT PANEL */
-.builder{
-  padding:22px;
-  border-radius:26px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.14);
-}
-
-/* FORM */
-.field{
-  margin-bottom:16px;
-}
-
-.field label{
-  font-weight:800;
-  font-size:.85rem;
-}
-
-.field input,
-.field textarea{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.2);
-  background:rgba(255,255,255,.08);
-  color:#fff;
-}
-
-/* TOOLBAR */
-.toolbar{
-  display:flex;
-  gap:6px;
-  margin-bottom:14px;
-  flex-wrap:wrap;
-}
-
-.toolbar select,
-.toolbar button,
-.toolbar input{
-  border-radius:8px;
-  padding:6px 8px;
-  border:none;
-  background:rgba(255,255,255,.15);
-  color:#fff;
+.hero p{
+  margin-top:12px;
+  color:rgba(255,255,255,.68);
   font-weight:700;
 }
 
+.level-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:20px;
+}
+
+.level-card{
+  min-height:142px;
+  padding:20px;
+  border-radius:28px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:
+    0 24px 70px rgba(0,0,0,.26),
+    inset 0 1px 0 rgba(255,255,255,.09);
+  cursor:pointer;
+  transition:.22s ease;
+}
+
+.level-card:hover{
+  transform:translateY(-3px);
+  background:rgba(255,255,255,.105);
+  border-color:rgba(232,216,166,.34);
+}
+
+.level-card h2{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:1.75rem;
+  font-weight:400;
+  margin-bottom:12px;
+}
+
+.level-card p{
+  color:rgba(255,255,255,.66);
+  font-size:.82rem;
+  font-weight:800;
+}
+
+.file-list{
+  display:none;
+  margin-top:16px;
+  gap:8px;
+}
+
+.level-card.open .file-list{
+  display:grid;
+}
+
+.file-pill{
+  width:100%;
+  text-align:left;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border-radius:14px;
+  padding:10px 12px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.file-pill:hover{
+  background:rgba(255,255,255,.14);
+}
+
+.empty-note{
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.055);
+  color:rgba(255,255,255,.58);
+  font-size:.78rem;
+  font-weight:800;
+}
+
+.footer{
+  margin-top:30px;
+  display:flex;
+  justify-content:center;
+}
+
+.create-btn{
+  min-width:230px;
+  min-height:50px;
+  border-radius:17px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  font-family:Inter,system-ui,sans-serif;
+  font-weight:900;
+  cursor:pointer;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  transition:.2s ease;
+}
+
+.create-btn:hover{
+  background:rgba(255,255,255,.16);
+  transform:translateY(-2px);
+}
+
+@media(max-width:900px){
+  .level-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:620px){
+  .page{
+    width:min(92vw,520px);
+    padding-top:112px;
+  }
+
+  .level-grid{
+    grid-template-columns:1fr;
+  }
+}
 </style>
 </head>
 
 <body>
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Teacher Workspace</p>
+    <h1>Lesson Plans</h1>
+    <p>Open a level folder to view saved lesson plans, or create a new one.</p>
+  </section>
 
-<div class="page">
+  <section class="level-grid" id="levelGrid"></section>
 
-<div class="topbar">
-  <div class="top-actions">
-    <button onclick="newLesson()">New</button>
-    <button onclick="saveLesson()">Save</button>
-    <button onclick="loadLesson()">Edit</button>
-    <button onclick="viewMode()">View</button>
+  <div class="footer">
+    <button class="create-btn" id="createBtn" type="button">Create Lesson Plan</button>
   </div>
-</div>
+</main>
 
-<div class="shell">
-
-<!-- LEFT -->
-<div class="folder-panel" id="folders"></div>
-
-<!-- RIGHT -->
-<div class="builder">
-
-<div class="toolbar">
-<select onchange="format('fontName',this.value)">
-<option>Arial</option>
-<option>Georgia</option>
-<option>Times New Roman</option>
-</select>
-
-<select onchange="format('fontSize',this.value)">
-<option value="3">Normal</option>
-<option value="5">Large</option>
-<option value="7">Huge</option>
-</select>
-
-<button onclick="format('bold')">B</button>
-<button onclick="format('italic')">I</button>
-<button onclick="format('underline')">U</button>
-
-<input type="color" onchange="format('foreColor',this.value)">
-
-<button onclick="format('justifyLeft')">L</button>
-<button onclick="format('justifyCenter')">C</button>
-<button onclick="format('justifyRight')">R</button>
-</div>
-
-<div class="field">
-<label>Lesson Title</label>
-<input id="title">
-</div>
-
-<div class="field">
-<label>Objective</label>
-<textarea id="objective"></textarea>
-</div>
-
-<div class="field">
-<label>Warm Up</label>
-<textarea id="warmup"></textarea>
-</div>
-
-<div class="field">
-<label>Main Lesson</label>
-<textarea id="main"></textarea>
-</div>
-
-<div class="field">
-<label>Practice</label>
-<textarea id="practice"></textarea>
-</div>
-
-<div class="field">
-<label>Notes</label>
-<textarea id="notes"></textarea>
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<script src="/js/impact-global-bg.js"></script>
-<script src="/js/impact-page-nav.js"></script>
+<script src="/js/impact-global-bg.js?v=lesson-plans-folders-final-001"></script>
+<script src="/js/impact-page-nav.js?v=lesson-plans-folders-final-001"></script>
 
 <script>
-const levels = ["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
-let selectedLevel = levels[0];
+(function(){
+  const levels = ["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
+  const grid = document.getElementById("levelGrid");
+  const createBtn = document.getElementById("createBtn");
 
-const folderEl = document.getElementById("folders");
+  function getPlans(){
+    try{
+      return JSON.parse(localStorage.getItem("impactLessonPlans") || "[]");
+    }catch(e){
+      return [];
+    }
+  }
 
-levels.forEach(l=>{
-  const d=document.createElement("div");
-  d.className="level";
-  d.innerText=l;
-  d.onclick=()=>selectedLevel=l;
-  folderEl.appendChild(d);
-});
+  function render(){
+    const plans = getPlans();
 
-function format(cmd,val=null){
-  document.execCommand(cmd,false,val);
-}
+    grid.innerHTML = levels.map(level => {
+      const files = plans.filter(plan => plan.level === level);
+      const fileHtml = files.length
+        ? files.map(file => `<button class="file-pill" data-id="${file.id}" type="button">${file.title || file.name || "Untitled Lesson"}</button>`).join("")
+        : `<div class="empty-note">No lesson plans saved yet.</div>`;
 
-function newLesson(){
-  document.querySelectorAll("input,textarea").forEach(e=>e.value="");
-}
+      return `
+        <article class="level-card" data-level="${level}">
+          <h2>${level}</h2>
+          <p>${files.length} lesson plan${files.length === 1 ? "" : "s"}</p>
+          <div class="file-list">${fileHtml}</div>
+        </article>
+      `;
+    }).join("");
 
-function saveLesson(){
-  const data={
-    level:selectedLevel,
-    title:title.value,
-    objective:objective.value,
-    warmup:warmup.value,
-    main:main.value,
-    practice:practice.value,
-    notes:notes.value
-  };
+    document.querySelectorAll(".level-card").forEach(card => {
+      card.addEventListener("click", function(e){
+        if(e.target.classList.contains("file-pill")) return;
 
-  let list = JSON.parse(localStorage.getItem("lessons")||"[]");
-  list.push(data);
-  localStorage.setItem("lessons",JSON.stringify(list));
-  alert("Saved");
-}
+        document.querySelectorAll(".level-card").forEach(c => {
+          if(c !== card) c.classList.remove("open");
+        });
 
-function loadLesson(){
-  let list = JSON.parse(localStorage.getItem("lessons")||"[]");
-  if(!list.length) return alert("No lessons");
+        card.classList.toggle("open");
+        sessionStorage.setItem("impactSelectedLessonLevel", card.dataset.level);
+      });
+    });
 
-  let l = list[0];
+    document.querySelectorAll(".file-pill").forEach(btn => {
+      btn.addEventListener("click", function(e){
+        e.stopPropagation();
+        sessionStorage.setItem("impactEditingLessonId", btn.dataset.id);
+        window.location.href = "/teacher/lesson-builder.html?edit=" + encodeURIComponent(btn.dataset.id);
+      });
+    });
+  }
 
-  title.value=l.title;
-  objective.value=l.objective;
-  warmup.value=l.warmup;
-  main.value=l.main;
-  practice.value=l.practice;
-  notes.value=l.notes;
-}
+  createBtn.addEventListener("click", function(){
+    const selected = sessionStorage.getItem("impactSelectedLessonLevel") || "Absolute Beginner";
+    window.location.href = "/teacher/lesson-builder.html?level=" + encodeURIComponent(selected);
+  });
 
-function viewMode(){
-  alert("View mode coming next");
-}
+  render();
+})();
 </script>
-
 </body>
 </html>

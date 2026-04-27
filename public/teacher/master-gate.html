@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Master Access</title>
+<style>
+body{
+  background:#160f0c;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+  font-family:Inter;
+}
+.card{
+  padding:40px;
+  border-radius:20px;
+  background:rgba(255,255,255,.08);
+  text-align:center;
+}
+input{
+  padding:14px;
+  width:260px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+}
+button{
+  margin-top:16px;
+  padding:12px 20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>Master Access</h2>
+<input id="key" placeholder="Enter passkey">
+<br>
+<button onclick="enter()">Enter</button>
+</div>
+
+<script>
+function enter(){
+  const val = document.getElementById("key").value;
+  if(val === "IMP-ZXJ-AM"){
+    window.location.href = "/teacher/admin-dashboard.html";
+  } else {
+    alert("Access denied");
+  }
+}
+</script>
+
+</body>
+</html>
