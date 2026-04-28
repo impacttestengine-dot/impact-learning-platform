@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Seed Impact Passkeys</title>
+<style>
+body{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  background:#05060b;
+  color:white;
+  font-family:Inter,Arial,sans-serif;
+}
+.card{
+  width:min(520px,92vw);
+  padding:32px;
+  border-radius:28px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.16);
+}
+button{
+  width:100%;
+  padding:16px;
+  border-radius:16px;
+  border:0;
+  font-weight:900;
+  cursor:pointer;
+}
+#status{
+  margin-top:18px;
+  font-weight:800;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Seed Impact Passkeys</h1>
+  <button id="seedBtn">Seed Firestore</button>
+  <div id="status"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+const passkeys = [
+  {
+    name:"Emelia",
+    role:"Impact Team lead",
+    passkey:"IMP-ZXJ$453-AM",
+    status:"active"
+  },
+  {
+    name:"Adelaide",
+    role:"Academic Team lead",
+    passkey:"IMP-HYX$862-EH",
+    status:"active"
+  },
+  {
+    name:"Theodosia",
+    role:"Teacher",
+    passkey:"IMP-VGJ$447-RS",
+    status:"active"
+  },
+  {
+    name:"Prosper",
+    role:"Teacher",
+    passkey:"IMP-YPW$392-HZ",
+    status:"active"
+  }
+];
+
+document.getElementById("seedBtn").onclick = async function(){
+  const status = document.getElementById("status");
+  const db = firebase.firestore();
+
+  status.textContent = "Seeding...";
+
+  for(const item of passkeys){
+    const existing = await db.collection("impactPasskeys")
+      .where("passkey","==",item.passkey)
+      .limit(1)
+      .get();
+
+    if(existing.empty){
+      await db.collection("impactPasskeys").add({
+        ...item,
+        createdAt:new Date().toISOString(),
+        source:"manual_seed"
+      });
+    }
+  }
+
+  status.textContent = "Done. Passkeys are now in Firestore.";
+};
+</script>
+</body>
+</html>
+

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -7,14 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/passkey-luxury.css?v=gate-any-passkey-001">
-  <link rel="stylesheet" href="/css/impact-global-bg.css?v=blur-bg-logo-clean-001">
+  <link rel="stylesheet" href="/css/passkey-luxury.css?v=impact-passkeys-only-001">
+  <link rel="stylesheet" href="/css/impact-global-bg.css?v=impact-passkeys-only-001">
 </head>
 <body>
   <main class="access-page">
     <div class="bg-layer"></div>
     <div class="shade-layer"></div>
-    
 
     <section class="access-card">
       <p class="small-title">PERSONNEL ACCESS</p>
@@ -31,31 +30,44 @@
   </main>
 
   <script type="module">
-    import { validatePasskey } from "/js/passkey-auth.js?v=gate-any-passkey-001";
+    import { validatePasskey } from "/js/passkey-auth.js?v=impact-passkeys-only-001";
 
     const input = document.getElementById("passkey");
     const status = document.getElementById("status");
     const button = document.getElementById("signInBtn");
     const toggle = document.getElementById("togglePasskey");
 
-    toggle.addEventListener("click", () => input.type = input.type === "password" ? "text" : "password");
+    toggle.addEventListener("click", () => {
+      input.type = input.type === "password" ? "text" : "password";
+    });
 
     async function login(){
       status.textContent = "Checking passkey...";
-      const result = await validatePasskey(input.value, "personnel");
 
-      if(result.ok){
-        sessionStorage.setItem("impactAccessRole", "personnel");
-        sessionStorage.setItem("impactAccessName", result.ownerName || "Personnel");
-        window.location.href = "/teacher/dashboard.html";
-      }else{
-        status.textContent = result.message;
+      try{
+        const result = await validatePasskey(input.value, "personnel");
+
+        if(result.ok){
+          sessionStorage.setItem("impactAccessRole", "personnel");
+          sessionStorage.setItem("impactAccessName", result.ownerName || "Personnel");
+          sessionStorage.setItem("impactPersonnelRole", result.role || "Teacher");
+          window.location.href = "/teacher/dashboard.html";
+        }else{
+          status.textContent = result.message;
+        }
+      }catch(e){
+        console.error(e);
+        status.textContent = "Could not verify passkey.";
       }
     }
 
     button.addEventListener("click", login);
-    input.addEventListener("keydown", e => { if(e.key === "Enter") login(); });
+    input.addEventListener("keydown", e => {
+      if(e.key === "Enter") login();
+    });
   </script>
-  <script src="/js/impact-global-bg.js?v=blur-bg-logo-clean-001"></script>
+
+  <script src="/js/impact-global-bg.js?v=impact-passkeys-only-001"></script>
 </body>
 </html>
+

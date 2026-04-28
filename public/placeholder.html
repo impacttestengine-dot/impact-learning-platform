@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Coming Soon | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  background:#05060b;
+  color:#fff;
+  font-family:Inter,system-ui,sans-serif;
+}
+.page{
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:30px;
+}
+.card{
+  width:min(680px,92vw);
+  padding:38px;
+  border-radius:34px;
+  background:rgba(8,12,24,.72);
+  border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  box-shadow:0 30px 90px rgba(0,0,0,.42);
+  text-align:center;
+}
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.3em;
+  color:rgba(232,216,166,.82);
+  font-size:.68rem;
+  font-weight:900;
+  margin-bottom:14px;
+}
+h1{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:clamp(3rem,6vw,5rem);
+  font-weight:400;
+  margin-bottom:16px;
+}
+p{
+  color:rgba(255,255,255,.72);
+  font-weight:700;
+  line-height:1.65;
+}
+.actions{
+  margin-top:24px;
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+button,a{
+  min-height:48px;
+  padding:0 18px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  font-weight:900;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+<main class="page">
+  <section class="card">
+    <p class="eyebrow" id="module">Impact Platform</p>
+    <h1 id="title">Coming Soon</h1>
+    <p>This page or action is safely connected. The full feature has not been built yet.</p>
+
+    <div class="actions">
+      <a href="/teacher/dashboard.html">Dashboard</a>
+      <button type="button" onclick="history.back()">Back</button>
+    </div>
+  </section>
+</main>
+
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+<script>
+(function(){
+  const q = new URLSearchParams(location.search);
+  document.getElementById("title").textContent = q.get("title") || "Coming Soon";
+  document.getElementById("module").textContent = q.get("module") || "Impact Platform";
+})();
+</script>
+</body>
+</html>
+

@@ -1,106 +1,373 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Configuration</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Configuration | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
 
 <style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
 body{
-  background:#0f172a;
-  font-family:Inter, sans-serif;
-  color:white;
+  min-height:100vh;
+  font-family:Inter,system-ui,sans-serif;
+  color:#fff;
+  background:#05060b;
+}
+
+.page{
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:30px;
 }
 
 .card{
-  width:400px;
-  margin:100px auto;
-  padding:30px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.05);
+  width:min(650px,92vw);
+  padding:42px;
+  border-radius:34px;
+  background:rgba(8,12,24,.72);
+  border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.10);
 }
 
-input, select{
+h1{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:clamp(2.4rem,5vw,3.6rem);
+  font-weight:400;
+  margin-bottom:28px;
+  color:#fbfbf8;
+}
+
+.field{
+  margin-bottom:18px;
+}
+
+label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:900;
+  color:rgba(255,255,255,.82);
+}
+
+input,
+select{
   width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:10px;
-  border:none;
+  min-height:58px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  padding:14px 16px;
+  font:inherit;
+  font-weight:800;
+  outline:none;
+}
+
+select option{
+  color:#111827;
 }
 
 button{
   width:100%;
-  padding:12px;
-  margin-top:20px;
-  border-radius:10px;
-  background:#2563eb;
-  color:white;
-  border:none;
+  min-height:58px;
+  margin-top:6px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.18);
+  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.08));
+  color:#fff;
+  font:inherit;
+  font-weight:900;
   cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
 }
 
-.settings-icon{
+button:hover{
+  background:rgba(255,255,255,.18);
+}
+
+#result{
+  margin-top:18px;
+  padding:14px;
+  border-radius:16px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  display:none;
+  font-weight:900;
+}
+
+.team-lead-settings{
   position:fixed;
-  bottom:30px;
   right:30px;
-  font-size:26px;
+  bottom:90px;
+  z-index:50;
+  width:58px;
+  height:58px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.20);
+  background:rgba(255,255,255,.13);
+  color:#fff;
+  font-size:1.35rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   cursor:pointer;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 22px 70px rgba(0,0,0,.38);
+}
+/* CONFIGURATION FINAL POSITION FIX */
+.card{
+  width:min(560px,90vw) !important;
+  padding:34px !important;
+}
+
+h1{
+  font-size:clamp(2.2rem,4.4vw,3.15rem) !important;
+  margin-bottom:24px !important;
+}
+
+input,
+select,
+button{
+  min-height:52px !important;
+}
+
+.team-lead-settings{
+  right:58px !important;
+  bottom:126px !important;
+}
+
+.config-nav{
+  position:fixed;
+  top:24px;
+  left:28px;
+  right:28px;
+  z-index:2147483647;
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+}
+
+.config-nav button{
+  width:auto !important;
+  min-height:42px !important;
+  margin:0 !important;
+  padding:10px 15px !important;
+  border-radius:14px !important;
+  pointer-events:auto;
+}
+/* CONFIGURATION_REFINED_FINAL_002 */
+.card{
+  width:min(520px,88vw) !important;
+  padding:30px !important;
+}
+
+h1{
+  font-size:clamp(2.05rem,4vw,2.95rem) !important;
+  margin-bottom:22px !important;
+}
+
+input,
+select,
+button{
+  min-height:50px !important;
+}
+
+.team-lead-settings{
+  right:86px !important;
+  bottom:150px !important;
+}
+
+.config-nav{
+  position:fixed;
+  top:24px;
+  left:28px;
+  right:28px;
+  z-index:2147483647;
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+}
+
+.config-nav button{
+  width:auto !important;
+  min-height:42px !important;
+  margin:0 !important;
+  padding:10px 15px !important;
+  border-radius:14px !important;
+  pointer-events:auto;
+}
+/* CONFIG_NAV_SETTINGS_FIX_003 */
+.config-nav{
+  position:fixed !important;
+  top:22px !important;
+  left:28px !important;
+  right:48px !important;
+  z-index:2147483647 !important;
+  display:flex !important;
+  justify-content:space-between !important;
+  pointer-events:none !important;
+}
+
+.config-nav button{
+  width:auto !important;
+  min-width:86px !important;
+  min-height:42px !important;
+  margin:0 !important;
+  padding:10px 15px !important;
+  border-radius:14px !important;
+  pointer-events:auto !important;
+  white-space:nowrap !important;
+}
+
+.team-lead-settings{
+  position:fixed !important;
+  right:88px !important;
+  bottom:120px !important;
+  z-index:2147483647 !important;
+  width:58px !important;
+  height:58px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:20px !important;
+  border:1px solid rgba(255,255,255,.20) !important;
+  background:rgba(255,255,255,.15) !important;
+  color:#fff !important;
+  font-size:1.35rem !important;
+  cursor:pointer !important;
+  backdrop-filter:blur(18px) !important;
+  -webkit-backdrop-filter:blur(18px) !important;
+  box-shadow:0 22px 70px rgba(0,0,0,.38) !important;
 }
 </style>
 </head>
 
 <body>
-
-<div class="card">
-<h2>Create Team Passkey</h2>
-
-<input id="name" placeholder="Team Member Name">
-<select id="role">
-  <option value="teacher">Teacher</option>
-</select>
-
-<select id="status">
-  <option value="active">Active</option>
-</select>
-
-<button onclick="createPasskey()">Generate Passkey</button>
+<div class="config-nav">
+  <button type="button" onclick="window.location.href='/teacher/dashboard.html'">Dashboard</button>
+  <button type="button" onclick="history.back()">Back</button>
 </div>
+<main class="page">
+  <section class="card">
+    <h1>Create Team Passkey</h1>
 
-<div class="settings-icon" onclick="openAdmin()">⚙️</div>
+    <div class="field">
+      <label>Team Member Name</label>
+      <input id="memberName" type="text" placeholder="Team Member Name">
+    </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { firebaseConfig } from "../js/firebase-config.js";
+    <div class="field">
+      <label>Role</label>
+      <select id="role">
+  <option value="Teacher">Teacher</option>
+  <option value="Operations">Operations</option>
+  <option value="Academic Team lead">Academic Team lead</option>
+  <option value="Impact Team lead">Impact Team lead</option>
+</select>
+    </div>
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    <div class="field">
+      <label>Status</label>
+      <select id="status">
+        <option value="active">Active</option>
+      </select>
+    </div>
 
-window.createPasskey = async () => {
-  const name = document.getElementById("name").value;
+    <button id="generateBtn" type="button">Generate Passkey</button>
 
-  const key = "IMP-" + Math.random().toString(36).substring(2,8).toUpperCase();
+    <div id="result"></div>
+  </section>
+</main>
 
-  await addDoc(collection(db,"passkeys"),{
-    name,
-    role:"teacher",
-    key,
-    status:"active",
-    created:Date.now()
-  });
+<button class="team-lead-settings" id="teamLeadSettingsBtn" type="button">⚙</button>
 
-  alert("Passkey created: " + key);
-};
+<script src="/js/impact-global-bg.js"></script>
 
-window.openAdmin = () => {
-  const input = prompt("Enter master passkey");
+<script>
+(function(){
+  const result = document.getElementById("result");
 
-  if(input === "IMP-ZXJ-AM"){
-    window.location.href = "/teacher/admin.html";
-  } else {
-    alert("Access denied");
+  function makeKey(){
+    const a = Math.random().toString(36).slice(2,5).toUpperCase();
+    const b = Math.random().toString(36).slice(2,5).toUpperCase();
+    return "IMP-" + a + "-" + b;
   }
-};
-</script>
 
+  document.getElementById("generateBtn").onclick = async function(){
+    const name = document.getElementById("memberName").value.trim();
+    const role = document.getElementById("role").value;
+    const status = document.getElementById("status").value;
+    const passkey = makeKey();
+
+    const item = {
+      id:"PK-" + Date.now(),
+      name:name || "Unnamed",
+      role,
+      passkey,
+      status,
+      createdAt:new Date().toISOString()
+    };
+
+    const list = JSON.parse(localStorage.getItem("impactPasskeys") || "[]");
+    list.push(item);
+    localStorage.setItem("impactPasskeys", JSON.stringify(list));
+
+    try{
+      if(window.firebase && firebase.apps && firebase.apps.length && firebase.firestore){
+        const db = firebase.firestore();
+
+        const existing = await db.collection("impactPasskeys")
+          .where("passkey","==",passkey)
+          .limit(1)
+          .get();
+
+        if(existing.empty){
+          await db.collection("impactPasskeys").add({
+            name:item.name,
+            role:item.role,
+            passkey:item.passkey,
+            status:item.status,
+            createdAt:item.createdAt
+          });
+        }
+      }
+    }catch(e){
+      console.warn("Firestore save failed. Local backup saved.", e);
+    }
+
+    result.style.display = "block";
+    result.textContent = "Passkey created for " + item.name + ": " + passkey;
+  };
+
+  document.getElementById("teamLeadSettingsBtn").onclick = function(){
+    window.location.href = "/gate/team-lead.html";
+  };
+})();
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+

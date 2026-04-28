@@ -188,7 +188,7 @@ body{
 <main class="dashboard-page">
   <header class="dashboard-header">
     <p class="eyebrow">Teacher Workspace</p>
-    <h1 id="welcomeLine">Welcome</h1>
+    <h1 id="dashboardWelcome">Welcome, <span id="userName">User</span></h1>
   </header>
 
   <section class="dashboard-grid">
@@ -236,34 +236,35 @@ body{
 
 <script src="/js/impact-global-bg.js?v=dashboard-reset-001"></script>
 
+
+
+<style id="dashboard-welcome-fix">
+#dashboardWelcome{
+  font-size:clamp(2.4rem,5vw,4.4rem) !important;
+  line-height:1.02 !important;
+  text-align:center !important;
+  white-space:normal !important;
+}
+</style>
+
 <script>
-(function(){
-  const wrap = document.getElementById("dashboardMenuWrap");
-  const btn = document.getElementById("dashboardToggleBtn");
+document.addEventListener("DOMContentLoaded", function(){
+  const name =
+    sessionStorage.getItem("impactAccessName") ||
+    sessionStorage.getItem("impactPersonnelName") ||
+    "User";
 
-  if(btn && wrap){
-    btn.addEventListener("click", function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      wrap.classList.toggle("open");
-    });
-
-    wrap.addEventListener("click", function(e){
-      e.stopPropagation();
-    });
-
-    document.addEventListener("click", function(){
-      wrap.classList.remove("open");
-    });
+  const el = document.getElementById("userName");
+  if(el){
+    el.textContent = name;
   }
-
-  const name = sessionStorage.getItem("impactAccessName") || "";
-  const welcomeLine = document.getElementById("welcomeLine");
-  if(welcomeLine && name){
-    welcomeLine.textContent = "Welcome, " + name;
-  }
-})();
+});
 </script>
 </body>
 </html>
+
+
+
+
+
 

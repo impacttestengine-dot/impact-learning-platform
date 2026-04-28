@@ -1,0 +1,19 @@
+﻿<script src="/js/impact-firebase-store.js"></script>
+
+<script>
+(async () => {
+  console.log("🚀 Starting FULL migration...");
+
+  if (!window.ImpactFirebaseStore) {
+    console.error("Firebase store not loaded");
+    return;
+  }
+
+  await window.ImpactFirebaseStore.migrateEverything();
+
+  console.log("✅ Migration complete");
+
+  alert("Migration to Firebase complete. You can now remove local storage safely.");
+
+})();
+</script>

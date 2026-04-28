@@ -1,91 +1,50 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>impactLearners Workspace | Impact Learning Platform</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="/css/impactLearners-dashboard.css?v=impactLearners-workspace-01">
-  <link rel="stylesheet" href="/css/impact-global-bg.css?v=blur-bg-logo-clean-001">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Learner Hub | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif}
+.page{position:relative;z-index:2;width:min(1100px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:34px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(232,216,166,.78);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);font-weight:400;line-height:1}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.card{min-height:160px;padding:24px;border-radius:28px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.28);color:#fff;text-decoration:none}
+.card:hover{transform:translateY(-3px);background:rgba(255,255,255,.11)}
+.card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2rem;font-weight:400;margin-bottom:20px}
+.card p{color:rgba(255,255,255,.68);font-weight:700;line-height:1.55}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <main class="dashboard-page">
-    <div class="bg-layer"></div>
-    <div class="shade-layer"></div>
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Learner Hub</p>
+    <h1 id="learnerWelcome">Welcome</h1>
+  </section>
 
-    <header class="topbar">
-      
-      
-    </header>
+  <section class="grid">
+    <a class="card" href="/learner/lessons.html"><h2>Lessons</h2><p>View assigned lessons and class resources.</p></a>
+    <a class="card" href="/learner/activities.html"><h2>Activities</h2><p>Complete assigned activities and exercises.</p></a>
+    <a class="card" href="/learner/exams.html"><h2>Assessments</h2><p>Open tests, mock exams, and assessment tasks.</p></a>
+    <a class="card" href="/learner/progress.html"><h2>Progress</h2><p>Track growth, comments, scores, and recommendations.</p></a>
+  </section>
+</main>
 
-    <section class="dashboard-shell">
-      <div class="dashboard-intro">
-        <p class="eyebrow">impactLearners Workspace</p>
-<p class="welcome-line" id="welcomeLine">Welcome</p>
-        
-        
-      </div>
-
-      <section class="module-grid">
-        <a class="module-card" href="/impactLearners/classes.html">
-          
-          <h2>Classes</h2>
-          <p>View upcoming online classes, meeting links, and class schedules.</p>
-        </a>
-
-        <a class="module-card" href="/impactLearners/lesson-plans.html">
-          
-          <h2>Lesson Notes</h2>
-          <p>Review lesson summaries, objectives, and materials shared by your personnel.</p>
-        </a>
-
-        <a class="module-card" href="/impactLearners/activities.html">
-          
-          <h2>Activities</h2>
-          <p>Complete assigned practice tasks, speaking prompts, and written exercises.</p>
-        </a>
-
-        <a class="module-card" href="/impactLearners/recordings.html">
-          
-          <h2>Recordings</h2>
-          <p>Watch class recordings and revisit important learning moments.</p>
-        </a>
-
-        <a class="module-card" href="/impactLearners/tests.html">
-          
-          <h2>Assessments</h2>
-          <p>Take assigned tests, mock exams, and placement assessments.</p>
-        </a>
-
-        <a class="module-card" href="/impactLearners/progress.html">
-          
-          <h2>Progress</h2>
-          <p>Track scores, personnel comments, completed work, and next recommendations.</p>
-        </a>
-      </section>
-    </section>
-  </main>
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+<script src="/js/impact-route-guard.js"></script>
 <script>
-  const accessName = sessionStorage.getItem("impactAccessName") || "";
-  const welcomeLine = document.getElementById("welcomeLine");
-
-  if (welcomeLine && accessName) {
-    welcomeLine.textContent = `Welcome, ${accessName}`;
-  }
+const name = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactLearnerName") || "";
+if(name){
+  document.getElementById("learnerWelcome").textContent = "Welcome, " + name;
+}
 </script>
-  <script src="/js/impact-global-bg.js?v=blur-bg-logo-clean-001"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-

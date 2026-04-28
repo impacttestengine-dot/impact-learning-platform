@@ -1,0 +1,481 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Team Lead Dashboard | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  min-height:100vh;
+  font-family:Inter,system-ui,sans-serif;
+  color:#fff;
+  background:#05060b;
+}
+
+.page{
+  position:relative;
+  z-index:2;
+  width:min(1180px,92vw);
+  margin:0 auto;
+  padding:118px 0 80px;
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:34px;
+}
+
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.34em;
+  font-size:.68rem;
+  font-weight:900;
+  color:rgba(232,216,166,.78);
+  margin-bottom:12px;
+}
+
+h1{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:clamp(3rem,6vw,5rem);
+  font-weight:400;
+  line-height:1;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+
+.card{
+  min-height:520px;
+  padding:26px;
+  border-radius:34px;
+  background:rgba(8,12,24,.72);
+  border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.42),
+    inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+.card h2{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:2rem;
+  font-weight:400;
+  margin-bottom:18px;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:14px;
+  align-items:center;
+  padding:14px;
+  border-radius:18px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.10);
+  margin-bottom:12px;
+}
+
+.row strong{
+  display:block;
+  font-size:.95rem;
+}
+
+.row span{
+  display:block;
+  margin-top:4px;
+  color:rgba(255,255,255,.62);
+  font-size:.78rem;
+  font-weight:800;
+}
+
+.row button{
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  border-radius:14px;
+  padding:10px 12px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.row button:hover{
+  background:rgba(255,255,255,.16);
+}
+
+.row.inactive{
+  opacity:.55;
+  filter:saturate(.4);
+  background:rgba(120,120,120,.10);
+}
+
+.row.inactive strong,
+.row.inactive span{
+  color:rgba(255,255,255,.48);
+}
+
+.row.inactive button{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.visit-row{
+  grid-template-columns:1fr;
+}
+
+.empty{
+  padding:16px;
+  border-radius:18px;
+  background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.64);
+  font-weight:800;
+}
+
+.status-pill{
+  display:inline-block;
+  margin-top:6px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.12);
+  font-size:.68rem;
+  font-weight:900;
+}
+
+@media(max-width:850px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Impact Team Lead</p>
+    <h1>Access Control</h1>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>Created Passkeys</h2>
+      <div id="passkeyList">
+        <div class="empty">Loading passkeys...</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Visit Tracker</h2>
+      <div id="visitList">
+        <div class="empty">Loading visits...</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+(async function(){
+  if(sessionStorage.getItem("impactTeamLeadAccess") !== "granted"){
+    window.location.href = "/gate/team-lead.html";
+    return;
+  }
+
+  const passkeyList = document.getElementById("passkeyList");
+  const visitList = document.getElementById("visitList");
+
+  let db = null;
+
+  try{
+    db = firebase.firestore();
+  }catch(e){
+    db = null;
+  }
+
+  function getLocalPasskeys(){
+    try{
+      return JSON.parse(localStorage.getItem("impactPasskeys") || "[]");
+    }catch(e){
+      return [];
+    }
+  }
+
+  function saveLocalPasskeys(list){
+    localStorage.setItem("impactPasskeys", JSON.stringify(list));
+  }
+
+  function getLocalVisits(){
+    try{
+      return JSON.parse(localStorage.getItem("impactGateVisits") || "[]");
+    }catch(e){
+      return [];
+    }
+  }
+
+  async function migrateLocalToFirebase(){
+    if(!db) return;
+
+    const local = getLocalPasskeys();
+
+    for(const item of local){
+      if(!item.passkey) continue;
+
+      const existing = await db.collection("impactPasskeys")
+        .where("passkey","==",item.passkey)
+        .limit(1)
+        .get();
+
+      if(existing.empty){
+        await db.collection("impactPasskeys").add({
+          name:item.name || "Unnamed",
+          role:item.role || "teacher",
+          passkey:item.passkey,
+          status:item.status || "active",
+          createdAt:item.createdAt || new Date().toISOString(),
+          migratedFromLocal:true
+        });
+      }
+    }
+  }
+
+  function renderPasskeys(rows){
+    rows.sort((a,b)=>{
+      const aInactive = (a.status || "active") !== "active";
+      const bInactive = (b.status || "active") !== "active";
+
+      if(aInactive && !bInactive) return 1;
+      if(!aInactive && bInactive) return -1;
+
+      return String(a.name || "").localeCompare(String(b.name || ""));
+    });
+
+    if(!rows.length){
+      passkeyList.innerHTML = '<div class="empty">No passkeys created yet.</div>';
+      return;
+    }
+
+    passkeyList.innerHTML = rows.map(item => {
+      const inactive = (item.status || "active") !== "active";
+
+      return `
+        <div class="row ${inactive ? "inactive" : ""}">
+          <div>
+            <strong>${item.name || "Unnamed"}</strong>
+            <span>${item.role || "teacher"} • ${item.passkey || "No passkey"}</span>
+            <span class="status-pill">${inactive ? "Inactive" : "Active"}</span>
+          </div>
+          <button data-id="${item.id}" ${inactive ? "disabled" : ""} type="button">
+            ${inactive ? "Inactive" : "Deactivate"}
+          </button>
+        </div>
+      `;
+    }).join("");
+
+    passkeyList.querySelectorAll("button[data-id]").forEach(btn => {
+      btn.onclick = async function(){
+        if(!confirm("Deactivate this passkey?")) return;
+
+        if(db && btn.dataset.id.length > 10){
+          await db.collection("impactPasskeys").doc(btn.dataset.id).update({
+            status:"deactivated",
+            deactivatedAt:new Date().toISOString()
+          });
+        }else{
+          const list = getLocalPasskeys().map(item => {
+            if(item.id === btn.dataset.id) item.status = "deactivated";
+            return item;
+          });
+          saveLocalPasskeys(list);
+          renderPasskeys(list);
+        }
+      };
+    });
+  }
+
+  function renderVisits(rows){
+    rows.sort((a,b)=>String(b.time || "").localeCompare(String(a.time || "")));
+
+    if(!rows.length){
+      visitList.innerHTML = '<div class="empty">No tracked visits yet.</div>';
+      return;
+    }
+
+    visitList.innerHTML = rows.map(v => `
+      <div class="row visit-row">
+        <div>
+          <strong>${v.name || "Unknown visitor"}</strong>
+          <span>${v.role || "unknown"} • ${v.gate || "unknown gate"}</span>
+          <span>${v.time ? new Date(v.time).toLocaleString() : ""}</span>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  if(db){
+    await migrateLocalToFirebase();
+
+    db.collection("impactPasskeys").onSnapshot(snapshot => {
+      const rows = [];
+      snapshot.forEach(doc => rows.push({id:doc.id, ...doc.data()}));
+      renderPasskeys(rows);
+    });
+
+    db.collection("impactGateVisits").onSnapshot(snapshot => {
+      const rows = [];
+      snapshot.forEach(doc => rows.push({id:doc.id, ...doc.data()}));
+      renderVisits(rows);
+    });
+  }else{
+    renderPasskeys(getLocalPasskeys());
+    renderVisits(getLocalVisits());
+  }
+})();
+</script>
+<script id="FORCE_PASSKEY_FIRESTORE_MIGRATION">
+document.addEventListener("DOMContentLoaded", async () => {
+  const passkeyList = document.getElementById("passkeyList");
+
+  function showError(msg){
+    passkeyList.innerHTML = `<div class="empty">${msg}</div>`;
+  }
+
+  function getLocalPasskeys(){
+    const keys = [];
+
+    try{
+      const a = JSON.parse(localStorage.getItem("impactPasskeys") || "[]");
+      if(Array.isArray(a)) keys.push(...a);
+    }catch(e){}
+
+    try{
+      const b = JSON.parse(localStorage.getItem("impact_keys") || "[]");
+      if(Array.isArray(b)) keys.push(...b);
+    }catch(e){}
+
+    return keys;
+  }
+
+  function normalizeRole(role){
+    const r = String(role || "Teacher").trim();
+    if(r.toLowerCase() === "personnel") return "Teacher";
+    return r;
+  }
+
+  function normalizeStatus(status, active){
+    if(status) return String(status).toLowerCase() === "deactivated" || String(status).toLowerCase() === "inactive" ? "deactivated" : "active";
+    return active === false ? "deactivated" : "active";
+  }
+
+  async function waitForFirebase(){
+    for(let i=0;i<40;i++){
+      if(window.firebase && firebase.apps && firebase.apps.length && firebase.firestore){
+        return firebase.firestore();
+      }
+      await new Promise(r => setTimeout(r,150));
+    }
+    throw new Error("Firebase did not load.");
+  }
+
+  async function migrateLocalPasskeys(db){
+    const local = getLocalPasskeys();
+
+    for(const item of local){
+      const passkey = item.passkey || item.key || item.code;
+      if(!passkey) continue;
+
+      const existing = await db.collection("impactPasskeys")
+        .where("passkey","==",passkey)
+        .limit(1)
+        .get();
+
+      if(existing.empty){
+        await db.collection("impactPasskeys").add({
+          name:item.name || item.fullName || item.memberName || "Unnamed",
+          role:normalizeRole(item.role),
+          passkey:passkey,
+          status:normalizeStatus(item.status,item.active),
+          createdAt:item.createdAt || new Date().toISOString(),
+          migratedFromLocal:true,
+          migratedAt:new Date().toISOString()
+        });
+      }
+    }
+  }
+
+  function renderPasskeys(snapshot){
+    const rows = [];
+    snapshot.forEach(doc => rows.push({id:doc.id,...doc.data()}));
+
+    rows.sort((a,b)=>{
+      const ai = (a.status || "active") !== "active";
+      const bi = (b.status || "active") !== "active";
+      if(ai && !bi) return 1;
+      if(!ai && bi) return -1;
+      return String(a.name || "").localeCompare(String(b.name || ""));
+    });
+
+    if(!rows.length){
+      passkeyList.innerHTML = `<div class="empty">No passkeys created yet.</div>`;
+      return;
+    }
+
+    passkeyList.innerHTML = rows.map(item => {
+      const inactive = (item.status || "active") !== "active";
+      return `
+        <div class="row ${inactive ? "inactive" : ""}">
+          <div>
+            <strong>${item.name || "Unnamed"}</strong>
+            <span>${item.role || "Teacher"} • ${item.passkey || "No passkey"}</span>
+            <span class="status-pill">${inactive ? "Inactive" : "Active"}</span>
+          </div>
+          <button data-id="${item.id}" ${inactive ? "disabled" : ""} type="button">
+            ${inactive ? "Inactive" : "Deactivate"}
+          </button>
+        </div>
+      `;
+    }).join("");
+
+    passkeyList.querySelectorAll("button[data-id]").forEach(btn => {
+      btn.onclick = async () => {
+        if(!confirm("Deactivate this passkey?")) return;
+        const db = firebase.firestore();
+        await db.collection("impactPasskeys").doc(btn.dataset.id).update({
+          status:"deactivated",
+          deactivatedAt:new Date().toISOString()
+        });
+      };
+    });
+  }
+
+  try{
+    const db = await waitForFirebase();
+
+    await migrateLocalPasskeys(db);
+
+    db.collection("impactPasskeys").onSnapshot(renderPasskeys, err => {
+      showError("Firestore read failed: " + err.message);
+    });
+
+  }catch(err){
+    showError("Could not load Firestore: " + err.message);
+  }
+});
+</script>
+</body>
+</html>
+
+

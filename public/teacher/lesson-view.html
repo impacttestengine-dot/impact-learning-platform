@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lesson View | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif}
+.page{position:relative;z-index:2;width:min(920px,92vw);margin:0 auto;padding:80px 0}
+.doc{padding:36px;border-radius:34px;background:rgba(8,12,24,.72);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(24px)}
+h1,h2,h3{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400}
+.title{font-size:clamp(2.6rem,5vw,4.5rem);margin-bottom:28px}
+.lesson-card{background:transparent!important;border:0!important;box-shadow:none!important;padding:12px 0!important;margin:0!important}
+img,video{max-width:100%;border-radius:18px}
+audio{width:100%;margin:14px 0}
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="doc">
+    <h1 class="title" id="title">Lesson Plan</h1>
+    <div id="content"></div>
+  </section>
+</main>
+
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
+<script>
+(async function(){
+  const id = new URLSearchParams(location.search).get("id");
+  const title = document.getElementById("title");
+  const content = document.getElementById("content");
+
+  const plans = await window.ImpactFirebaseStore.getLessonPlans();
+  const plan = plans.find(p => p.id === id);
+
+  if(!plan){
+    content.innerHTML = "Lesson plan not found.";
+    return;
+  }
+
+  title.textContent = plan.title || plan.name || "Lesson Plan";
+  content.innerHTML = plan.content || "";
+})();
+</script>
+</body>
+</html>
+

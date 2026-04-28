@@ -1,95 +1,64 @@
-﻿import {
+﻿import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import {
+  getFirestore,
   collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  getDocs,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
-import { db } from "/js/firebase-app.js";
+const firebaseConfig = await fetch("/__/firebase/init.json")
+  .then(r => r.json())
+  .catch(() => null);
 
-function clean(value){
-  return String(value || "").trim().toUpperCase();
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+function cleanKey(value){
+  return String(value || "").trim().replace(/\s+/g,"").toUpperCase();
 }
 
-function flattenValues(obj){
-  const values = [];
+export async function validatePasskey(passkeyValue, gate){
+  const typed = cleanKey(passkeyValue);
 
-  function walk(item){
-    if(item === null || item === undefined) return;
-
-    if(typeof item === "string" || typeof item === "number"){
-      values.push(clean(item));
-      return;
-    }
-
-    if(Array.isArray(item)){
-      item.forEach(walk);
-      return;
-    }
-
-    if(typeof item === "object"){
-      Object.values(item).forEach(walk);
-    }
+  if(!typed){
+    return { ok:false, message:"Enter your passkey." };
   }
 
-  walk(obj);
-  return values;
-}
+  const snap = await getDocs(collection(db, "impactPasskeys"));
 
-function localPasskeyExists(entered){
-  const localKeys = [
-    "accessPasskeys",
-    "impactAccessPasskeys",
-    "personnelPasskeys",
-    "learnerPasskeys"
-  ];
+  let foundDoc = null;
+  let foundData = null;
 
-  for(const key of localKeys){
-    try{
-      const raw = localStorage.getItem(key);
-      if(!raw) continue;
+  snap.forEach(docSnap => {
+    const data = docSnap.data();
+    const stored = cleanKey(data.passkey || data.key || data.code);
 
-      const values = flattenValues(JSON.parse(raw));
-      if(values.includes(entered)) return true;
-    }catch(e){}
-  }
-
-  return false;
-}
-
-export async function validatePasskey(inputPasskey, requestedGate){
-  const entered = clean(inputPasskey);
-
-  if(!entered){
-    return { ok:false, message:"Please enter your passkey." };
-  }
-
-  if(localPasskeyExists(entered)){
-    return {
-      ok:true,
-      role: requestedGate,
-      ownerName: requestedGate === "learnerHub" ? "Learner Hub" : "Personnel"
-    };
-  }
-
-  try{
-    const snap = await getDocs(collection(db, "accessPasskeys"));
-
-    for(const docSnap of snap.docs){
-      const data = docSnap.data();
-      const values = flattenValues(data);
-      values.push(clean(docSnap.id));
-
-      if(values.includes(entered)){
-        return {
-          ok:true,
-          role: requestedGate,
-          ownerName: data.ownerName || data.name || data.teamMemberName || data.learnerName || "User"
-        };
-      }
+    if(stored === typed){
+      foundDoc = docSnap;
+      foundData = data;
     }
+  });
 
+  if(!foundData){
     return { ok:false, message:"Invalid passkey." };
-  }catch(error){
-    console.error(error);
-    return { ok:false, message:"Could not validate passkey from Firestore." };
   }
+
+  if(String(foundData.status || "active").toLowerCase() !== "active"){
+    return { ok:false, message:"This passkey has been deactivated." };
+  }
+
+  await addDoc(collection(db, "impactGateVisits"), {
+    passkeyId: foundDoc.id,
+    name: foundData.name || "Unknown",
+    role: foundData.role || "Teacher",
+    gate: gate || "personnel",
+    passkey: foundData.passkey || passkeyValue,
+    time: new Date().toISOString()
+  });
+
+  return {
+    ok:true,
+    ownerName: foundData.name || "Personnel",
+    role: foundData.role || "Teacher"
+  };
 }

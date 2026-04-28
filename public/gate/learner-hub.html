@@ -1,61 +1,70 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Learner Hub Access</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/passkey-luxury.css?v=gate-any-passkey-001">
-  <link rel="stylesheet" href="/css/impact-global-bg.css?v=blur-bg-logo-clean-001">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Learner Access | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/passkey-luxury.css">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
 </head>
 <body>
-  <main class="access-page">
-    <div class="bg-layer"></div>
-    <div class="shade-layer"></div>
-    
+<main class="access-page">
+  <div class="bg-layer"></div>
+  <div class="shade-layer"></div>
 
-    <section class="access-card">
-      <p class="small-title">Learner Hub Access</p>
-      <h1>Welcome</h1>
+  <section class="access-card">
+    <p class="small-title">LEARNER ACCESS</p>
+    <h1>Welcome</h1>
 
-      <div class="passkey-row">
-        <input id="passkey" type="password" autocomplete="off">
-        <button class="toggle-passkey" id="togglePasskey" type="button">👁</button>
-      </div>
+    <div class="passkey-row">
+      <input id="passkey" type="password" autocomplete="off">
+      <button class="toggle-passkey" id="togglePasskey" type="button">👁</button>
+    </div>
 
-      <button id="signInBtn" type="button">Sign In</button>
-      <p id="status" class="status"></p>
-    </section>
-  </main>
+    <button id="signInBtn" type="button">Sign In</button>
+    <p id="status" class="status"></p>
+  </section>
+</main>
 
-  <script type="module">
-    import { validatePasskey } from "/js/passkey-auth.js?v=gate-any-passkey-001";
+<script type="module">
+import { validatePasskey } from "/js/passkey-auth.js?v=learner-gate-fixed-001";
 
-    const input = document.getElementById("passkey");
-    const status = document.getElementById("status");
-    const button = document.getElementById("signInBtn");
-    const toggle = document.getElementById("togglePasskey");
+const input = document.getElementById("passkey");
+const status = document.getElementById("status");
+const button = document.getElementById("signInBtn");
+const toggle = document.getElementById("togglePasskey");
 
-    toggle.addEventListener("click", () => input.type = input.type === "password" ? "text" : "password");
+toggle.addEventListener("click", () => {
+  input.type = input.type === "password" ? "text" : "password";
+});
 
-    async function login(){
-      status.textContent = "Checking passkey...";
-      const result = await validatePasskey(input.value, "learnerHub");
+async function login(){
+  status.textContent = "Checking passkey...";
 
-      if(result.ok){
-        sessionStorage.setItem("impactAccessRole", "learnerHub");
-        sessionStorage.setItem("impactAccessName", result.ownerName || "learnerHub");
-        window.location.href = "/learner/dashboard.html";
-      }else{
-        status.textContent = result.message;
-      }
+  try{
+    const result = await validatePasskey(input.value, "learner");
+
+    if(result.ok){
+      sessionStorage.setItem("impactAccessRole", "learner");
+      sessionStorage.setItem("impactAccessName", result.ownerName || "Learner");
+      sessionStorage.setItem("impactLearnerName", result.ownerName || "Learner");
+      window.location.href = "/learner/dashboard.html";
+    }else{
+      status.textContent = result.message;
     }
+  }catch(e){
+    console.error(e);
+    status.textContent = "Could not verify passkey.";
+  }
+}
 
-    button.addEventListener("click", login);
-    input.addEventListener("keydown", e => { if(e.key === "Enter") login(); });
-  </script>
-  <script src="/js/impact-global-bg.js?v=blur-bg-logo-clean-001"></script>
+button.addEventListener("click", login);
+input.addEventListener("keydown", e => {
+  if(e.key === "Enter") login();
+});
+</script>
+<script src="/js/impact-global-bg.js"></script>
 </body>
 </html>
+

@@ -4,185 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Lesson Plans | Impact</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/impact-global-bg.css?v=lesson-plans-folders-final-001">
-<link rel="stylesheet" href="/css/impact-page-nav.css?v=lesson-plans-folders-final-001">
-
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-html,body{
-  min-height:100%;
-}
-
-body{
-  font-family:Inter,system-ui,sans-serif;
-  color:#fff;
-  background:#05060b;
-  overflow-x:hidden;
-}
-
-.page{
-  position:relative;
-  z-index:2;
-  width:min(1120px,92vw);
-  margin:0 auto;
-  padding:118px 0 80px;
-}
-
-.hero{
-  text-align:center;
-  margin-bottom:34px;
-}
-
-.eyebrow{
-  text-transform:uppercase;
-  letter-spacing:.34em;
-  font-size:.68rem;
-  font-weight:900;
-  color:rgba(235,240,255,.62);
-  margin-bottom:12px;
-}
-
-.hero h1{
-  font-family:"Sorts Mill Goudy",Georgia,serif;
-  font-size:clamp(3rem,6vw,5.2rem);
-  font-weight:400;
-  line-height:1;
-  color:#fbfbf8;
-}
-
-.hero p{
-  margin-top:12px;
-  color:rgba(255,255,255,.68);
-  font-weight:700;
-}
-
-.level-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:20px;
-}
-
-.level-card{
-  min-height:142px;
-  padding:20px;
-  border-radius:28px;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.14);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  box-shadow:
-    0 24px 70px rgba(0,0,0,.26),
-    inset 0 1px 0 rgba(255,255,255,.09);
-  cursor:pointer;
-  transition:.22s ease;
-}
-
-.level-card:hover{
-  transform:translateY(-3px);
-  background:rgba(255,255,255,.105);
-  border-color:rgba(232,216,166,.34);
-}
-
-.level-card h2{
-  font-family:"Sorts Mill Goudy",Georgia,serif;
-  font-size:1.75rem;
-  font-weight:400;
-  margin-bottom:12px;
-}
-
-.level-card p{
-  color:rgba(255,255,255,.66);
-  font-size:.82rem;
-  font-weight:800;
-}
-
-.file-list{
-  display:none;
-  margin-top:16px;
-  gap:8px;
-}
-
-.level-card.open .file-list{
-  display:grid;
-}
-
-.file-pill{
-  width:100%;
-  text-align:left;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.08);
-  color:#fff;
-  border-radius:14px;
-  padding:10px 12px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-.file-pill:hover{
-  background:rgba(255,255,255,.14);
-}
-
-.empty-note{
-  padding:10px 12px;
-  border-radius:14px;
-  background:rgba(255,255,255,.055);
-  color:rgba(255,255,255,.58);
-  font-size:.78rem;
-  font-weight:800;
-}
-
-.footer{
-  margin-top:30px;
-  display:flex;
-  justify-content:center;
-}
-
-.create-btn{
-  min-width:230px;
-  min-height:50px;
-  border-radius:17px;
-  border:1px solid rgba(255,255,255,.16);
-  background:rgba(255,255,255,.10);
-  color:#fff;
-  font-family:Inter,system-ui,sans-serif;
-  font-weight:900;
-  cursor:pointer;
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  transition:.2s ease;
-}
-
-.create-btn:hover{
-  background:rgba(255,255,255,.16);
-  transform:translateY(-2px);
-}
-
-@media(max-width:900px){
-  .level-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
-}
-
-@media(max-width:620px){
-  .page{
-    width:min(92vw,520px);
-    padding-top:112px;
-  }
-
-  .level-grid{
-    grid-template-columns:1fr;
-  }
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-height:100vh}
+.page{position:relative;z-index:2;width:min(1120px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:34px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.62);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1}
+.hero p{margin-top:12px;color:rgba(255,255,255,.68);font-weight:700}
+.level-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.level-card{min-height:142px;padding:20px;border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer}
+.level-card:hover{transform:translateY(-3px);background:rgba(255,255,255,.105);border-color:rgba(232,216,166,.34)}
+.level-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.75rem;font-weight:400;margin-bottom:12px}
+.level-card p{color:rgba(255,255,255,.66);font-size:.82rem;font-weight:800}
+.file-list{display:none;margin-top:16px;gap:8px}
+.level-card.open .file-list{display:grid}
+.lesson-file-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.file-pill,.lesson-delete-btn,.create-btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 12px;font-weight:900;cursor:pointer}
+.file-pill{text-align:left;width:100%}
+.lesson-delete-btn{border-color:rgba(255,120,120,.28);background:rgba(255,80,80,.12)}
+.empty-note{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.055);color:rgba(255,255,255,.58);font-size:.78rem;font-weight:800}
+.footer{margin-top:30px;display:flex;justify-content:center}
+.create-btn{min-width:230px;min-height:50px}
+@media(max-width:900px){.level-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.level-grid{grid-template-columns:1fr}.page{padding-top:112px}}
 </style>
 </head>
-
 <body>
 <main class="page">
   <section class="hero">
@@ -190,78 +40,74 @@ body{
     <h1>Lesson Plans</h1>
     <p>Open a level folder to view saved lesson plans, or create a new one.</p>
   </section>
-
   <section class="level-grid" id="levelGrid"></section>
-
-  <div class="footer">
-    <button class="create-btn" id="createBtn" type="button">Create Lesson Plan</button>
-  </div>
+  <div class="footer"><button class="create-btn" id="createBtn" type="button">Create Lesson Plan</button></div>
 </main>
 
-<script src="/js/impact-global-bg.js?v=lesson-plans-folders-final-001"></script>
-<script src="/js/impact-page-nav.js?v=lesson-plans-folders-final-001"></script>
-
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+<script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
 <script>
-(function(){
-  const levels = ["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
-  const grid = document.getElementById("levelGrid");
-  const createBtn = document.getElementById("createBtn");
+(async function(){
+  const levels=["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
+  const grid=document.getElementById("levelGrid");
+  const createBtn=document.getElementById("createBtn");
 
-  function getPlans(){
-    try{
-      return JSON.parse(localStorage.getItem("impactLessonPlans") || "[]");
-    }catch(e){
-      return [];
-    }
-  }
+  async function render(){
+    const plans=await window.ImpactFirebaseStore.getLessonPlans();
 
-  function render(){
-    const plans = getPlans();
-
-    grid.innerHTML = levels.map(level => {
-      const files = plans.filter(plan => plan.level === level);
-      const fileHtml = files.length
-        ? files.map(file => `<button class="file-pill" data-id="${file.id}" type="button">${file.title || file.name || "Untitled Lesson"}</button>`).join("")
+    grid.innerHTML=levels.map(level=>{
+      const files=plans.filter(p=>p.level===level);
+      const fileHtml=files.length
+        ? files.map(file=>`
+          <div class="lesson-file-row">
+            <button class="file-pill" data-id="${file.id}" type="button">${file.title || file.name || "Untitled Lesson"}</button>
+            <button class="lesson-delete-btn" data-delete-id="${file.id}" type="button">Delete</button>
+          </div>`).join("")
         : `<div class="empty-note">No lesson plans saved yet.</div>`;
 
-      return `
-        <article class="level-card" data-level="${level}">
-          <h2>${level}</h2>
-          <p>${files.length} lesson plan${files.length === 1 ? "" : "s"}</p>
-          <div class="file-list">${fileHtml}</div>
-        </article>
-      `;
+      return `<article class="level-card" data-level="${level}">
+        <h2>${level}</h2>
+        <p>${files.length} lesson plan${files.length===1?"":"s"}</p>
+        <div class="file-list">${fileHtml}</div>
+      </article>`;
     }).join("");
 
-    document.querySelectorAll(".level-card").forEach(card => {
-      card.addEventListener("click", function(e){
-        if(e.target.classList.contains("file-pill")) return;
-
-        document.querySelectorAll(".level-card").forEach(c => {
-          if(c !== card) c.classList.remove("open");
-        });
-
+    document.querySelectorAll(".level-card").forEach(card=>{
+      card.onclick=e=>{
+        if(e.target.closest("button")) return;
+        document.querySelectorAll(".level-card").forEach(c=>{if(c!==card)c.classList.remove("open")});
         card.classList.toggle("open");
-        sessionStorage.setItem("impactSelectedLessonLevel", card.dataset.level);
-      });
+        sessionStorage.setItem("impactSelectedLessonLevel",card.dataset.level);
+      };
     });
 
-    document.querySelectorAll(".file-pill").forEach(btn => {
-      btn.addEventListener("click", function(e){
+    document.querySelectorAll(".file-pill").forEach(btn=>{
+      btn.onclick=e=>{
         e.stopPropagation();
-        sessionStorage.setItem("impactEditingLessonId", btn.dataset.id);
-        window.location.href = "/teacher/lesson-builder.html?edit=" + encodeURIComponent(btn.dataset.id);
-      });
+        sessionStorage.setItem("impactEditingLessonId",btn.dataset.id);
+        location.href="/teacher/lesson-builder.html?edit="+encodeURIComponent(btn.dataset.id);
+      };
+    });
+
+    document.querySelectorAll(".lesson-delete-btn").forEach(btn=>{
+      btn.onclick=async e=>{
+        e.stopPropagation();
+        if(!confirm("Delete this lesson plan?")) return;
+        await window.ImpactFirebaseStore.deleteLessonPlan(btn.dataset.deleteId);
+        await render();
+      };
     });
   }
 
-  createBtn.addEventListener("click", function(){
-    const selected = sessionStorage.getItem("impactSelectedLessonLevel") || "Absolute Beginner";
-    window.location.href = "/teacher/lesson-builder.html?level=" + encodeURIComponent(selected);
-  });
+  createBtn.onclick=()=>{
+    const selected=sessionStorage.getItem("impactSelectedLessonLevel") || "Absolute Beginner";
+    location.href="/teacher/lesson-builder.html?level="+encodeURIComponent(selected);
+  };
 
-  render();
+  await render();
 })();
 </script>
 </body>
 </html>
+

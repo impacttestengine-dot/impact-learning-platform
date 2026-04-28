@@ -1758,6 +1758,159 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
+<script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
+<script id="LESSON_BUILDER_FIREBASE_FINAL">
+document.addEventListener("DOMContentLoaded", async () => {
+  const canvas = document.getElementById("canvas");
+  const titleInput = document.getElementById("lessonTitle");
+  const levelInput = document.getElementById("lessonLevel");
+  const saveBtn = document.getElementById("saveBtn");
+  const editBtn = document.getElementById("editBtn");
+  const viewBtn = document.getElementById("viewBtn");
+  const newBtn = document.getElementById("newBtn");
+
+  const imageInput = document.getElementById("imageInput");
+  const audioInput = document.getElementById("audioInput");
+  const videoInput = document.getElementById("videoInput");
+
+  let currentLessonId =
+    new URLSearchParams(location.search).get("edit") ||
+    sessionStorage.getItem("impactEditingLessonId") ||
+    "";
+
+  let mediaList = [];
+
+  function removeEmpty(){
+    const empty = canvas?.querySelector(".empty-state");
+    if(empty) empty.remove();
+  }
+
+  function savedTick(){
+    const tick = document.getElementById("saveTick");
+    if(tick){
+      tick.classList.add("show");
+      setTimeout(() => tick.classList.remove("show"), 1400);
+    }
+  }
+
+  function addMediaCard(media){
+    removeEmpty();
+    mediaList.push(media);
+
+    const card = document.createElement("article");
+    card.className = "lesson-card lesson-media-card";
+    card.contentEditable = "false";
+    card.dataset.storagePath = media.path || "";
+    card.dataset.mediaUrl = media.url || "";
+    card.dataset.mediaType = media.folder || "";
+
+    if(media.folder === "lesson-images"){
+      card.innerHTML = `<div class="lesson-media-resizer"><img src="${media.url}" alt="${media.name || "Lesson image"}"></div>`;
+    }
+
+    if(media.folder === "lesson-audio"){
+      card.innerHTML = `<audio src="${media.url}" controls></audio>`;
+    }
+
+    if(media.folder === "lesson-video"){
+      card.innerHTML = `<div class="lesson-media-resizer"><video src="${media.url}" controls></video></div>`;
+    }
+
+    canvas.appendChild(card);
+  }
+
+  async function bindUpload(input, folder){
+    if(!input) return;
+
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+
+      const media = await window.ImpactFirebaseStore.uploadFile(file, folder);
+      addMediaCard(media);
+
+      e.target.value = "";
+    };
+  }
+
+  await bindUpload(imageInput, "lesson-images");
+  await bindUpload(audioInput, "lesson-audio");
+  await bindUpload(videoInput, "lesson-video");
+
+  async function saveLesson(){
+    const id = await window.ImpactFirebaseStore.saveLessonPlan({
+      id: currentLessonId,
+      title: titleInput?.value.trim() || "Untitled Lesson Plan",
+      level: levelInput?.value || "Absolute Beginner",
+      content: canvas?.innerHTML || "",
+      media: mediaList
+    });
+
+    currentLessonId = id;
+    sessionStorage.setItem("impactEditingLessonId", id);
+    savedTick();
+  }
+
+  if(saveBtn){
+    saveBtn.onclick = saveLesson;
+  }
+
+  if(newBtn){
+    newBtn.onclick = () => {
+      if(!confirm("Start a new lesson plan?")) return;
+      currentLessonId = "";
+      mediaList = [];
+      if(titleInput) titleInput.value = "";
+      if(canvas) canvas.innerHTML = `<div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>`;
+    };
+  }
+
+  if(editBtn){
+    editBtn.onclick = async () => {
+      const level = levelInput?.value || "Absolute Beginner";
+      const plans = (await window.ImpactFirebaseStore.getLessonPlans()).filter(p => p.level === level);
+
+      if(!plans.length){
+        alert("No saved lesson plans in this level folder yet.");
+        return;
+      }
+
+      const list = plans.map((p,i)=>`${i+1}. ${p.title || p.name || "Untitled Lesson"}`).join("\n");
+      const choice = prompt("Select lesson plan number:\n\n" + list);
+      const selected = plans[Number(choice)-1];
+
+      if(!selected) return;
+
+      currentLessonId = selected.id;
+      mediaList = selected.media || [];
+      sessionStorage.setItem("impactEditingLessonId", currentLessonId);
+
+      if(titleInput) titleInput.value = selected.title || selected.name || "";
+      if(levelInput) levelInput.value = selected.level || "Absolute Beginner";
+      if(canvas) canvas.innerHTML = selected.content || "";
+    };
+  }
+
+  if(viewBtn){
+    viewBtn.onclick = async () => {
+      await saveLesson();
+      window.open("/teacher/lesson-view.html?id=" + encodeURIComponent(currentLessonId), "_blank");
+    };
+  }
+
+  if(currentLessonId){
+    const plans = await window.ImpactFirebaseStore.getLessonPlans();
+    const selected = plans.find(p => p.id === currentLessonId);
+
+    if(selected){
+      mediaList = selected.media || [];
+      if(titleInput) titleInput.value = selected.title || selected.name || "";
+      if(levelInput) levelInput.value = selected.level || "Absolute Beginner";
+      if(canvas) canvas.innerHTML = selected.content || "";
+    }
+  }
+});
+</script>
 </body>
         </html>
       `);
@@ -1986,6 +2139,159 @@ document.addEventListener("DOMContentLoaded", () => {
       if(!undoStack.length) return;
       canvas.innerHTML = undoStack.pop();
     };
+  }
+});
+</script>
+<script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
+<script id="LESSON_BUILDER_FIREBASE_FINAL">
+document.addEventListener("DOMContentLoaded", async () => {
+  const canvas = document.getElementById("canvas");
+  const titleInput = document.getElementById("lessonTitle");
+  const levelInput = document.getElementById("lessonLevel");
+  const saveBtn = document.getElementById("saveBtn");
+  const editBtn = document.getElementById("editBtn");
+  const viewBtn = document.getElementById("viewBtn");
+  const newBtn = document.getElementById("newBtn");
+
+  const imageInput = document.getElementById("imageInput");
+  const audioInput = document.getElementById("audioInput");
+  const videoInput = document.getElementById("videoInput");
+
+  let currentLessonId =
+    new URLSearchParams(location.search).get("edit") ||
+    sessionStorage.getItem("impactEditingLessonId") ||
+    "";
+
+  let mediaList = [];
+
+  function removeEmpty(){
+    const empty = canvas?.querySelector(".empty-state");
+    if(empty) empty.remove();
+  }
+
+  function savedTick(){
+    const tick = document.getElementById("saveTick");
+    if(tick){
+      tick.classList.add("show");
+      setTimeout(() => tick.classList.remove("show"), 1400);
+    }
+  }
+
+  function addMediaCard(media){
+    removeEmpty();
+    mediaList.push(media);
+
+    const card = document.createElement("article");
+    card.className = "lesson-card lesson-media-card";
+    card.contentEditable = "false";
+    card.dataset.storagePath = media.path || "";
+    card.dataset.mediaUrl = media.url || "";
+    card.dataset.mediaType = media.folder || "";
+
+    if(media.folder === "lesson-images"){
+      card.innerHTML = `<div class="lesson-media-resizer"><img src="${media.url}" alt="${media.name || "Lesson image"}"></div>`;
+    }
+
+    if(media.folder === "lesson-audio"){
+      card.innerHTML = `<audio src="${media.url}" controls></audio>`;
+    }
+
+    if(media.folder === "lesson-video"){
+      card.innerHTML = `<div class="lesson-media-resizer"><video src="${media.url}" controls></video></div>`;
+    }
+
+    canvas.appendChild(card);
+  }
+
+  async function bindUpload(input, folder){
+    if(!input) return;
+
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+
+      const media = await window.ImpactFirebaseStore.uploadFile(file, folder);
+      addMediaCard(media);
+
+      e.target.value = "";
+    };
+  }
+
+  await bindUpload(imageInput, "lesson-images");
+  await bindUpload(audioInput, "lesson-audio");
+  await bindUpload(videoInput, "lesson-video");
+
+  async function saveLesson(){
+    const id = await window.ImpactFirebaseStore.saveLessonPlan({
+      id: currentLessonId,
+      title: titleInput?.value.trim() || "Untitled Lesson Plan",
+      level: levelInput?.value || "Absolute Beginner",
+      content: canvas?.innerHTML || "",
+      media: mediaList
+    });
+
+    currentLessonId = id;
+    sessionStorage.setItem("impactEditingLessonId", id);
+    savedTick();
+  }
+
+  if(saveBtn){
+    saveBtn.onclick = saveLesson;
+  }
+
+  if(newBtn){
+    newBtn.onclick = () => {
+      if(!confirm("Start a new lesson plan?")) return;
+      currentLessonId = "";
+      mediaList = [];
+      if(titleInput) titleInput.value = "";
+      if(canvas) canvas.innerHTML = `<div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>`;
+    };
+  }
+
+  if(editBtn){
+    editBtn.onclick = async () => {
+      const level = levelInput?.value || "Absolute Beginner";
+      const plans = (await window.ImpactFirebaseStore.getLessonPlans()).filter(p => p.level === level);
+
+      if(!plans.length){
+        alert("No saved lesson plans in this level folder yet.");
+        return;
+      }
+
+      const list = plans.map((p,i)=>`${i+1}. ${p.title || p.name || "Untitled Lesson"}`).join("\n");
+      const choice = prompt("Select lesson plan number:\n\n" + list);
+      const selected = plans[Number(choice)-1];
+
+      if(!selected) return;
+
+      currentLessonId = selected.id;
+      mediaList = selected.media || [];
+      sessionStorage.setItem("impactEditingLessonId", currentLessonId);
+
+      if(titleInput) titleInput.value = selected.title || selected.name || "";
+      if(levelInput) levelInput.value = selected.level || "Absolute Beginner";
+      if(canvas) canvas.innerHTML = selected.content || "";
+    };
+  }
+
+  if(viewBtn){
+    viewBtn.onclick = async () => {
+      await saveLesson();
+      window.open("/teacher/lesson-view.html?id=" + encodeURIComponent(currentLessonId), "_blank");
+    };
+  }
+
+  if(currentLessonId){
+    const plans = await window.ImpactFirebaseStore.getLessonPlans();
+    const selected = plans.find(p => p.id === currentLessonId);
+
+    if(selected){
+      mediaList = selected.media || [];
+      if(titleInput) titleInput.value = selected.title || selected.name || "";
+      if(levelInput) levelInput.value = selected.level || "Absolute Beginner";
+      if(canvas) canvas.innerHTML = selected.content || "";
+    }
   }
 });
 </script>
@@ -2603,6 +2909,159 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
+<script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
+<script id="LESSON_BUILDER_FIREBASE_FINAL">
+document.addEventListener("DOMContentLoaded", async () => {
+  const canvas = document.getElementById("canvas");
+  const titleInput = document.getElementById("lessonTitle");
+  const levelInput = document.getElementById("lessonLevel");
+  const saveBtn = document.getElementById("saveBtn");
+  const editBtn = document.getElementById("editBtn");
+  const viewBtn = document.getElementById("viewBtn");
+  const newBtn = document.getElementById("newBtn");
+
+  const imageInput = document.getElementById("imageInput");
+  const audioInput = document.getElementById("audioInput");
+  const videoInput = document.getElementById("videoInput");
+
+  let currentLessonId =
+    new URLSearchParams(location.search).get("edit") ||
+    sessionStorage.getItem("impactEditingLessonId") ||
+    "";
+
+  let mediaList = [];
+
+  function removeEmpty(){
+    const empty = canvas?.querySelector(".empty-state");
+    if(empty) empty.remove();
+  }
+
+  function savedTick(){
+    const tick = document.getElementById("saveTick");
+    if(tick){
+      tick.classList.add("show");
+      setTimeout(() => tick.classList.remove("show"), 1400);
+    }
+  }
+
+  function addMediaCard(media){
+    removeEmpty();
+    mediaList.push(media);
+
+    const card = document.createElement("article");
+    card.className = "lesson-card lesson-media-card";
+    card.contentEditable = "false";
+    card.dataset.storagePath = media.path || "";
+    card.dataset.mediaUrl = media.url || "";
+    card.dataset.mediaType = media.folder || "";
+
+    if(media.folder === "lesson-images"){
+      card.innerHTML = `<div class="lesson-media-resizer"><img src="${media.url}" alt="${media.name || "Lesson image"}"></div>`;
+    }
+
+    if(media.folder === "lesson-audio"){
+      card.innerHTML = `<audio src="${media.url}" controls></audio>`;
+    }
+
+    if(media.folder === "lesson-video"){
+      card.innerHTML = `<div class="lesson-media-resizer"><video src="${media.url}" controls></video></div>`;
+    }
+
+    canvas.appendChild(card);
+  }
+
+  async function bindUpload(input, folder){
+    if(!input) return;
+
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+
+      const media = await window.ImpactFirebaseStore.uploadFile(file, folder);
+      addMediaCard(media);
+
+      e.target.value = "";
+    };
+  }
+
+  await bindUpload(imageInput, "lesson-images");
+  await bindUpload(audioInput, "lesson-audio");
+  await bindUpload(videoInput, "lesson-video");
+
+  async function saveLesson(){
+    const id = await window.ImpactFirebaseStore.saveLessonPlan({
+      id: currentLessonId,
+      title: titleInput?.value.trim() || "Untitled Lesson Plan",
+      level: levelInput?.value || "Absolute Beginner",
+      content: canvas?.innerHTML || "",
+      media: mediaList
+    });
+
+    currentLessonId = id;
+    sessionStorage.setItem("impactEditingLessonId", id);
+    savedTick();
+  }
+
+  if(saveBtn){
+    saveBtn.onclick = saveLesson;
+  }
+
+  if(newBtn){
+    newBtn.onclick = () => {
+      if(!confirm("Start a new lesson plan?")) return;
+      currentLessonId = "";
+      mediaList = [];
+      if(titleInput) titleInput.value = "";
+      if(canvas) canvas.innerHTML = `<div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>`;
+    };
+  }
+
+  if(editBtn){
+    editBtn.onclick = async () => {
+      const level = levelInput?.value || "Absolute Beginner";
+      const plans = (await window.ImpactFirebaseStore.getLessonPlans()).filter(p => p.level === level);
+
+      if(!plans.length){
+        alert("No saved lesson plans in this level folder yet.");
+        return;
+      }
+
+      const list = plans.map((p,i)=>`${i+1}. ${p.title || p.name || "Untitled Lesson"}`).join("\n");
+      const choice = prompt("Select lesson plan number:\n\n" + list);
+      const selected = plans[Number(choice)-1];
+
+      if(!selected) return;
+
+      currentLessonId = selected.id;
+      mediaList = selected.media || [];
+      sessionStorage.setItem("impactEditingLessonId", currentLessonId);
+
+      if(titleInput) titleInput.value = selected.title || selected.name || "";
+      if(levelInput) levelInput.value = selected.level || "Absolute Beginner";
+      if(canvas) canvas.innerHTML = selected.content || "";
+    };
+  }
+
+  if(viewBtn){
+    viewBtn.onclick = async () => {
+      await saveLesson();
+      window.open("/teacher/lesson-view.html?id=" + encodeURIComponent(currentLessonId), "_blank");
+    };
+  }
+
+  if(currentLessonId){
+    const plans = await window.ImpactFirebaseStore.getLessonPlans();
+    const selected = plans.find(p => p.id === currentLessonId);
+
+    if(selected){
+      mediaList = selected.media || [];
+      if(titleInput) titleInput.value = selected.title || selected.name || "";
+      if(levelInput) levelInput.value = selected.level || "Absolute Beginner";
+      if(canvas) canvas.innerHTML = selected.content || "";
+    }
+  }
+});
+</script>
 </body>
         </html>
       `);
@@ -2834,8 +3293,163 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
+<script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
+<script id="LESSON_BUILDER_FIREBASE_FINAL">
+document.addEventListener("DOMContentLoaded", async () => {
+  const canvas = document.getElementById("canvas");
+  const titleInput = document.getElementById("lessonTitle");
+  const levelInput = document.getElementById("lessonLevel");
+  const saveBtn = document.getElementById("saveBtn");
+  const editBtn = document.getElementById("editBtn");
+  const viewBtn = document.getElementById("viewBtn");
+  const newBtn = document.getElementById("newBtn");
+
+  const imageInput = document.getElementById("imageInput");
+  const audioInput = document.getElementById("audioInput");
+  const videoInput = document.getElementById("videoInput");
+
+  let currentLessonId =
+    new URLSearchParams(location.search).get("edit") ||
+    sessionStorage.getItem("impactEditingLessonId") ||
+    "";
+
+  let mediaList = [];
+
+  function removeEmpty(){
+    const empty = canvas?.querySelector(".empty-state");
+    if(empty) empty.remove();
+  }
+
+  function savedTick(){
+    const tick = document.getElementById("saveTick");
+    if(tick){
+      tick.classList.add("show");
+      setTimeout(() => tick.classList.remove("show"), 1400);
+    }
+  }
+
+  function addMediaCard(media){
+    removeEmpty();
+    mediaList.push(media);
+
+    const card = document.createElement("article");
+    card.className = "lesson-card lesson-media-card";
+    card.contentEditable = "false";
+    card.dataset.storagePath = media.path || "";
+    card.dataset.mediaUrl = media.url || "";
+    card.dataset.mediaType = media.folder || "";
+
+    if(media.folder === "lesson-images"){
+      card.innerHTML = `<div class="lesson-media-resizer"><img src="${media.url}" alt="${media.name || "Lesson image"}"></div>`;
+    }
+
+    if(media.folder === "lesson-audio"){
+      card.innerHTML = `<audio src="${media.url}" controls></audio>`;
+    }
+
+    if(media.folder === "lesson-video"){
+      card.innerHTML = `<div class="lesson-media-resizer"><video src="${media.url}" controls></video></div>`;
+    }
+
+    canvas.appendChild(card);
+  }
+
+  async function bindUpload(input, folder){
+    if(!input) return;
+
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+
+      const media = await window.ImpactFirebaseStore.uploadFile(file, folder);
+      addMediaCard(media);
+
+      e.target.value = "";
+    };
+  }
+
+  await bindUpload(imageInput, "lesson-images");
+  await bindUpload(audioInput, "lesson-audio");
+  await bindUpload(videoInput, "lesson-video");
+
+  async function saveLesson(){
+    const id = await window.ImpactFirebaseStore.saveLessonPlan({
+      id: currentLessonId,
+      title: titleInput?.value.trim() || "Untitled Lesson Plan",
+      level: levelInput?.value || "Absolute Beginner",
+      content: canvas?.innerHTML || "",
+      media: mediaList
+    });
+
+    currentLessonId = id;
+    sessionStorage.setItem("impactEditingLessonId", id);
+    savedTick();
+  }
+
+  if(saveBtn){
+    saveBtn.onclick = saveLesson;
+  }
+
+  if(newBtn){
+    newBtn.onclick = () => {
+      if(!confirm("Start a new lesson plan?")) return;
+      currentLessonId = "";
+      mediaList = [];
+      if(titleInput) titleInput.value = "";
+      if(canvas) canvas.innerHTML = `<div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>`;
+    };
+  }
+
+  if(editBtn){
+    editBtn.onclick = async () => {
+      const level = levelInput?.value || "Absolute Beginner";
+      const plans = (await window.ImpactFirebaseStore.getLessonPlans()).filter(p => p.level === level);
+
+      if(!plans.length){
+        alert("No saved lesson plans in this level folder yet.");
+        return;
+      }
+
+      const list = plans.map((p,i)=>`${i+1}. ${p.title || p.name || "Untitled Lesson"}`).join("\n");
+      const choice = prompt("Select lesson plan number:\n\n" + list);
+      const selected = plans[Number(choice)-1];
+
+      if(!selected) return;
+
+      currentLessonId = selected.id;
+      mediaList = selected.media || [];
+      sessionStorage.setItem("impactEditingLessonId", currentLessonId);
+
+      if(titleInput) titleInput.value = selected.title || selected.name || "";
+      if(levelInput) levelInput.value = selected.level || "Absolute Beginner";
+      if(canvas) canvas.innerHTML = selected.content || "";
+    };
+  }
+
+  if(viewBtn){
+    viewBtn.onclick = async () => {
+      await saveLesson();
+      window.open("/teacher/lesson-view.html?id=" + encodeURIComponent(currentLessonId), "_blank");
+    };
+  }
+
+  if(currentLessonId){
+    const plans = await window.ImpactFirebaseStore.getLessonPlans();
+    const selected = plans.find(p => p.id === currentLessonId);
+
+    if(selected){
+      mediaList = selected.media || [];
+      if(titleInput) titleInput.value = selected.title || selected.name || "";
+      if(levelInput) levelInput.value = selected.level || "Absolute Beginner";
+      if(canvas) canvas.innerHTML = selected.content || "";
+    }
+  }
+});
+</script>
 </body>
 </html>
+
+
 
 
 
