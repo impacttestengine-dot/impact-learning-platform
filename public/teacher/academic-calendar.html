@@ -5,22 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Academic Calendar</title>
 
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family: 'Inter', sans-serif;
-}
+<!-- KEEP YOUR SYSTEM FILES -->
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
 
+<style>
 body{
-  background: radial-gradient(circle at top, #0f172a, #020617);
   color:white;
 }
 
-/* ===== PAGE WRAPPER ===== */
+/* ===== PAGE ===== */
 .page{
-  padding:30px;
+  position:relative;
+  z-index:2;
+  padding:110px 40px 40px;
 }
 
 /* ===== HEADER ===== */
@@ -32,11 +30,11 @@ body{
 }
 
 .title{
-  font-size:28px;
+  font-size:32px;
   font-weight:600;
-  letter-spacing:0.5px;
 }
 
+/* ===== YEAR NAV ===== */
 .year-nav{
   display:flex;
   align-items:center;
@@ -45,7 +43,6 @@ body{
 
 .year{
   font-size:22px;
-  font-weight:500;
 }
 
 .arrow{
@@ -58,82 +55,72 @@ body{
 .edit{
   margin-left:20px;
   cursor:pointer;
-  opacity:0.7;
 }
-.edit:hover{opacity:1;}
 
 /* ===== GLASS CONTAINER ===== */
-.calendar-wrapper{
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(20px);
-  border-radius:20px;
+.calendar{
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(25px);
+  border-radius:24px;
   padding:20px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  overflow:hidden;
+  box-shadow:0 20px 80px rgba(0,0,0,0.6);
 }
 
 /* ===== SCROLL ===== */
 .scroll{
   overflow-x:auto;
-  padding-bottom:10px;
 }
 
 /* ===== GRID ===== */
 .grid{
   display:grid;
-  grid-template-columns: 200px repeat(52, 1fr);
+  grid-template-columns:200px repeat(52, 1fr);
   min-width:1600px;
 }
 
-/* ===== LEFT LABEL COLUMN ===== */
+/* ===== LABELS ===== */
 .label{
-  padding:12px;
+  padding:10px;
   font-size:14px;
-  opacity:0.8;
-  border-bottom:1px solid rgba(255,255,255,0.08);
+  opacity:0.85;
+  border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
-/* ===== MONTH HEADER ===== */
+/* ===== MONTH ===== */
 .month{
   text-align:center;
   font-size:12px;
   padding:10px 0;
-  border-bottom:1px solid rgba(255,255,255,0.15);
+  border-bottom:1px solid rgba(255,255,255,0.2);
   opacity:0.8;
 }
 
 /* ===== CELLS ===== */
 .cell{
-  height:28px;
-  border-right:1px solid rgba(255,255,255,0.05);
-  border-bottom:1px solid rgba(255,255,255,0.05);
+  height:30px;
+  border-right:1px solid rgba(255,255,255,0.06);
+  border-bottom:1px solid rgba(255,255,255,0.06);
 }
 
-/* ===== ROW TYPES ===== */
+.cell:hover{
+  background: rgba(255,255,255,0.1);
+  cursor:pointer;
+}
+
+/* ===== ROW COLORS ===== */
 .phase{ color:#60a5fa; }
 .event{ color:#34d399; }
 .exam{ color:#fbbf24; }
 .holiday{ color:#f87171; }
 
-/* ===== HOVER EFFECT ===== */
-.cell:hover{
-  background: rgba(255,255,255,0.08);
-  cursor:pointer;
-}
-
-/* ===== SCROLLBAR ===== */
-.scroll::-webkit-scrollbar{
-  height:8px;
-}
-.scroll::-webkit-scrollbar-thumb{
-  background: rgba(255,255,255,0.2);
-  border-radius:10px;
-}
-
 </style>
 </head>
 
 <body>
+
+<!-- KEEP YOUR NAV -->
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
 
 <div class="page">
 
@@ -144,60 +131,70 @@ body{
       <div class="arrow" onclick="changeYear(-1)">◀</div>
       <div class="year" id="year">2026</div>
       <div class="arrow" onclick="changeYear(1)">▶</div>
-
       <div class="edit">✏️</div>
     </div>
   </div>
 
-  <div class="calendar-wrapper">
+  <div class="calendar">
     <div class="scroll">
-
-      <div class="grid" id="grid">
-
-        <!-- MONTH HEADER ROW -->
-        <div></div>
-        <script>
-          const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-          months.forEach(m=>{
-            for(let i=0;i<4;i++){
-              document.write(<div class='month'></div>);
-            }
-          });
-        </script>
-
-        <!-- ROWS -->
-        <script>
-          const rows = [
-            {name:"Phase 1", cls:"phase"},
-            {name:"Phase 2", cls:"phase"},
-            {name:"Phase 3", cls:"phase"},
-            {name:"Phase 4", cls:"phase"},
-            {name:"Events", cls:"event"},
-            {name:"Exams", cls:"exam"},
-            {name:"Holidays", cls:"holiday"}
-          ];
-
-          rows.forEach(r=>{
-            document.write(<div class="label "></div>);
-            for(let i=0;i<52;i++){
-              document.write(<div class="cell"></div>);
-            }
-          });
-        </script>
-
-      </div>
-
+      <div class="grid" id="grid"></div>
     </div>
   </div>
 
 </div>
 
 <script>
+const grid = document.getElementById("grid");
+
+function buildGrid(){
+
+  grid.innerHTML = "";
+
+  // MONTH HEADER
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  let header = "<div></div>";
+
+  months.forEach(m=>{
+    for(let i=0;i<4;i++){
+      header += <div class="month"></div>;
+    }
+  });
+
+  grid.innerHTML += header;
+
+  // ROWS
+  const rows = [
+    {name:"Phase 1", cls:"phase"},
+    {name:"Phase 2", cls:"phase"},
+    {name:"Phase 3", cls:"phase"},
+    {name:"Phase 4", cls:"phase"},
+    {name:"Events", cls:"event"},
+    {name:"Exams", cls:"exam"},
+    {name:"Holidays", cls:"holiday"}
+  ];
+
+  rows.forEach(r=>{
+    let rowHTML = <div class="label "></div>;
+
+    for(let i=0;i<52;i++){
+      rowHTML += <div class="cell"></div>;
+    }
+
+    grid.innerHTML += rowHTML;
+  });
+}
+
+// YEAR SWITCH
 function changeYear(dir){
-  const el = document.getElementById("year");
+  let el = document.getElementById("year");
   let y = parseInt(el.innerText);
   el.innerText = y + dir;
 }
+
+// INIT
+buildGrid();
+
 </script>
 
 </body>
