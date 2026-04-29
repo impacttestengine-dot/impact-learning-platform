@@ -1759,6 +1759,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 <script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
+
+<script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
+
+<script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
 <script id="LESSON_BUILDER_FIREBASE_FINAL">
 document.addEventListener("DOMContentLoaded", async () => {
   const canvas = document.getElementById("canvas");
@@ -1802,18 +1806,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     card.contentEditable = "false";
     card.dataset.storagePath = media.path || "";
     card.dataset.mediaUrl = media.url || "";
-    card.dataset.mediaType = media.folder || "";
 
-    if(media.folder === "lesson-images"){
+    if((media.mimeType || "").startsWith("image")){
       card.innerHTML = `<div class="lesson-media-resizer"><img src="${media.url}" alt="${media.name || "Lesson image"}"></div>`;
-    }
-
-    if(media.folder === "lesson-audio"){
+    } else if((media.mimeType || "").startsWith("audio")){
       card.innerHTML = `<audio src="${media.url}" controls></audio>`;
-    }
-
-    if(media.folder === "lesson-video"){
+    } else if((media.mimeType || "").startsWith("video")){
       card.innerHTML = `<div class="lesson-media-resizer"><video src="${media.url}" controls></video></div>`;
+    } else {
+      card.innerHTML = `<a href="${media.url}" target="_blank">${media.name || "Uploaded file"}</a>`;
     }
 
     canvas.appendChild(card);
@@ -1826,7 +1827,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       const file = e.target.files[0];
       if(!file) return;
 
-      const media = await window.ImpactFirebaseStore.uploadFile(file, folder);
+      const level = levelInput?.value || "Absolute Beginner";
+      const lessonTitle = titleInput?.value.trim() || "Untitled Lesson";
+      const subfolder = level + "/" + lessonTitle;
+
+      const media = await window.ImpactFirebaseStore.uploadFile(file, folder, subfolder);
       addMediaCard(media);
 
       e.target.value = "";
@@ -1860,6 +1865,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if(!confirm("Start a new lesson plan?")) return;
       currentLessonId = "";
       mediaList = [];
+      sessionStorage.removeItem("impactEditingLessonId");
       if(titleInput) titleInput.value = "";
       if(canvas) canvas.innerHTML = `<div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>`;
     };
@@ -1898,9 +1904,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
+  const levelFromUrl = new URLSearchParams(location.search).get("level");
+  if(levelFromUrl && levelInput){
+    levelInput.value = levelFromUrl;
+  }
+
   if(currentLessonId){
-    const plans = await window.ImpactFirebaseStore.getLessonPlans();
-    const selected = plans.find(p => p.id === currentLessonId);
+    const selected = await window.ImpactFirebaseStore.getLessonPlan(currentLessonId);
 
     if(selected){
       mediaList = selected.media || [];
@@ -2143,6 +2153,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 <script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
+
+<script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
+
+<script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
 <script id="LESSON_BUILDER_FIREBASE_FINAL">
 document.addEventListener("DOMContentLoaded", async () => {
   const canvas = document.getElementById("canvas");
@@ -2186,18 +2200,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     card.contentEditable = "false";
     card.dataset.storagePath = media.path || "";
     card.dataset.mediaUrl = media.url || "";
-    card.dataset.mediaType = media.folder || "";
 
-    if(media.folder === "lesson-images"){
+    if((media.mimeType || "").startsWith("image")){
       card.innerHTML = `<div class="lesson-media-resizer"><img src="${media.url}" alt="${media.name || "Lesson image"}"></div>`;
-    }
-
-    if(media.folder === "lesson-audio"){
+    } else if((media.mimeType || "").startsWith("audio")){
       card.innerHTML = `<audio src="${media.url}" controls></audio>`;
-    }
-
-    if(media.folder === "lesson-video"){
+    } else if((media.mimeType || "").startsWith("video")){
       card.innerHTML = `<div class="lesson-media-resizer"><video src="${media.url}" controls></video></div>`;
+    } else {
+      card.innerHTML = `<a href="${media.url}" target="_blank">${media.name || "Uploaded file"}</a>`;
     }
 
     canvas.appendChild(card);
@@ -2210,7 +2221,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       const file = e.target.files[0];
       if(!file) return;
 
-      const media = await window.ImpactFirebaseStore.uploadFile(file, folder);
+      const level = levelInput?.value || "Absolute Beginner";
+      const lessonTitle = titleInput?.value.trim() || "Untitled Lesson";
+      const subfolder = level + "/" + lessonTitle;
+
+      const media = await window.ImpactFirebaseStore.uploadFile(file, folder, subfolder);
       addMediaCard(media);
 
       e.target.value = "";
@@ -2244,6 +2259,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if(!confirm("Start a new lesson plan?")) return;
       currentLessonId = "";
       mediaList = [];
+      sessionStorage.removeItem("impactEditingLessonId");
       if(titleInput) titleInput.value = "";
       if(canvas) canvas.innerHTML = `<div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>`;
     };
@@ -2282,9 +2298,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
+  const levelFromUrl = new URLSearchParams(location.search).get("level");
+  if(levelFromUrl && levelInput){
+    levelInput.value = levelFromUrl;
+  }
+
   if(currentLessonId){
-    const plans = await window.ImpactFirebaseStore.getLessonPlans();
-    const selected = plans.find(p => p.id === currentLessonId);
+    const selected = await window.ImpactFirebaseStore.getLessonPlan(currentLessonId);
 
     if(selected){
       mediaList = selected.media || [];
@@ -2910,6 +2930,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 <script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
+
+<script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
+
+<script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
 <script id="LESSON_BUILDER_FIREBASE_FINAL">
 document.addEventListener("DOMContentLoaded", async () => {
   const canvas = document.getElementById("canvas");
@@ -2953,18 +2977,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     card.contentEditable = "false";
     card.dataset.storagePath = media.path || "";
     card.dataset.mediaUrl = media.url || "";
-    card.dataset.mediaType = media.folder || "";
 
-    if(media.folder === "lesson-images"){
+    if((media.mimeType || "").startsWith("image")){
       card.innerHTML = `<div class="lesson-media-resizer"><img src="${media.url}" alt="${media.name || "Lesson image"}"></div>`;
-    }
-
-    if(media.folder === "lesson-audio"){
+    } else if((media.mimeType || "").startsWith("audio")){
       card.innerHTML = `<audio src="${media.url}" controls></audio>`;
-    }
-
-    if(media.folder === "lesson-video"){
+    } else if((media.mimeType || "").startsWith("video")){
       card.innerHTML = `<div class="lesson-media-resizer"><video src="${media.url}" controls></video></div>`;
+    } else {
+      card.innerHTML = `<a href="${media.url}" target="_blank">${media.name || "Uploaded file"}</a>`;
     }
 
     canvas.appendChild(card);
@@ -2977,7 +2998,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       const file = e.target.files[0];
       if(!file) return;
 
-      const media = await window.ImpactFirebaseStore.uploadFile(file, folder);
+      const level = levelInput?.value || "Absolute Beginner";
+      const lessonTitle = titleInput?.value.trim() || "Untitled Lesson";
+      const subfolder = level + "/" + lessonTitle;
+
+      const media = await window.ImpactFirebaseStore.uploadFile(file, folder, subfolder);
       addMediaCard(media);
 
       e.target.value = "";
@@ -3011,6 +3036,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if(!confirm("Start a new lesson plan?")) return;
       currentLessonId = "";
       mediaList = [];
+      sessionStorage.removeItem("impactEditingLessonId");
       if(titleInput) titleInput.value = "";
       if(canvas) canvas.innerHTML = `<div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>`;
     };
@@ -3049,9 +3075,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
+  const levelFromUrl = new URLSearchParams(location.search).get("level");
+  if(levelFromUrl && levelInput){
+    levelInput.value = levelFromUrl;
+  }
+
   if(currentLessonId){
-    const plans = await window.ImpactFirebaseStore.getLessonPlans();
-    const selected = plans.find(p => p.id === currentLessonId);
+    const selected = await window.ImpactFirebaseStore.getLessonPlan(currentLessonId);
 
     if(selected){
       mediaList = selected.media || [];
@@ -3294,6 +3324,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 <script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
+
+<script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
+
+<script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
 <script id="LESSON_BUILDER_FIREBASE_FINAL">
 document.addEventListener("DOMContentLoaded", async () => {
   const canvas = document.getElementById("canvas");
@@ -3337,18 +3371,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     card.contentEditable = "false";
     card.dataset.storagePath = media.path || "";
     card.dataset.mediaUrl = media.url || "";
-    card.dataset.mediaType = media.folder || "";
 
-    if(media.folder === "lesson-images"){
+    if((media.mimeType || "").startsWith("image")){
       card.innerHTML = `<div class="lesson-media-resizer"><img src="${media.url}" alt="${media.name || "Lesson image"}"></div>`;
-    }
-
-    if(media.folder === "lesson-audio"){
+    } else if((media.mimeType || "").startsWith("audio")){
       card.innerHTML = `<audio src="${media.url}" controls></audio>`;
-    }
-
-    if(media.folder === "lesson-video"){
+    } else if((media.mimeType || "").startsWith("video")){
       card.innerHTML = `<div class="lesson-media-resizer"><video src="${media.url}" controls></video></div>`;
+    } else {
+      card.innerHTML = `<a href="${media.url}" target="_blank">${media.name || "Uploaded file"}</a>`;
     }
 
     canvas.appendChild(card);
@@ -3361,7 +3392,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       const file = e.target.files[0];
       if(!file) return;
 
-      const media = await window.ImpactFirebaseStore.uploadFile(file, folder);
+      const level = levelInput?.value || "Absolute Beginner";
+      const lessonTitle = titleInput?.value.trim() || "Untitled Lesson";
+      const subfolder = level + "/" + lessonTitle;
+
+      const media = await window.ImpactFirebaseStore.uploadFile(file, folder, subfolder);
       addMediaCard(media);
 
       e.target.value = "";
@@ -3395,6 +3430,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if(!confirm("Start a new lesson plan?")) return;
       currentLessonId = "";
       mediaList = [];
+      sessionStorage.removeItem("impactEditingLessonId");
       if(titleInput) titleInput.value = "";
       if(canvas) canvas.innerHTML = `<div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>`;
     };
@@ -3433,9 +3469,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
+  const levelFromUrl = new URLSearchParams(location.search).get("level");
+  if(levelFromUrl && levelInput){
+    levelInput.value = levelFromUrl;
+  }
+
   if(currentLessonId){
-    const plans = await window.ImpactFirebaseStore.getLessonPlans();
-    const selected = plans.find(p => p.id === currentLessonId);
+    const selected = await window.ImpactFirebaseStore.getLessonPlan(currentLessonId);
 
     if(selected){
       mediaList = selected.media || [];
@@ -3448,6 +3488,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 </script>
 </body>
 </html>
+
+
 
 
 

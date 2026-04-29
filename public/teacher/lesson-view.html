@@ -27,15 +27,14 @@ audio{width:100%;margin:14px 0}
 </main>
 
 <script src="/js/impact-global-bg.js"></script>
-<script src="/js/impact-firebase-store.js?v=firebase-storage-final-001"></script>
+<script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
 <script>
 (async function(){
   const id = new URLSearchParams(location.search).get("id");
   const title = document.getElementById("title");
   const content = document.getElementById("content");
 
-  const plans = await window.ImpactFirebaseStore.getLessonPlans();
-  const plan = plans.find(p => p.id === id);
+  const plan = await window.ImpactFirebaseStore.getLessonPlan(id);
 
   if(!plan){
     content.innerHTML = "Lesson plan not found.";
@@ -48,4 +47,3 @@ audio{width:100%;margin:14px 0}
 </script>
 </body>
 </html>
-

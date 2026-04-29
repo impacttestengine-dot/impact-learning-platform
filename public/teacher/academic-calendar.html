@@ -1,55 +1,204 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Academic Calendar</title>
 
 <style>
-body{
+*{
   margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body{
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color:white;
+}
+
+/* ===== PAGE WRAPPER ===== */
+.page{
+  padding:30px;
+}
+
+/* ===== HEADER ===== */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+.title{
+  font-size:28px;
+  font-weight:600;
+  letter-spacing:0.5px;
+}
+
+.year-nav{
   display:flex;
   align-items:center;
-  justify-content:center;
-  height:100vh;
-  background:#05060b;
-  color:white;
-  font-family:Inter;
+  gap:15px;
 }
 
-.card{
+.year{
+  font-size:22px;
+  font-weight:500;
+}
+
+.arrow{
+  cursor:pointer;
+  font-size:20px;
+  opacity:0.7;
+}
+.arrow:hover{opacity:1;}
+
+.edit{
+  margin-left:20px;
+  cursor:pointer;
+  opacity:0.7;
+}
+.edit:hover{opacity:1;}
+
+/* ===== GLASS CONTAINER ===== */
+.calendar-wrapper{
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(20px);
+  border-radius:20px;
+  padding:20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  overflow:hidden;
+}
+
+/* ===== SCROLL ===== */
+.scroll{
+  overflow-x:auto;
+  padding-bottom:10px;
+}
+
+/* ===== GRID ===== */
+.grid{
+  display:grid;
+  grid-template-columns: 200px repeat(52, 1fr);
+  min-width:1600px;
+}
+
+/* ===== LEFT LABEL COLUMN ===== */
+.label{
+  padding:12px;
+  font-size:14px;
+  opacity:0.8;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+/* ===== MONTH HEADER ===== */
+.month{
   text-align:center;
-  padding:40px;
-  border-radius:24px;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);
-  animation:float 3s ease-in-out infinite;
+  font-size:12px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,0.15);
+  opacity:0.8;
 }
 
-@keyframes float{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-  100%{transform:translateY(0)}
+/* ===== CELLS ===== */
+.cell{
+  height:28px;
+  border-right:1px solid rgba(255,255,255,0.05);
+  border-bottom:1px solid rgba(255,255,255,0.05);
 }
 
-h1{
-  font-family:"Sorts Mill Goudy";
-  font-weight:400;
+/* ===== ROW TYPES ===== */
+.phase{ color:#60a5fa; }
+.event{ color:#34d399; }
+.exam{ color:#fbbf24; }
+.holiday{ color:#f87171; }
+
+/* ===== HOVER EFFECT ===== */
+.cell:hover{
+  background: rgba(255,255,255,0.08);
+  cursor:pointer;
+}
+
+/* ===== SCROLLBAR ===== */
+.scroll::-webkit-scrollbar{
+  height:8px;
+}
+.scroll::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,0.2);
+  border-radius:10px;
 }
 
 </style>
-  <link rel="stylesheet" href="/css/impact-global-bg.css?v=blur-bg-logo-clean-001">
-  <link rel="stylesheet" href="/css/impact-page-nav.css?v=nav-global-001">
 </head>
 
 <body>
-<div class="card">
-<h1>Academic Calendar</h1>
-<p>Coming Soon</p>
+
+<div class="page">
+
+  <div class="header">
+    <div class="title">Academic Timeline</div>
+
+    <div class="year-nav">
+      <div class="arrow" onclick="changeYear(-1)">◀</div>
+      <div class="year" id="year">2026</div>
+      <div class="arrow" onclick="changeYear(1)">▶</div>
+
+      <div class="edit">✏️</div>
+    </div>
+  </div>
+
+  <div class="calendar-wrapper">
+    <div class="scroll">
+
+      <div class="grid" id="grid">
+
+        <!-- MONTH HEADER ROW -->
+        <div></div>
+        <script>
+          const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          months.forEach(m=>{
+            for(let i=0;i<4;i++){
+              document.write(<div class='month'></div>);
+            }
+          });
+        </script>
+
+        <!-- ROWS -->
+        <script>
+          const rows = [
+            {name:"Phase 1", cls:"phase"},
+            {name:"Phase 2", cls:"phase"},
+            {name:"Phase 3", cls:"phase"},
+            {name:"Phase 4", cls:"phase"},
+            {name:"Events", cls:"event"},
+            {name:"Exams", cls:"exam"},
+            {name:"Holidays", cls:"holiday"}
+          ];
+
+          rows.forEach(r=>{
+            document.write(<div class="label "></div>);
+            for(let i=0;i<52;i++){
+              document.write(<div class="cell"></div>);
+            }
+          });
+        </script>
+
+      </div>
+
+    </div>
+  </div>
+
 </div>
-  <script src="/js/impact-global-bg.js?v=blur-bg-logo-clean-001"></script>
-  <script src="/js/impact-page-nav.js?v=nav-global-001"></script>
+
+<script>
+function changeYear(dir){
+  const el = document.getElementById("year");
+  let y = parseInt(el.innerText);
+  el.innerText = y + dir;
+}
+</script>
+
 </body>
 </html>
-
-

@@ -169,6 +169,44 @@ body{
   .dashboard-page{width:min(92vw,620px)}
 }
 </style>
+<style id="dashboard-toggle-force-css">
+  .dashboard-menu-wrap,
+  #dashboardMenuWrap {
+    position: fixed !important;
+    top: 24px !important;
+    right: 24px !important;
+    z-index: 999999 !important;
+  }
+
+  .dashboard-toggle-btn,
+  #dashboardToggleBtn {
+    position: relative !important;
+    z-index: 1000001 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+
+  .dashboard-menu-panel,
+  #dashboardMenuPanel,
+  .dashboard-menu {
+    display: none !important;
+    position: absolute !important;
+    top: 54px !important;
+    right: 0 !important;
+    min-width: 220px !important;
+    z-index: 1000000 !important;
+    pointer-events: auto !important;
+  }
+
+  .dashboard-menu-wrap.open .dashboard-menu-panel,
+  .dashboard-menu-wrap.open #dashboardMenuPanel,
+  .dashboard-menu-wrap.open .dashboard-menu,
+  #dashboardMenuWrap.open .dashboard-menu-panel,
+  #dashboardMenuWrap.open #dashboardMenuPanel,
+  #dashboardMenuWrap.open .dashboard-menu {
+    display: block !important;
+  }
+</style>
 </head>
 
 <body>
@@ -260,8 +298,69 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 });
 </script>
+<script id="dashboard-toggle-force-script">
+(function(){
+  function initDashboardToggle(){
+    const btn =
+      document.getElementById("dashboardToggleBtn") ||
+      document.querySelector(".dashboard-toggle-btn") ||
+      document.querySelector("[data-dashboard-toggle]") ||
+      document.querySelector("button[aria-label='Menu']") ||
+      document.querySelector("button[aria-label='menu']");
+
+    if (!btn) return;
+
+    let wrap =
+      document.getElementById("dashboardMenuWrap") ||
+      btn.closest(".dashboard-menu-wrap") ||
+      btn.parentElement;
+
+    let panel =
+      document.getElementById("dashboardMenuPanel") ||
+      document.querySelector(".dashboard-menu-panel") ||
+      document.querySelector(".dashboard-menu");
+
+    if (!wrap) return;
+
+    if (panel && !wrap.contains(panel)) {
+      wrap.appendChild(panel);
+    }
+
+    wrap.classList.add("dashboard-menu-wrap");
+    btn.classList.add("dashboard-toggle-btn");
+
+    if (panel) {
+      panel.classList.add("dashboard-menu-panel");
+    }
+
+    btn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      wrap.classList.toggle("open");
+    };
+
+    if (panel) {
+      panel.onclick = function(e){
+        e.stopPropagation();
+      };
+    }
+
+    document.addEventListener("click", function(){
+      wrap.classList.remove("open");
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initDashboardToggle);
+  } else {
+    initDashboardToggle();
+  }
+})();
+</script>
 </body>
 </html>
+
+
 
 
 

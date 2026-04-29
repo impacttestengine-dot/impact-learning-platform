@@ -1,8 +1,8 @@
-﻿rules_version = '2';
+rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
-    match /recordings/{level}/{fileName} {
+    match /{allPaths=**} {
       allow read, write: if true;
     }
   }

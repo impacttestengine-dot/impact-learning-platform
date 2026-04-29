@@ -22,6 +22,10 @@
     };
   }
 
+  function cleanKey(v){
+    return String(v || "").trim().replace(/\s+/g,"").toUpperCase();
+  }
+
   function makeId(prefix){
     return prefix + "-" + Date.now() + "-" + Math.random().toString(36).slice(2,8);
   }
@@ -47,17 +51,27 @@
     return rows;
   }
 
+  async function getDoc(collectionName, id){
+    const { db } = await ready();
+    const ref = await db.collection(collectionName).doc(id).get();
+    if(!ref.exists) return null;
+    return { id:ref.id, ...ref.data() };
+  }
+
   async function deleteDoc(collectionName, id){
     const { db } = await ready();
     await db.collection(collectionName).doc(id).delete();
   }
 
-  async function uploadFile(file, folder){
+  async function uploadFile(file, folder, subfolder){
     const { storage } = await ready();
-    const safeName = file.name.replace(/[^\w.\-]+/g,"_");
-    const path = "impact/" + folder + "/" + Date.now() + "-" + safeName;
-    const ref = storage.ref(path);
 
+    const safeName = file.name.replace(/[^\w.\-]+/g,"_");
+    const safeFolder = String(folder || "uploads").replace(/[^\w\-\/]+/g,"_");
+    const safeSub = subfolder ? String(subfolder).replace(/[^\w\-\/]+/g,"_") + "/" : "";
+    const path = "impact/" + safeFolder + "/" + safeSub + Date.now() + "-" + safeName;
+
+    const ref = storage.ref(path);
     await ref.put(file);
 
     return {
@@ -66,13 +80,15 @@
       name: file.name,
       mimeType: file.type,
       size: file.size,
-      folder
+      folder: safeFolder,
+      createdAt: new Date().toISOString()
     };
   }
 
   async function saveLessonPlan(plan){
     return await saveDoc("lessonPlans", {
-      title: plan.title || "Untitled Lesson Plan",
+      title: plan.title || plan.name || "Untitled Lesson Plan",
+      name: plan.title || plan.name || "Untitled Lesson Plan",
       level: plan.level || "Absolute Beginner",
       content: plan.content || "",
       media: plan.media || [],
@@ -84,26 +100,98 @@
     return await getDocs("lessonPlans");
   }
 
+  async function getLessonPlan(id){
+    return await getDoc("lessonPlans", id);
+  }
+
   async function deleteLessonPlan(id){
     return await deleteDoc("lessonPlans", id);
   }
 
-  async function saveDashboardModule(moduleName, data, id){
-    return await saveDoc(moduleName, data, id);
+  async function validatePasskey(passkeyValue, gate){
+    const { db } = await ready();
+    const typed = cleanKey(passkeyValue);
+
+    const snap = await db.collection("impactPasskeys").get();
+
+    let foundDoc = null;
+    let foundData = null;
+
+    snap.forEach(doc=>{
+      const data = doc.data();
+      const stored = cleanKey(data.passkey || data.key || data.code);
+
+      if(stored === typed){
+        foundDoc = doc;
+        foundData = data;
+      }
+    });
+
+    if(!foundData){
+      return { ok:false, message:"Invalid passkey." };
+    }
+
+    if(String(foundData.status || "active").toLowerCase() !== "active"){
+      return { ok:false, message:"This passkey has been deactivated." };
+    }
+
+    await db.collection("impactGateVisits").add({
+      passkeyId: foundDoc.id,
+      name: foundData.name || "Unknown",
+      role: foundData.role || "Teacher",
+      gate: gate || "personnel",
+      passkey: foundData.passkey || passkeyValue,
+      time: new Date().toISOString()
+    });
+
+    return {
+      ok:true,
+      ownerName: foundData.name || "Personnel",
+      role: foundData.role || "Teacher"
+    };
+  }
+
+  async function createPasskey(item){
+    const { db } = await ready();
+
+    const existing = await db.collection("impactPasskeys")
+      .where("passkey","==",item.passkey)
+      .limit(1)
+      .get();
+
+    const data = {
+      name:item.name || "Unnamed",
+      role:item.role || "Teacher",
+      passkey:item.passkey,
+      status:item.status || "active",
+      createdAt:item.createdAt || new Date().toISOString(),
+      source:item.source || "configuration_page"
+    };
+
+    if(existing.empty){
+      const ref = await db.collection("impactPasskeys").add(data);
+      return ref.id;
+    }
+
+    await existing.docs[0].ref.set(data,{merge:true});
+    return existing.docs[0].id;
   }
 
   window.ImpactFirebaseStore = {
     ready,
     saveDoc,
     getDocs,
+    getDoc,
     deleteDoc,
     uploadFile,
 
     saveLessonPlan,
     getLessonPlans,
+    getLessonPlan,
     deleteLessonPlan,
 
-    saveDashboardModule,
+    validatePasskey,
+    createPasskey,
 
     collections:{
       passkeys:"impactPasskeys",
