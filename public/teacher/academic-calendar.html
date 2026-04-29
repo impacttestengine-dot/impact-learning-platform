@@ -2,226 +2,741 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Academic Calendar</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Academic Calendar | Impact</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
 <link rel="stylesheet" href="/css/impact-page-nav.css">
 
 <style>
-body{color:white;}
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  min-height:100vh;
+  background:#05060b;
+  color:#fff;
+  font-family:Inter,system-ui,sans-serif;
+  overflow-x:hidden;
+}
 
 .page{
   position:relative;
   z-index:2;
-  padding:110px 40px 40px;
+  width:min(1450px,94vw);
+  margin:0 auto;
+  padding:118px 0 70px;
 }
 
-.header{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:25px;
+.hero{
+  text-align:center;
+  margin-bottom:28px;
 }
 
-.title{font-size:32px;}
-
-.year-nav{
-  display:flex;
-  align-items:center;
-  gap:15px;
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.36em;
+  font-size:.68rem;
+  font-weight:800;
+  color:rgba(235,240,255,.62);
+  margin-bottom:10px;
 }
 
-.calendar{
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(25px);
-  border-radius:24px;
-  padding:20px;
-  box-shadow:0 20px 80px rgba(0,0,0,0.6);
+h1{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:clamp(3.2rem,6vw,5.8rem);
+  font-weight:400;
+  line-height:1;
 }
 
-.scroll{overflow-x:auto;}
-
-.grid{
-  display:grid;
-  grid-template-columns:200px repeat(52, 1fr);
-  min-width:1600px;
-  position:relative;
-}
-
-.label{
-  padding:10px;
-  border-bottom:1px solid rgba(255,255,255,0.1);
-}
-
-.cell{
-  height:40px;
-  border:1px solid rgba(255,255,255,0.05);
-  position:relative;
-}
-
-.cell:hover{background:rgba(255,255,255,0.1);}
-
-/* EVENT BLOCK */
-.event-block{
-  position:absolute;
-  height:30px;
-  border-radius:8px;
-  padding:4px 8px;
-  font-size:12px;
+.top-actions{
   display:flex;
   align-items:center;
+  justify-content:center;
+  gap:14px;
+  margin-top:18px;
+}
+
+.btn{
+  min-height:48px;
+  padding:0 18px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.09);
+  color:#fff;
+  font-weight:800;
   cursor:pointer;
-  white-space:nowrap;
-  overflow:hidden;
+  backdrop-filter:blur(18px);
+  box-shadow:0 18px 50px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.1);
 }
 
-.phase{background:#3b82f6;}
-.event{background:#10b981;}
-.exam{background:#f59e0b;}
-.holiday{background:#ef4444;}
+.btn.active{
+  background:rgba(231,214,161,.22);
+  border-color:rgba(231,214,161,.5);
+}
 
+.year{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:2.3rem;
+  min-width:130px;
+  text-align:center;
+}
+
+.shell{
+  border-radius:38px;
+  padding:26px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 34px 100px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.1);
+  backdrop-filter:blur(30px);
+}
+
+.months{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:20px;
+}
+
+.card{
+  min-height:300px;
+  border-radius:26px;
+  overflow:hidden;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+.card-head{
+  height:56px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:0 18px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  background:linear-gradient(135deg,rgba(35,79,151,.9),rgba(20,45,95,.7));
+}
+
+.card:nth-child(n+4) .card-head{
+  background:linear-gradient(135deg,rgba(36,126,70,.9),rgba(23,75,46,.72));
+}
+
+.card:nth-child(n+7) .card-head{
+  background:linear-gradient(135deg,rgba(178,130,28,.9),rgba(110,78,18,.72));
+}
+
+.card:nth-child(n+10) .card-head{
+  background:linear-gradient(135deg,rgba(165,45,45,.9),rgba(94,24,36,.72));
+}
+
+.head-icon{
+  font-size:1rem;
+  opacity:.85;
+}
+
+.items{
+  padding:14px 16px 18px;
+}
+
+.item{
+  display:grid;
+  grid-template-columns:78px minmax(0,1fr) 58px;
+  gap:16px;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.date{
+  font-size:.74rem;
+  font-weight:600;
+  color:rgba(255,255,255,.7);
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.event-text{
+  font-size:.82rem;
+  font-weight:500;
+  color:rgba(255,255,255,.9);
+  line-height:1.32;
+  white-space:normal;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+
+.status-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+}
+
+.status-btn{
+  width:18px;
+  height:18px;
+  border-radius:6px;
+  padding:0;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0;
+  line-height:1;
+  color:transparent;
+}
+
+.status-btn.ok{
+  border:1px solid rgba(34,197,94,.7);
+  background:rgba(34,197,94,.13);
+}
+
+.status-btn.no{
+  border:1px solid rgba(239,68,68,.7);
+  background:rgba(239,68,68,.13);
+}
+
+.status-btn.ok.active{
+  background:rgba(34,197,94,.95);
+}
+
+.status-btn.no.active{
+  background:rgba(239,68,68,.95);
+}
+
+.status-btn.ok.active::after{
+  content:"✓";
+  font-size:12px;
+  font-weight:900;
+  color:#052e16;
+}
+
+.status-btn.no.active::after{
+  content:"×";
+  font-size:12px;
+  font-weight:900;
+  color:#450a0a;
+}
+
+.item.done .event-text{
+  opacity:.62;
+}
+
+.add-line{
+  display:none;
+  grid-template-columns:78px minmax(0,1fr) 42px;
+  gap:16px;
+  margin:12px 16px 18px;
+}
+
+body.editing .add-line{
+  display:grid;
+}
+
+.add-line input{
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border-radius:12px;
+  padding:10px;
+  font-weight:600;
+  outline:0;
+}
+
+.add-line button{
+  border:0;
+  border-radius:12px;
+  background:rgba(231,214,161,.25);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.delete{
+  display:none;
+  border:0;
+  background:rgba(244,63,94,.18);
+  color:#fff;
+  border-radius:9px;
+  width:24px;
+  height:24px;
+  cursor:pointer;
+}
+
+body.editing .item{
+  grid-template-columns:78px minmax(0,1fr) 58px 26px;
+}
+
+body.editing .delete{
+  display:block;
+}
+
+.bottom{
+  display:grid;
+  grid-template-columns:1.1fr 1.1fr 1fr;
+  gap:18px;
+  margin-top:20px;
+}
+
+.panel{
+  border-radius:26px;
+  overflow:hidden;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.13);
+}
+
+.panel h2{
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(20,45,95,.82);
+  font-size:1rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.panel-body{
+  padding:18px;
+}
+
+.priority{
+  display:grid;
+  grid-template-columns:42px 1fr;
+  gap:12px;
+  padding:11px 0;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.priority strong{
+  display:block;
+  text-transform:uppercase;
+  font-size:.86rem;
+  font-weight:700;
+}
+
+.priority span{
+  font-size:.78rem;
+  color:rgba(255,255,255,.72);
+  font-weight:500;
+}
+
+textarea{
+  width:100%;
+  min-height:180px;
+  border:0;
+  outline:0;
+  resize:vertical;
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  border-radius:18px;
+  padding:14px;
+  font:500 .9rem Inter;
+}
+
+.status{
+  text-align:center;
+  margin-top:14px;
+  color:rgba(255,255,255,.65);
+  font-weight:700;
+  font-size:.82rem;
+}
+
+@media(max-width:1050px){
+  .months{grid-template-columns:repeat(2,1fr)}
+  .bottom{grid-template-columns:1fr}
+}
+
+@media(max-width:700px){
+  .page{padding-top:105px}
+  .months{grid-template-columns:1fr}
+  .shell{padding:14px;border-radius:28px}
+  .item{grid-template-columns:70px minmax(0,1fr) 54px}
+  body.editing .item{grid-template-columns:70px minmax(0,1fr) 54px 26px}
+  .add-line{grid-template-columns:70px minmax(0,1fr) 42px}
+}
 </style>
 </head>
 
 <body>
-
 <script src="/js/impact-global-bg.js"></script>
 <script src="/js/impact-page-nav.js"></script>
 
-<div class="page">
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Teacher Workspace</p>
+    <h1>Academic Calendar</h1>
 
-<div class="header">
-<div class="title">Academic Timeline</div>
+    <div class="top-actions">
+      <button class="btn" id="prevYear" type="button">‹</button>
+      <div class="year" id="yearLabel"></div>
+      <button class="btn" id="nextYear" type="button">›</button>
+      <button class="btn" id="editBtn" type="button">✎ Edit</button>
+    </div>
+  </section>
 
-<div class="year-nav">
-<div onclick="changeYear(-1)">◀</div>
-<div id="year">2026</div>
-<div onclick="changeYear(1)">▶</div>
-</div>
-</div>
+  <section class="shell">
+    <div class="months" id="months"></div>
 
-<div class="calendar">
-<div class="scroll">
-<div class="grid" id="grid"></div>
-</div>
-</div>
+    <div class="bottom">
+      <div class="panel">
+        <h2>Always Running</h2>
+        <div class="panel-body">
+          <div class="priority"><div>📅</div><div><strong>Weekly</strong><span>Lesson delivery, teacher check-ins, learner support.</span></div></div>
+          <div class="priority"><div>📊</div><div><strong>Monthly</strong><span>Performance review, lesson plan updates, learner progress checks.</span></div></div>
+          <div class="priority"><div>👥</div><div><strong>Quarterly</strong><span>Teacher training, curriculum review, parent/learner feedback.</span></div></div>
+        </div>
+      </div>
 
-</div>
+      <div class="panel">
+        <h2>Academic Priorities</h2>
+        <div class="panel-body">
+          <div class="priority"><div>💬</div><div><strong>Oral Fluency</strong><span>Speaking confidence remains our core identity.</span></div></div>
+          <div class="priority"><div>🧾</div><div><strong>Assess All Skills</strong><span>Speaking, listening, reading, and writing.</span></div></div>
+          <div class="priority"><div>📈</div><div><strong>Visible Progress</strong><span>Celebrate small wins and track growth.</span></div></div>
+          <div class="priority"><div>🤝</div><div><strong>Excellence Together</strong><span>Plan well, teach with purpose, create impact.</span></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Notes</h2>
+        <div class="panel-body">
+          <textarea id="notes" placeholder="Add academic year notes here..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <p class="status" id="status">Loading Firestore...</p>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
 
 <script>
-const grid = document.getElementById("grid");
+const db = firebase.firestore();
 
-let events = JSON.parse(localStorage.getItem("calendarEvents") || "[]");
+const monthsEl = document.getElementById("months");
+const yearLabel = document.getElementById("yearLabel");
+const editBtn = document.getElementById("editBtn");
+const statusEl = document.getElementById("status");
+const notesEl = document.getElementById("notes");
 
-let isDragging = false;
-let startCell = null;
-let currentRow = null;
+let currentYear = new Date().getFullYear();
+let editing = false;
+let data = {};
 
-// BUILD GRID
-function build(){
-  grid.innerHTML = "";
+const monthNames = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
+];
 
-  const rows = [
-    {name:"Phase 1", type:"phase"},
-    {name:"Phase 2", type:"phase"},
-    {name:"Phase 3", type:"phase"},
-    {name:"Phase 4", type:"phase"},
-    {name:"Events", type:"event"},
-    {name:"Exams", type:"exam"},
-    {name:"Holidays", type:"holiday"}
-  ];
+const starter = {
+  January:[
+    ["12 Jan","Revision period for 2025",null],
+    ["19 Jan","2025 assessment test",null],
+    ["26 Jan","Report cards distribution",null],
+    ["28 Jan","Activity 1",null],
+    ["28 Jan","Teacher evaluation form to client pages",null],
+    ["28 Jan","January report",null],
+    ["28 Jan","Dated billing tracker PDF",null]
+  ],
+  February:[
+    ["28 Feb","Activity 2",null],
+    ["28 Feb","Teacher evaluation form to client pages",null],
+    ["28 Feb","February report",null],
+    ["28 Feb","Dated billing tracker PDF",null]
+  ],
+  March:[
+    ["25 Mar","Communique about Q1 assessment to be sent",null],
+    ["23 Mar","Quarter 1 assessment",null],
+    ["01 Apr","Report cards ready and sent",null],
+    ["28 Mar","March report",null],
+    ["28 Mar","Teacher evaluation form to client pages",null],
+    ["28 Mar","Dated billing tracker PDF",null]
+  ],
+  April:[
+    ["28 Apr","Activity 3",null],
+    ["28 Apr","Teacher evaluation form to client pages",null],
+    ["28 Apr","April report",null],
+    ["28 Apr","Dated billing tracker PDF",null]
+  ],
+  May:[
+    ["04 May","DELF examination preps begin",null],
+    ["28 May","Activity 4",null],
+    ["28 May","Teacher evaluation form to client pages",null],
+    ["28 May","May report",null],
+    ["28 May","Dated billing tracker PDF",null]
+  ],
+  June:[
+    ["15 Jun","Communique about Q2 assessment to be sent",null],
+    ["22 Jun","Quarter 2 assessment",null],
+    ["29 Jun","Report cards ready and sent",null],
+    ["28 Jun","June report",null],
+    ["28 Jun","Teacher evaluation form to client pages",null],
+    ["28 Jun","Dated billing tracker PDF",null]
+  ],
+  July:[
+    ["28 Jul","Activity 5",null],
+    ["28 Jul","Teacher evaluation form to client pages",null],
+    ["28 Jul","July report",null],
+    ["28 Jul","Dated billing tracker PDF",null]
+  ],
+  August:[
+    ["28 Aug","Activity 6",null],
+    ["28 Aug","Teacher evaluation form to client pages",null],
+    ["28 Aug","August report",null],
+    ["28 Aug","Dated billing tracker PDF",null]
+  ],
+  September:[
+    ["14 Sep","Communique about Q3 assessment to be sent",null],
+    ["21 Sep","Quarter 3 assessment",null],
+    ["28 Sep","Report cards ready and sent",null],
+    ["28 Sep","September report",null],
+    ["28 Sep","Teacher evaluation form to client pages",null],
+    ["28 Sep","Dated billing tracker PDF",null]
+  ],
+  October:[
+    ["01 Oct","DELF examination October sitting",null],
+    ["28 Oct","Activity 7",null],
+    ["28 Oct","Teacher evaluation form to client pages",null],
+    ["28 Oct","October report",null],
+    ["28 Oct","Dated billing tracker PDF",null]
+  ],
+  November:[
+    ["28 Nov","Activity 8",null],
+    ["28 Nov","Teacher evaluation form to client pages",null],
+    ["28 Nov","November report",null],
+    ["28 Nov","Dated billing tracker PDF",null]
+  ],
+  December:[
+    ["30 Nov","Communique about EOY assessment to be sent",null],
+    ["07 Dec","End of year assessment",null],
+    ["14 Dec","Report cards ready and sent",null],
+    ["20 Dec","Annual report",null],
+    ["20 Dec","Dated billing tracker PDF",null]
+  ]
+};
 
-  rows.forEach((row,rowIndex)=>{
-    let label = document.createElement("div");
-    label.className = "label";
-    label.innerText = row.name;
-    grid.appendChild(label);
-
-    for(let i=0;i<52;i++){
-      let cell = document.createElement("div");
-      cell.className = "cell";
-      cell.dataset.row = rowIndex;
-      cell.dataset.col = i;
-
-      cell.onmousedown = (e)=>{
-        isDragging = true;
-        startCell = i;
-        currentRow = rowIndex;
-      };
-
-      cell.onmouseup = (e)=>{
-        if(!isDragging) return;
-        isDragging = false;
-
-        let end = i;
-
-        let title = prompt("Event name?");
-        if(!title) return;
-
-        let event = {
-          row: currentRow,
-          start: Math.min(startCell,end),
-          end: Math.max(startCell,end),
-          text: title,
-          type: rows[currentRow].type
-        };
-
-        events.push(event);
-        save();
-        renderEvents();
-      };
-
-      grid.appendChild(cell);
-    }
-  });
-
-  renderEvents();
+function docRef(){
+  return db.collection("academicCalendars").doc(String(currentYear));
 }
 
-// RENDER EVENTS
-function renderEvents(){
-  document.querySelectorAll(".event-block").forEach(e=>e.remove());
+function normalizeCalendarData(){
+  if(!data.months) data.months = {};
 
-  events.forEach((ev,index)=>{
-    let block = document.createElement("div");
-    block.className = "event-block " + ev.type;
+  monthNames.forEach(month => {
+    if(!Array.isArray(data.months[month])) data.months[month] = [];
 
-    block.innerText = ev.text;
-
-    let cellWidth = grid.offsetWidth / 52;
-
-    block.style.left = (200 + ev.start * cellWidth) + "px";
-    block.style.top = (ev.row * 40 + 40) + "px";
-    block.style.width = ((ev.end - ev.start + 1) * cellWidth - 4) + "px";
-
-    block.onclick = ()=>{
-      let action = confirm("Delete this event?");
-      if(action){
-        events.splice(index,1);
-        save();
-        renderEvents();
+    data.months[month] = data.months[month].map(item => {
+      if(Array.isArray(item) && item.length >= 4){
+        return [item[0], item[2], null];
       }
+
+      if(Array.isArray(item) && item.length === 3){
+        if(typeof item[2] === "boolean" || item[2] === null){
+          return [item[0], item[1], item[2]];
+        }
+
+        return [item[0], item[2], null];
+      }
+
+      if(Array.isArray(item) && item.length === 2){
+        return [item[0], item[1], null];
+      }
+
+      return ["", String(item || ""), null];
+    });
+  });
+}
+
+async function load(){
+  yearLabel.textContent = currentYear;
+  statusEl.textContent = "Loading calendar...";
+
+  const fallback = () => {
+    data = JSON.parse(JSON.stringify({ months: starter, notes:"" }));
+    normalizeCalendarData();
+    notesEl.value = data.notes || "";
+    render();
+    statusEl.textContent = "Calendar loaded offline. Firestore will sync when available.";
+  };
+
+  try{
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Firestore timeout")), 4500)
+    );
+
+    const snap = await Promise.race([docRef().get(), timeout]);
+
+    if(snap.exists){
+      data = snap.data();
+    }else{
+      data = JSON.parse(JSON.stringify({ months: starter, notes:"" }));
+      await docRef().set(data,{merge:true});
+    }
+
+    normalizeCalendarData();
+    notesEl.value = data.notes || "";
+    render();
+
+    statusEl.textContent = "Saved in Firestore";
+  }catch(err){
+    console.warn("Firestore load failed:", err);
+    fallback();
+  }
+}
+
+async function save(){
+  normalizeCalendarData();
+  data.notes = notesEl.value;
+
+  try{
+    await docRef().set(data,{merge:true});
+    statusEl.textContent = "Saved ✓";
+    setTimeout(()=>statusEl.textContent="Saved in Firestore",1000);
+  }catch(err){
+    console.warn("Firestore save failed:", err);
+    localStorage.setItem("impactAcademicCalendar_" + currentYear, JSON.stringify(data));
+    statusEl.textContent = "Saved locally. Firestore not reachable.";
+  }
+}
+
+function makeStatus(month,index,item,row){
+  const wrap = document.createElement("div");
+  wrap.className = "status-actions";
+
+  const yes = document.createElement("button");
+  yes.className = "status-btn ok" + (item[2] === true ? " active" : "");
+  yes.type = "button";
+
+  const no = document.createElement("button");
+  no.className = "status-btn no" + (item[2] === false ? " active" : "");
+  no.type = "button";
+
+  yes.onclick = async () => {
+    data.months[month][index][2] = true;
+    row.classList.add("done");
+    yes.classList.add("active");
+    no.classList.remove("active");
+    await save();
+  };
+
+  no.onclick = async () => {
+    data.months[month][index][2] = false;
+    row.classList.remove("done");
+    no.classList.add("active");
+    yes.classList.remove("active");
+    await save();
+  };
+
+  wrap.appendChild(yes);
+  wrap.appendChild(no);
+
+  return wrap;
+}
+
+function render(){
+  normalizeCalendarData();
+  monthsEl.innerHTML = "";
+
+  monthNames.forEach(month => {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const head = document.createElement("div");
+    head.className = "card-head";
+    head.innerHTML = '<span class="head-icon">▦</span>' + month;
+
+    const list = document.createElement("div");
+    list.className = "items";
+
+    data.months[month].forEach((item,index) => {
+      const row = document.createElement("div");
+      row.className = "item";
+      row.classList.toggle("done", item[2] === true);
+
+      const date = document.createElement("div");
+      date.className = "date";
+      date.textContent = item[0] || "";
+
+      const text = document.createElement("div");
+      text.className = "event-text";
+      text.textContent = item[1] || "";
+
+      const status = makeStatus(month,index,item,row);
+
+      const del = document.createElement("button");
+      del.className = "delete";
+      del.type = "button";
+      del.textContent = "×";
+      del.onclick = async () => {
+        data.months[month].splice(index,1);
+        render();
+        await save();
+      };
+
+      row.appendChild(date);
+      row.appendChild(text);
+      row.appendChild(status);
+      row.appendChild(del);
+      list.appendChild(row);
+    });
+
+    const add = document.createElement("div");
+    add.className = "add-line";
+    add.innerHTML = '<input placeholder="Date"><input placeholder="Event"><button type="button">+</button>';
+
+    add.querySelector("button").onclick = async () => {
+      const inputs = add.querySelectorAll("input");
+      const date = inputs[0].value.trim();
+      const event = inputs[1].value.trim();
+
+      if(!date || !event) return;
+
+      data.months[month].push([date,event,null]);
+
+      inputs[0].value = "";
+      inputs[1].value = "";
+
+      render();
+      await save();
     };
 
-    grid.appendChild(block);
+    card.appendChild(head);
+    card.appendChild(list);
+    card.appendChild(add);
+    monthsEl.appendChild(card);
   });
 }
 
-// SAVE
-function save(){
-  localStorage.setItem("calendarEvents", JSON.stringify(events));
-}
+editBtn.onclick = () => {
+  editing = !editing;
+  document.body.classList.toggle("editing",editing);
+  editBtn.classList.toggle("active",editing);
+  editBtn.textContent = editing ? "✓ Editing" : "✎ Edit";
+};
 
-// YEAR
-function changeYear(dir){
-  let el = document.getElementById("year");
-  el.innerText = parseInt(el.innerText) + dir;
-}
+notesEl.addEventListener("input", () => {
+  clearTimeout(window.noteTimer);
+  window.noteTimer = setTimeout(save,600);
+});
 
-// INIT
-build();
+document.getElementById("prevYear").onclick = async () => {
+  currentYear--;
+  await load();
+};
 
+document.getElementById("nextYear").onclick = async () => {
+  currentYear++;
+  await load();
+};
+
+load();
 </script>
-
 </body>
 </html>
+
