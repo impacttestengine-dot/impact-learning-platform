@@ -5,195 +5,221 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Academic Calendar</title>
 
-<!-- KEEP YOUR SYSTEM FILES -->
 <link rel="stylesheet" href="/css/impact-global-bg.css">
 <link rel="stylesheet" href="/css/impact-page-nav.css">
 
 <style>
-body{
-  color:white;
-}
+body{color:white;}
 
-/* ===== PAGE ===== */
 .page{
   position:relative;
   z-index:2;
   padding:110px 40px 40px;
 }
 
-/* ===== HEADER ===== */
 .header{
   display:flex;
   justify-content:space-between;
-  align-items:center;
   margin-bottom:25px;
 }
 
-.title{
-  font-size:32px;
-  font-weight:600;
-}
+.title{font-size:32px;}
 
-/* ===== YEAR NAV ===== */
 .year-nav{
   display:flex;
   align-items:center;
   gap:15px;
 }
 
-.year{
-  font-size:22px;
-}
-
-.arrow{
-  cursor:pointer;
-  font-size:20px;
-  opacity:0.7;
-}
-.arrow:hover{opacity:1;}
-
-.edit{
-  margin-left:20px;
-  cursor:pointer;
-}
-
-/* ===== GLASS CONTAINER ===== */
 .calendar{
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(25px);
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(25px);
   border-radius:24px;
   padding:20px;
   box-shadow:0 20px 80px rgba(0,0,0,0.6);
 }
 
-/* ===== SCROLL ===== */
-.scroll{
-  overflow-x:auto;
-}
+.scroll{overflow-x:auto;}
 
-/* ===== GRID ===== */
 .grid{
   display:grid;
   grid-template-columns:200px repeat(52, 1fr);
   min-width:1600px;
+  position:relative;
 }
 
-/* ===== LABELS ===== */
 .label{
   padding:10px;
-  font-size:14px;
-  opacity:0.85;
   border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
-/* ===== MONTH ===== */
-.month{
-  text-align:center;
-  font-size:12px;
-  padding:10px 0;
-  border-bottom:1px solid rgba(255,255,255,0.2);
-  opacity:0.8;
-}
-
-/* ===== CELLS ===== */
 .cell{
+  height:40px;
+  border:1px solid rgba(255,255,255,0.05);
+  position:relative;
+}
+
+.cell:hover{background:rgba(255,255,255,0.1);}
+
+/* EVENT BLOCK */
+.event-block{
+  position:absolute;
   height:30px;
-  border-right:1px solid rgba(255,255,255,0.06);
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
-
-.cell:hover{
-  background: rgba(255,255,255,0.1);
+  border-radius:8px;
+  padding:4px 8px;
+  font-size:12px;
+  display:flex;
+  align-items:center;
   cursor:pointer;
+  white-space:nowrap;
+  overflow:hidden;
 }
 
-/* ===== ROW COLORS ===== */
-.phase{ color:#60a5fa; }
-.event{ color:#34d399; }
-.exam{ color:#fbbf24; }
-.holiday{ color:#f87171; }
+.phase{background:#3b82f6;}
+.event{background:#10b981;}
+.exam{background:#f59e0b;}
+.holiday{background:#ef4444;}
 
 </style>
 </head>
 
 <body>
 
-<!-- KEEP YOUR NAV -->
 <script src="/js/impact-global-bg.js"></script>
 <script src="/js/impact-page-nav.js"></script>
 
 <div class="page">
 
-  <div class="header">
-    <div class="title">Academic Timeline</div>
+<div class="header">
+<div class="title">Academic Timeline</div>
 
-    <div class="year-nav">
-      <div class="arrow" onclick="changeYear(-1)">◀</div>
-      <div class="year" id="year">2026</div>
-      <div class="arrow" onclick="changeYear(1)">▶</div>
-      <div class="edit">✏️</div>
-    </div>
-  </div>
+<div class="year-nav">
+<div onclick="changeYear(-1)">◀</div>
+<div id="year">2026</div>
+<div onclick="changeYear(1)">▶</div>
+</div>
+</div>
 
-  <div class="calendar">
-    <div class="scroll">
-      <div class="grid" id="grid"></div>
-    </div>
-  </div>
+<div class="calendar">
+<div class="scroll">
+<div class="grid" id="grid"></div>
+</div>
+</div>
 
 </div>
 
 <script>
 const grid = document.getElementById("grid");
 
-function buildGrid(){
+let events = JSON.parse(localStorage.getItem("calendarEvents") || "[]");
 
+let isDragging = false;
+let startCell = null;
+let currentRow = null;
+
+// BUILD GRID
+function build(){
   grid.innerHTML = "";
 
-  // MONTH HEADER
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const rows = [
+    {name:"Phase 1", type:"phase"},
+    {name:"Phase 2", type:"phase"},
+    {name:"Phase 3", type:"phase"},
+    {name:"Phase 4", type:"phase"},
+    {name:"Events", type:"event"},
+    {name:"Exams", type:"exam"},
+    {name:"Holidays", type:"holiday"}
+  ];
 
-  let header = "<div></div>";
+  rows.forEach((row,rowIndex)=>{
+    let label = document.createElement("div");
+    label.className = "label";
+    label.innerText = row.name;
+    grid.appendChild(label);
 
-  months.forEach(m=>{
-    for(let i=0;i<4;i++){
-      header += <div class="month"></div>;
+    for(let i=0;i<52;i++){
+      let cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.row = rowIndex;
+      cell.dataset.col = i;
+
+      cell.onmousedown = (e)=>{
+        isDragging = true;
+        startCell = i;
+        currentRow = rowIndex;
+      };
+
+      cell.onmouseup = (e)=>{
+        if(!isDragging) return;
+        isDragging = false;
+
+        let end = i;
+
+        let title = prompt("Event name?");
+        if(!title) return;
+
+        let event = {
+          row: currentRow,
+          start: Math.min(startCell,end),
+          end: Math.max(startCell,end),
+          text: title,
+          type: rows[currentRow].type
+        };
+
+        events.push(event);
+        save();
+        renderEvents();
+      };
+
+      grid.appendChild(cell);
     }
   });
 
-  grid.innerHTML += header;
+  renderEvents();
+}
 
-  // ROWS
-  const rows = [
-    {name:"Phase 1", cls:"phase"},
-    {name:"Phase 2", cls:"phase"},
-    {name:"Phase 3", cls:"phase"},
-    {name:"Phase 4", cls:"phase"},
-    {name:"Events", cls:"event"},
-    {name:"Exams", cls:"exam"},
-    {name:"Holidays", cls:"holiday"}
-  ];
+// RENDER EVENTS
+function renderEvents(){
+  document.querySelectorAll(".event-block").forEach(e=>e.remove());
 
-  rows.forEach(r=>{
-    let rowHTML = <div class="label "></div>;
+  events.forEach((ev,index)=>{
+    let block = document.createElement("div");
+    block.className = "event-block " + ev.type;
 
-    for(let i=0;i<52;i++){
-      rowHTML += <div class="cell"></div>;
-    }
+    block.innerText = ev.text;
 
-    grid.innerHTML += rowHTML;
+    let cellWidth = grid.offsetWidth / 52;
+
+    block.style.left = (200 + ev.start * cellWidth) + "px";
+    block.style.top = (ev.row * 40 + 40) + "px";
+    block.style.width = ((ev.end - ev.start + 1) * cellWidth - 4) + "px";
+
+    block.onclick = ()=>{
+      let action = confirm("Delete this event?");
+      if(action){
+        events.splice(index,1);
+        save();
+        renderEvents();
+      }
+    };
+
+    grid.appendChild(block);
   });
 }
 
-// YEAR SWITCH
+// SAVE
+function save(){
+  localStorage.setItem("calendarEvents", JSON.stringify(events));
+}
+
+// YEAR
 function changeYear(dir){
   let el = document.getElementById("year");
-  let y = parseInt(el.innerText);
-  el.innerText = y + dir;
+  el.innerText = parseInt(el.innerText) + dir;
 }
 
 // INIT
-buildGrid();
+build();
 
 </script>
 
