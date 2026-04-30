@@ -20,10 +20,10 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
 .level-card:hover{transform:translateY(-3px);background:rgba(255,255,255,.105);border-color:rgba(232,216,166,.34)}
 .level-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.75rem;font-weight:400;margin-bottom:12px}
 .level-card p{color:rgba(255,255,255,.66);font-size:.82rem;font-weight:800}
-.file-list{max-height:0;overflow:hidden;margin-top:0;display:grid;gap:10px;opacity:0;transition:max-height .45s ease, opacity .25s ease, margin-top .35s ease}
-.level-card.open .file-list{max-height:360px;overflow-y:auto;margin-top:16px;opacity:1}
-.lesson-file-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center}
-.file-pill,.lesson-action-btn,.lesson-delete-btn,.create-btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 12px;font-weight:900;cursor:pointer}
+.file-list{display:none;margin-top:16px;gap:8px}
+.level-card.open .file-list{display:grid}
+.lesson-file-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.file-pill,.lesson-delete-btn,.create-btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 12px;font-weight:900;cursor:pointer}
 .file-pill{text-align:left;width:100%}
 .lesson-delete-btn{border-color:rgba(255,120,120,.28);background:rgba(255,80,80,.12)}
 .empty-note{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.055);color:rgba(255,255,255,.58);font-size:.78rem;font-weight:800}
@@ -54,23 +54,15 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
   const createBtn=document.getElementById("createBtn");
 
   async function render(){
-    let plans=await window.ImpactFirebaseStore.getLessonPlans();
-
-const dummyTemplates=[
-  {id:"template-speaking-starter",level:"Absolute Beginner",title:"Template 1 — Speaking Starter",isTemplate:true},
-  {id:"template-vocabulary-builder",level:"Absolute Beginner",title:"Template 2 — Vocabulary Builder",isTemplate:true},
-  {id:"template-assessment-prep",level:"Absolute Beginner",title:"Template 3 — Assessment Prep",isTemplate:true}
-];
-
-plans=[...dummyTemplates,...plans];
+    const plans=await window.ImpactFirebaseStore.getLessonPlans();
 
     grid.innerHTML=levels.map(level=>{
       const files=plans.filter(p=>p.level===level);
       const fileHtml=files.length
         ? files.map(file=>`
           <div class="lesson-file-row">
-            <button class="file-pill" data-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">${file.title || file.name || "Untitled Lesson"}</button>
-            <button class="lesson-action-btn lesson-view-btn" data-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">View</button><button class="lesson-action-btn lesson-edit-btn" data-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">Edit</button><button class="lesson-delete-btn" data-delete-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">Delete</button>
+            <button class="file-pill" data-id="${file.id}" type="button">${file.title || file.name || "Untitled Lesson"}</button>
+            <button class="lesson-delete-btn" data-delete-id="${file.id}" type="button">Delete</button>
           </div>`).join("")
         : `<div class="empty-note">No lesson plans saved yet.</div>`;
 
@@ -90,36 +82,18 @@ plans=[...dummyTemplates,...plans];
       };
     });
 
-    document.querySelectorAll(".file-pill,.lesson-view-btn").forEach(btn=>{
+    document.querySelectorAll(".file-pill").forEach(btn=>{
       btn.onclick=e=>{
         e.stopPropagation();
-        const id=btn.dataset.id;
-        sessionStorage.setItem("impactEditingLessonId",id);
-        if(btn.dataset.template==="yes"){
-          localStorage.setItem("impactSelectedLessonPlan",JSON.stringify({
-            id,
-            title:btn.closest(".lesson-file-row").querySelector(".file-pill").textContent.trim(),
-            level:"Absolute Beginner",
-            type:"template"
-          }));
-        }
-        location.href="/teacher/lesson-plan-view.html?id="+encodeURIComponent(id);
-      };
-    });
-
-    document.querySelectorAll(".lesson-edit-btn").forEach(btn=>{
-      btn.onclick=e=>{
-        e.stopPropagation();
-        const id=btn.dataset.id;
-        sessionStorage.setItem("impactEditingLessonId",id);
-        location.href="/teacher/lesson-builder.html?edit="+encodeURIComponent(id);
+        sessionStorage.setItem("impactEditingLessonId",btn.dataset.id);
+        location.href="/teacher/lesson-builder.html?edit="+encodeURIComponent(btn.dataset.id);
       };
     });
 
     document.querySelectorAll(".lesson-delete-btn").forEach(btn=>{
       btn.onclick=async e=>{
         e.stopPropagation();
-        if(btn.dataset.template==="yes"){alert("Template samples cannot be deleted.");return;} if(!confirm("Delete this lesson plan?")) return;
+        if(!confirm("Delete this lesson plan?")) return;
         await window.ImpactFirebaseStore.deleteLessonPlan(btn.dataset.deleteId);
         await render();
       };
@@ -136,4 +110,3 @@ plans=[...dummyTemplates,...plans];
 </script>
 </body>
 </html>
-
