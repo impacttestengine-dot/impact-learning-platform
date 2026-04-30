@@ -16,117 +16,36 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-he
 .eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.62);margin-bottom:12px}
 h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1}
 .hero p{margin-top:12px;color:rgba(255,255,255,.68);font-weight:700}
-
 .level-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 .level-card{min-height:142px;padding:20px;border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer;transition:all .28s ease}
 .level-card:hover{transform:translateY(-3px);background:rgba(255,255,255,.105);border-color:rgba(232,216,166,.34)}
 .level-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.75rem;font-weight:400;margin-bottom:12px}
 .level-card p{color:rgba(255,255,255,.66);font-size:.82rem;font-weight:800}
-
 .level-grid.folder-focus-active .level-card{filter:blur(3px) brightness(.45);opacity:.42}
 .level-grid.folder-focus-active .level-card.open{filter:none;opacity:1;transform:scale(1.015);z-index:5}
-
 .file-list{max-height:0;overflow:hidden;margin-top:0;display:grid;gap:10px;opacity:0;transition:max-height .45s ease,opacity .25s ease,margin-top .35s ease}
 .level-card.open .file-list{max-height:380px;overflow-y:auto;margin-top:16px;opacity:1}
-
 .lesson-file-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:8px;border-radius:16px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07)}
-.file-pill,.lesson-action-btn,.lesson-delete-btn,.create-btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 12px;font-weight:400;cursor:pointer}
+.file-pill,.lesson-action-btn,.lesson-delete-btn,.create-btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 12px;font-weight:400;cursor:pointer;transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
 .file-pill{text-align:left;width:100%;line-height:1.35}
-.lesson-action-btn,.lesson-delete-btn{font-weight:500}
+.lesson-action-btn:hover{transform:translateY(-2px) scale(1.04);background:rgba(255,255,255,.16);border-color:rgba(232,216,166,.38);box-shadow:0 12px 28px rgba(0,0,0,.28)}
 .lesson-delete-btn{border-color:rgba(255,120,120,.28);background:rgba(255,80,80,.12)}
-.empty-note{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.055);color:rgba(255,255,255,.58);font-size:.78rem;font-weight:400}
+.lesson-delete-btn:hover{transform:translateY(-2px) scale(1.04);background:rgba(255,80,80,.24);border-color:rgba(255,120,120,.5);box-shadow:0 12px 28px rgba(255,80,80,.16)}
+.lesson-action-btn:active,.lesson-delete-btn:active{transform:scale(.96)}
 .footer{margin-top:30px;display:flex;justify-content:center}
 .create-btn{min-width:230px;min-height:50px;font-weight:900}
 
+.impact-confirm-backdrop{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.48);backdrop-filter:blur(14px)}
+.impact-confirm-backdrop.show{display:flex}
+.impact-confirm-card{width:min(420px,90vw);border-radius:28px;padding:28px;background:rgba(20,24,38,.9);border:1px solid rgba(255,255,255,.16);box-shadow:0 30px 90px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12);text-align:center}
+.impact-confirm-card h3{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2rem;font-weight:400;margin-bottom:10px}
+.impact-confirm-card p{color:rgba(255,255,255,.72);font-weight:600;line-height:1.5;margin-bottom:22px}
+.impact-confirm-actions{display:flex;gap:12px;justify-content:center}
+.impact-confirm-actions button{min-width:110px;border-radius:16px;padding:12px 16px;cursor:pointer;font-weight:800;color:#fff;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.1)}
+.impact-confirm-actions .danger{border-color:rgba(255,120,120,.35);background:rgba(255,80,80,.18)}
+
 @media(max-width:900px){.level-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.level-grid{grid-template-columns:1fr}.page{padding-top:112px}.lesson-file-row{grid-template-columns:1fr}}
-
-/* impact-confirm-modal-style */
-.impact-confirm-backdrop{
-  position:fixed;
-  inset:0;
-  z-index:99999;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  background:rgba(0,0,0,.48);
-  backdrop-filter:blur(14px);
-}
-
-.impact-confirm-backdrop.show{
-  display:flex;
-}
-
-.impact-confirm-card{
-  width:min(420px,90vw);
-  border-radius:28px;
-  padding:28px;
-  background:rgba(20,24,38,.88);
-  border:1px solid rgba(255,255,255,.16);
-  box-shadow:0 30px 90px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.12);
-  text-align:center;
-}
-
-.impact-confirm-card h3{
-  font-family:"Sorts Mill Goudy",Georgia,serif;
-  font-size:2rem;
-  font-weight:400;
-  margin-bottom:10px;
-}
-
-.impact-confirm-card p{
-  color:rgba(255,255,255,.72);
-  font-weight:600;
-  line-height:1.5;
-  margin-bottom:22px;
-}
-
-.impact-confirm-actions{
-  display:flex;
-  gap:12px;
-  justify-content:center;
-}
-
-.impact-confirm-actions button{
-  min-width:110px;
-  border-radius:16px;
-  padding:12px 16px;
-  cursor:pointer;
-  font-weight:800;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.16);
-  background:rgba(255,255,255,.1);
-}
-
-.impact-confirm-actions .danger{
-  border-color:rgba(255,120,120,.35);
-  background:rgba(255,80,80,.18);
-}
-
-/* lesson-action-hover-fix */
-.lesson-action-btn,
-.lesson-delete-btn{
-  transition:transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
-}
-
-.lesson-action-btn:hover{
-  transform:translateY(-2px) scale(1.04);
-  background:rgba(255,255,255,.16);
-  border-color:rgba(232,216,166,.38);
-  box-shadow:0 12px 28px rgba(0,0,0,.28);
-}
-
-.lesson-delete-btn:hover{
-  transform:translateY(-2px) scale(1.04);
-  background:rgba(255,80,80,.24);
-  border-color:rgba(255,120,120,.5);
-  box-shadow:0 12px 28px rgba(255,80,80,.16);
-}
-
-.lesson-action-btn:active,
-.lesson-delete-btn:active{
-  transform:scale(.96);
-}
 </style>
 </head>
 
@@ -161,105 +80,83 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
 <script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
 
 <script>
-function impactConfirm(message){
-  return new Promise(resolve=>{
-    const modal=document.getElementById("impactConfirmModal");
-    const msg=document.getElementById("impactConfirmMessage");
-    const ok=document.getElementById("impactConfirmOk");
-    const cancel=document.getElementById("impactConfirmCancel");
-
-    msg.textContent=message || "Are you sure?";
-    modal.classList.add("show");
-
-    function close(result){
-      modal.classList.remove("show");
-      ok.onclick=null;
-      cancel.onclick=null;
-      modal.onclick=null;
-      resolve(result);
-    }
-
-    ok.onclick=()=>close(true);
-    cancel.onclick=()=>close(false);
-    modal.onclick=e=>{
-      if(e.target===modal) close(false);
-    };
-  });
-}
-
 (async function(){
   const levels=["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
   const grid=document.getElementById("levelGrid");
   const createBtn=document.getElementById("createBtn");
 
   const templateBase=[
-    {
-      key:"speaking-starter",
-      title:"Template 1 — Speaking Starter",
-      objective:"Learners practise simple oral production from the first minutes of class.",
-      flow:"Warm-up → teacher model → repetition → guided speaking → independent speaking → quick correction.",
-      materials:"Speaking prompts, name cards, simple question frames."
-    },
-    {
-      key:"vocabulary-builder",
-      title:"Template 2 — Vocabulary Builder",
-      objective:"Learners use new vocabulary confidently in short spoken sentences.",
-      flow:"Picture prompt → vocabulary drilling → sentence building → oral practice → mini performance check.",
-      materials:"Picture cards, vocabulary list, sentence frames."
-    },
-    {
-      key:"assessment-prep",
-      title:"Template 3 — Assessment Prep",
-      objective:"Learners review weak areas and practise assessment-style tasks.",
-      flow:"Quick diagnostic → correction → guided practice → individual attempt → feedback.",
-      materials:"Review worksheet, assessment prompts, correction notes."
-    }
+    {key:"speaking-starter",title:"Template 1 — Speaking Starter",objective:"Learners practise simple oral production from the first minutes of class.",flow:"Warm-up → teacher model → repetition → guided speaking → independent speaking → quick correction.",materials:"Speaking prompts, name cards, simple question frames."},
+    {key:"vocabulary-builder",title:"Template 2 — Vocabulary Builder",objective:"Learners use new vocabulary confidently in short spoken sentences.",flow:"Picture prompt → vocabulary drilling → sentence building → oral practice → mini performance check.",materials:"Picture cards, vocabulary list, sentence frames."},
+    {key:"assessment-prep",title:"Template 3 — Assessment Prep",objective:"Learners review weak areas and practise assessment-style tasks.",flow:"Quick diagnostic → correction → guided practice → individual attempt → feedback.",materials:"Review worksheet, assessment prompts, correction notes."}
   ];
+
+  function impactConfirm(message){
+    return new Promise(resolve=>{
+      const modal=document.getElementById("impactConfirmModal");
+      const msg=document.getElementById("impactConfirmMessage");
+      const ok=document.getElementById("impactConfirmOk");
+      const cancel=document.getElementById("impactConfirmCancel");
+
+      msg.textContent=message;
+      modal.classList.add("show");
+
+      const close=(result)=>{
+        modal.classList.remove("show");
+        ok.onclick=null;
+        cancel.onclick=null;
+        modal.onclick=null;
+        resolve(result);
+      };
+
+      ok.onclick=()=>close(true);
+      cancel.onclick=()=>close(false);
+      modal.onclick=(e)=>{ if(e.target===modal) close(false); };
+    });
+  }
 
   function deletedTemplates(){
     try{return JSON.parse(localStorage.getItem("impactDeletedLessonTemplates")||"[]")}
     catch(e){return []}
   }
 
+  function saveDeletedTemplate(id){
+    const deleted=deletedTemplates();
+    deleted.push(id);
+    localStorage.setItem("impactDeletedLessonTemplates",JSON.stringify([...new Set(deleted)]));
+  }
+
   function templatePlansFor(level){
     const deleted=deletedTemplates();
-    return templateBase
-      .map(t=>({
-        id:`template-${level.replace(/\s+/g,"-").replace(/\./g,"-").toLowerCase()}-${t.key}`,
-        level,
-        title:t.title,
-        type:"template",
-        isTemplate:true,
-        objective:t.objective,
-        flow:t.flow,
-        materials:t.materials
-      }))
-      .filter(t=>!deleted.includes(t.id));
+    return templateBase.map(t=>({
+      id:`template-${level.replace(/\s+/g,"-").replace(/\./g,"-").toLowerCase()}-${t.key}`,
+      level,
+      title:t.title,
+      type:"template",
+      isTemplate:true,
+      objective:t.objective,
+      flow:t.flow,
+      materials:t.materials
+    })).filter(t=>!deleted.includes(t.id));
   }
 
   async function safeGetPlans(){
-    try{
-      return await window.ImpactFirebaseStore.getLessonPlans();
-    }catch(e){
-      console.warn("Could not load lesson plans:",e);
-      return [];
-    }
+    try{return await window.ImpactFirebaseStore.getLessonPlans()}
+    catch(e){console.warn(e);return []}
   }
 
   async function render(){
     const savedPlans=await safeGetPlans();
 
     grid.innerHTML=levels.map(level=>{
-      const files=[...templatePlansFor(level), ...savedPlans.filter(p=>p.level===level)];
-      const fileHtml=files.length
-        ? files.map(file=>`
-          <div class="lesson-file-row">
-            <button class="file-pill" data-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">${file.title || file.name || "Untitled Lesson"}</button>
-            <button class="lesson-action-btn lesson-view-btn" data-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">🔎</button>
-            <button class="lesson-action-btn lesson-edit-btn" data-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">✍🏽</button>
-            <button class="lesson-delete-btn" data-delete-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">❌</button>
-          </div>`).join("")
-        : `<div class="empty-note">No lesson plans saved yet.</div>`;
+      const files=[...templatePlansFor(level),...savedPlans.filter(p=>p.level===level)];
+      const fileHtml=files.map(file=>`
+        <div class="lesson-file-row">
+          <button class="file-pill" data-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">${file.title || file.name || "Untitled Lesson"}</button>
+          <button class="lesson-action-btn lesson-view-btn" data-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">🔎</button>
+          <button class="lesson-action-btn lesson-edit-btn" data-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">✍🏽</button>
+          <button class="lesson-delete-btn" data-id="${file.id}" data-template="${file.isTemplate ? "yes" : "no"}" type="button">❌</button>
+        </div>`).join("");
 
       return `<article class="level-card" data-level="${level}">
         <h2>${level}</h2>
@@ -267,186 +164,85 @@ function impactConfirm(message){
         <div class="file-list">${fileHtml}</div>
       </article>`;
     }).join("");
-
-    document.querySelectorAll(".level-card").forEach(card=>{
-      card.onclick=e=>{
-        if(e.target.closest("button")) return;
-
-        document.querySelectorAll(".level-card").forEach(c=>{
-          if(c!==card)c.classList.remove("open");
-        });
-
-        card.classList.toggle("open");
-
-        const anyOpen=!!document.querySelector(".level-card.open");
-        grid.classList.toggle("folder-focus-active",anyOpen);
-
-        sessionStorage.setItem("impactSelectedLessonLevel",card.dataset.level);
-      };
-    });
-
-    document.querySelectorAll(".file-pill,.lesson-view-btn").forEach(btn=>{
-      btn.onclick=e=>{
-        e.stopPropagation();
-        const row=btn.closest(".lesson-file-row");
-        const title=row.querySelector(".file-pill").textContent.trim();
-        const id=btn.dataset.id;
-        const level=btn.closest(".level-card").dataset.level;
-        const isTemplate=btn.dataset.template==="yes";
-
-        const selected={
-          id,
-          title,
-          level,
-          type:isTemplate ? "template" : "saved"
-        };
-
-        const template=templatePlansFor(level).find(t=>t.id===id);
-        if(template) Object.assign(selected,template);
-
-        localStorage.setItem("impactSelectedLessonPlan",JSON.stringify(selected));
-        sessionStorage.setItem("impactEditingLessonId",id);
-
-        location.href="/teacher/lesson-plan-view.html?id="+encodeURIComponent(id);
-      };
-    });
-
-    document.querySelectorAll(".lesson-edit-btn").forEach(btn=>{
-      btn.onclick=e=>{
-        e.stopPropagation();
-        const row=btn.closest(".lesson-file-row");
-        const title=row.querySelector(".file-pill").textContent.trim();
-        const id=btn.dataset.id;
-        const level=btn.closest(".level-card").dataset.level;
-        const isTemplate=btn.dataset.template==="yes";
-
-        const selected={
-          id,
-          title,
-          level,
-          type:isTemplate ? "template" : "saved"
-        };
-
-        const template=templatePlansFor(level).find(t=>t.id===id);
-        if(template) Object.assign(selected,template);
-
-        localStorage.setItem("impactSelectedLessonPlan",JSON.stringify(selected));
-        sessionStorage.setItem("impactEditingLessonId",id);
-
-        location.href="/teacher/lesson-builder.html?edit="+encodeURIComponent(id);
-      };
-    });
-
-    document.querySelectorAll(".lesson-delete-btn").forEach(btn=>{
-      btn.onclick=async e=>{
-        e.preventDefault();
-        e.stopPropagation();
-
-        const id=btn.dataset.deleteId;
-        const isTemplate=btn.dataset.template==="yes";
-
-        if(isTemplate){
-          if(!(await impactConfirm("Delete this template from the folder?"))) return;
-          const deleted=deletedTemplates();
-          deleted.push(id);
-          localStorage.setItem("impactDeletedLessonTemplates",JSON.stringify([...new Set(deleted)]));
-          await render();
-          return;
-        }
-
-        if(!(await impactConfirm("Delete this lesson plan?"))) return;
-        await window.ImpactFirebaseStore.deleteLessonPlan(id);
-        await render();
-      };
-    });
   }
+
+  grid.addEventListener("click",async e=>{
+    const deleteBtn=e.target.closest(".lesson-delete-btn");
+    const viewBtn=e.target.closest(".lesson-view-btn,.file-pill");
+    const editBtn=e.target.closest(".lesson-edit-btn");
+    const card=e.target.closest(".level-card");
+
+    if(deleteBtn){
+      e.preventDefault();
+      e.stopPropagation();
+
+      const id=deleteBtn.dataset.id;
+      const isTemplate=deleteBtn.dataset.template==="yes";
+
+      if(isTemplate){
+        const ok=await impactConfirm("Delete this template from the folder?");
+        if(!ok) return;
+        saveDeletedTemplate(id);
+        await render();
+        return;
+      }
+
+      const ok=await impactConfirm("Delete this lesson plan?");
+      if(!ok) return;
+      await window.ImpactFirebaseStore.deleteLessonPlan(id);
+      await render();
+      return;
+    }
+
+    if(viewBtn){
+      e.preventDefault();
+      e.stopPropagation();
+      const row=viewBtn.closest(".lesson-file-row");
+      const id=viewBtn.dataset.id;
+      const level=viewBtn.closest(".level-card").dataset.level;
+      const template=templatePlansFor(level).find(t=>t.id===id);
+      const selected=template || {id,title:row.querySelector(".file-pill").textContent.trim(),level,type:"saved"};
+      localStorage.setItem("impactSelectedLessonPlan",JSON.stringify(selected));
+      sessionStorage.setItem("impactEditingLessonId",id);
+      location.href="/teacher/lesson-plan-view.html?id="+encodeURIComponent(id);
+      return;
+    }
+
+    if(editBtn){
+      e.preventDefault();
+      e.stopPropagation();
+      const row=editBtn.closest(".lesson-file-row");
+      const id=editBtn.dataset.id;
+      const level=editBtn.closest(".level-card").dataset.level;
+      const template=templatePlansFor(level).find(t=>t.id===id);
+      const selected=template || {id,title:row.querySelector(".file-pill").textContent.trim(),level,type:"saved"};
+      localStorage.setItem("impactSelectedLessonPlan",JSON.stringify(selected));
+      sessionStorage.setItem("impactEditingLessonId",id);
+      location.href="/teacher/lesson-builder.html?edit="+encodeURIComponent(id);
+      return;
+    }
+
+    if(card){
+      document.querySelectorAll(".level-card").forEach(c=>{if(c!==card)c.classList.remove("open")});
+      card.classList.toggle("open");
+      grid.classList.toggle("folder-focus-active",!!document.querySelector(".level-card.open"));
+      sessionStorage.setItem("impactSelectedLessonLevel",card.dataset.level);
+    }
+  });
+
+  document.addEventListener("click",e=>{
+    if(e.target.closest(".level-card") || e.target.closest(".create-btn") || e.target.closest(".impact-confirm-card")) return;
+    document.querySelectorAll(".level-card.open").forEach(card=>card.classList.remove("open"));
+    grid.classList.remove("folder-focus-active");
+  });
 
   createBtn.onclick=()=>{
     const selected=sessionStorage.getItem("impactSelectedLessonLevel") || "Absolute Beginner";
     location.href="/teacher/lesson-builder.html?level="+encodeURIComponent(selected);
   };
 
-  document.addEventListener("click",function(e){
-    if(e.target.closest(".level-card") || e.target.closest(".create-btn")) return;
-
-    document.querySelectorAll(".level-card.open").forEach(card=>card.classList.remove("open"));
-    grid.classList.remove("folder-focus-active");
-  });
-
   await render();
 })();
 </script>
-
-
-
-
-<script id="lesson-delete-final-fix">
-document.addEventListener("click", async function(e){
-  const deleteBtn = e.target.closest(".lesson-delete-btn");
-  if(!deleteBtn) return;
-
-  e.preventDefault();
-  e.stopPropagation();
-  e.stopImmediatePropagation();
-
-  const id = deleteBtn.dataset.deleteId;
-  const isTemplate = deleteBtn.dataset.template === "yes";
-  const row = deleteBtn.closest(".lesson-file-row");
-  const card = deleteBtn.closest(".level-card");
-
-  async function askDelete(message){
-    if(typeof impactConfirm === "function"){
-      return await impactConfirm(message);
-    }
-    return window.confirm(message);
-  }
-
-  if(isTemplate){
-    const ok = await askDelete("Delete this template from the folder?");
-    if(!ok) return;
-
-    const deleted = JSON.parse(localStorage.getItem("impactDeletedLessonTemplates") || "[]");
-    deleted.push(id);
-    localStorage.setItem("impactDeletedLessonTemplates", JSON.stringify([...new Set(deleted)]));
-
-    if(row) row.remove();
-
-    if(card){
-      const remaining = card.querySelectorAll(".lesson-file-row").length;
-      const count = card.querySelector("p");
-      if(count){
-        count.textContent = remaining + " lesson plan" + (remaining === 1 ? "" : "s");
-      }
-    }
-
-    return;
-  }
-
-  const ok = await askDelete("Delete this lesson plan?");
-  if(!ok) return;
-
-  try{
-    await window.ImpactFirebaseStore.deleteLessonPlan(id);
-
-    if(row) row.remove();
-
-    if(card){
-      const remaining = card.querySelectorAll(".lesson-file-row").length;
-      const count = card.querySelector("p");
-      if(count){
-        count.textContent = remaining + " lesson plan" + (remaining === 1 ? "" : "s");
-      }
-    }
-  }catch(err){
-    console.error(err);
-    alert("Could not delete this lesson plan.");
-  }
-}, true);
-</script>
-
 </body>
 </html>
-
-
-
-
