@@ -2,176 +2,130 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Lesson Plans | Impact</title>
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/impact-global-bg.css">
-<link rel="stylesheet" href="/css/impact-page-nav.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-height:100vh}
-.page{position:relative;z-index:2;width:min(1120px,92vw);margin:0 auto;padding:118px 0 80px}
-.hero{text-align:center;margin-bottom:34px}
-.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.62);margin-bottom:12px}
-h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1}
-.hero p{margin-top:12px;color:rgba(255,255,255,.68);font-weight:700}
-.level-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-.level-card{min-height:142px;padding:20px;border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.09);cursor:pointer}
-.level-card:hover{transform:translateY(-3px);background:rgba(255,255,255,.105);border-color:rgba(232,216,166,.34)}
-.level-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.75rem;font-weight:400;margin-bottom:12px}
-.level-card p{color:rgba(255,255,255,.66);font-size:.82rem;font-weight:800}
-.file-list{display:none;margin-top:16px;gap:8px}
-.level-card.open .file-list{display:grid}
-.lesson-file-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
-.file-pill,.lesson-delete-btn,.create-btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 12px;font-weight:900;cursor:pointer}
-.file-pill{text-align:left;width:100%}
-.lesson-delete-btn{border-color:rgba(255,120,120,.28);background:rgba(255,80,80,.12)}
-.empty-note{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.055);color:rgba(255,255,255,.58);font-size:.78rem;font-weight:800}
-.footer{margin-top:30px;display:flex;justify-content:center}
-.create-btn{min-width:230px;min-height:50px}
-@media(max-width:900px){.level-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:620px){.level-grid{grid-template-columns:1fr}.page{padding-top:112px}}
+body{
+  margin:0;
+  background:#05060b;
+  color:white;
+  font-family:Inter;
+}
+
+.page{
+  width:92%;
+  margin:auto;
+  padding-top:100px;
+}
+
+h1{
+  font-family:"Sorts Mill Goudy";
+  font-size:60px;
+  text-align:center;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  margin-top:40px;
+}
+
+.card{
+  padding:25px;
+  border-radius:20px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);
+  cursor:pointer;
+}
+
+.card h2{
+  margin:0;
+}
+
+.rollout{
+  display:none;
+  margin-top:15px;
+  padding:20px;
+  border-radius:20px;
+  background:rgba(255,255,255,.05);
+}
+
+.card.open{
+  grid-column:1/-1;
+}
+
+.card.open .rollout{
+  display:block;
+}
+
+.lesson{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+}
 </style>
 </head>
+
 <body>
-<main class="page">
-  <section class="hero">
-    <p class="eyebrow">Teacher Workspace</p>
-    <h1>Lesson Plans</h1>
-    <p>Open a level folder to view saved lesson plans, or create a new one.</p>
-  </section>
-  <section class="level-grid" id="levelGrid"></section>
-  <div class="footer"><button class="create-btn" id="createBtn" type="button">Create Lesson Plan</button></div>
-</main>
 
+<div class="page">
 
+<h1>Lesson Plans</h1>
 
-<style>
-.lesson-rollout {
-  max-height: 0;
-  overflow: hidden;
-  transition: all 0.45s ease;
-  margin-top: 0;
-}
+<div class="grid">
 
-.lesson-rollout.open {
-  max-height: 320px;
-  margin-top: 14px;
-}
+<div class="card" onclick="toggle(this)">
+<h2>A1</h2>
+<p>3 lesson plans</p>
 
-.lesson-rollout-inner {
-  background: rgba(255,255,255,0.06);
-  border-radius: 16px;
-  padding: 14px;
-}
+<div class="rollout">
 
-.lesson-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
+<div class="lesson">
+<span>Template 1 — Speaking Starter</span>
+<div>
+<button>View</button>
+<button>Edit</button>
+<button>Delete</button>
+</div>
+</div>
 
-.lesson-row:last-child {
-  border-bottom: none;
-}
+<div class="lesson">
+<span>Template 2 — Vocabulary Builder</span>
+<div>
+<button>View</button>
+<button>Edit</button>
+<button>Delete</button>
+</div>
+</div>
 
-.lesson-actions button {
-  margin-left: 6px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: none;
-  background: rgba(255,255,255,0.1);
-  color: white;
-  cursor: pointer;
-  font-size: 12px;
-}
-</style>
+<div class="lesson">
+<span>Template 3 — Assessment Prep</span>
+<div>
+<button>View</button>
+<button>Edit</button>
+<button>Delete</button>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
 
 <script>
-(function(){
-
-const LEVELS = ["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
-
-const templates = [
-  "Template 1 — Speaking Starter",
-  "Template 2 — Vocabulary Builder",
-  "Template 3 — Assessment Prep"
-];
-
-function findCards(){
-  return Array.from(document.querySelectorAll("div")).filter(el=>{
-    const text = el.innerText;
-    if(!text) return false;
-
-    return LEVELS.some(l => text.includes(l)) &&
-           text.toLowerCase().includes("lesson plans") &&
-           el.offsetHeight > 50;
-  });
+function toggle(el){
+document.querySelectorAll('.card').forEach(c=>{
+if(c!==el)c.classList.remove('open');
+});
+el.classList.toggle('open');
 }
-
-function createRollout(card){
-  if(card.querySelector(".lesson-rollout")) return;
-
-  const rollout = document.createElement("div");
-  rollout.className = "lesson-rollout";
-
-  const inner = document.createElement("div");
-  inner.className = "lesson-rollout-inner";
-
-  templates.forEach(name=>{
-    const row = document.createElement("div");
-    row.className = "lesson-row";
-
-    row.innerHTML = `
-      <div>${name}</div>
-      <div class="lesson-actions">
-        <button onclick="event.stopPropagation()">View</button>
-        <button onclick="event.stopPropagation()">Edit</button>
-        <button onclick="event.stopPropagation()">Delete</button>
-      </div>
-    `;
-
-    inner.appendChild(row);
-  });
-
-  rollout.appendChild(inner);
-  card.appendChild(rollout);
-}
-
-function init(){
-  const cards = findCards();
-
-  cards.forEach(card=>{
-    createRollout(card);
-
-    card.style.cursor = "pointer";
-
-    card.addEventListener("click", function(e){
-      if(e.target.tagName === "BUTTON") return;
-
-      const rollout = card.querySelector(".lesson-rollout");
-
-      const isOpen = rollout.classList.contains("open");
-
-      document.querySelectorAll(".lesson-rollout").forEach(r=>{
-        r.classList.remove("open");
-      });
-
-      if(!isOpen){
-        rollout.classList.add("open");
-      }
-    });
-  });
-}
-
-setTimeout(init, 600);
-
-})();
 </script>
 
 </body>
 </html>
-
-
