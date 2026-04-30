@@ -108,5 +108,276 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
   await render();
 })();
 </script>
+<style id="lesson-folder-rollout-style">
+  .lesson-rollout-panel{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:max-height .45s ease, opacity .25s ease, margin-top .35s ease;
+    margin-top:0;
+  }
+
+  .lesson-folder-open .lesson-rollout-panel{
+    max-height:360px;
+    opacity:1;
+    margin-top:18px;
+  }
+
+  .lesson-rollout-inner{
+    max-height:310px;
+    overflow-y:auto;
+    padding:14px;
+    border-radius:22px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  }
+
+  .lesson-rollout-row{
+    display:grid;
+    grid-template-columns:1fr auto auto auto;
+    gap:10px;
+    align-items:center;
+    padding:12px 4px;
+    border-bottom:1px solid rgba(255,255,255,.09);
+  }
+
+  .lesson-rollout-row:last-child{
+    border-bottom:0;
+  }
+
+  .lesson-rollout-title{
+    font-size:.88rem;
+    font-weight:650;
+    color:rgba(255,255,255,.9);
+    line-height:1.35;
+  }
+
+  .lesson-rollout-action{
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    border-radius:12px;
+    padding:8px 11px;
+    font-size:.74rem;
+    font-weight:800;
+    cursor:pointer;
+  }
+
+  .lesson-rollout-action.delete{
+    background:rgba(239,68,68,.14);
+    border-color:rgba(239,68,68,.35);
+  }
+
+  .lesson-rollout-empty{
+    padding:16px;
+    color:rgba(255,255,255,.62);
+    font-weight:700;
+    font-size:.85rem;
+  }
+
+  @media(max-width:700px){
+    .lesson-rollout-row{
+      grid-template-columns:1fr;
+    }
+  }
+</style>
+
+<script id="lesson-folder-rollout-script">
+(function(){
+  const levels = ["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
+
+  const dummyTemplates = [
+    {
+      id:"template-speaking-starter",
+      title:"Template 1 — Speaking Starter",
+      level:"Absolute Beginner",
+      type:"template"
+    },
+    {
+      id:"template-vocabulary-builder",
+      title:"Template 2 — Vocabulary Builder",
+      level:"Absolute Beginner",
+      type:"template"
+    },
+    {
+      id:"template-assessment-prep",
+      title:"Template 3 — Assessment Prep",
+      level:"Absolute Beginner",
+      type:"template"
+    }
+  ];
+
+  let loadedPlans = [];
+
+  function cleanText(value){
+    return String(value || "").replace(/\s+/g," ").trim();
+  }
+
+  function findFolderCards(){
+    const all = Array.from(document.querySelectorAll("article, .card, .level-card, .folder, div, a"));
+    const cards = [];
+
+    levels.forEach(level=>{
+      const match = all.find(el=>{
+        const text = cleanText(el.textContent);
+        if(!text) return false;
+        if(!text.includes(level)) return false;
+        if(!/lesson plan/i.test(text)) return false;
+
+        const rect = el.getBoundingClientRect();
+        return rect.width > 120 && rect.height > 40;
+      });
+
+      if(match && !cards.includes(match)){
+        cards.push(match);
+        match.dataset.lessonLevel = level;
+      }
+    });
+
+    return cards;
+  }
+
+  function plansFor(level){
+    return loadedPlans.filter(plan => cleanText(plan.level).toLowerCase() === cleanText(level).toLowerCase());
+  }
+
+  function normalizePlan(doc){
+    const d = doc.data ? doc.data() : doc;
+
+    return {
+      id: doc.id || d.id || "",
+      title: d.title || d.name || d.lessonTitle || "Untitled Lesson Plan",
+      level: d.level || d.folder || d.cefrLevel || "Absolute Beginner",
+      type: d.type || "saved",
+      raw: d
+    };
+  }
+
+  function updateCount(card, count){
+    const candidates = Array.from(card.querySelectorAll("*")).filter(el =>
+      /lesson plans/i.test(cleanText(el.textContent))
+    );
+
+    const countEl = candidates[candidates.length - 1];
+
+    if(countEl){
+      countEl.textContent = count + " lesson plans";
+    }
+  }
+
+  function buildRollout(card, level){
+    let panel = card.querySelector(".lesson-rollout-panel");
+
+    if(!panel){
+      panel = document.createElement("div");
+      panel.className = "lesson-rollout-panel";
+      panel.innerHTML = '<div class="lesson-rollout-inner"></div>';
+      card.appendChild(panel);
+    }
+
+    const inner = panel.querySelector(".lesson-rollout-inner");
+    inner.innerHTML = "";
+
+    const plans = plansFor(level);
+    updateCount(card, plans.length);
+
+    if(plans.length === 0){
+      inner.innerHTML = '<div class="lesson-rollout-empty">No saved lesson plans yet.</div>';
+      return;
+    }
+
+    plans.forEach(plan=>{
+      const row = document.createElement("div");
+      row.className = "lesson-rollout-row";
+
+      row.innerHTML = `
+        <div class="lesson-rollout-title">${plan.title}</div>
+        <button class="lesson-rollout-action view" type="button">View</button>
+        <button class="lesson-rollout-action edit" type="button">Edit</button>
+        <button class="lesson-rollout-action delete" type="button">Delete</button>
+      `;
+
+      row.querySelector(".view").onclick = function(e){
+        e.stopPropagation();
+        localStorage.setItem("impactSelectedLessonPlan", JSON.stringify(plan));
+        window.location.href = "/teacher/lesson-plan-view.html";
+      };
+
+      row.querySelector(".edit").onclick = function(e){
+        e.stopPropagation();
+        localStorage.setItem("impactSelectedLessonPlan", JSON.stringify(plan));
+        window.location.href = "/teacher/lesson-plan-builder.html";
+      };
+
+      row.querySelector(".delete").onclick = async function(e){
+        e.stopPropagation();
+
+        if(plan.type === "template"){
+          alert("Template samples cannot be deleted.");
+          return;
+        }
+
+        if(!confirm("Delete this lesson plan?")) return;
+
+        try{
+          if(window.firebase && firebase.firestore && plan.id){
+            await firebase.firestore().collection("lessonPlans").doc(plan.id).delete();
+          }
+          await loadPlans();
+        }catch(err){
+          console.error(err);
+          alert("Could not delete lesson plan.");
+        }
+      };
+
+      inner.appendChild(row);
+    });
+  }
+
+  function wireCards(){
+    const cards = findFolderCards();
+
+    cards.forEach(card=>{
+      const level = card.dataset.lessonLevel;
+      buildRollout(card, level);
+
+      if(card.dataset.rolloutWired === "yes") return;
+      card.dataset.rolloutWired = "yes";
+
+      card.addEventListener("click", function(e){
+        if(e.target.closest(".lesson-rollout-action")) return;
+
+        const isOpen = card.classList.contains("lesson-folder-open");
+
+        document.querySelectorAll(".lesson-folder-open").forEach(openCard=>{
+          if(openCard !== card) openCard.classList.remove("lesson-folder-open");
+        });
+
+        card.classList.toggle("lesson-folder-open", !isOpen);
+      });
+    });
+  }
+
+  async function loadPlans(){
+    loadedPlans = [...dummyTemplates];
+
+    try{
+      if(window.firebase && firebase.firestore){
+        const snap = await firebase.firestore().collection("lessonPlans").get();
+        snap.forEach(doc => loadedPlans.push(normalizePlan(doc)));
+      }
+    }catch(err){
+      console.warn("Lesson plans Firestore load skipped:", err);
+    }
+
+    wireCards();
+  }
+
+  setTimeout(loadPlans, 400);
+  setTimeout(wireCards, 1200);
+})();
+</script>
 </body>
 </html>
+
