@@ -376,7 +376,73 @@ function impactConfirm(message){
   await render();
 })();
 </script>
+
+<script id="lesson-delete-final-fix">
+document.addEventListener("click", async function(e){
+  const deleteBtn = e.target.closest(".lesson-delete-btn");
+  if(!deleteBtn) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+
+  const id = deleteBtn.dataset.deleteId;
+  const isTemplate = deleteBtn.dataset.template === "yes";
+  const row = deleteBtn.closest(".lesson-file-row");
+  const card = deleteBtn.closest(".level-card");
+
+  async function askDelete(message){
+    if(typeof impactConfirm === "function"){
+      return await impactConfirm(message);
+    }
+    return window.confirm(message);
+  }
+
+  if(isTemplate){
+    const ok = await askDelete("Delete this template from the folder?");
+    if(!ok) return;
+
+    const deleted = JSON.parse(localStorage.getItem("impactDeletedLessonTemplates") || "[]");
+    deleted.push(id);
+    localStorage.setItem("impactDeletedLessonTemplates", JSON.stringify([...new Set(deleted)]));
+
+    if(row) row.remove();
+
+    if(card){
+      const remaining = card.querySelectorAll(".lesson-file-row").length;
+      const count = card.querySelector("p");
+      if(count){
+        count.textContent = remaining + " lesson plan" + (remaining === 1 ? "" : "s");
+      }
+    }
+
+    return;
+  }
+
+  const ok = await askDelete("Delete this lesson plan?");
+  if(!ok) return;
+
+  try{
+    await window.ImpactFirebaseStore.deleteLessonPlan(id);
+
+    if(row) row.remove();
+
+    if(card){
+      const remaining = card.querySelectorAll(".lesson-file-row").length;
+      const count = card.querySelector("p");
+      if(count){
+        count.textContent = remaining + " lesson plan" + (remaining === 1 ? "" : "s");
+      }
+    }
+  }catch(err){
+    console.error(err);
+    alert("Could not delete this lesson plan.");
+  }
+}, true);
+</script>
+
 </body>
 </html>
+
 
 
