@@ -40,6 +40,68 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
 
 @media(max-width:900px){.level-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.level-grid{grid-template-columns:1fr}.page{padding-top:112px}.lesson-file-row{grid-template-columns:1fr}}
+
+/* impact-confirm-modal-style */
+.impact-confirm-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.48);
+  backdrop-filter:blur(14px);
+}
+
+.impact-confirm-backdrop.show{
+  display:flex;
+}
+
+.impact-confirm-card{
+  width:min(420px,90vw);
+  border-radius:28px;
+  padding:28px;
+  background:rgba(20,24,38,.88);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 30px 90px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.12);
+  text-align:center;
+}
+
+.impact-confirm-card h3{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:2rem;
+  font-weight:400;
+  margin-bottom:10px;
+}
+
+.impact-confirm-card p{
+  color:rgba(255,255,255,.72);
+  font-weight:600;
+  line-height:1.5;
+  margin-bottom:22px;
+}
+
+.impact-confirm-actions{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+}
+
+.impact-confirm-actions button{
+  min-width:110px;
+  border-radius:16px;
+  padding:12px 16px;
+  cursor:pointer;
+  font-weight:800;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.1);
+}
+
+.impact-confirm-actions .danger{
+  border-color:rgba(255,120,120,.35);
+  background:rgba(255,80,80,.18);
+}
 </style>
 </head>
 
@@ -58,11 +120,48 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
   </div>
 </main>
 
+<div class="impact-confirm-backdrop" id="impactConfirmModal">
+  <div class="impact-confirm-card">
+    <h3>Delete template?</h3>
+    <p id="impactConfirmMessage">This will remove the template from this folder.</p>
+    <div class="impact-confirm-actions">
+      <button type="button" id="impactConfirmCancel">Cancel</button>
+      <button type="button" class="danger" id="impactConfirmOk">Delete</button>
+    </div>
+  </div>
+</div>
+
 <script src="/js/impact-global-bg.js"></script>
 <script src="/js/impact-page-nav.js"></script>
 <script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
 
 <script>
+function impactConfirm(message){
+  return new Promise(resolve=>{
+    const modal=document.getElementById("impactConfirmModal");
+    const msg=document.getElementById("impactConfirmMessage");
+    const ok=document.getElementById("impactConfirmOk");
+    const cancel=document.getElementById("impactConfirmCancel");
+
+    msg.textContent=message || "Are you sure?";
+    modal.classList.add("show");
+
+    function close(result){
+      modal.classList.remove("show");
+      ok.onclick=null;
+      cancel.onclick=null;
+      modal.onclick=null;
+      resolve(result);
+    }
+
+    ok.onclick=()=>close(true);
+    cancel.onclick=()=>close(false);
+    modal.onclick=e=>{
+      if(e.target===modal) close(false);
+    };
+  });
+}
+
 (async function(){
   const levels=["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
   const grid=document.getElementById("levelGrid");
@@ -218,7 +317,7 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
         e.stopPropagation();
 
         if(btn.dataset.template==="yes"){
-          if(!confirm("Delete this template from the folder?")) return;
+          if(!(await impactConfirm("Delete this template from the folder?"))) return;
           const deleted=deletedTemplates();
           deleted.push(btn.dataset.deleteId);
           localStorage.setItem("impactDeletedLessonTemplates",JSON.stringify([...new Set(deleted)]));
@@ -226,7 +325,7 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
           return;
         }
 
-        if(!confirm("Delete this lesson plan?")) return;
+        if(!(await impactConfirm("Delete this lesson plan?"))) return;
         await window.ImpactFirebaseStore.deleteLessonPlan(btn.dataset.deleteId);
         await render();
       };
@@ -250,3 +349,4 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
 </script>
 </body>
 </html>
+
