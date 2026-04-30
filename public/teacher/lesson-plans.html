@@ -102,6 +102,31 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
   border-color:rgba(255,120,120,.35);
   background:rgba(255,80,80,.18);
 }
+
+/* lesson-action-hover-fix */
+.lesson-action-btn,
+.lesson-delete-btn{
+  transition:transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.lesson-action-btn:hover{
+  transform:translateY(-2px) scale(1.04);
+  background:rgba(255,255,255,.16);
+  border-color:rgba(232,216,166,.38);
+  box-shadow:0 12px 28px rgba(0,0,0,.28);
+}
+
+.lesson-delete-btn:hover{
+  transform:translateY(-2px) scale(1.04);
+  background:rgba(255,80,80,.24);
+  border-color:rgba(255,120,120,.5);
+  box-shadow:0 12px 28px rgba(255,80,80,.16);
+}
+
+.lesson-action-btn:active,
+.lesson-delete-btn:active{
+  transform:scale(.96);
+}
 </style>
 </head>
 
@@ -314,19 +339,23 @@ function impactConfirm(message){
 
     document.querySelectorAll(".lesson-delete-btn").forEach(btn=>{
       btn.onclick=async e=>{
+        e.preventDefault();
         e.stopPropagation();
 
-        if(btn.dataset.template==="yes"){
+        const id=btn.dataset.deleteId;
+        const isTemplate=btn.dataset.template==="yes";
+
+        if(isTemplate){
           if(!(await impactConfirm("Delete this template from the folder?"))) return;
           const deleted=deletedTemplates();
-          deleted.push(btn.dataset.deleteId);
+          deleted.push(id);
           localStorage.setItem("impactDeletedLessonTemplates",JSON.stringify([...new Set(deleted)]));
           await render();
           return;
         }
 
         if(!(await impactConfirm("Delete this lesson plan?"))) return;
-        await window.ImpactFirebaseStore.deleteLessonPlan(btn.dataset.deleteId);
+        await window.ImpactFirebaseStore.deleteLessonPlan(id);
         await render();
       };
     });
@@ -349,4 +378,5 @@ function impactConfirm(message){
 </script>
 </body>
 </html>
+
 
