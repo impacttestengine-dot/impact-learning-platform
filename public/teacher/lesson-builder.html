@@ -1921,7 +1921,41 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
-<script src="/js/impact-task-menu-patch.js"></script></body>
+<script src="/js/impact-task-menu-patch.js"></script><script id="lesson-template-builder-loader">
+document.addEventListener("DOMContentLoaded",function(){
+  try{
+    const plan=JSON.parse(localStorage.getItem("impactSelectedLessonPlan")||"{}");
+    if(!plan || plan.type!=="template") return;
+
+    const titleInput=document.getElementById("lessonTitle") || document.querySelector("input[placeholder*='title' i]");
+    const levelInput=document.getElementById("lessonLevel") || document.querySelector("select");
+    const canvas=document.getElementById("canvas") || document.querySelector(".canvas,.lesson-canvas");
+
+    if(titleInput) titleInput.value=plan.title || "";
+    if(levelInput) levelInput.value=plan.level || "Absolute Beginner";
+
+    if(canvas && !canvas.dataset.templateLoaded){
+      canvas.dataset.templateLoaded="yes";
+      canvas.innerHTML=`
+        <article class="lesson-card" contenteditable="true">
+          <h2>${plan.title || "Lesson Template"}</h2>
+          <p><strong>Objective:</strong> ${plan.objective || ""}</p>
+        </article>
+        <article class="lesson-card" contenteditable="true">
+          <p><strong>Lesson Flow:</strong> ${plan.flow || ""}</p>
+        </article>
+        <article class="lesson-card" contenteditable="true">
+          <p><strong>Materials:</strong> ${plan.materials || ""}</p>
+        </article>
+      `;
+    }
+  }catch(e){
+    console.warn("Template loader skipped",e);
+  }
+});
+</script>
+
+</body>
         </html>
       `);
       w.document.close();
@@ -2315,7 +2349,41 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
-<script src="/js/impact-task-menu-patch.js"></script></body>
+<script src="/js/impact-task-menu-patch.js"></script><script id="lesson-template-builder-loader">
+document.addEventListener("DOMContentLoaded",function(){
+  try{
+    const plan=JSON.parse(localStorage.getItem("impactSelectedLessonPlan")||"{}");
+    if(!plan || plan.type!=="template") return;
+
+    const titleInput=document.getElementById("lessonTitle") || document.querySelector("input[placeholder*='title' i]");
+    const levelInput=document.getElementById("lessonLevel") || document.querySelector("select");
+    const canvas=document.getElementById("canvas") || document.querySelector(".canvas,.lesson-canvas");
+
+    if(titleInput) titleInput.value=plan.title || "";
+    if(levelInput) levelInput.value=plan.level || "Absolute Beginner";
+
+    if(canvas && !canvas.dataset.templateLoaded){
+      canvas.dataset.templateLoaded="yes";
+      canvas.innerHTML=`
+        <article class="lesson-card" contenteditable="true">
+          <h2>${plan.title || "Lesson Template"}</h2>
+          <p><strong>Objective:</strong> ${plan.objective || ""}</p>
+        </article>
+        <article class="lesson-card" contenteditable="true">
+          <p><strong>Lesson Flow:</strong> ${plan.flow || ""}</p>
+        </article>
+        <article class="lesson-card" contenteditable="true">
+          <p><strong>Materials:</strong> ${plan.materials || ""}</p>
+        </article>
+      `;
+    }
+  }catch(e){
+    console.warn("Template loader skipped",e);
+  }
+});
+</script>
+
+</body>
       </html>
     `);
     w.document.close();
@@ -3092,7 +3160,41 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
-<script src="/js/impact-task-menu-patch.js"></script></body>
+<script src="/js/impact-task-menu-patch.js"></script><script id="lesson-template-builder-loader">
+document.addEventListener("DOMContentLoaded",function(){
+  try{
+    const plan=JSON.parse(localStorage.getItem("impactSelectedLessonPlan")||"{}");
+    if(!plan || plan.type!=="template") return;
+
+    const titleInput=document.getElementById("lessonTitle") || document.querySelector("input[placeholder*='title' i]");
+    const levelInput=document.getElementById("lessonLevel") || document.querySelector("select");
+    const canvas=document.getElementById("canvas") || document.querySelector(".canvas,.lesson-canvas");
+
+    if(titleInput) titleInput.value=plan.title || "";
+    if(levelInput) levelInput.value=plan.level || "Absolute Beginner";
+
+    if(canvas && !canvas.dataset.templateLoaded){
+      canvas.dataset.templateLoaded="yes";
+      canvas.innerHTML=`
+        <article class="lesson-card" contenteditable="true">
+          <h2>${plan.title || "Lesson Template"}</h2>
+          <p><strong>Objective:</strong> ${plan.objective || ""}</p>
+        </article>
+        <article class="lesson-card" contenteditable="true">
+          <p><strong>Lesson Flow:</strong> ${plan.flow || ""}</p>
+        </article>
+        <article class="lesson-card" contenteditable="true">
+          <p><strong>Materials:</strong> ${plan.materials || ""}</p>
+        </article>
+      `;
+    }
+  }catch(e){
+    console.warn("Template loader skipped",e);
+  }
+});
+</script>
+
+</body>
         </html>
       `);
       w.document.close();
@@ -3486,8 +3588,43 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
-<script src="/js/impact-task-menu-patch.js"></script></body>
+<script src="/js/impact-task-menu-patch.js"></script><script id="lesson-template-builder-loader">
+document.addEventListener("DOMContentLoaded",function(){
+  try{
+    const plan=JSON.parse(localStorage.getItem("impactSelectedLessonPlan")||"{}");
+    if(!plan || plan.type!=="template") return;
+
+    const titleInput=document.getElementById("lessonTitle") || document.querySelector("input[placeholder*='title' i]");
+    const levelInput=document.getElementById("lessonLevel") || document.querySelector("select");
+    const canvas=document.getElementById("canvas") || document.querySelector(".canvas,.lesson-canvas");
+
+    if(titleInput) titleInput.value=plan.title || "";
+    if(levelInput) levelInput.value=plan.level || "Absolute Beginner";
+
+    if(canvas && !canvas.dataset.templateLoaded){
+      canvas.dataset.templateLoaded="yes";
+      canvas.innerHTML=`
+        <article class="lesson-card" contenteditable="true">
+          <h2>${plan.title || "Lesson Template"}</h2>
+          <p><strong>Objective:</strong> ${plan.objective || ""}</p>
+        </article>
+        <article class="lesson-card" contenteditable="true">
+          <p><strong>Lesson Flow:</strong> ${plan.flow || ""}</p>
+        </article>
+        <article class="lesson-card" contenteditable="true">
+          <p><strong>Materials:</strong> ${plan.materials || ""}</p>
+        </article>
+      `;
+    }
+  }catch(e){
+    console.warn("Template loader skipped",e);
+  }
+});
+</script>
+
+</body>
 </html>
+
 
 
 
