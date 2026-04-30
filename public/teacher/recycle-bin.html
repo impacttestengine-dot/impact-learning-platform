@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Recycle Bin | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif}
+.page{position:relative;z-index:2;width:min(1120px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:34px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.62);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1}
+.hero p{margin-top:12px;color:rgba(255,255,255,.68);font-weight:700}
+.shell{border-radius:34px;padding:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(24px);box-shadow:0 28px 90px rgba(0,0,0,.36)}
+.bin-row{display:grid;grid-template-columns:1fr .8fr .8fr auto;gap:12px;align-items:center;padding:14px;border-bottom:1px solid rgba(255,255,255,.09)}
+.bin-title{font-weight:700;color:rgba(255,255,255,.9)}
+.meta{font-size:.8rem;color:rgba(255,255,255,.62);font-weight:600}
+.empty{text-align:center;padding:32px;color:rgba(255,255,255,.6);font-weight:700}
+.btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 13px;font-weight:800;cursor:pointer}
+.btn.danger{border-color:rgba(255,120,120,.3);background:rgba(255,80,80,.13)}
+.status{text-align:center;margin-top:14px;color:rgba(255,255,255,.62);font-weight:700}
+@media(max-width:760px){.bin-row{grid-template-columns:1fr}.page{padding-top:106px}}
+</style>
+</head>
+
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Personnel Workspace</p>
+    <h1>Recycle Bin</h1>
+    <p>Deleted personnel-side items appear here for record keeping.</p>
+  </section>
+
+  <section class="shell" id="binList">
+    <div class="empty">Loading recycle bin...</div>
+  </section>
+
+  <p class="status" id="status"></p>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+const db = firebase.firestore();
+const list = document.getElementById("binList");
+const statusEl = document.getElementById("status");
+
+async function loadBin(){
+  list.innerHTML = "";
+  statusEl.textContent = "Loading Firestore...";
+
+  try{
+    const snap = await db.collection("personnelRecycleBin").orderBy("deletedAt","desc").limit(100).get();
+
+    if(snap.empty){
+      list.innerHTML = `<div class="empty">Recycle bin is empty.</div>`;
+      statusEl.textContent = "";
+      return;
+    }
+
+    snap.forEach(doc=>{
+      const item = doc.data();
+      const row = document.createElement("div");
+      row.className = "bin-row";
+      row.innerHTML = `
+        <div>
+          <div class="bin-title">${item.title || "Deleted item"}</div>
+          <div class="meta">${item.type || "item"} • ${item.itemId || ""}</div>
+        </div>
+        <div class="meta">Deleted by: ${item.deletedBy || "Unknown"}</div>
+        <div class="meta">${item.deletedAt ? new Date(item.deletedAt).toLocaleString() : ""}</div>
+        <button class="btn danger">Remove Record</button>
+      `;
+
+      row.querySelector("button").onclick = async()=>{
+        await db.collection("personnelRecycleBin").doc(doc.id).delete();
+        await loadBin();
+      };
+
+      list.appendChild(row);
+    });
+
+    statusEl.textContent = "Saved in Firestore";
+  }catch(e){
+    console.error(e);
+    list.innerHTML = `<div class="empty">Could not load recycle bin.</div>`;
+    statusEl.textContent = "Firestore not reachable.";
+  }
+}
+
+loadBin();
+</script>
+</body>
+</html>

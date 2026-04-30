@@ -207,6 +207,35 @@ body{
     display: block !important;
   }
 </style>
+<style id="impact-recycle-dashboard-style">
+  .impact-recycle-shortcut{
+    position:fixed;
+    left:50%;
+    bottom:24px;
+    transform:translateX(-50%);
+    z-index:9998;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    backdrop-filter:blur(18px);
+    box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);
+    font-size:1.25rem;
+    transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
+  }
+
+  .impact-recycle-shortcut:hover{
+    transform:translateX(-50%) translateY(-3px) scale(1.05);
+    background:rgba(255,255,255,.13);
+    box-shadow:0 24px 70px rgba(0,0,0,.45);
+  }
+</style>
 </head>
 
 <body>
@@ -358,8 +387,24 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 })();
 </script>
-<script src="/js/impact-task-menu-patch.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script><script src="/__/firebase/init.js"></script><script src="/js/impact-task-badge.js"></script></body>
+<script src="/js/impact-task-menu-patch.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script><script src="/__/firebase/init.js"></script><script src="/js/impact-task-badge.js"></script><script id="impact-recycle-dashboard-shortcut">
+document.addEventListener("DOMContentLoaded",function(){
+  if(document.getElementById("impactRecycleShortcut")) return;
+
+  const bin = document.createElement("button");
+  bin.id = "impactRecycleShortcut";
+  bin.className = "impact-recycle-shortcut";
+  bin.type = "button";
+  bin.title = "Recycle Bin";
+  bin.textContent = "♻";
+  bin.onclick = () => window.location.href = "/teacher/recycle-bin.html";
+
+  document.body.appendChild(bin);
+});
+</script>
+</body>
 </html>
+
 
 
 
