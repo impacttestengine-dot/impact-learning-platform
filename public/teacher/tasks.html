@@ -1,51 +1,21 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Tasks</title>
-<script type="module" src="/js/firebase.js"></script>
-<style>
-body{background:#0f172a;color:white;font-family:system-ui;padding:30px}
-.task{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #333}
-.done{color:#22c55e}
-.pending{color:#f59e0b}
-</style>
+<script type="module" src="../js/tasks.js"></script>
 </head>
 
 <body>
+<h1>Teacher Tasks</h1>
 
-<h2>Tasks</h2>
-<div id="tasks"></div>
+<input id="taskTitle" placeholder="Task title">
+<input id="teacher" placeholder="Assign to teacher">
+<input id="date" type="date">
 
-<script type="module">
-import { db } from '/js/firebase.js'
-import { collection, addDoc, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+<button onclick="addTask()">Add Task</button>
 
-const el = document.getElementById('tasks')
-
-async function load(){
-  const snap = await getDocs(collection(db,"tasks"))
-
-  el.innerHTML=""
-
-  snap.forEach(d=>{
-    const t=d.data()
-    el.innerHTML += 
-      <div class="task">
-        <span></span>
-        <button onclick="complete('')"></button>
-      </div>
-    
-  })
-}
-
-window.complete = async (id)=>{
-  await updateDoc(doc(db,"tasks",id),{done:true})
-  load()
-}
-
-load()
-</script>
+<div id="tasksList"></div>
 
 </body>
 </html>

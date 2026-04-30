@@ -1,106 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Teacher KPIs</title>
-<link rel="stylesheet" href="/css/global.css">
-<script type="module" src="/js/firebase.js"></script>
-
-<style>
-body{
-  margin:0;
-  font-family: system-ui;
-  color:white;
-  background:url('/images/bg.jpg') center/cover no-repeat fixed;
-}
-.overlay{
-  backdrop-filter:blur(25px);
-  min-height:100vh;
-  padding:40px;
-}
-.card{
-  background:rgba(255,255,255,0.08);
-  border-radius:20px;
-  padding:20px;
-  margin-bottom:20px;
-}
-.kpi{
-  display:flex;
-  justify-content:space-between;
-  padding:12px 0;
-  border-bottom:1px solid rgba(255,255,255,0.1);
-}
-.badge{
-  padding:6px 12px;
-  border-radius:10px;
-}
-.good{ background:rgba(34,197,94,0.2); }
-.mid{ background:rgba(234,179,8,0.2); }
-.bad{ background:rgba(239,68,68,0.2); }
-</style>
+<title>KPIs</title>
+<link rel="stylesheet" href="../css/global.css">
+<script type="module" src="../js/kpis.js"></script>
 </head>
 
-<body>
-<div class="overlay">
+<body class="dark">
+<h1>Team KPIs</h1>
 
-<a href="/teacher/dashboard.html">Dashboard</a>
-
-<h1>Teacher KPIs</h1>
-
-<div id="kpis"></div>
-
-</div>
-
-<script type="module">
-import { db } from '/js/firebase.js'
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
-
-const container = document.getElementById('kpis')
-
-async function loadKPIs(){
-  const snap = await getDocs(collection(db,"kpiLogs"))
-
-  let participation=0, progress=0, punctuality=0, tasks=0, count=0
-
-  snap.forEach(doc=>{
-    const d = doc.data()
-    participation += d.participation || 0
-    progress += d.progress || 0
-    punctuality += d.punctuality || 0
-    tasks += d.taskCompletion || 0
-    count++
-  })
-
-  if(count===0) return
-
-  participation = Math.round(participation/count)
-  progress = Math.round(progress/count)
-  punctuality = Math.round(punctuality/count)
-  tasks = Math.round(tasks/count)
-
-  render("Student Participation", participation)
-  render("Student Progress", progress)
-  render("Teacher Punctuality", punctuality)
-  render("Task Completion", tasks)
-}
-
-function render(name,val){
-  let cls="bad"
-  if(val>=80) cls="good"
-  else if(val>=60) cls="mid"
-
-  container.innerHTML += 
-    <div class="card">
-      <div class="kpi">
-        <span></span>
-        <span class="badge ">%</span>
-      </div>
-    </div>
-  
-}
-
-loadKPIs()
-</script>
+<div id="kpiContainer"></div>
 
 </body>
 </html>
