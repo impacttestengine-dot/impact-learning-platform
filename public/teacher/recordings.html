@@ -419,8 +419,104 @@ button:active{transform:scale(.985)}
 <script type="module" src="/js/recordings.js?v=recordings-library-001"></script>
   <script src="/js/impact-global-bg.js?v=blur-bg-logo-clean-001"></script>
   <script src="/js/impact-page-nav.js?v=nav-global-001"></script>
-<script src="/js/impact-task-menu-patch.js"></script></body>
+<script src="/js/impact-task-menu-patch.js"></script><style id="inline-folder-create-style">
+.inline-folder-create{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  margin-top:14px;
+}
+.inline-folder-create input{
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.09);
+  color:white;
+  border-radius:16px;
+  padding:13px 14px;
+  font-weight:700;
+  outline:none;
+}
+.inline-folder-create button{
+  border:1px solid rgba(231,214,161,.42);
+  background:rgba(231,214,161,.18);
+  color:white;
+  border-radius:16px;
+  padding:13px 18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.subfolder-pill{
+  margin-top:10px;
+  padding:13px 16px;
+  border-radius:16px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  font-weight:800;
+}
+</style>
+
+<script id="inline-folder-create-script">
+(function(){
+  function patchCreateButtons(){
+    document.querySelectorAll("button,a,div").forEach(btn=>{
+      const text = (btn.textContent || "").trim().toLowerCase();
+
+      if(!text.includes("create first subfolder") && !text.includes("create subfolder")) return;
+      if(btn.dataset.inlineFolderPatched === "yes") return;
+
+      btn.dataset.inlineFolderPatched = "yes";
+
+      btn.onclick = function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        const parent = btn.parentElement;
+        if(!parent || parent.querySelector(".inline-folder-create")) return;
+
+        const form = document.createElement("div");
+        form.className = "inline-folder-create";
+        form.innerHTML = `
+          <input placeholder="Subfolder name">
+          <button type="button">Save</button>
+        `;
+
+        parent.appendChild(form);
+
+        const input = form.querySelector("input");
+        input.focus();
+
+        form.querySelector("button").onclick = async function(){
+          const name = input.value.trim();
+          if(!name) return;
+
+          const pill = document.createElement("div");
+          pill.className = "subfolder-pill";
+          pill.textContent = name;
+
+          form.replaceWith(pill);
+
+          try{
+            if(window.firebase && firebase.firestore){
+              const db = firebase.firestore();
+              await db.collection("recordingSubfolders").add({
+                name,
+                createdAt:new Date().toISOString()
+              });
+            }
+          }catch(err){
+            console.warn("Subfolder saved visually, Firestore save skipped:", err);
+          }
+        };
+      };
+    });
+  }
+
+  setTimeout(patchCreateButtons,300);
+  setTimeout(patchCreateButtons,1000);
+})();
+</script>
+</body>
 </html>
+
 
 
 

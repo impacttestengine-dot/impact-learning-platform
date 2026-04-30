@@ -1,24 +1,137 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Lesson Plans</title>
-<script src="../js/lesson.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Lesson Plans | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  background:#05060b;
+  color:white;
+  font-family:Inter;
+}
+
+.page{
+  width:92%;
+  margin:auto;
+  padding-top:100px;
+}
+
+h1{
+  font-family:"Sorts Mill Goudy";
+  font-size:52px;
+}
+
+.folder{
+  margin-top:20px;
+  padding:25px;
+  border-radius:20px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);
+  cursor:pointer;
+}
+
+.folder-title{
+  font-size:22px;
+  font-weight:800;
+}
+
+.count{
+  opacity:.6;
+  font-size:14px;
+}
+
+.rollout{
+  display:none;
+  margin-top:15px;
+  padding:20px;
+  border-radius:20px;
+  background:rgba(255,255,255,.05);
+}
+
+.folder.open .rollout{
+  display:block;
+}
+
+.lesson{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.actions button{
+  margin-left:5px;
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.view{background:#2563eb;}
+.edit{background:#4f46e5;}
+.delete{background:#dc2626;}
+</style>
 </head>
 
 <body>
 
+<div class="page">
+
 <h1>Lesson Plans</h1>
 
-<div class="folder" onclick="toggleFolder(this)">
-    A1 (3 lessons)
+<div class="folder" onclick="toggle(this)">
+  <div class="folder-title">A1</div>
+  <div class="count">3 lesson plans</div>
 
-    <div class="dropdown">
-        <div>Lesson 1 <button>View</button><button>Edit</button><button>Delete</button></div>
-        <div>Lesson 2 <button>View</button><button>Edit</button><button>Delete</button></div>
-        <div>Lesson 3 <button>View</button><button>Edit</button><button>Delete</button></div>
+  <div class="rollout">
+    
+    <div class="lesson">
+      <span>Template 1 — Speaking Starter</span>
+      <div class="actions">
+        <button class="view">View</button>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+      </div>
     </div>
+
+    <div class="lesson">
+      <span>Template 2 — Vocabulary Builder</span>
+      <div class="actions">
+        <button class="view">View</button>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+      </div>
+    </div>
+
+    <div class="lesson">
+      <span>Template 3 — Assessment Prep</span>
+      <div class="actions">
+        <button class="view">View</button>
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+      </div>
+    </div>
+
+  </div>
 </div>
+
+</div>
+
+<script>
+function toggle(el){
+  document.querySelectorAll('.folder').forEach(f=>{
+    if(f !== el) f.classList.remove('open');
+  });
+  el.classList.toggle('open');
+}
+</script>
 
 </body>
 </html>
