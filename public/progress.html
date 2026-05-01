@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Progress</title>
+</head>
+<body>
+  <h1>Progress Dashboard</h1>
+
+  <div id="progress-container"></div>
+
+  <script>
+    const data = JSON.parse(localStorage.getItem('lessonDraft') || '[]');
+
+    document.getElementById('progress-container').innerHTML =
+      "<p>Total Lessons Built: " + data.length + "</p>";
+  </script>
+</body>
+</html>

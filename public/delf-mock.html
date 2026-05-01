@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>DELF Mock</title>
+</head>
+<body>
+  <h1>DELF Mock Builder</h1>
+
+  <div id="canvas"></div>
+
+  <button onclick="addBlock()">Add Question</button>
+
+  <script>
+    let mock = JSON.parse(localStorage.getItem('delfMock') || '[]');
+
+    function addBlock() {
+      mock.push({ question: "New Question" });
+      save();
+      render();
+    }
+
+    function save() {
+      localStorage.setItem("delfMock", JSON.stringify(mock));
+    }
+
+    function render() {
+      const canvas = document.getElementById("canvas");
+      canvas.innerHTML = "";
+
+      mock.forEach((q, i) => {
+        canvas.innerHTML += 
+          <div>
+            
+            <button onclick="deleteQ()">Delete</button>
+          </div>
+        ;
+      });
+    }
+
+    function deleteQ(i) {
+      mock.splice(i, 1);
+      save();
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
