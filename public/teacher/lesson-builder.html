@@ -49,6 +49,37 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-he
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:980px){.page{padding-top:118px}.workspace{grid-template-columns:1fr}}
 </style>
+<style id="LESSON_BUILDER_AUTOSAVE_AND_DELETE_STYLE">
+.lesson-block-delete{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+  transition:transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.lesson-block-delete:hover{
+  transform:scale(1.1);
+  background:rgba(255,80,80,.72);
+  box-shadow:0 10px 30px rgba(255,80,80,.22);
+}
+
+.lesson-block-delete:active{
+  transform:scale(.92);
+}
+</style>
 </head>
 
 <body>
@@ -226,5 +257,128 @@ document.addEventListener("DOMContentLoaded", async()=>{
   }
 });
 </script>
+<script id="LESSON_BUILDER_AUTOSAVE_AND_DELETE">
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("canvas");
+  const titleInput = document.getElementById("lessonTitle");
+  const levelInput = document.getElementById("lessonLevel");
+  const saveTick = document.getElementById("saveTick");
+
+  let autosaveTimer = null;
+
+  function showSaving(){
+    if(!saveTick) return;
+    saveTick.textContent = "Saving...";
+    saveTick.style.opacity = "1";
+    saveTick.classList.add("show");
+  }
+
+  function showSaved(){
+    if(!saveTick) return;
+    saveTick.textContent = "Saved ✓";
+    saveTick.classList.add("show");
+    setTimeout(() => {
+      saveTick.classList.remove("show");
+      saveTick.textContent = "✓";
+    }, 1400);
+  }
+
+  async function autoSave(){
+    if(!canvas) return;
+    showSaving();
+
+    const existingId =
+      window.currentLessonId ||
+      sessionStorage.getItem("impactEditingLessonId") ||
+      "";
+
+    const data = {
+      id: existingId,
+      title: titleInput?.value.trim() || "Untitled Lesson Plan",
+      name: titleInput?.value.trim() || "Untitled Lesson Plan",
+      level: levelInput?.value || "Absolute Beginner",
+      content: canvas.innerHTML || "",
+      updatedAt: new Date().toISOString()
+    };
+
+    try{
+      if(window.ImpactFirebaseStore && window.ImpactFirebaseStore.saveLessonPlan){
+        const id = await window.ImpactFirebaseStore.saveLessonPlan(data);
+        window.currentLessonId = id;
+        sessionStorage.setItem("impactEditingLessonId", id);
+      }else{
+        const all = JSON.parse(localStorage.getItem("impactLessonPlans") || "[]");
+        const id = data.id || ("LP-" + Date.now());
+        data.id = id;
+
+        const i = all.findIndex(x => x.id === id);
+        if(i >= 0) all[i] = data;
+        else all.push(data);
+
+        localStorage.setItem("impactLessonPlans", JSON.stringify(all));
+        window.currentLessonId = id;
+        sessionStorage.setItem("impactEditingLessonId", id);
+      }
+
+      showSaved();
+    }catch(err){
+      console.error("Autosave error:", err);
+      if(saveTick){
+        saveTick.textContent = "Not saved";
+        saveTick.classList.add("show");
+      }
+    }
+  }
+
+  function triggerAutoSave(){
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(autoSave, 900);
+  }
+
+  function attachDeleteButtons(){
+    document.querySelectorAll(".lesson-card").forEach(card => {
+      if(card.querySelector(".lesson-block-delete")) return;
+
+      card.style.position = "relative";
+
+      const btn = document.createElement("button");
+      btn.className = "lesson-block-delete";
+      btn.type = "button";
+      btn.textContent = "×";
+      btn.title = "Delete block";
+
+      btn.onclick = e => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        card.style.transition = "transform .18s ease, opacity .18s ease";
+        card.style.transform = "scale(.96)";
+        card.style.opacity = "0";
+
+        setTimeout(() => {
+          card.remove();
+          triggerAutoSave();
+        }, 180);
+      };
+
+      card.appendChild(btn);
+    });
+  }
+
+  if(canvas){
+    canvas.addEventListener("input", triggerAutoSave);
+    canvas.addEventListener("change", triggerAutoSave);
+
+    const observer = new MutationObserver(() => attachDeleteButtons());
+    observer.observe(canvas, { childList:true, subtree:false });
+
+    attachDeleteButtons();
+  }
+
+  titleInput?.addEventListener("input", triggerAutoSave);
+  levelInput?.addEventListener("change", triggerAutoSave);
+});
+</script>
 </body>
 </html>
+
