@@ -20,9 +20,35 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 .card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2rem;font-weight:400;margin-bottom:20px}
 .card p{color:rgba(255,255,255,.68);font-weight:700;line-height:1.55}
 @media(max-width:760px){.grid{grid-template-columns:1fr}}
+
+.learner-home-btn{
+  position:fixed;
+  top:24px;
+  left:24px;
+  z-index:9999;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  color:#fff;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(18px);
+  box-shadow:0 16px 44px rgba(0,0,0,.32);
+  font-size:1.15rem;
+  transition:.18s ease;
+}
+
+.learner-home-btn:hover{
+  transform:translateY(-2px) scale(1.04);
+  background:rgba(255,255,255,.16);
+}
 </style>
 </head>
-<body>
+<body><a class="learner-home-btn" href="/" title="Home">⌂</a>
 <main class="page">
   <section class="hero">
     <p class="eyebrow">Learner Hub</p>
@@ -48,3 +74,4 @@ if(name){
 </script>
 </body>
 </html>
+
