@@ -456,8 +456,65 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 });
 </script>
+<script id="LESSON_BUILDER_DELETE_FINAL_FIX">
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("canvas");
+  const saveBtn = document.getElementById("saveBtn");
+
+  function addDeleteButtons(){
+    if(!canvas) return;
+
+    canvas.querySelectorAll(".lesson-card").forEach(card => {
+      if(card.querySelector(".lesson-block-delete")) return;
+
+      card.style.position = "relative";
+
+      const btn = document.createElement("button");
+      btn.className = "lesson-block-delete";
+      btn.type = "button";
+      btn.textContent = "×";
+      btn.setAttribute("contenteditable","false");
+
+      btn.addEventListener("mousedown", e => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        card.remove();
+
+        setTimeout(() => {
+          if(saveBtn) saveBtn.click();
+        }, 150);
+      });
+
+      card.appendChild(btn);
+    });
+  }
+
+  addDeleteButtons();
+
+  const observer = new MutationObserver(() => {
+    setTimeout(addDeleteButtons, 50);
+  });
+
+  if(canvas){
+    observer.observe(canvas, {
+      childList:true,
+      subtree:true
+    });
+  }
+
+  setTimeout(addDeleteButtons, 500);
+  setTimeout(addDeleteButtons, 1500);
+});
+</script>
 </body>
 </html>
+
 
 
 
