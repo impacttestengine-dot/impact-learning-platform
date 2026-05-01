@@ -381,7 +381,82 @@ document.addEventListener("DOMContentLoaded", () => {
   levelInput?.addEventListener("change", triggerAutoSave);
 });
 </script>
+<script id="LESSON_BUILDER_LOAD_FIX">
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const canvas = document.getElementById("canvas");
+  const titleInput = document.getElementById("lessonTitle");
+  const levelInput = document.getElementById("lessonLevel");
+
+  let lessonId =
+    new URLSearchParams(location.search).get("edit") ||
+    sessionStorage.getItem("impactEditingLessonId");
+
+  // =========================
+  // LOAD FROM FIREBASE
+  // =========================
+  async function loadFromFirebase(id){
+    if(!window.ImpactFirebaseStore || !window.ImpactFirebaseStore.getLessonPlan) return null;
+    try{
+      return await window.ImpactFirebaseStore.getLessonPlan(id);
+    }catch(e){
+      console.warn("Firebase load failed", e);
+      return null;
+    }
+  }
+
+  // =========================
+  // LOAD FROM LOCAL STORAGE
+  // =========================
+  function loadFromLocal(id){
+    const all = JSON.parse(localStorage.getItem("impactLessonPlans") || "[]");
+    return all.find(x => x.id === id);
+  }
+
+  // =========================
+  // APPLY LESSON TO UI
+  // =========================
+  function applyLesson(data){
+    if(!data) return;
+
+    if(titleInput) titleInput.value = data.title || data.name || "";
+    if(levelInput) levelInput.value = data.level || "Absolute Beginner";
+    if(canvas) canvas.innerHTML = data.content || "";
+
+    window.currentLessonId = data.id;
+    sessionStorage.setItem("impactEditingLessonId", data.id);
+  }
+
+  // =========================
+  // LOAD FLOW
+  // =========================
+  if(lessonId){
+
+    let lesson = await loadFromFirebase(lessonId);
+
+    if(!lesson){
+      lesson = loadFromLocal(lessonId);
+    }
+
+    if(lesson){
+      applyLesson(lesson);
+    }
+
+  } else {
+
+    // Load LAST SAVED automatically
+    const all = JSON.parse(localStorage.getItem("impactLessonPlans") || "[]");
+
+    if(all.length){
+      const latest = all.sort((a,b)=> new Date(b.updatedAt) - new Date(a.updatedAt))[0];
+      applyLesson(latest);
+    }
+  }
+
+});
+</script>
 </body>
 </html>
+
 
 
