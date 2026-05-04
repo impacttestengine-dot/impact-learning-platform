@@ -4,54 +4,130 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Placement Test Builder | Impact</title>
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
-<link rel="stylesheet" href="/teacher/placements/placements.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overflow-x:hidden}
+
+.lp-nav{position:fixed;top:24px;left:28px;z-index:99999;display:flex;gap:12px}
+.lp-icon-btn{width:46px;height:46px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);box-shadow:0 18px 48px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.10)}
+.lp-icon-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+
+.page{position:relative;z-index:20;width:min(1220px,94vw);margin:0 auto;padding:128px 0 80px}
+.workspace{display:grid;grid-template-columns:260px minmax(0,1fr) 240px;gap:22px;align-items:start}
+.panel{border-radius:30px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);box-shadow:0 24px 70px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.10);backdrop-filter:blur(20px)}
+.blocks-panel,.settings-panel{padding:22px}
+.block-list{display:grid;gap:12px}
+
+.block-btn,.control-btn,.toolbar button,.toolbar select,.toolbar input,.settings-panel input,.settings-panel select{
+  border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.10);color:#fff;border-radius:16px;padding:12px 14px;
+  font-family:Inter,system-ui,sans-serif;font-weight:900;cursor:pointer;backdrop-filter:blur(18px);transition:.15s ease
+}
+.block-btn{width:100%;min-height:54px;text-align:center}
+.block-btn:hover,.control-btn:hover,.toolbar button:hover{background:rgba(255,255,255,.17);border-color:rgba(232,216,166,.34);transform:translateY(-1px)}
+.block-btn:active,.control-btn:active,.toolbar button:active{transform:scale(.97)}
+
+.canvas-panel{padding:18px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.toolbar select,.toolbar input{min-height:40px;padding:8px 10px}
+.toolbar option,.settings-panel option{color:#111827}
+
+.canvas{min-height:540px;border-radius:26px;padding:22px;background:radial-gradient(circle at 20% 0%,rgba(255,255,255,.09),transparent 28%),linear-gradient(180deg,rgba(6,10,22,.88),rgba(9,12,24,.76));border:1px solid rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.empty-state{padding:18px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);color:rgba(255,255,255,.74);font-weight:800;line-height:1.5}
+
+.lesson-card{position:relative;margin-bottom:16px;padding:20px 54px 20px 20px;border-radius:24px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 44px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.10);color:#fff;outline:none}
+.lesson-card:focus,.lesson-card.active{border-color:rgba(232,216,166,.44);box-shadow:0 18px 44px rgba(0,0,0,.22),0 0 0 2px rgba(232,216,166,.18),inset 0 1px 0 rgba(255,255,255,.10)}
+.lesson-card h1,.lesson-card h2,.lesson-card h3{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400;color:#fbfbf8;margin-bottom:8px}
+.lesson-card h1{font-size:2.2rem}.lesson-card h2{font-size:1.8rem}.lesson-card h3{font-size:1.45rem}
+.lesson-card p,.lesson-card li{color:rgba(255,255,255,.82);font-weight:700;line-height:1.65}
+.lesson-card ul{margin:10px 0 0 22px}
+.delete-card{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,120,120,.28);background:rgba(255,80,80,.14);color:#fff;cursor:pointer;font-weight:900}
+
+.settings-panel{display:grid;gap:16px}
+.settings-label{display:block;margin-bottom:8px;font-size:.82rem;font-weight:900;color:rgba(255,255,255,.78)}
+.settings-panel input,.settings-panel select{width:100%;min-height:50px}
+.settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+.control-btn{min-height:48px}
+.save-tick{display:block;height:18px;margin-top:6px;text-align:center;color:#d9f99d;font-weight:900;font-size:1.05rem;opacity:0;transform:scale(.8);transition:.18s ease}
+.save-tick.show{opacity:1;transform:scale(1)}
+
+@media(max-width:980px){.page{padding-top:118px}.workspace{grid-template-columns:1fr}}
+</style>
 </head>
+
 <body>
 <script src="/js/impact-global-bg.js"></script>
 
 <nav class="lp-nav">
-  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></a>
-  <a class="lp-icon-btn" href="/teacher/placements/tests.html" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg></a>
+  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+  <a class="lp-icon-btn" href="/teacher/placements/tests.html" title="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+  </a>
 </nav>
 
 <main class="page">
-  <section class="hero">
-    <p class="eyebrow">Assessment Builder</p>
-    <h1>Placement Test Builder</h1>
-    <p>Build placement tests using listening, reading, writing, and speaking blocks.</p>
-  </section>
-
-  <section class="builder-layout">
-    <aside class="panel" style="padding:22px">
+  <section class="workspace">
+    <aside class="panel blocks-panel">
       <div class="block-list">
-        <button data-type="instruction">Instruction</button>
-        <button data-type="listening">Listening</button>
-        <button data-type="reading">Reading</button>
-        <button data-type="writing">Writing</button>
-        <button data-type="speaking">Speaking</button>
+        <button class="block-btn" data-block="header" type="button">Header</button>
+        <button class="block-btn" data-block="instruction" type="button">Instruction</button>
+        <button class="block-btn" data-block="listening" type="button">Listening</button>
+        <button class="block-btn" data-block="reading" type="button">Reading</button>
+        <button class="block-btn" data-block="writing" type="button">Writing</button>
+        <button class="block-btn" data-block="speaking" type="button">Speaking</button>
+        <button class="block-btn" data-block="scoring" type="button">Scoring Notes</button>
       </div>
     </aside>
 
-    <section class="panel" style="padding:18px">
-      <div class="canvas" id="canvas"><div class="empty">Add test blocks from the left.</div></div>
+    <section class="panel canvas-panel">
+      <div class="toolbar">
+        <button id="undoBtn" type="button">↶</button>
+        <select id="fontFamily"><option value="Inter">Inter</option><option value="Georgia">Georgia</option><option value="Arial">Arial</option><option value="Times New Roman">Times New Roman</option></select>
+        <select id="fontSize"><option value="14px">14</option><option value="16px" selected>16</option><option value="18px">18</option><option value="20px">20</option><option value="24px">24</option><option value="32px">32</option></select>
+        <select id="lineSpacing"><option value="1.2">Line 1.2</option><option value="1.5" selected>Line 1.5</option><option value="1.8">Line 1.8</option><option value="2">Line 2</option></select>
+        <select id="alignment"><option value="left">Align Left</option><option value="center">Align Center</option><option value="right">Align Right</option><option value="justify">Justify</option></select>
+        <button data-toggle="bold" type="button">B</button>
+        <button data-toggle="italic" type="button">I</button>
+        <button data-toggle="underline" type="button">U</button>
+        <input id="fontColor" type="color" value="#ffffff">
+        <input id="backgroundColor" type="color" value="#24304f">
+      </div>
+
+      <div class="canvas" id="canvas">
+        <div class="empty-state">Add placement test blocks from the left. Each block will appear here as an editable card.</div>
+      </div>
     </section>
 
-    <aside class="panel" style="padding:22px">
-      <div class="settings-stack">
-        <input id="title" placeholder="Test title">
-        <select id="target">
+    <aside class="panel settings-panel">
+      <div>
+        <label class="settings-label">Test Title</label>
+        <input id="testTitle" type="text" placeholder="Placement Test Title">
+      </div>
+
+      <div>
+        <label class="settings-label">Target Range</label>
+        <select id="testTarget">
           <option>A0 → A1</option>
           <option>A1 → A2</option>
           <option>A2 → B1</option>
           <option>B1 → B2</option>
           <option>Full Level Detection</option>
         </select>
-        <button id="newBtn">New</button>
-        <button id="saveBtn">Save</button>
-        <button id="viewBtn">View</button>
       </div>
+
+      <div class="settings-actions">
+        <button class="control-btn" id="newBtn" type="button">New +</button>
+        <button class="control-btn" id="saveBtn" type="button">Save</button>
+        <button class="control-btn" id="viewBtn" type="button">View</button>
+        <button class="control-btn" onclick="location.href='/teacher/placements/tests.html'" type="button">Folder</button>
+      </div>
+      <span id="saveTick" class="save-tick">✓</span>
     </aside>
   </section>
 </main>
@@ -59,46 +135,113 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
 <script src="/__/firebase/init.js"></script>
+
 <script>
 const db=firebase.firestore();
 const canvas=document.getElementById("canvas");
+const titleInput=document.getElementById("testTitle");
+const targetInput=document.getElementById("testTarget");
 const params=new URLSearchParams(location.search);
 let currentId=params.get("edit") || "";
-let blocks=[];
+let selectedCard=null;
+let undoStack=[];
 
-const templates={
-  instruction:{title:"Instruction",body:"Write learner instructions here..."},
-  listening:{title:"Listening Section",body:"Audio file name:\nAudio script:\nQuestions:\n1.\n2.\n3."},
-  reading:{title:"Reading Section",body:"Reading text:\nQuestions:\n1.\n2.\n3."},
-  writing:{title:"Writing Section",body:"Writing prompt:\nExpected learner response:"},
-  speaking:{title:"Speaking Section",body:"Teacher prompt:\nExpected speaking target:"}
-};
-
-function render(){
-  canvas.innerHTML="";
-  if(!blocks.length){
-    canvas.innerHTML='<div class="empty">Add test blocks from the left.</div>';
-    return;
-  }
-  blocks.forEach((b,i)=>{
-    const card=document.createElement("article");
-    card.className="builder-block";
-    card.innerHTML=`<button class="delete-block" data-i="${i}">×</button><h2>${b.title}</h2><textarea data-i="${i}">${b.body}</textarea>`;
-    canvas.appendChild(card);
-  });
-  canvas.querySelectorAll("textarea").forEach(t=>t.oninput=()=>{blocks[Number(t.dataset.i)].body=t.value;autosave();});
-  canvas.querySelectorAll(".delete-block").forEach(btn=>btn.onclick=()=>{blocks.splice(Number(btn.dataset.i),1);render();autosave();});
+function tick(){
+  const t=document.getElementById("saveTick");
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),1200);
 }
 
-document.querySelectorAll("[data-type]").forEach(btn=>{
-  btn.onclick=()=>{blocks.push({...templates[btn.dataset.type]});render();autosave();};
+function clearEmpty(){
+  const empty=canvas.querySelector(".empty-state");
+  if(empty) empty.remove();
+}
+
+function selectCard(card){
+  selectedCard=card;
+  document.querySelectorAll(".lesson-card").forEach(c=>c.classList.remove("active"));
+  card.classList.add("active");
+}
+
+function pushUndo(){undoStack.push(canvas.innerHTML);if(undoStack.length>40)undoStack.shift();}
+
+function bindCard(card){
+  card.addEventListener("click",()=>selectCard(card));
+  card.addEventListener("focus",()=>selectCard(card));
+  card.addEventListener("input",autosave);
+  card.querySelector(".delete-card").onclick=(e)=>{
+    e.stopPropagation();
+    pushUndo();
+    card.remove();
+    if(!canvas.querySelector(".lesson-card")){
+      canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Each block will appear here as an editable card.</div>';
+    }
+    autosave();
+  };
+}
+
+function addCard(html){
+  pushUndo();
+  clearEmpty();
+  const card=document.createElement("article");
+  card.className="lesson-card";
+  card.contentEditable="true";
+  card.innerHTML='<button class="delete-card" contenteditable="false" type="button">×</button>'+html;
+  canvas.appendChild(card);
+  bindCard(card);
+  selectCard(card);
+  card.focus();
+  autosave();
+}
+
+function template(type){
+  if(type==="header") return '<h1>Placement Test</h1><p>Write a short introduction for the learner.</p>';
+  if(type==="instruction") return '<h2>Instructions</h2><p>Read the instructions carefully before answering the questions.</p>';
+  if(type==="listening") return '<h2>Listening Section</h2><p><strong>Audio file name:</strong></p><p><strong>Audio script:</strong></p><p><strong>Questions:</strong><br>1.<br>2.<br>3.</p>';
+  if(type==="reading") return '<h2>Reading Section</h2><p><strong>Reading text:</strong></p><p><strong>Questions:</strong><br>1.<br>2.<br>3.</p>';
+  if(type==="writing") return '<h2>Writing Section</h2><p><strong>Writing prompt:</strong></p><p><strong>Expected learner response:</strong></p>';
+  if(type==="speaking") return '<h2>Speaking Section</h2><p><strong>Teacher prompt:</strong></p><p><strong>Expected speaking target:</strong></p>';
+  if(type==="scoring") return '<h2>Scoring Notes</h2><ul><li>Listening:</li><li>Reading:</li><li>Writing:</li><li>Speaking:</li><li>Recommended level:</li></ul>';
+}
+
+document.querySelectorAll(".block-btn").forEach(btn=>{
+  btn.onclick=()=>addCard(template(btn.dataset.block));
 });
+
+function apply(prop,value){
+  if(!selectedCard)return;
+  selectedCard.style[prop]=value;
+  autosave();
+}
+fontFamily.onchange=e=>apply("fontFamily",e.target.value);
+fontSize.onchange=e=>apply("fontSize",e.target.value);
+lineSpacing.onchange=e=>apply("lineHeight",e.target.value);
+alignment.onchange=e=>apply("textAlign",e.target.value);
+fontColor.oninput=e=>apply("color",e.target.value);
+backgroundColor.oninput=e=>apply("backgroundColor",e.target.value);
+
+document.querySelectorAll("[data-toggle]").forEach(btn=>{
+  btn.onclick=()=>{
+    if(!selectedCard)return;
+    const t=btn.dataset.toggle;
+    if(t==="bold") selectedCard.style.fontWeight=selectedCard.style.fontWeight==="900"?"700":"900";
+    if(t==="italic") selectedCard.style.fontStyle=selectedCard.style.fontStyle==="italic"?"normal":"italic";
+    if(t==="underline") selectedCard.style.textDecoration=selectedCard.style.textDecoration==="underline"?"none":"underline";
+    autosave();
+  };
+});
+
+undoBtn.onclick=()=>{
+  if(!undoStack.length)return;
+  canvas.innerHTML=undoStack.pop();
+  canvas.querySelectorAll(".lesson-card").forEach(bindCard);
+};
 
 async function save(){
   const payload={
-    title:document.getElementById("title").value.trim() || "Untitled Placement Test",
-    target:document.getElementById("target").value,
-    blocks,
+    title:titleInput.value.trim() || "Untitled Placement Test",
+    target:targetInput.value,
+    content:canvas.innerHTML,
     updatedAt:new Date().toISOString()
   };
   if(currentId){
@@ -106,27 +249,39 @@ async function save(){
   }else{
     const ref=await db.collection("placementTests").add(payload);
     currentId=ref.id;
+    history.replaceState(null,"","?edit="+currentId);
   }
+  tick();
 }
 
-let timer=null;
-function autosave(){clearTimeout(timer);timer=setTimeout(save,900);}
-document.getElementById("title").oninput=autosave;
-document.getElementById("target").onchange=autosave;
-document.getElementById("saveBtn").onclick=save;
-document.getElementById("newBtn").onclick=()=>{currentId="";blocks=[];document.getElementById("title").value="";render();};
-document.getElementById("viewBtn").onclick=async()=>{await save();location.href="/teacher/placements/view-test.html?id="+currentId;};
+let saveTimer=null;
+function autosave(){clearTimeout(saveTimer);saveTimer=setTimeout(save,900);}
+titleInput.oninput=autosave;
+targetInput.onchange=autosave;
+saveBtn.onclick=save;
+
+newBtn.onclick=()=>{
+  currentId="";
+  titleInput.value="";
+  targetInput.value="A0 → A1";
+  canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Each block will appear here as an editable card.</div>';
+  history.replaceState(null,"","/teacher/placements/builder.html");
+};
+
+viewBtn.onclick=async()=>{
+  await save();
+  location.href="/teacher/placements/view-test.html?id="+currentId;
+};
 
 async function load(){
-  if(!currentId){render();return;}
+  if(!currentId)return;
   const doc=await db.collection("placementTests").doc(currentId).get();
-  if(doc.exists){
-    const d=doc.data();
-    document.getElementById("title").value=d.title||"";
-    document.getElementById("target").value=d.target||"Full Level Detection";
-    blocks=d.blocks||[];
-  }
-  render();
+  if(!doc.exists)return;
+  const d=doc.data();
+  titleInput.value=d.title||"";
+  targetInput.value=d.target||"A0 → A1";
+  canvas.innerHTML=d.content || '<div class="empty-state">Add placement test blocks from the left.</div>';
+  canvas.querySelectorAll(".lesson-card").forEach(bindCard);
 }
 load();
 </script>
