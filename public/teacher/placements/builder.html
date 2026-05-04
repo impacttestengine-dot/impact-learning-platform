@@ -37,7 +37,7 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
 .toolbar select,.toolbar input{min-height:40px;padding:8px 10px}
 .toolbar option,.settings-panel option{color:#111827}
 
-.canvas{min-height:540px;border-radius:26px;padding:22px;background:radial-gradient(circle at 20% 0%,rgba(255,255,255,.09),transparent 28%),linear-gradient(180deg,rgba(6,10,22,.88),rgba(9,12,24,.76));border:1px solid rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.canvas{display:flex;flex-direction:column;align-items:flex-start;min-height:540px;border-radius:26px;padding:22px;background:radial-gradient(circle at 20% 0%,rgba(255,255,255,.09),transparent 28%),linear-gradient(180deg,rgba(6,10,22,.88),rgba(9,12,24,.76));border:1px solid rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
 .empty-state{padding:18px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);color:rgba(255,255,255,.74);font-weight:800;line-height:1.5}
 
 .lesson-card{position:relative;margin-bottom:16px;padding:20px 54px 20px 20px;border-radius:24px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 44px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.10);color:#fff;outline:none}
@@ -49,8 +49,26 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
 
 .delete-card{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,120,120,.28);background:rgba(255,80,80,.14);color:#fff;cursor:pointer;font-weight:900}
 
-.media-resizer{display:inline-block;width:70%;max-width:100%;min-width:140px;resize:horizontal;overflow:auto;padding:8px;border-radius:18px;border:1px dashed rgba(232,216,166,.38)}
-.media-resizer img,.media-resizer video{width:100%!important;height:auto!important;display:block!important;border-radius:14px}
+.media-resizer{
+  display:block;
+  width:70%;
+  max-width:100%;
+  min-width:120px;
+  resize:both;
+  overflow:auto;
+  padding:10px;
+  border-radius:18px;
+  border:1px dashed rgba(232,216,166,.5);
+  background:rgba(255,255,255,.035);
+}
+.media-resizer img,.media-resizer video{
+  width:100%!important;
+  height:100%!important;
+  min-height:90px;
+  object-fit:contain!important;
+  display:block!important;
+  border-radius:14px;
+}
 
 .settings-panel{display:grid;gap:16px}
 .settings-label{display:block;margin-bottom:8px;font-size:.82rem;font-weight:900;color:rgba(255,255,255,.78)}
@@ -99,7 +117,10 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
         <select id="fontSize"><option value="14px">14</option><option value="16px" selected>16</option><option value="18px">18</option><option value="20px">20</option><option value="24px">24</option><option value="32px">32</option></select>
         <select id="lineSpacing"><option value="1.2">Line 1.2</option><option value="1.5" selected>Line 1.5</option><option value="1.8">Line 1.8</option><option value="2">Line 2</option></select>
         <select id="alignment"><option value="left">Align Left</option><option value="center">Align Center</option><option value="right">Align Right</option><option value="justify">Justify</option></select>
-        <button data-toggle="bold" type="button">B</button>
+        <button id="cardAlignLeft" type="button">Card Left</button>
+<button id="cardAlignCenter" type="button">Card Center</button>
+<button id="cardAlignRight" type="button">Card Right</button>
+<button data-toggle="bold" type="button">B</button>
         <button data-toggle="italic" type="button">I</button>
         <button data-toggle="underline" type="button">U</button>
         <input id="fontColor" type="color" value="#ffffff">
@@ -115,19 +136,6 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
       <div>
         <label class="settings-label">Test Title</label>
         <input id="testTitle" type="text" placeholder="Placement Test Title">
-      </div>
-
-      <div>
-        <label class="settings-label">Target Level</label>
-        <select id="testTarget">
-          <option>Absolute Beginner</option>
-          <option>A0</option>
-          <option>A1</option>
-          <option>A1.1</option>
-          <option>A2</option>
-          <option>B1</option>
-          <option>B2</option>
-        </select>
       </div>
 
       <div class="settings-actions">
@@ -152,7 +160,6 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
 const db=firebase.firestore();
 const canvas=document.getElementById("canvas");
 const titleInput=document.getElementById("testTitle");
-const targetInput=document.getElementById("testTarget");
 const params=new URLSearchParams(location.search);
 let currentId=params.get("edit") || "";
 let selectedCard=null;
@@ -309,6 +316,40 @@ document.querySelectorAll("[data-toggle]").forEach(btn=>{
   };
 });
 
+function alignSelectedCards(value){
+  const cards = targetCards();
+  if(!cards.length) return;
+
+  cards.forEach(card=>{
+    card.style.justifySelf = value;
+    card.style.alignSelf = value;
+
+    if(value === "left"){
+      card.style.marginLeft = "0";
+      card.style.marginRight = "auto";
+      card.style.width = "92%";
+    }
+
+    if(value === "center"){
+      card.style.marginLeft = "auto";
+      card.style.marginRight = "auto";
+      card.style.width = "92%";
+    }
+
+    if(value === "right"){
+      card.style.marginLeft = "auto";
+      card.style.marginRight = "0";
+      card.style.width = "92%";
+    }
+  });
+
+  autosave();
+}
+
+document.getElementById("cardAlignLeft").onclick = ()=>alignSelectedCards("left");
+document.getElementById("cardAlignCenter").onclick = ()=>alignSelectedCards("center");
+document.getElementById("cardAlignRight").onclick = ()=>alignSelectedCards("right");
+
 undoBtn.onclick=()=>{
   if(!undoStack.length)return;
   canvas.innerHTML=undoStack.pop();
@@ -319,8 +360,7 @@ async function save(){
   const cleanTitle=titleInput.value.trim() || "Untitled Placement Test";
   const payload={
     title:cleanTitle,
-    target:targetInput.value,
-    content:canvas.innerHTML,
+content:canvas.innerHTML,
     updatedAt:new Date().toISOString()
   };
   if(currentId){
@@ -336,14 +376,12 @@ async function save(){
 let saveTimer=null;
 function autosave(){clearTimeout(saveTimer);saveTimer=setTimeout(save,900);}
 titleInput.oninput=autosave;
-targetInput.onchange=autosave;
 saveBtn.onclick=save;
 
 newBtn.onclick=()=>{
   currentId="";
   titleInput.value="";
-  targetInput.value="Absolute Beginner";
-  canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
   history.replaceState(null,"","/teacher/placements/builder.html");
 };
 
@@ -358,11 +396,11 @@ async function load(){
   if(!doc.exists)return;
   const d=doc.data();
   titleInput.value=d.title||"";
-  targetInput.value=d.target||"Absolute Beginner";
-  canvas.innerHTML=d.content || '<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+canvas.innerHTML=d.content || '<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
   canvas.querySelectorAll(".lesson-card").forEach(bindCard);
 }
 load();
 </script>
 </body>
 </html>
+
