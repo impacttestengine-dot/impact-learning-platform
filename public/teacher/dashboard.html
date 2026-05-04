@@ -7,236 +7,62 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css?v=dashboard-reset-001">
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-
-html,body{
-  min-height:100%;
-}
-
-body{
-  min-height:100vh;
-  font-family:Inter,system-ui,sans-serif;
-  color:#fff;
-  background:#05060b;
-  overflow-x:hidden;
-}
+html,body{min-height:100%}
+body{min-height:100vh;font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overflow-x:hidden}
 
 .dashboard-home-btn{
-  position:fixed;
-  top:24px;
-  left:28px;
-  z-index:2147483647;
-  text-decoration:none;
-  color:#fff;
-  font-size:.72rem;
-  font-weight:900;
-  padding:10px 14px;
-  border-radius:14px;
-  background:rgba(255,255,255,.09);
-  border:1px solid rgba(255,255,255,.16);
-  backdrop-filter:blur(18px);
+  position:fixed;top:24px;left:28px;z-index:2147483647;text-decoration:none;color:#fff;
+  font-size:.72rem;font-weight:900;padding:10px 14px;border-radius:14px;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px)
 }
 
-.dashboard-menu-wrap{
-  position:fixed !important;
-  top:24px !important;
-  right:28px !important;
-  z-index:2147483647 !important;
-  display:block !important;
-  visibility:visible !important;
-  opacity:1 !important;
-}
-
+.dashboard-menu-wrap{position:fixed!important;top:24px!important;right:28px!important;z-index:2147483647!important}
 .dashboard-toggle-btn{
-  width:46px !important;
-  height:46px !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  border:1px solid rgba(255,255,255,.22) !important;
-  border-radius:16px !important;
-  background:rgba(255,255,255,.16) !important;
-  color:#fff !important;
-  font-size:28px !important;
-  font-weight:900 !important;
-  cursor:pointer !important;
-  backdrop-filter:blur(18px) !important;
+  width:46px!important;height:46px!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  border:1px solid rgba(255,255,255,.22)!important;border-radius:16px!important;background:rgba(255,255,255,.16)!important;
+  color:#fff!important;font-size:28px!important;font-weight:900!important;cursor:pointer!important;backdrop-filter:blur(18px)!important
 }
-
 .dashboard-toggle-menu{
-  position:absolute;
-  top:52px;
-  right:0;
-  display:none;
-  min-width:240px;
-  padding:10px;
-  border-radius:18px;
-  background:rgba(8,10,18,.94);
-  border:1px solid rgba(255,255,255,.14);
-  backdrop-filter:blur(18px);
+  position:absolute;top:52px;right:0;display:none;min-width:240px;padding:10px;border-radius:18px;
+  background:rgba(8,10,18,.94);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)
 }
+.dashboard-menu-wrap.open .dashboard-toggle-menu{display:grid;gap:8px}
+.dashboard-toggle-menu a{color:#fff;text-decoration:none;padding:10px 12px;border-radius:12px;font-size:.78rem;font-weight:800}
+.dashboard-toggle-menu a:hover{background:rgba(255,255,255,.12)}
 
-.dashboard-menu-wrap.open .dashboard-toggle-menu{
-  display:grid;
-  gap:8px;
-}
+.dashboard-page{position:relative;z-index:2;width:min(1060px,88vw);margin:0 auto;padding:78px 0 80px}
+.dashboard-header{text-align:center;margin-bottom:36px}
+.dashboard-header .eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.64);margin-bottom:10px}
+.dashboard-header h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.4rem,5vw,4.4rem);font-weight:400;line-height:1.02;text-align:center}
 
-.dashboard-toggle-menu a{
-  color:#fff;
-  text-decoration:none;
-  padding:10px 12px;
-  border-radius:12px;
-  font-size:.78rem;
-  font-weight:800;
-}
-
-.dashboard-toggle-menu a:hover{
-  background:rgba(255,255,255,.12);
-}
-
-.dashboard-page{
-  position:relative;
-  z-index:2;
-  width:min(1060px,88vw);
-  margin:0 auto;
-  padding:78px 0 80px;
-}
-
-.dashboard-header{
-  text-align:center;
-  margin-bottom:36px;
-}
-
-.dashboard-header .eyebrow{
-  text-transform:uppercase;
-  letter-spacing:.34em;
-  font-size:.68rem;
-  font-weight:900;
-  color:rgba(235,240,255,.64);
-  margin-bottom:10px;
-}
-
-.dashboard-header h1{
-  font-family:"Sorts Mill Goudy",Georgia,serif;
-  font-size:clamp(2.8rem,5.5vw,4.8rem);
-  font-weight:400;
-  line-height:1;
-}
-
-.dashboard-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:22px;
-}
+.dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
 
 .dashboard-card{
-  min-height:154px;
-  display:block;
-  text-decoration:none;
-  color:#fff;
-  padding:25px;
-  border-radius:28px;
-  background:rgba(255,255,255,.065);
-  border:1px solid rgba(255,255,255,.12);
+  min-height:154px;display:block;text-decoration:none;color:#fff;padding:25px;border-radius:28px;
+  background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.12);
   box-shadow:0 22px 64px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
-  backdrop-filter:blur(20px);
-  transition:.2s ease;
+  backdrop-filter:blur(20px);transition:.2s ease
 }
+.dashboard-card:hover{transform:translateY(-2px);background:rgba(255,255,255,.095)}
+.dashboard-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.85rem;font-weight:400;margin-bottom:32px}
+.dashboard-card p{color:rgba(255,255,255,.66);font-size:.82rem;font-weight:700;line-height:1.55}
 
-.dashboard-card:hover{
-  transform:translateY(-2px);
-  background:rgba(255,255,255,.095);
+.impact-recycle-shortcut{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9998;width:52px;height:52px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(18px);box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);font-size:1.25rem
 }
-
-.dashboard-card h2{
-  font-family:"Sorts Mill Goudy",Georgia,serif;
-  font-size:1.85rem;
-  font-weight:400;
-  margin-bottom:32px;
-}
-
-.dashboard-card p{
-  color:rgba(255,255,255,.66);
-  font-size:.82rem;
-  font-weight:700;
-  line-height:1.55;
-}
+.impact-recycle-shortcut:hover{transform:translateX(-50%) translateY(-3px) scale(1.05);background:rgba(255,255,255,.13)}
 
 @media(max-width:760px){
   .dashboard-grid{grid-template-columns:1fr}
   .dashboard-page{width:min(92vw,620px)}
 }
 </style>
-<style id="dashboard-toggle-force-css">
-  .dashboard-menu-wrap,
-  #dashboardMenuWrap {
-    position: fixed !important;
-    top: 24px !important;
-    right: 24px !important;
-    z-index: 999999 !important;
-  }
-
-  .dashboard-toggle-btn,
-  #dashboardToggleBtn {
-    position: relative !important;
-    z-index: 1000001 !important;
-    pointer-events: auto !important;
-    cursor: pointer !important;
-  }
-
-  .dashboard-menu-panel,
-  #dashboardMenuPanel,
-  .dashboard-menu {
-    display: none !important;
-    position: absolute !important;
-    top: 54px !important;
-    right: 0 !important;
-    min-width: 220px !important;
-    z-index: 1000000 !important;
-    pointer-events: auto !important;
-  }
-
-  .dashboard-menu-wrap.open .dashboard-menu-panel,
-  .dashboard-menu-wrap.open #dashboardMenuPanel,
-  .dashboard-menu-wrap.open .dashboard-menu,
-  #dashboardMenuWrap.open .dashboard-menu-panel,
-  #dashboardMenuWrap.open #dashboardMenuPanel,
-  #dashboardMenuWrap.open .dashboard-menu {
-    display: block !important;
-  }
-</style>
-<style id="impact-recycle-dashboard-style">
-  .impact-recycle-shortcut{
-    position:fixed;
-    left:50%;
-    bottom:24px;
-    transform:translateX(-50%);
-    z-index:9998;
-    width:52px;
-    height:52px;
-    border-radius:50%;
-    border:1px solid rgba(255,255,255,.18);
-    background:rgba(255,255,255,.08);
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    backdrop-filter:blur(18px);
-    box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);
-    font-size:1.25rem;
-    transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
-  }
-
-  .impact-recycle-shortcut:hover{
-    transform:translateX(-50%) translateY(-3px) scale(1.05);
-    background:rgba(255,255,255,.13);
-    box-shadow:0 24px 70px rgba(0,0,0,.45);
-  }
-</style>
-<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
 </head>
 
 <body>
@@ -244,11 +70,10 @@ body{
 
 <div class="dashboard-menu-wrap" id="dashboardMenuWrap">
   <button class="dashboard-toggle-btn" id="dashboardToggleBtn" type="button" aria-label="Dashboard menu">⋮</button>
-
   <div class="dashboard-toggle-menu">
     <a href="/teacher/academic-calendar.html">Academic Calendar</a>
     <a href="/teacher/kpis.html">Team KPIs</a>
-        <a href="/teacher/tasks.html">Tasks</a><a href="/teacher/tasks.html">Tasks</a>
+    <a href="/teacher/tasks.html">Tasks</a>
     <a href="/teacher/reports.html">Reports</a>
     <a href="/teacher/operations.html">Operations</a>
   </div>
@@ -300,103 +125,42 @@ body{
       <h2>Configuration</h2>
       <p>Manage access controls, passkeys, platform settings, and system rules.</p>
     </a>
-  </section>
 
-<a class="workspace-card" href="/teacher/placements/index.html">
-  <h2>Learner Placements</h2>
-  <p>Create placement tests, manage recordings, and review learner placement reports.</p>
-</a>
+    <a class="dashboard-card" href="/teacher/placements/index.html">
+      <h2>Learner Placements</h2>
+      <p>Create placement tests, manage recordings, and review learner placement reports.</p>
+    </a>
+  </section>
 </main>
 
 <script src="/js/impact-global-bg.js?v=dashboard-reset-001"></script>
-
-
-
-<style id="dashboard-welcome-fix">
-#dashboardWelcome{
-  font-size:clamp(2.4rem,5vw,4.4rem) !important;
-  line-height:1.02 !important;
-  text-align:center !important;
-  white-space:normal !important;
-}
-</style>
-
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-  const name =
-    sessionStorage.getItem("impactAccessName") ||
-    sessionStorage.getItem("impactPersonnelName") ||
-    "User";
-
+  const name = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "User";
   const el = document.getElementById("userName");
-  if(el){
-    el.textContent = name;
-  }
+  if(el) el.textContent = name;
+
+  const wrap = document.getElementById("dashboardMenuWrap");
+  const btn = document.getElementById("dashboardToggleBtn");
+
+  btn.onclick = function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    wrap.classList.toggle("open");
+  };
+
+  document.addEventListener("click", function(){ wrap.classList.remove("open"); });
 });
 </script>
-<script id="dashboard-toggle-force-script">
-(function(){
-  function initDashboardToggle(){
-    const btn =
-      document.getElementById("dashboardToggleBtn") ||
-      document.querySelector(".dashboard-toggle-btn") ||
-      document.querySelector("[data-dashboard-toggle]") ||
-      document.querySelector("button[aria-label='Menu']") ||
-      document.querySelector("button[aria-label='menu']");
 
-    if (!btn) return;
-
-    let wrap =
-      document.getElementById("dashboardMenuWrap") ||
-      btn.closest(".dashboard-menu-wrap") ||
-      btn.parentElement;
-
-    let panel =
-      document.getElementById("dashboardMenuPanel") ||
-      document.querySelector(".dashboard-menu-panel") ||
-      document.querySelector(".dashboard-menu");
-
-    if (!wrap) return;
-
-    if (panel && !wrap.contains(panel)) {
-      wrap.appendChild(panel);
-    }
-
-    wrap.classList.add("dashboard-menu-wrap");
-    btn.classList.add("dashboard-toggle-btn");
-
-    if (panel) {
-      panel.classList.add("dashboard-menu-panel");
-    }
-
-    btn.onclick = function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      wrap.classList.toggle("open");
-    };
-
-    if (panel) {
-      panel.onclick = function(e){
-        e.stopPropagation();
-      };
-    }
-
-    document.addEventListener("click", function(){
-      wrap.classList.remove("open");
-    });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initDashboardToggle);
-  } else {
-    initDashboardToggle();
-  }
-})();
-</script>
-<script src="/js/impact-task-menu-patch.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script><script src="/__/firebase/init.js"></script><script src="/js/impact-task-badge.js"></script><script id="impact-recycle-dashboard-shortcut">
+<script src="/js/impact-task-menu-patch.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script src="/js/impact-task-badge.js"></script>
+<script>
 document.addEventListener("DOMContentLoaded",function(){
   if(document.getElementById("impactRecycleShortcut")) return;
-
   const bin = document.createElement("button");
   bin.id = "impactRecycleShortcut";
   bin.className = "impact-recycle-shortcut";
@@ -404,27 +168,9 @@ document.addEventListener("DOMContentLoaded",function(){
   bin.title = "Recycle Bin";
   bin.textContent = "♻";
   bin.onclick = () => window.location.href = "/teacher/recycle-bin.html";
-
   document.body.appendChild(bin);
 });
 </script>
 <script src="/js/impact-round-icons.js?v=001"></script>
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
