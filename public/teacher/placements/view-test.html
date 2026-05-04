@@ -4,16 +4,61 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>View Placement Test | Impact</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
 <link rel="stylesheet" href="/teacher/placements/placements.css">
+
+<style>
+.view-doc{
+  padding:28px;
+  border-radius:32px;
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(22px);
+  box-shadow:0 26px 80px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.view-doc .lesson-card{
+  margin-bottom:16px;
+  padding:20px;
+  border-radius:24px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.14);
+}
+
+.view-doc .delete-card{
+  display:none !important;
+}
+
+.view-doc h1,
+.view-doc h2,
+.view-doc h3{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-weight:400;
+  margin-bottom:10px;
+}
+
+.view-doc p,
+.view-doc li{
+  color:rgba(255,255,255,.82);
+  font-weight:700;
+  line-height:1.65;
+}
+</style>
 </head>
+
 <body>
 <script src="/js/impact-global-bg.js"></script>
 
 <nav class="lp-nav">
-  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></a>
-  <a class="lp-icon-btn" href="/teacher/placements/tests.html" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg></a>
+  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+
+  <a class="lp-icon-btn" href="/teacher/placements/tests.html" title="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+  </a>
 </nav>
 
 <main class="page">
@@ -22,24 +67,64 @@
     <h1 id="pageTitle">Loading...</h1>
     <p id="targetText"></p>
   </section>
-  <section class="panel" id="doc" style="padding:28px"></section>
+
+  <section class="view-doc" id="doc">
+    <div class="empty">Loading test...</div>
+  </section>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
 <script src="/__/firebase/init.js"></script>
+
 <script>
-const db=firebase.firestore();
-const id=new URLSearchParams(location.search).get("id");
+const db = firebase.firestore();
+const id = new URLSearchParams(location.search).get("id");
+
 async function load(){
-  const doc=document.getElementById("doc");
-  const snap=await db.collection("placementTests").doc(id).get();
-  if(!snap.exists){document.getElementById("pageTitle").textContent="Not found";return;}
-  const t=snap.data();
-  document.getElementById("pageTitle").textContent=t.title || "Placement Test";
-  document.getElementById("targetText").textContent=t.target || "";
-  doc.innerHTML=(t.blocks||[]).map(b=>`<article class="builder-block"><h2>${b.title}</h2><p style="white-space:pre-wrap;line-height:1.7;color:rgba(255,255,255,.76);font-weight:700;margin-top:12px">${b.body||""}</p></article>`).join("");
+  const docBox = document.getElementById("doc");
+  const titleBox = document.getElementById("pageTitle");
+  const targetBox = document.getElementById("targetText");
+
+  if(!id){
+    titleBox.textContent = "No test selected";
+    docBox.innerHTML = '<div class="empty">No placement test ID was provided.</div>';
+    return;
+  }
+
+  const snap = await db.collection("placementTests").doc(id).get();
+
+  if(!snap.exists){
+    titleBox.textContent = "Not found";
+    docBox.innerHTML = '<div class="empty">This placement test could not be found.</div>';
+    return;
+  }
+
+  const test = snap.data();
+
+  titleBox.textContent = test.title || "Untitled Placement Test";
+  targetBox.textContent = test.target || "";
+
+  if(test.content && test.content.trim()){
+    docBox.innerHTML = test.content;
+    docBox.querySelectorAll("[contenteditable]").forEach(el => el.removeAttribute("contenteditable"));
+    docBox.querySelectorAll(".delete-card").forEach(btn => btn.remove());
+    return;
+  }
+
+  if(test.blocks && test.blocks.length){
+    docBox.innerHTML = test.blocks.map(b => `
+      <article class="lesson-card">
+        <h2>${b.title || "Section"}</h2>
+        <p style="white-space:pre-wrap">${b.body || ""}</p>
+      </article>
+    `).join("");
+    return;
+  }
+
+  docBox.innerHTML = '<div class="empty">This test has no content yet. Go back and edit the test.</div>';
 }
+
 load();
 </script>
 </body>
