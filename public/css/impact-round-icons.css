@@ -1,0 +1,28 @@
+﻿.impact-round-icon{
+  width:46px!important;
+  height:46px!important;
+  border-radius:50%!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:rgba(255,255,255,.08)!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  color:#fff!important;
+  text-decoration:none!important;
+  font-size:0!important;
+  backdrop-filter:blur(18px)!important;
+  box-shadow:0 18px 48px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.10)!important;
+}
+.impact-round-icon svg{
+  width:21px!important;
+  height:21px!important;
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:2.1!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+.impact-round-icon:hover{
+  transform:translateY(-2px) scale(1.04)!important;
+  background:rgba(255,255,255,.14)!important;
+}
