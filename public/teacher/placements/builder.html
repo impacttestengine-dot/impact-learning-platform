@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>Test Builder</title>
+</head>
+<body>
+
+<h2>Placement Test Builder</h2>
+
+<textarea id="builder" style="width:100%;height:300px;"></textarea>
+
+<button onclick="saveTest()">Save Test</button>
+
+<script>
+function saveTest(){
+  let data = document.getElementById("builder").value;
+  localStorage.setItem("placement_test_"+Date.now(), data);
+  alert("Saved");
+}
+</script>
+
+</body>
+</html>

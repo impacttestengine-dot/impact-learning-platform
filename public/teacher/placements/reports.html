@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>Placement Reports</title>
+</head>
+<body>
+
+<h2>Placement Reports</h2>
+
+<input type="text" id="search" placeholder="Search reports..." onkeyup="filter()">
+
+<div id="reports"></div>
+
+<script>
+let reports = ["John - A1","Mary - B2","Paul - A2"];
+
+function render(){
+  let container = document.getElementById("reports");
+  container.innerHTML="";
+  reports.forEach(r=>{
+    let div=document.createElement("div");
+    div.innerText=r;
+    container.appendChild(div);
+  });
+}
+
+function filter(){
+  let q=document.getElementById("search").value.toLowerCase();
+  let container=document.getElementById("reports");
+  container.innerHTML="";
+  reports.filter(r=>r.toLowerCase().includes(q)).forEach(r=>{
+    let div=document.createElement("div");
+    div.innerText=r;
+    container.appendChild(div);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>

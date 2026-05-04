@@ -1,7 +1,9 @@
-﻿{
+{
   "projects": {
     "default": "impact--platform-v2",
     "live": "impact--platform-v2",
     "old": "impact-test-engine"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }

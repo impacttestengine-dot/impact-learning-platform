@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>Placement Recordings</title>
+</head>
+<body>
+
+<h2>Placement Recordings</h2>
+
+<div style="display:flex">
+
+<div style="width:30%">
+  <ul id="levels">
+    <li>A0</li>
+    <li>A1</li>
+    <li>A2</li>
+    <li>B1</li>
+    <li>B2</li>
+  </ul>
+</div>
+
+<div style="width:70%">
+  <input type="file" id="file">
+  <button onclick="upload()">Upload</button>
+  <div id="files"></div>
+</div>
+
+</div>
+
+<script>
+function upload(){
+  let file = document.getElementById("file").files[0];
+  let list = document.getElementById("files");
+  let item = document.createElement("div");
+  item.innerText = file.name;
+  list.appendChild(item);
+}
+</script>
+
+</body>
+</html>
