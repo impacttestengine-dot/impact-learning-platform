@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>View Placement Test | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/teacher/placements/placements.css">
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="lp-nav">
+  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></a>
+  <a class="lp-icon-btn" href="/teacher/placements/tests.html" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg></a>
+</nav>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Placement Test</p>
+    <h1 id="pageTitle">Loading...</h1>
+    <p id="targetText"></p>
+  </section>
+  <section class="panel" id="doc" style="padding:28px"></section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+const db=firebase.firestore();
+const id=new URLSearchParams(location.search).get("id");
+async function load(){
+  const doc=document.getElementById("doc");
+  const snap=await db.collection("placementTests").doc(id).get();
+  if(!snap.exists){document.getElementById("pageTitle").textContent="Not found";return;}
+  const t=snap.data();
+  document.getElementById("pageTitle").textContent=t.title || "Placement Test";
+  document.getElementById("targetText").textContent=t.target || "";
+  doc.innerHTML=(t.blocks||[]).map(b=>`<article class="builder-block"><h2>${b.title}</h2><p style="white-space:pre-wrap;line-height:1.7;color:rgba(255,255,255,.76);font-weight:700;margin-top:12px">${b.body||""}</p></article>`).join("");
+}
+load();
+</script>
+</body>
+</html>

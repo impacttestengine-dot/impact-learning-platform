@@ -1,41 +1,108 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Placement Recordings</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Placement Recordings | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/teacher/placements/placements.css">
 </head>
 <body>
+<script src="/js/impact-global-bg.js"></script>
 
-<h2>Placement Recordings</h2>
+<nav class="lp-nav">
+  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></a>
+  <a class="lp-icon-btn" href="/teacher/placements/index.html" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg></a>
+</nav>
 
-<div style="display:flex">
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Placement Audio Library</p>
+    <h1>Placement Recordings</h1>
+    <p>Upload learner placement recordings and organize them by level.</p>
+  </section>
 
-<div style="width:30%">
-  <ul id="levels">
-    <li>A0</li>
-    <li>A1</li>
-    <li>A2</li>
-    <li>B1</li>
-    <li>B2</li>
-  </ul>
-</div>
+  <section class="two-col">
+    <aside class="panel" style="padding:22px">
+      <h2 style="margin-bottom:16px">Level Folders</h2>
+      <div class="level-list" id="levels"></div>
+    </aside>
 
-<div style="width:70%">
-  <input type="file" id="file">
-  <button onclick="upload()">Upload</button>
-  <div id="files"></div>
-</div>
+    <section class="panel" style="padding:22px">
+      <div class="upload-bar">
+        <input id="file" type="file" accept="audio/*,video/*">
+        <select id="folder"></select>
+        <button id="uploadBtn">Upload</button>
+      </div>
+      <div id="recordingList"><div class="empty">Loading...</div></div>
+    </section>
+  </section>
+</main>
 
-</div>
-
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
 <script>
-function upload(){
-  let file = document.getElementById("file").files[0];
-  let list = document.getElementById("files");
-  let item = document.createElement("div");
-  item.innerText = file.name;
-  list.appendChild(item);
-}
-</script>
+const db=firebase.firestore();
+const storage=firebase.storage();
+const levels=["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
+let current=levels[0];
 
+levels.forEach(level=>{
+  const b=document.createElement("button");
+  b.className="level-btn";
+  b.textContent=level;
+  b.onclick=()=>{current=level;paint();load();};
+  document.getElementById("levels").appendChild(b);
+
+  const o=document.createElement("option");
+  o.textContent=level;
+  document.getElementById("folder").appendChild(o);
+});
+
+function paint(){
+  document.querySelectorAll(".level-btn").forEach(b=>b.classList.toggle("active",b.textContent===current));
+  document.getElementById("folder").value=current;
+}
+
+async function upload(){
+  const file=document.getElementById("file").files[0];
+  if(!file)return;
+  const level=document.getElementById("folder").value;
+  const path=`placement-recordings/${level}/${Date.now()}-${file.name}`;
+  const ref=storage.ref(path);
+  await ref.put(file);
+  const url=await ref.getDownloadURL();
+  await db.collection("placementRecordings").add({name:file.name,level,url,type:file.type,path,createdAt:new Date().toISOString()});
+  document.getElementById("file").value="";
+  current=level;
+  paint();
+  load();
+}
+
+async function load(){
+  const box=document.getElementById("recordingList");
+  box.innerHTML='<div class="empty">Loading recordings...</div>';
+  const snap=await db.collection("placementRecordings").where("level","==",current).get();
+  box.innerHTML="";
+  if(snap.empty){
+    box.innerHTML='<div class="empty">No recordings in this folder yet.</div>';
+    return;
+  }
+  snap.forEach(doc=>{
+    const r=doc.data();
+    const item=document.createElement("div");
+    item.className="recording-item";
+    item.innerHTML=`<strong>${r.name}</strong>${(r.type||"").startsWith("video")?`<video src="${r.url}" controls></video>`:`<audio src="${r.url}" controls></audio>`}`;
+    box.appendChild(item);
+  });
+}
+
+document.getElementById("uploadBtn").onclick=upload;
+paint();
+load();
+</script>
 </body>
 </html>

@@ -1,21 +1,78 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Placement Tests</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Placement Tests | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/teacher/placements/placements.css">
 </head>
 <body>
+<script src="/js/impact-global-bg.js"></script>
 
-<h2>Placement Tests</h2>
+<nav class="lp-nav">
+  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></a>
+  <a class="lp-icon-btn" href="/teacher/placements/index.html" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg></a>
+</nav>
 
-<div id="testsList"></div>
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Placement Folder</p>
+    <h1>Placement Tests</h1>
+    <p>Saved placement tests appear inside this folder.</p>
+  </section>
 
-<button onclick="createTest()">+ Create New Test</button>
+  <section class="folder-card">
+    <div class="folder-head">
+      <div>
+        <h2>Placement Test Folder</h2>
+        <p class="soft-text">Create, view, edit, or delete placement assessments.</p>
+      </div>
+      <button id="createBtn">Create Test</button>
+    </div>
+    <div class="list" id="testList"><div class="empty">Loading placement tests...</div></div>
+  </section>
+</main>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
 <script>
-function createTest(){
-  window.location.href="builder.html";
-}
-</script>
+const db=firebase.firestore();
+const list=document.getElementById("testList");
 
+document.getElementById("createBtn").onclick=function(){
+  location.href="/teacher/placements/builder.html";
+};
+
+async function load(){
+  list.innerHTML='<div class="empty">Loading placement tests...</div>';
+  try{
+    const snap=await db.collection("placementTests").orderBy("updatedAt","desc").get();
+    list.innerHTML="";
+    if(snap.empty){
+      list.innerHTML='<div class="empty">No placement tests created yet.</div>';
+      return;
+    }
+    snap.forEach(doc=>{
+      const t=doc.data();
+      const row=document.createElement("div");
+      row.className="row";
+      row.innerHTML=`
+        <strong>${t.title || "Untitled Placement Test"}</strong>
+        <a href="/teacher/placements/view-test.html?id=${doc.id}">View</a>
+        <a href="/teacher/placements/builder.html?edit=${doc.id}">Edit</a>
+        <button data-id="${doc.id}">Delete</button>
+      `;
+      row.querySelector("button").onclick=async()=>{await db.collection("placementTests").doc(doc.id).delete();load();};
+      list.appendChild(row);
+    });
+  }catch(e){
+    list.innerHTML='<div class="empty">Could not load placement tests.</div>';
+  }
+}
+load();
+</script>
 </body>
 </html>

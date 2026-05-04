@@ -1,42 +1,77 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Placement Reports</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Placement Reports | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/teacher/placements/placements.css">
 </head>
 <body>
+<script src="/js/impact-global-bg.js"></script>
 
-<h2>Placement Reports</h2>
+<nav class="lp-nav">
+  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></a>
+  <a class="lp-icon-btn" href="/teacher/placements/index.html" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg></a>
+</nav>
 
-<input type="text" id="search" placeholder="Search reports..." onkeyup="filter()">
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Learner Reports</p>
+    <h1>Placement Reports</h1>
+    <p>Search and review all learner placement results in one place.</p>
+  </section>
 
-<div id="reports"></div>
+  <section class="panel" style="padding:24px">
+    <input class="search" id="search" placeholder="Search by learner name, level, result, teacher, or recommendation...">
+    <div id="reports"><div class="empty">Loading reports...</div></div>
+  </section>
+</main>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
 <script>
-let reports = ["John - A1","Mary - B2","Paul - A2"];
+const db=firebase.firestore();
+let all=[];
 
 function render(){
-  let container = document.getElementById("reports");
-  container.innerHTML="";
-  reports.forEach(r=>{
-    let div=document.createElement("div");
-    div.innerText=r;
-    container.appendChild(div);
+  const q=document.getElementById("search").value.toLowerCase();
+  const box=document.getElementById("reports");
+  const rows=all.filter(r=>JSON.stringify(r).toLowerCase().includes(q));
+  box.innerHTML="";
+  if(!rows.length){
+    box.innerHTML='<div class="empty">No reports found.</div>';
+    return;
+  }
+  rows.forEach(r=>{
+    const item=document.createElement("article");
+    item.className="report-item";
+    item.innerHTML=`
+      <h2>${r.learner || r.name || "Unnamed Learner"}</h2>
+      <p class="soft-text">${r.level || "No level"} • ${r.result || r.placement || "No placement result"} • ${r.teacher || "No teacher"}</p>
+      <p style="margin-top:12px;color:rgba(255,255,255,.74);font-weight:700;line-height:1.7">${r.remarks || r.report || r.recommendation || "No report details yet."}</p>
+    `;
+    box.appendChild(item);
   });
 }
 
-function filter(){
-  let q=document.getElementById("search").value.toLowerCase();
-  let container=document.getElementById("reports");
-  container.innerHTML="";
-  reports.filter(r=>r.toLowerCase().includes(q)).forEach(r=>{
-    let div=document.createElement("div");
-    div.innerText=r;
-    container.appendChild(div);
-  });
+async function load(){
+  const box=document.getElementById("reports");
+  box.innerHTML='<div class="empty">Loading reports...</div>';
+  try{
+    const snap=await db.collection("placementReports").get();
+    all=[];
+    snap.forEach(doc=>all.push(doc.data()));
+    render();
+  }catch(e){
+    box.innerHTML='<div class="empty">Could not load reports.</div>';
+  }
 }
 
-render();
+document.getElementById("search").oninput=render;
+load();
 </script>
-
 </body>
 </html>
