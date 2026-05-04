@@ -19,8 +19,9 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
 
 .page{position:relative;z-index:20;width:min(1220px,94vw);margin:0 auto;padding:128px 0 80px}
 .workspace{display:grid;grid-template-columns:260px minmax(0,1fr) 240px;gap:22px;align-items:start}
+
 .panel{border-radius:30px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);box-shadow:0 24px 70px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.10);backdrop-filter:blur(20px)}
-.blocks-panel,.settings-panel{padding:22px}
+.blocks-panel,.settings-panel{padding:22px;position:sticky;top:110px;max-height:calc(100vh - 132px);overflow:auto}
 .block-list{display:grid;gap:12px}
 
 .block-btn,.control-btn,.toolbar button,.toolbar select,.toolbar input,.settings-panel input,.settings-panel select{
@@ -32,7 +33,7 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
 .block-btn:active,.control-btn:active,.toolbar button:active{transform:scale(.97)}
 
 .canvas-panel{padding:18px}
-.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;position:sticky;top:0;z-index:5;padding-bottom:8px;background:rgba(6,10,22,.72);backdrop-filter:blur(18px);border-radius:18px}
 .toolbar select,.toolbar input{min-height:40px;padding:8px 10px}
 .toolbar option,.settings-panel option{color:#111827}
 
@@ -40,22 +41,26 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
 .empty-state{padding:18px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);color:rgba(255,255,255,.74);font-weight:800;line-height:1.5}
 
 .lesson-card{position:relative;margin-bottom:16px;padding:20px 54px 20px 20px;border-radius:24px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 44px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.10);color:#fff;outline:none}
-.lesson-card:focus,.lesson-card.active{border-color:rgba(232,216,166,.44);box-shadow:0 18px 44px rgba(0,0,0,.22),0 0 0 2px rgba(232,216,166,.18),inset 0 1px 0 rgba(255,255,255,.10)}
+.lesson-card:focus,.lesson-card.active,.canvas.all-selected .lesson-card{border-color:rgba(232,216,166,.55);box-shadow:0 18px 44px rgba(0,0,0,.22),0 0 0 2px rgba(232,216,166,.2),inset 0 1px 0 rgba(255,255,255,.10)}
 .lesson-card h1,.lesson-card h2,.lesson-card h3{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400;color:#fbfbf8;margin-bottom:8px}
 .lesson-card h1{font-size:2.2rem}.lesson-card h2{font-size:1.8rem}.lesson-card h3{font-size:1.45rem}
 .lesson-card p,.lesson-card li{color:rgba(255,255,255,.82);font-weight:700;line-height:1.65}
 .lesson-card ul{margin:10px 0 0 22px}
+
 .delete-card{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,120,120,.28);background:rgba(255,80,80,.14);color:#fff;cursor:pointer;font-weight:900}
+
+.media-resizer{display:inline-block;width:70%;max-width:100%;min-width:140px;resize:horizontal;overflow:auto;padding:8px;border-radius:18px;border:1px dashed rgba(232,216,166,.38)}
+.media-resizer img,.media-resizer video{width:100%!important;height:auto!important;display:block!important;border-radius:14px}
 
 .settings-panel{display:grid;gap:16px}
 .settings-label{display:block;margin-bottom:8px;font-size:.82rem;font-weight:900;color:rgba(255,255,255,.78)}
 .settings-panel input,.settings-panel select{width:100%;min-height:50px}
 .settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
 .control-btn{min-height:48px}
-.save-tick{display:block;height:18px;margin-top:6px;text-align:center;color:#d9f99d;font-weight:900;font-size:1.05rem;opacity:0;transform:scale(.8);transition:.18s ease}
+.save-tick{display:block;height:26px;margin-top:4px;text-align:center;color:#d9f99d;font-weight:900;font-size:1.3rem;opacity:0;transform:scale(.8);transition:.18s ease}
 .save-tick.show{opacity:1;transform:scale(1)}
 
-@media(max-width:980px){.page{padding-top:118px}.workspace{grid-template-columns:1fr}}
+@media(max-width:980px){.page{padding-top:118px}.workspace{grid-template-columns:1fr}.blocks-panel,.settings-panel{position:relative;top:auto;max-height:none}}
 </style>
 </head>
 
@@ -102,7 +107,7 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
       </div>
 
       <div class="canvas" id="canvas">
-        <div class="empty-state">Add placement test blocks from the left. Each block will appear here as an editable card.</div>
+        <div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>
       </div>
     </section>
 
@@ -113,13 +118,15 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
       </div>
 
       <div>
-        <label class="settings-label">Target Range</label>
+        <label class="settings-label">Target Level</label>
         <select id="testTarget">
-          <option>A0 → A1</option>
-          <option>A1 → A2</option>
-          <option>A2 → B1</option>
-          <option>B1 → B2</option>
-          <option>Full Level Detection</option>
+          <option>Absolute Beginner</option>
+          <option>A0</option>
+          <option>A1</option>
+          <option>A1.1</option>
+          <option>A2</option>
+          <option>B1</option>
+          <option>B2</option>
         </select>
       </div>
 
@@ -127,7 +134,6 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
         <button class="control-btn" id="newBtn" type="button">New +</button>
         <button class="control-btn" id="saveBtn" type="button">Save</button>
         <button class="control-btn" id="viewBtn" type="button">View</button>
-        <button class="control-btn" onclick="location.href='/teacher/placements/tests.html'" type="button">Folder</button>
       </div>
       <span id="saveTick" class="save-tick">✓</span>
     </aside>
@@ -150,12 +156,13 @@ const targetInput=document.getElementById("testTarget");
 const params=new URLSearchParams(location.search);
 let currentId=params.get("edit") || "";
 let selectedCard=null;
+let allSelected=false;
 let undoStack=[];
 
 function tick(){
   const t=document.getElementById("saveTick");
   t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),1200);
+  setTimeout(()=>t.classList.remove("show"),1400);
 }
 
 function clearEmpty(){
@@ -163,27 +170,55 @@ function clearEmpty(){
   if(empty) empty.remove();
 }
 
+function allCards(){
+  return Array.from(canvas.querySelectorAll(".lesson-card"));
+}
+
 function selectCard(card){
+  allSelected=false;
+  canvas.classList.remove("all-selected");
   selectedCard=card;
-  document.querySelectorAll(".lesson-card").forEach(c=>c.classList.remove("active"));
+  allCards().forEach(c=>c.classList.remove("active"));
   card.classList.add("active");
+}
+
+function selectAllCards(){
+  const cards=allCards();
+  if(!cards.length)return;
+  allSelected=true;
+  selectedCard=null;
+  canvas.classList.add("all-selected");
+  cards.forEach(c=>c.classList.add("active"));
+}
+
+canvas.addEventListener("click",function(e){
+  if(e.target===canvas || e.target.classList.contains("empty-state")){
+    selectAllCards();
+  }
+});
+
+function targetCards(){
+  return allSelected ? allCards() : (selectedCard ? [selectedCard] : []);
 }
 
 function pushUndo(){undoStack.push(canvas.innerHTML);if(undoStack.length>40)undoStack.shift();}
 
 function bindCard(card){
-  card.addEventListener("click",()=>selectCard(card));
+  card.addEventListener("click",e=>{e.stopPropagation();selectCard(card);});
   card.addEventListener("focus",()=>selectCard(card));
   card.addEventListener("input",autosave);
-  card.querySelector(".delete-card").onclick=(e)=>{
-    e.stopPropagation();
-    pushUndo();
-    card.remove();
-    if(!canvas.querySelector(".lesson-card")){
-      canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Each block will appear here as an editable card.</div>';
-    }
-    autosave();
-  };
+  const del=card.querySelector(".delete-card");
+  if(del){
+    del.onclick=(e)=>{
+      e.stopPropagation();
+      pushUndo();
+      card.remove();
+      if(!canvas.querySelector(".lesson-card")){
+        canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+      }
+      autosave();
+    };
+  }
 }
 
 function addCard(html){
@@ -201,54 +236,56 @@ function addCard(html){
 }
 
 function template(type){
-  if(type==="header") return '<h1>New Header</h1>';
-  if(type==="subheader") return '<h2>New Sub Header</h2>';
-  if(type==="outline") return '<h2>Lesson Outline</h2><ul><li>Warm-up</li><li>Main lesson</li><li>Practice</li><li>Review</li></ul>';
-  if(type==="title") return '<h1>Lesson Title</h1><p>Add a short description of the test section here.</p>';
+  if(type==="header") return '<h1>PLACEMENT TEST</h1>';
+  if(type==="subheader") return '<h2>A.</h2>';
+  if(type==="outline") return '<h2>Test Outline</h2><ul><li>Oral warm-up</li><li>Listening</li><li>Reading</li><li>Writing</li><li>Speaking</li></ul>';
+  if(type==="title") return '<h1>Section Title</h1><p>Add a short description of the test section here.</p>';
   if(type==="objectives") return '<h2>Objectives</h2><p><strong>By the end of this placement test, the learner should:</strong></p><ul><li>Show listening ability</li><li>Show reading ability</li><li>Show writing ability</li><li>Show speaking ability</li></ul>';
   if(type==="text") return '<p>Write test content here...</p>';
-  if(type==="image"){ document.getElementById("imageInput").click(); return ""; }
-  if(type==="audio"){ document.getElementById("audioInput").click(); return ""; }
-  if(type==="video"){ document.getElementById("videoInput").click(); return ""; }
+  if(type==="image"){document.getElementById("imageInput").click();return "";}
+  if(type==="audio"){document.getElementById("audioInput").click();return "";}
+  if(type==="video"){document.getElementById("videoInput").click();return "";}
   return '<p>Write content here...</p>';
 }
 
-function fileToDataUrl(file, cb){
-  const reader = new FileReader();
-  reader.onload = () => cb(reader.result);
+document.querySelectorAll(".block-btn").forEach(btn=>{
+  btn.onclick=()=>{
+    const html=template(btn.dataset.block);
+    if(html)addCard(html);
+  };
+});
+
+function fileToDataUrl(file,cb){
+  const reader=new FileReader();
+  reader.onload=()=>cb(reader.result);
   reader.readAsDataURL(file);
 }
 
-document.getElementById("imageInput").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  fileToDataUrl(file, src => addCard('<img src="'+src+'" alt="Placement image" style="max-width:100%;border-radius:16px;display:block;">'));
+imageInput.onchange=e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  fileToDataUrl(file,src=>addCard('<div class="media-resizer"><img src="'+src+'" alt="Placement image"></div>'));
   e.target.value="";
-});
-
-document.getElementById("audioInput").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  fileToDataUrl(file, src => addCard('<audio src="'+src+'" controls style="width:100%;"></audio>'));
-  e.target.value="";
-});
-
-document.getElementById("videoInput").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(!file) return;
-  fileToDataUrl(file, src => addCard('<video src="'+src+'" controls style="max-width:100%;border-radius:16px;display:block;"></video>'));
-  e.target.value="";
-});
-document.querySelectorAll(".block-btn").forEach(btn=>{
-  btn.onclick=()=>{
-  const html = template(btn.dataset.block);
-  if(html) addCard(html);
 };
-});
+
+audioInput.onchange=e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  fileToDataUrl(file,src=>addCard('<audio src="'+src+'" controls style="width:100%"></audio>'));
+  e.target.value="";
+};
+
+videoInput.onchange=e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  fileToDataUrl(file,src=>addCard('<div class="media-resizer"><video src="'+src+'" controls></video></div>'));
+  e.target.value="";
+};
 
 function apply(prop,value){
-  if(!selectedCard)return;
-  selectedCard.style[prop]=value;
+  const cards=targetCards();
+  if(!cards.length)return;
+  cards.forEach(card=>card.style[prop]=value);
   autosave();
 }
 fontFamily.onchange=e=>apply("fontFamily",e.target.value);
@@ -260,11 +297,14 @@ backgroundColor.oninput=e=>apply("backgroundColor",e.target.value);
 
 document.querySelectorAll("[data-toggle]").forEach(btn=>{
   btn.onclick=()=>{
-    if(!selectedCard)return;
+    const cards=targetCards();
+    if(!cards.length)return;
     const t=btn.dataset.toggle;
-    if(t==="bold") selectedCard.style.fontWeight=selectedCard.style.fontWeight==="900"?"700":"900";
-    if(t==="italic") selectedCard.style.fontStyle=selectedCard.style.fontStyle==="italic"?"normal":"italic";
-    if(t==="underline") selectedCard.style.textDecoration=selectedCard.style.textDecoration==="underline"?"none":"underline";
+    cards.forEach(card=>{
+      if(t==="bold") card.style.fontWeight=card.style.fontWeight==="900"?"700":"900";
+      if(t==="italic") card.style.fontStyle=card.style.fontStyle==="italic"?"normal":"italic";
+      if(t==="underline") card.style.textDecoration=card.style.textDecoration==="underline"?"none":"underline";
+    });
     autosave();
   };
 });
@@ -276,8 +316,9 @@ undoBtn.onclick=()=>{
 };
 
 async function save(){
+  const cleanTitle=titleInput.value.trim() || "Untitled Placement Test";
   const payload={
-    title:titleInput.value.trim() || "Untitled Placement Test",
+    title:cleanTitle,
     target:targetInput.value,
     content:canvas.innerHTML,
     updatedAt:new Date().toISOString()
@@ -301,8 +342,8 @@ saveBtn.onclick=save;
 newBtn.onclick=()=>{
   currentId="";
   titleInput.value="";
-  targetInput.value="A0 → A1";
-  canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Each block will appear here as an editable card.</div>';
+  targetInput.value="Absolute Beginner";
+  canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
   history.replaceState(null,"","/teacher/placements/builder.html");
 };
 
@@ -317,12 +358,11 @@ async function load(){
   if(!doc.exists)return;
   const d=doc.data();
   titleInput.value=d.title||"";
-  targetInput.value=d.target||"A0 → A1";
-  canvas.innerHTML=d.content || '<div class="empty-state">Add placement test blocks from the left.</div>';
+  targetInput.value=d.target||"Absolute Beginner";
+  canvas.innerHTML=d.content || '<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
   canvas.querySelectorAll(".lesson-card").forEach(bindCard);
 }
 load();
 </script>
 </body>
 </html>
-

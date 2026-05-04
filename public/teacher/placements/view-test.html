@@ -10,40 +10,51 @@
 <link rel="stylesheet" href="/teacher/placements/placements.css">
 
 <style>
-.view-doc{
-  padding:28px;
-  border-radius:32px;
+.document-wrap{
+  width:min(900px,92vw);
+  margin:0 auto;
+  padding:44px;
+  border-radius:34px;
   background:rgba(255,255,255,.075);
   border:1px solid rgba(255,255,255,.14);
   backdrop-filter:blur(22px);
   box-shadow:0 26px 80px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08);
 }
-
-.view-doc .lesson-card{
-  margin-bottom:16px;
-  padding:20px;
-  border-radius:24px;
-  background:rgba(255,255,255,.09);
-  border:1px solid rgba(255,255,255,.14);
+.document-wrap .lesson-card{
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+  padding:0!important;
+  margin:0 0 22px!important;
+  border-radius:0!important;
 }
-
-.view-doc .delete-card{
-  display:none !important;
-}
-
-.view-doc h1,
-.view-doc h2,
-.view-doc h3{
+.document-wrap .delete-card{display:none!important}
+.document-wrap h1,.document-wrap h2,.document-wrap h3{
   font-family:"Sorts Mill Goudy",Georgia,serif;
   font-weight:400;
-  margin-bottom:10px;
+  margin:18px 0 10px;
 }
-
-.view-doc p,
-.view-doc li{
-  color:rgba(255,255,255,.82);
+.document-wrap h1{font-size:3.2rem;text-align:center}
+.document-wrap h2{font-size:2rem}
+.document-wrap p,.document-wrap li{
+  color:rgba(255,255,255,.84);
   font-weight:700;
-  line-height:1.65;
+  line-height:1.75;
+}
+.document-wrap ul{margin:10px 0 18px 28px}
+.document-wrap img,.document-wrap video{
+  max-width:100%;
+  border-radius:18px;
+  display:block;
+  margin:18px auto;
+}
+.document-wrap audio{width:100%;margin:18px 0}
+.document-wrap .media-resizer{
+  resize:none!important;
+  width:auto!important;
+  max-width:100%!important;
+  border:none!important;
+  padding:0!important;
 }
 </style>
 </head>
@@ -55,7 +66,6 @@
   <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard">
     <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
   </a>
-
   <a class="lp-icon-btn" href="/teacher/placements/tests.html" title="Back">
     <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
   </a>
@@ -68,7 +78,7 @@
     <p id="targetText"></p>
   </section>
 
-  <section class="view-doc" id="doc">
+  <section class="document-wrap" id="doc">
     <div class="empty">Loading test...</div>
   </section>
 </main>
@@ -78,53 +88,43 @@
 <script src="/__/firebase/init.js"></script>
 
 <script>
-const db = firebase.firestore();
-const id = new URLSearchParams(location.search).get("id");
+const db=firebase.firestore();
+const id=new URLSearchParams(location.search).get("id");
 
 async function load(){
-  const docBox = document.getElementById("doc");
-  const titleBox = document.getElementById("pageTitle");
-  const targetBox = document.getElementById("targetText");
+  const docBox=document.getElementById("doc");
+  const titleBox=document.getElementById("pageTitle");
+  const targetBox=document.getElementById("targetText");
 
   if(!id){
-    titleBox.textContent = "No test selected";
-    docBox.innerHTML = '<div class="empty">No placement test ID was provided.</div>';
+    titleBox.textContent="No test selected";
+    docBox.innerHTML='<div class="empty">No placement test ID was provided.</div>';
     return;
   }
 
-  const snap = await db.collection("placementTests").doc(id).get();
+  const snap=await db.collection("placementTests").doc(id).get();
 
   if(!snap.exists){
-    titleBox.textContent = "Not found";
-    docBox.innerHTML = '<div class="empty">This placement test could not be found.</div>';
+    titleBox.textContent="Not found";
+    docBox.innerHTML='<div class="empty">This placement test could not be found.</div>';
     return;
   }
 
-  const test = snap.data();
+  const test=snap.data();
 
-  titleBox.textContent = test.title || "Untitled Placement Test";
-  targetBox.textContent = test.target || "";
+  titleBox.textContent=test.title || "Untitled Placement Test";
+  targetBox.textContent=test.target || "";
 
   if(test.content && test.content.trim()){
-    docBox.innerHTML = test.content;
-    docBox.querySelectorAll("[contenteditable]").forEach(el => el.removeAttribute("contenteditable"));
-    docBox.querySelectorAll(".delete-card").forEach(btn => btn.remove());
+    docBox.innerHTML=test.content;
+    docBox.querySelectorAll("[contenteditable]").forEach(el=>el.removeAttribute("contenteditable"));
+    docBox.querySelectorAll(".delete-card").forEach(btn=>btn.remove());
+    docBox.querySelectorAll(".lesson-card").forEach(card=>card.classList.remove("active"));
     return;
   }
 
-  if(test.blocks && test.blocks.length){
-    docBox.innerHTML = test.blocks.map(b => `
-      <article class="lesson-card">
-        <h2>${b.title || "Section"}</h2>
-        <p style="white-space:pre-wrap">${b.body || ""}</p>
-      </article>
-    `).join("");
-    return;
-  }
-
-  docBox.innerHTML = '<div class="empty">This test has no content yet. Go back and edit the test.</div>';
+  docBox.innerHTML='<div class="empty">This test has no content yet. Go back and edit the test.</div>';
 }
-
 load();
 </script>
 </body>
