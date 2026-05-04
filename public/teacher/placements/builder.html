@@ -76,12 +76,14 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
     <aside class="panel blocks-panel">
       <div class="block-list">
         <button class="block-btn" data-block="header" type="button">Header</button>
-        <button class="block-btn" data-block="instruction" type="button">Instruction</button>
-        <button class="block-btn" data-block="listening" type="button">Listening</button>
-        <button class="block-btn" data-block="reading" type="button">Reading</button>
-        <button class="block-btn" data-block="writing" type="button">Writing</button>
-        <button class="block-btn" data-block="speaking" type="button">Speaking</button>
-        <button class="block-btn" data-block="scoring" type="button">Scoring Notes</button>
+        <button class="block-btn" data-block="subheader" type="button">Sub Header</button>
+        <button class="block-btn" data-block="outline" type="button">Lesson Outline</button>
+        <button class="block-btn" data-block="title" type="button">Title</button>
+        <button class="block-btn" data-block="objectives" type="button">Objectives</button>
+        <button class="block-btn" data-block="text" type="button">Text</button>
+        <button class="block-btn" data-block="image" type="button">Image</button>
+        <button class="block-btn" data-block="audio" type="button">Audio</button>
+        <button class="block-btn" data-block="video" type="button">Video</button>
       </div>
     </aside>
 
@@ -131,6 +133,10 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
     </aside>
   </section>
 </main>
+
+<input id="imageInput" type="file" accept="image/*" style="display:none">
+<input id="audioInput" type="file" accept="audio/*" style="display:none">
+<input id="videoInput" type="file" accept="video/*" style="display:none">
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
@@ -195,17 +201,49 @@ function addCard(html){
 }
 
 function template(type){
-  if(type==="header") return '<h1>Placement Test</h1><p>Write a short introduction for the learner.</p>';
-  if(type==="instruction") return '<h2>Instructions</h2><p>Read the instructions carefully before answering the questions.</p>';
-  if(type==="listening") return '<h2>Listening Section</h2><p><strong>Audio file name:</strong></p><p><strong>Audio script:</strong></p><p><strong>Questions:</strong><br>1.<br>2.<br>3.</p>';
-  if(type==="reading") return '<h2>Reading Section</h2><p><strong>Reading text:</strong></p><p><strong>Questions:</strong><br>1.<br>2.<br>3.</p>';
-  if(type==="writing") return '<h2>Writing Section</h2><p><strong>Writing prompt:</strong></p><p><strong>Expected learner response:</strong></p>';
-  if(type==="speaking") return '<h2>Speaking Section</h2><p><strong>Teacher prompt:</strong></p><p><strong>Expected speaking target:</strong></p>';
-  if(type==="scoring") return '<h2>Scoring Notes</h2><ul><li>Listening:</li><li>Reading:</li><li>Writing:</li><li>Speaking:</li><li>Recommended level:</li></ul>';
+  if(type==="header") return '<h1>New Header</h1>';
+  if(type==="subheader") return '<h2>New Sub Header</h2>';
+  if(type==="outline") return '<h2>Lesson Outline</h2><ul><li>Warm-up</li><li>Main lesson</li><li>Practice</li><li>Review</li></ul>';
+  if(type==="title") return '<h1>Lesson Title</h1><p>Add a short description of the test section here.</p>';
+  if(type==="objectives") return '<h2>Objectives</h2><p><strong>By the end of this placement test, the learner should:</strong></p><ul><li>Show listening ability</li><li>Show reading ability</li><li>Show writing ability</li><li>Show speaking ability</li></ul>';
+  if(type==="text") return '<p>Write test content here...</p>';
+  if(type==="image"){ document.getElementById("imageInput").click(); return ""; }
+  if(type==="audio"){ document.getElementById("audioInput").click(); return ""; }
+  if(type==="video"){ document.getElementById("videoInput").click(); return ""; }
+  return '<p>Write content here...</p>';
 }
 
+function fileToDataUrl(file, cb){
+  const reader = new FileReader();
+  reader.onload = () => cb(reader.result);
+  reader.readAsDataURL(file);
+}
+
+document.getElementById("imageInput").addEventListener("change", function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  fileToDataUrl(file, src => addCard('<img src="'+src+'" alt="Placement image" style="max-width:100%;border-radius:16px;display:block;">'));
+  e.target.value="";
+});
+
+document.getElementById("audioInput").addEventListener("change", function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  fileToDataUrl(file, src => addCard('<audio src="'+src+'" controls style="width:100%;"></audio>'));
+  e.target.value="";
+});
+
+document.getElementById("videoInput").addEventListener("change", function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  fileToDataUrl(file, src => addCard('<video src="'+src+'" controls style="max-width:100%;border-radius:16px;display:block;"></video>'));
+  e.target.value="";
+});
 document.querySelectorAll(".block-btn").forEach(btn=>{
-  btn.onclick=()=>addCard(template(btn.dataset.block));
+  btn.onclick=()=>{
+  const html = template(btn.dataset.block);
+  if(html) addCard(html);
+};
 });
 
 function apply(prop,value){
@@ -287,3 +325,4 @@ load();
 </script>
 </body>
 </html>
+
