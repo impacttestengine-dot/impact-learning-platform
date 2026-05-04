@@ -94,6 +94,26 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
   text-transform:uppercase;
   font-size:.72rem;
 }
+.insert-gap-below{
+  position:absolute;
+  right:52px;
+  top:14px;
+  height:30px;
+  padding:0 10px;
+  border-radius:999px;
+  font-size:.68rem;
+  font-weight:900;
+  border:1px solid rgba(232,216,166,.28);
+  background:rgba(232,216,166,.12);
+  color:#fff;
+  cursor:pointer;
+}
+.insert-gap-below:hover{
+  background:rgba(232,216,166,.20);
+}
+.gap-card .insert-gap-below{
+  display:none;
+}
 </style>
 </head>
 
@@ -232,10 +252,32 @@ function targetCards(){
 
 function pushUndo(){undoStack.push(canvas.innerHTML);if(undoStack.length>40)undoStack.shift();}
 
+function insertGapAfterCard(card){
+  pushUndo();
+
+  const gap=document.createElement("article");
+  gap.className="lesson-card gap-card";
+  gap.contentEditable="false";
+  gap.innerHTML='<button class="delete-card" contenteditable="false" type="button">×</button><div style="height:70px;"></div>';
+
+  card.insertAdjacentElement("afterend", gap);
+  bindCard(gap);
+  autosave();
+}
+
 function bindCard(card){
   card.addEventListener("click",e=>{e.stopPropagation();selectCard(card);});
   card.addEventListener("focus",()=>selectCard(card));
   card.addEventListener("input",autosave);
+  const gapBtn=card.querySelector(".insert-gap-below");
+  if(gapBtn){
+    gapBtn.onclick=(e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      insertGapAfterCard(card);
+    };
+  }
+
   const del=card.querySelector(".delete-card");
   if(del){
     del.onclick=(e)=>{
@@ -440,5 +482,6 @@ load();
 </script>
 </body>
 </html>
+
 
 
