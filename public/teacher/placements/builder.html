@@ -480,8 +480,108 @@ canvas.innerHTML=d.content || '<div class="empty-state">Add placement test block
 }
 load();
 </script>
+<script id="PLACEMENT_SETTINGS_BUTTONS_FINAL_FIX">
+document.addEventListener("DOMContentLoaded", function(){
+  const canvas = document.getElementById("canvas");
+  const titleInput = document.getElementById("testTitle");
+  const saveBtn = document.getElementById("saveBtn");
+  const newBtn = document.getElementById("newBtn");
+  const viewBtn = document.getElementById("viewBtn");
+  const saveTick = document.getElementById("saveTick");
+
+  let currentPlacementId =
+    new URLSearchParams(location.search).get("edit") ||
+    sessionStorage.getItem("currentPlacementTestId") ||
+    "";
+
+  function showTick(){
+    if(!saveTick) return;
+    saveTick.classList.add("show");
+    setTimeout(() => saveTick.classList.remove("show"), 1400);
+  }
+
+  async function savePlacementTest(){
+    if(!canvas || !titleInput) return "";
+
+    const payload = {
+      title: titleInput.value.trim() || "Untitled Placement Test",
+      content: canvas.innerHTML || "",
+      updatedAt: new Date().toISOString()
+    };
+
+    if(!window.firebase || !firebase.firestore){
+      const all = JSON.parse(localStorage.getItem("placementTests") || "[]");
+      const id = currentPlacementId || ("PT-" + Date.now());
+      payload.id = id;
+
+      const index = all.findIndex(item => item.id === id);
+      if(index >= 0) all[index] = payload;
+      else all.push(payload);
+
+      localStorage.setItem("placementTests", JSON.stringify(all));
+      currentPlacementId = id;
+      sessionStorage.setItem("currentPlacementTestId", id);
+      showTick();
+      return id;
+    }
+
+    const db = firebase.firestore();
+
+    if(currentPlacementId){
+      await db.collection("placementTests").doc(currentPlacementId).set(payload, { merge:true });
+    }else{
+      const ref = await db.collection("placementTests").add(payload);
+      currentPlacementId = ref.id;
+      sessionStorage.setItem("currentPlacementTestId", currentPlacementId);
+      history.replaceState(null, "", "/teacher/placements/builder.html?edit=" + currentPlacementId);
+    }
+
+    showTick();
+    return currentPlacementId;
+  }
+
+  if(saveBtn){
+    saveBtn.onclick = async function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      await savePlacementTest();
+    };
+  }
+
+  if(newBtn){
+    newBtn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+
+      currentPlacementId = "";
+      sessionStorage.removeItem("currentPlacementTestId");
+
+      if(titleInput) titleInput.value = "";
+
+      if(canvas){
+        canvas.innerHTML = '<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+      }
+
+      history.replaceState(null, "", "/teacher/placements/builder.html");
+    };
+  }
+
+  if(viewBtn){
+    viewBtn.onclick = async function(e){
+      e.preventDefault();
+      e.stopPropagation();
+
+      const id = await savePlacementTest();
+      if(id){
+        window.location.href = "/teacher/placements/view-test.html?id=" + encodeURIComponent(id);
+      }
+    };
+  }
+});
+</script>
 </body>
 </html>
+
 
 
 
