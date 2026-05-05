@@ -56,11 +56,11 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
 .media-resizer{display:block;width:70%;max-width:100%;min-width:120px;min-height:110px;resize:both;overflow:auto;padding:10px;border-radius:18px;border:1px dashed rgba(232,216,166,.5);background:rgba(255,255,255,.035)}
 .media-resizer img,.media-resizer video{width:100%!important;height:100%!important;min-height:90px;object-fit:contain!important;display:block!important;border-radius:14px}
 
-.settings-panel{display:grid;gap:16px}
+.settings-panel{display:grid;gap:16px;z-index:9999;position:sticky;top:110px;pointer-events:auto!important}
 .settings-label{display:block;margin-bottom:8px;font-size:.82rem;font-weight:900;color:rgba(255,255,255,.78)}
 .settings-panel input{width:100%;min-height:50px}
 .settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
-.control-btn{min-height:48px;pointer-events:auto!important}
+.control-btn{min-height:48px;pointer-events:auto!important;position:relative;z-index:10000}
 .save-tick{display:block;height:26px;margin-top:4px;text-align:center;color:#d9f99d;font-weight:900;font-size:1.3rem;opacity:0;transform:scale(.8);transition:.18s ease}
 .save-tick.show{opacity:1;transform:scale(1)}
 
@@ -426,29 +426,32 @@ document.addEventListener("DOMContentLoaded", function(){
     saveTimer=setTimeout(save,900);
   }
 
-  saveBtn.onclick=async function(e){
-    e.preventDefault();
-    e.stopPropagation();
-    await save();
-  };
+  saveBtn.addEventListener("click", async function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  const id = await save();
+  return false;
+}, true);
 
-  newBtn.onclick=function(e){
-    e.preventDefault();
-    e.stopPropagation();
+newBtn.addEventListener("click", function(e){
+  e.preventDefault();
+  e.stopPropagation();
 
-    currentId="";
-    titleInput.value="";
-    canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
-    history.replaceState(null,"","/teacher/placements/builder.html");
-  };
+  currentId="";
+  titleInput.value="";
+  canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+  history.replaceState(null,"","/teacher/placements/builder.html");
+  return false;
+}, true);
 
-  viewBtn.onclick=async function(e){
-    e.preventDefault();
-    e.stopPropagation();
+viewBtn.addEventListener("click", async function(e){
+  e.preventDefault();
+  e.stopPropagation();
 
-    const id=await save();
-    if(id) window.location.href="/teacher/placements/view-test.html?id="+encodeURIComponent(id);
-  };
+  const id=await save();
+  if(id) window.open("/teacher/placements/view-test.html?id="+encodeURIComponent(id), "_blank");
+  return false;
+}, true);
 
   async function load(){
     if(!currentId)return;
@@ -465,5 +468,72 @@ document.addEventListener("DOMContentLoaded", function(){
   load();
 });
 </script>
+<script id="PLACEMENT_BUTTONS_HARD_OVERRIDE">
+document.addEventListener("DOMContentLoaded", function(){
+  const saveBtn = document.getElementById("saveBtn");
+  const newBtn = document.getElementById("newBtn");
+  const viewBtn = document.getElementById("viewBtn");
+  const canvas = document.getElementById("canvas");
+  const titleInput = document.getElementById("testTitle");
+  const saveTick = document.getElementById("saveTick");
+
+  let currentId = new URLSearchParams(location.search).get("edit") || "";
+
+  function showTick(){
+    if(!saveTick) return;
+    saveTick.classList.add("show");
+    setTimeout(()=>saveTick.classList.remove("show"),1400);
+  }
+
+  async function hardSave(){
+    const db = firebase.firestore();
+    const payload = {
+      title: titleInput.value.trim() || "Untitled Placement Test",
+      content: canvas.innerHTML,
+      updatedAt: new Date().toISOString()
+    };
+
+    if(currentId){
+      await db.collection("placementTests").doc(currentId).set(payload,{merge:true});
+    }else{
+      const ref = await db.collection("placementTests").add(payload);
+      currentId = ref.id;
+      history.replaceState(null,"","/teacher/placements/builder.html?edit="+currentId);
+    }
+
+    showTick();
+    return currentId;
+  }
+
+  saveBtn.onclick = null;
+  newBtn.onclick = null;
+  viewBtn.onclick = null;
+
+  saveBtn.addEventListener("click", async function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    await hardSave();
+  }, true);
+
+  newBtn.addEventListener("click", function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    currentId = "";
+    titleInput.value = "";
+    canvas.innerHTML = '<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+    history.replaceState(null,"","/teacher/placements/builder.html");
+  }, true);
+
+  viewBtn.addEventListener("click", async function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const id = await hardSave();
+    if(id){
+      window.open("/teacher/placements/view-test.html?id=" + encodeURIComponent(id), "_blank");
+    }
+  }, true);
+});
+</script>
 </body>
 </html>
+
