@@ -11,41 +11,37 @@
 
 <style>
 .document-wrap{
-  width:min(980px,92vw);
+  width:min(900px,92vw);
   margin:0 auto;
-  padding:44px;
+  padding:56px;
   border-radius:34px;
-  background:rgba(255,255,255,.075);
-  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.10);
   backdrop-filter:blur(22px);
   box-shadow:0 26px 80px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08);
 }
 
 .document-wrap .lesson-card{
-  position:relative;
-  display:block;
-  margin-bottom:16px;
-  padding:20px;
-  border-radius:24px;
-  background:rgba(255,255,255,.09);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 18px 44px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.10);
-  color:inherit;
+  display:block!important;
+  width:100%!important;
+  margin:0 0 18px!important;
+  padding:0!important;
+  border:none!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
 }
 
-.document-wrap .delete-card{
+.document-wrap .delete-card,
+.document-wrap .gap-card::after{
   display:none!important;
 }
 
 .document-wrap .gap-card{
+  height:70px!important;
+  min-height:70px!important;
   background:transparent!important;
   border:none!important;
-  box-shadow:none!important;
-}
-
-.document-wrap .gap-card::after{
-  display:none!important;
-  content:""!important;
 }
 
 .document-wrap h1,
@@ -53,44 +49,44 @@
 .document-wrap h3{
   font-family:"Sorts Mill Goudy",Georgia,serif;
   font-weight:400;
-  margin:10px 0;
+  margin:18px 0 12px;
 }
+
+.document-wrap h1{
+  font-size:3.2rem;
+  text-align:center;
+}
+
+.document-wrap h2{font-size:2rem}
 
 .document-wrap p,
 .document-wrap li{
-  line-height:inherit;
+  line-height:1.75;
 }
 
 .document-wrap ul{
   margin:10px 0 18px 28px;
 }
 
+.document-wrap .media-resizer{
+  border:none!important;
+  background:transparent!important;
+  padding:0!important;
+  resize:none!important;
+  overflow:visible!important;
+}
+
 .document-wrap img,
 .document-wrap video{
+  max-width:100%;
   border-radius:18px;
   display:block;
+  margin:18px auto;
 }
 
 .document-wrap audio{
   width:100%;
   margin:18px 0;
-}
-
-.document-wrap .media-resizer{
-  display:block;
-  max-width:100%;
-  overflow:hidden;
-  padding:10px;
-  border-radius:18px;
-  border:1px dashed rgba(232,216,166,.25);
-  background:rgba(255,255,255,.025);
-}
-
-.document-wrap .media-resizer img,
-.document-wrap .media-resizer video{
-  width:100%!important;
-  height:100%!important;
-  object-fit:contain!important;
 }
 </style>
 </head>
@@ -155,7 +151,9 @@ async function load(){
     docBox.innerHTML=test.content;
     docBox.querySelectorAll("[contenteditable]").forEach(el=>el.removeAttribute("contenteditable"));
     docBox.querySelectorAll(".delete-card").forEach(btn=>btn.remove());
-    docBox.querySelectorAll(".lesson-card").forEach(card=>{
+    docBox.querySelectorAll("[contenteditable]").forEach(el=>el.removeAttribute("contenteditable"));
+docBox.querySelectorAll(".delete-card").forEach(btn=>btn.remove());
+docBox.querySelectorAll(".lesson-card").forEach(card=>{
   card.classList.remove("active");
   card.removeAttribute("draggable");
 });
@@ -168,5 +166,6 @@ load();
 </script>
 </body>
 </html>
+
 
 
