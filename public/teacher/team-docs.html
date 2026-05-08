@@ -355,3 +355,56 @@ loadDocs();
   font-weight:800 !important;
 }
 </style>
+<style>
+.doc-row{
+  padding:18px 22px !important;
+}
+
+.doc-row h3{
+  font-size:1.02rem !important;
+  font-weight:900 !important;
+  line-height:1.35 !important;
+  margin-bottom:10px !important;
+  letter-spacing:-.01em !important;
+}
+
+.meta{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  align-items:center !important;
+  gap:8px !important;
+  color:rgba(255,255,255,.58) !important;
+  font-size:.72rem !important;
+  font-weight:800 !important;
+  letter-spacing:.02em !important;
+  line-height:1.45 !important;
+  margin-bottom:4px !important;
+}
+
+.meta:last-child{
+  margin-bottom:0 !important;
+}
+
+.meta::before{
+  content:"•";
+  opacity:.35;
+  margin-right:2px;
+}
+
+.meta:first-of-type::before{
+  display:none;
+}
+
+.row-actions{
+  gap:10px !important;
+}
+
+.row-actions a,
+.row-actions button{
+  min-width:88px !important;
+  padding:11px 14px !important;
+  font-size:.74rem !important;
+  border-radius:15px !important;
+  background:rgba(255,255,255,.08) !important;
+}
+</style>
