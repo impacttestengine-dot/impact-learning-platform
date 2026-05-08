@@ -1,0 +1,292 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Team Docs | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+
+.nav{position:fixed;top:24px;left:28px;z-index:999;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);box-shadow:0 18px 48px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.10)}
+.nav svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+
+.page{position:relative;z-index:2;width:min(1120px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:34px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.62);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1}
+.hero p{margin-top:12px;color:rgba(255,255,255,.68);font-weight:700}
+
+.grid{display:grid;grid-template-columns:360px minmax(0,1fr);gap:22px;align-items:start}
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(22px);box-shadow:0 26px 80px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08)}
+.upload-panel{padding:24px;position:sticky;top:110px}
+.upload-panel h2,.docs-panel h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2rem;font-weight:400;margin-bottom:14px}
+.upload-box{border:1px dashed rgba(232,216,166,.38);border-radius:26px;padding:24px;text-align:center;background:rgba(255,255,255,.055);cursor:pointer;transition:.18s ease}
+.upload-box:hover{background:rgba(255,255,255,.09);transform:translateY(-2px)}
+.upload-box strong{display:block;font-size:1rem;margin-bottom:8px}
+.upload-box span{display:block;color:rgba(255,255,255,.62);font-size:.82rem;font-weight:700;line-height:1.5}
+.hidden{display:none}
+
+.docs-panel{padding:24px}
+.search-row{display:grid;grid-template-columns:1fr auto;gap:12px;margin-bottom:18px}
+.search-row input,.search-row button,.upload-btn{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.10);color:#fff;border-radius:16px;padding:13px 14px;font-family:Inter,system-ui,sans-serif;font-weight:900}
+.search-row input{width:100%;font-weight:700}
+.search-row button,.upload-btn{cursor:pointer}
+.search-row button:hover,.upload-btn:hover{background:rgba(255,255,255,.17)}
+
+.status{margin-top:16px;color:rgba(255,255,255,.7);font-size:.82rem;font-weight:800;line-height:1.5}
+.list{display:grid;gap:12px}
+.doc-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:16px;border-radius:22px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09)}
+.doc-row h3{font-size:1rem;margin-bottom:6px}
+.meta{color:rgba(255,255,255,.62);font-size:.78rem;font-weight:700;line-height:1.55}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.row-actions a,.row-actions button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:#fff;text-decoration:none;border-radius:14px;padding:10px 12px;font-weight:900;font-size:.78rem;cursor:pointer}
+.empty{text-align:center;padding:38px;color:rgba(255,255,255,.62);font-weight:900}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .upload-panel{position:relative;top:auto}
+}
+</style>
+</head>
+
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="nav">
+  <a href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+  <a href="javascript:history.back()" title="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+  </a>
+</nav>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Personnel Workspace</p>
+    <h1>Team Docs</h1>
+    <p>Upload, store, search, and open shared team documents.</p>
+  </section>
+
+  <section class="grid">
+    <aside class="panel upload-panel">
+      <h2>Upload Document</h2>
+      <label class="upload-box" for="docInput">
+        <strong>Choose a document</strong>
+        <span>PDF, Word, PowerPoint, Excel, image, audio, video, or any team file.</span>
+      </label>
+      <input id="docInput" class="hidden" type="file">
+      <p class="status" id="uploadStatus">Uploaded by: <span id="uploaderName">User</span></p>
+    </aside>
+
+    <section class="panel docs-panel">
+      <h2>Documents</h2>
+
+      <div class="search-row">
+        <input id="searchInput" type="search" placeholder="Search by title, uploader, date, or file type...">
+        <button id="searchBtn" type="button">Search</button>
+      </div>
+
+      <div class="list" id="docList">
+        <div class="empty">Loading documents...</div>
+      </div>
+    </section>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+
+<script>
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+const docInput = document.getElementById("docInput");
+const docList = document.getElementById("docList");
+const searchInput = document.getElementById("searchInput");
+const uploadStatus = document.getElementById("uploadStatus");
+const uploaderNameEl = document.getElementById("uploaderName");
+
+const uploader =
+  sessionStorage.getItem("impactAccessName") ||
+  sessionStorage.getItem("impactPersonnelName") ||
+  sessionStorage.getItem("impactUserName") ||
+  "User";
+
+uploaderNameEl.textContent = uploader;
+
+let allDocs = [];
+
+function safeText(value){
+  return String(value || "").replace(/[<>&"]/g, ch => ({
+    "<":"&lt;",
+    ">":"&gt;",
+    "&":"&amp;",
+    '"':"&quot;"
+  }[ch]));
+}
+
+function formatBytes(bytes){
+  if(!bytes) return "Unknown size";
+  const units = ["B","KB","MB","GB"];
+  let size = bytes;
+  let index = 0;
+  while(size >= 1024 && index < units.length - 1){
+    size = size / 1024;
+    index++;
+  }
+  return size.toFixed(index === 0 ? 0 : 1) + " " + units[index];
+}
+
+async function loadDocs(){
+  docList.innerHTML = '<div class="empty">Loading documents...</div>';
+
+  const snap = await db.collection("teamDocs").orderBy("uploadedAt","desc").get();
+  allDocs = [];
+
+  snap.forEach(doc => {
+    allDocs.push({ id: doc.id, ...doc.data() });
+  });
+
+  renderDocs(allDocs);
+}
+
+function renderDocs(items){
+  if(!items.length){
+    docList.innerHTML = '<div class="empty">No team documents found.</div>';
+    return;
+  }
+
+  docList.innerHTML = "";
+
+  items.forEach(item => {
+    const row = document.createElement("article");
+    row.className = "doc-row";
+
+    row.innerHTML = `
+      <div>
+        <h3>${safeText(item.name || "Untitled Document")}</h3>
+        <div class="meta">Uploaded by ${safeText(item.uploadedBy || "User")}</div>
+        <div class="meta">${safeText(item.uploadedAtText || "")} • ${safeText(item.type || "file")} • ${safeText(formatBytes(item.size))}</div>
+      </div>
+      <div class="row-actions">
+        <a href="${item.url}" target="_blank" rel="noopener">Open</a>
+        <button type="button" data-delete="${item.id}">Delete</button>
+      </div>
+    `;
+
+    row.querySelector("[data-delete]").onclick = async () => {
+      await deleteDocItem(item);
+    };
+
+    docList.appendChild(row);
+  });
+}
+
+async function deleteDocItem(item){
+  try{
+    if(window.ImpactRecycleBin){
+      await window.ImpactRecycleBin.send({
+        type: "team-doc",
+        title: item.name || "Team document",
+        collection: "teamDocs",
+        documentId: item.id,
+        storagePath: item.storagePath || "",
+        fileName: item.name || "",
+        data: item
+      });
+    }
+
+    await db.collection("teamDocs").doc(item.id).delete();
+
+    if(item.storagePath){
+      try{
+        await storage.ref(item.storagePath).delete();
+      }catch(e){
+        console.warn("Storage delete skipped:", e);
+      }
+    }
+
+    await loadDocs();
+  }catch(err){
+    console.error(err);
+    alert("Could not delete this document.");
+  }
+}
+
+docInput.onchange = async e => {
+  const file = e.target.files[0];
+  if(!file) return;
+
+  try{
+    uploadStatus.textContent = "Uploading " + file.name + "...";
+
+    const stamp = Date.now();
+    const cleanName = file.name.replace(/[^\w.\-() ]+/g, "_");
+    const path = "team-docs/" + stamp + "-" + cleanName;
+
+    const ref = storage.ref(path);
+    await ref.put(file);
+    const url = await ref.getDownloadURL();
+
+    const now = new Date();
+
+    await db.collection("teamDocs").add({
+      name: file.name,
+      type: file.type || "file",
+      size: file.size || 0,
+      url,
+      storagePath: path,
+      uploadedBy: uploader,
+      uploadedAt: now.toISOString(),
+      uploadedAtText: now.toLocaleString()
+    });
+
+    uploadStatus.textContent = "Uploaded successfully ✓";
+    docInput.value = "";
+    await loadDocs();
+  }catch(err){
+    console.error(err);
+    uploadStatus.textContent = "Upload failed. Please try again.";
+  }
+};
+
+function runSearch(){
+  const q = searchInput.value.trim().toLowerCase();
+
+  if(!q){
+    renderDocs(allDocs);
+    return;
+  }
+
+  const filtered = allDocs.filter(item => {
+    const text = [
+      item.name,
+      item.uploadedBy,
+      item.uploadedAtText,
+      item.type,
+      item.storagePath
+    ].join(" ").toLowerCase();
+
+    return text.includes(q);
+  });
+
+  renderDocs(filtered);
+}
+
+document.getElementById("searchBtn").onclick = runSearch;
+searchInput.oninput = runSearch;
+
+loadDocs();
+</script>
+</body>
+</html>
