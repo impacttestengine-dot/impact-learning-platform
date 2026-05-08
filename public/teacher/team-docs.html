@@ -248,7 +248,10 @@ docInput.onchange = async e => {
       storagePath: path,
       uploadedBy: uploader,
       uploadedAt: now.toISOString(),
-      uploadedAtText: now.toLocaleString()
+      uploadedAtText: now.toLocaleString(),
+      uploadDate: now.toLocaleDateString(),
+      uploadTime: now.toLocaleTimeString(),
+      extension: (file.name.split(".").pop() || "file").toLowerCase()
     });
 
     uploadStatus.textContent = "Uploaded successfully ✓";
@@ -408,3 +411,4 @@ loadDocs();
   background:rgba(255,255,255,.08) !important;
 }
 </style>
+
