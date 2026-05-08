@@ -5,47 +5,63 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Recycle Bin | Impact</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
-<link rel="stylesheet" href="/css/impact-page-nav.css">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif}
-.page{position:relative;z-index:2;width:min(1120px,92vw);margin:0 auto;padding:118px 0 80px}
-.hero{text-align:center;margin-bottom:34px}
+.nav{position:fixed;top:24px;left:28px;z-index:99;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px)}
+.page{position:relative;z-index:2;width:min(1100px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:32px}
 .eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.62);margin-bottom:12px}
-h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1}
-.hero p{margin-top:12px;color:rgba(255,255,255,.68);font-weight:700}
-.shell{border-radius:34px;padding:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(24px);box-shadow:0 28px 90px rgba(0,0,0,.36)}
-.bin-row{display:grid;grid-template-columns:1fr .8fr .8fr auto;gap:12px;align-items:center;padding:14px;border-bottom:1px solid rgba(255,255,255,.09)}
-.bin-title{font-weight:700;color:rgba(255,255,255,.9)}
-.meta{font-size:.8rem;color:rgba(255,255,255,.62);font-weight:600}
-.empty{text-align:center;padding:32px;color:rgba(255,255,255,.6);font-weight:700}
-.btn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;border-radius:14px;padding:10px 13px;font-weight:800;cursor:pointer}
-.btn.danger{border-color:rgba(255,120,120,.3);background:rgba(255,80,80,.13)}
-.status{text-align:center;margin-top:14px;color:rgba(255,255,255,.62);font-weight:700}
-@media(max-width:760px){.bin-row{grid-template-columns:1fr}.page{padding-top:106px}}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3.2rem,6vw,5.4rem);font-weight:400;line-height:1}
+.hero p{margin-top:12px;color:rgba(255,255,255,.68);font-weight:800}
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(22px);box-shadow:0 26px 80px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08);padding:22px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+button{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.10);color:#fff;border-radius:16px;padding:12px 14px;font-weight:900;cursor:pointer}
+button:hover{background:rgba(255,255,255,.17)}
+.danger{background:rgba(255,80,80,.16);border-color:rgba(255,120,120,.34)}
+.list{display:grid;gap:12px}
+.item{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:16px;border-radius:22px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09)}
+.item h3{font-size:1rem;margin-bottom:5px}
+.meta{color:rgba(255,255,255,.62);font-size:.8rem;font-weight:700;line-height:1.5}
+.empty{text-align:center;padding:38px;color:rgba(255,255,255,.62);font-weight:900}
+input[type="checkbox"]{width:20px;height:20px}
+@media(max-width:700px){.item{grid-template-columns:auto 1fr}.item .row-actions{grid-column:1/-1}}
 </style>
-<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
 </head>
 
 <body>
 <script src="/js/impact-global-bg.js"></script>
-<script src="/js/impact-page-nav.js"></script>
+
+<nav class="nav">
+  <a href="/teacher/dashboard.html" title="Dashboard">⌘</a>
+  <a href="javascript:history.back()" title="Back">←</a>
+</nav>
 
 <main class="page">
   <section class="hero">
     <p class="eyebrow">Personnel Workspace</p>
     <h1>Recycle Bin</h1>
-    <p>Deleted personnel-side items appear here for record keeping.</p>
+    <p>Deleted files, videos, audio, and records appear here with dates and timestamps.</p>
   </section>
 
-  <section class="shell" id="binList">
-    <div class="empty">Loading recycle bin...</div>
-  </section>
+  <section class="panel">
+    <div class="toolbar">
+      <label><input type="checkbox" id="selectAll"> Select all</label>
+      <div class="actions">
+        <button id="deleteSelected" class="danger">Delete Selected Permanently</button>
+        <button id="refreshBtn">Refresh</button>
+      </div>
+    </div>
 
-  <p class="status" id="status"></p>
+    <div class="list" id="binList">
+      <div class="empty">Loading recycle bin...</div>
+    </div>
+  </section>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -55,54 +71,85 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
 <script>
 const db = firebase.firestore();
 const list = document.getElementById("binList");
-const statusEl = document.getElementById("status");
+const selected = new Set();
 
-async function loadBin(){
-  list.innerHTML = "";
-  statusEl.textContent = "Loading Firestore...";
-
-  try{
-    const snap = await db.collection("personnelRecycleBin").orderBy("deletedAt","desc").limit(100).get();
-
-    if(snap.empty){
-      list.innerHTML = `<div class="empty">Recycle bin is empty.</div>`;
-      statusEl.textContent = "";
-      return;
-    }
-
-    snap.forEach(doc=>{
-      const item = doc.data();
-      const row = document.createElement("div");
-      row.className = "bin-row";
-      row.innerHTML = `
-        <div>
-          <div class="bin-title">${item.title || "Deleted item"}</div>
-          <div class="meta">${item.type || "item"} • ${item.itemId || ""}</div>
-        </div>
-        <div class="meta">Deleted by: ${item.deletedBy || "Unknown"}</div>
-        <div class="meta">${item.deletedAt ? new Date(item.deletedAt).toLocaleString() : ""}</div>
-        <button class="btn danger">Remove Record</button>
-      `;
-
-      row.querySelector("button").onclick = async()=>{
-        await db.collection("personnelRecycleBin").doc(doc.id).delete();
-        await loadBin();
-      };
-
-      list.appendChild(row);
-    });
-
-    statusEl.textContent = "Saved in Firestore";
-  }catch(e){
-    console.error(e);
-    list.innerHTML = `<div class="empty">Could not load recycle bin.</div>`;
-    statusEl.textContent = "Firestore not reachable.";
-  }
+function label(item){
+  return item.title || item.fileName || item.documentId || item.storagePath || "Deleted item";
 }
 
+function meta(item){
+  const parts = [];
+  if(item.type) parts.push(item.type);
+  if(item.collection) parts.push("Collection: " + item.collection);
+  if(item.storagePath) parts.push("Path: " + item.storagePath);
+  if(item.sourceUrl) parts.push("Deleted from: " + item.sourceUrl);
+  return parts.join(" • ");
+}
+
+async function loadBin(){
+  selected.clear();
+  document.getElementById("selectAll").checked = false;
+  list.innerHTML = '<div class="empty">Loading recycle bin...</div>';
+
+  const snap = await db.collection("recycleBin").orderBy("deletedAt","desc").get();
+
+  if(snap.empty){
+    list.innerHTML = '<div class="empty">Recycle bin is empty.</div>';
+    return;
+  }
+
+  list.innerHTML = "";
+
+  snap.forEach(doc=>{
+    const item = doc.data();
+    const row = document.createElement("article");
+    row.className = "item";
+    row.innerHTML = `
+      <input type="checkbox" data-id="${doc.id}">
+      <div>
+        <h3>${label(item)}</h3>
+        <div class="meta">${item.deletedAtText || item.deletedAt || ""}</div>
+        <div class="meta">${meta(item)}</div>
+      </div>
+      <div class="row-actions">
+        <button class="danger" data-delete="${doc.id}">Delete Permanently</button>
+      </div>
+    `;
+
+    row.querySelector("input").onchange = e=>{
+      if(e.target.checked) selected.add(doc.id);
+      else selected.delete(doc.id);
+    };
+
+    row.querySelector("[data-delete]").onclick = async ()=>{
+      await db.collection("recycleBin").doc(doc.id).delete();
+      loadBin();
+    };
+
+    list.appendChild(row);
+  });
+}
+
+document.getElementById("selectAll").onchange = e=>{
+  selected.clear();
+  document.querySelectorAll('#binList input[type="checkbox"]').forEach(cb=>{
+    cb.checked = e.target.checked;
+    if(cb.checked) selected.add(cb.dataset.id);
+  });
+};
+
+document.getElementById("deleteSelected").onclick = async ()=>{
+  if(!selected.size) return;
+  const batch = db.batch();
+  selected.forEach(id=>batch.delete(db.collection("recycleBin").doc(id)));
+  await batch.commit();
+  loadBin();
+};
+
+document.getElementById("refreshBtn").onclick = loadBin;
 loadBin();
 </script>
-<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-recycle-bin.js"></script>
 </body>
 </html>
 
