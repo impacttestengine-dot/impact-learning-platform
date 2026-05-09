@@ -291,6 +291,32 @@ textarea::placeholder{
 @media(max-width:700px){
   .form-grid{grid-template-columns:1fr}
 }
+.class-actions button,
+.class-actions a,
+.save-btn,
+button{
+  transition:transform .15s ease, background .18s ease, box-shadow .18s ease, opacity .15s ease !important;
+}
+
+.class-actions button:hover,
+.class-actions a:hover,
+.save-btn:hover,
+button:hover{
+  transform:translateY(-2px) scale(1.03) !important;
+  background:rgba(255,255,255,.18) !important;
+  box-shadow:0 14px 34px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.16) !important;
+  cursor:pointer !important;
+}
+
+.class-actions button:active,
+.class-actions a:active,
+.save-btn:active,
+button:active{
+  transform:scale(.94) !important;
+  opacity:.82 !important;
+}
+
+/* classes-button-reaction-fix */
 </style>
 </head>
 
@@ -762,7 +788,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 
+<script id="classes-open-meet-direct-fix">
+document.addEventListener("click", async function(e){
+  const btn = e.target.closest(".open-meet-btn");
+  if(!btn) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const url = btn.dataset.meetUrl;
+
+  if(!url || url === "#"){
+    alert("No Google Meet link found for this class.");
+    return;
+  }
+
+  btn.textContent = "Opening...";
+  btn.disabled = true;
+
+  const win = window.open(url, "_blank");
+
+  setTimeout(function(){
+    btn.disabled = false;
+    btn.textContent = "Open Meet";
+  }, 1200);
+
+  if(!win){
+    alert("Popup blocked. Please allow popups for this site.");
+  }
+}, true);
+</script>
 </body>
 </html>
+
 
 
