@@ -863,18 +863,55 @@ async function finishClassTrackerLog(item, session, reason="", remark=""){
     }, { merge:true });
 }
 
-function showEarlyEndPrompt(callback){
+function showEarlyEndPrompt(card, callback){
 
-  const reason = prompt(
-    "Class ended before 40 minutes.\n\nReason?"
-  );
+  if(!card) return;
 
-  if(reason === null){
-    callback("", "");
-    return;
-  }
+  const oldBox = card.querySelector(".early-end-inline-box");
+  if(oldBox) oldBox.remove();
 
-  callback(reason, "");
+  const box = document.createElement("div");
+  box.className = "early-end-inline-box";
+
+  box.innerHTML = `
+    <div class="early-end-title">Class ended before 40 minutes.</div>
+
+    <label class="early-end-label">Reason</label>
+
+    <select class="early-end-select">
+      <option value="">Select reason</option>
+      <option>Learner did not join</option>
+      <option>Internet issue</option>
+      <option>Teacher emergency</option>
+      <option>Learner emergency</option>
+      <option>Class rescheduled</option>
+      <option>Other</option>
+    </select>
+
+    <textarea class="early-end-remark" placeholder="Add remark if needed..."></textarea>
+
+    <button type="button" class="early-end-save">Save Reason</button>
+  `;
+
+  card.appendChild(box);
+
+  const select = box.querySelector(".early-end-select");
+  const remark = box.querySelector(".early-end-remark");
+  const save = box.querySelector(".early-end-save");
+
+  save.onclick = async () => {
+    const reason = select.value;
+    const note = remark.value.trim();
+
+    if(!reason){
+      box.querySelector(".early-end-title").textContent = "Please select a reason.";
+      return;
+    }
+
+    await callback(reason, note);
+
+    box.innerHTML = `<div class="early-end-saved">Early-end reason saved ✓</div>`;
+  };
 }
 
 document.addEventListener("click", async function(e){
@@ -934,7 +971,7 @@ document.addEventListener("click", async function(e){
 
   if(minutesSpent < 40){
 
-    showEarlyEndPrompt(async function(reason, remark){
+    showEarlyEndPrompt(btn.closest(".class-card"), async function(reason, remark){
 
       await finishClassTrackerLog(
         item,
@@ -972,6 +1009,7 @@ document.addEventListener("click", async function(e){
 
 </body>
 </html>
+
 
 
 
