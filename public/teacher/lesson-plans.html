@@ -247,8 +247,65 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
 </script>
 <script src="/js/impact-round-icons.js?v=001"></script>
 <script src="/js/impact-recycle-bin.js"></script>
+<script id="lesson-plan-delete-fix">
+document.addEventListener("click", async function(e){
+
+  const btn = e.target.closest(".delete-btn,.delete-plan,[data-delete],[data-delete-id]");
+
+  if(!btn) return;
+
+  const txt = (btn.textContent || "").toLowerCase();
+
+  if(
+    !txt.includes("delete") &&
+    !btn.classList.contains("delete-btn") &&
+    !btn.classList.contains("delete-plan")
+  ){
+    return;
+  }
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const id =
+    btn.dataset.delete ||
+    btn.dataset.deleteId ||
+    btn.dataset.id ||
+    btn.closest("[data-id]")?.dataset?.id;
+
+  if(!id){
+    alert("Could not find lesson plan ID.");
+    return;
+  }
+
+  if(!confirm("Delete this lesson plan?")) return;
+
+  try{
+
+    if(window.firebase && firebase.firestore){
+
+      await firebase.firestore()
+        .collection("lessonPlans")
+        .doc(id)
+        .delete();
+    }
+
+    const row =
+      btn.closest(".lesson-row,.lesson-item,.template-row,.card");
+
+    if(row) row.remove();
+
+  }catch(err){
+
+    console.error(err);
+    alert("Delete failed.");
+  }
+
+}, true);
+</script>
 </body>
 </html>
+
 
 
 

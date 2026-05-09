@@ -515,8 +515,181 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 <script src="/js/impact-round-icons.js?v=001"></script>
 <script src="/js/impact-recycle-bin.js"></script>
+<script id="lesson-builder-stability-fix">
+
+(function(){
+
+let autosaveTimer = null;
+const AUTOSAVE_DELAY = 3000;
+
+function scheduleAutosave(){
+
+  clearTimeout(autosaveTimer);
+
+  autosaveTimer = setTimeout(() => {
+
+    const saveBtn =
+      document.querySelector("#saveBtn") ||
+      [...document.querySelectorAll("button")]
+      .find(btn => btn.textContent.trim().toLowerCase() === "save");
+
+    if(saveBtn){
+      saveBtn.click();
+    }
+
+  }, AUTOSAVE_DELAY);
+}
+
+document.addEventListener("input", scheduleAutosave);
+
+document.querySelectorAll("img,video").forEach(media => {
+
+  if(media.closest(".resize-wrap")) return;
+
+  const wrap = document.createElement("div");
+
+  wrap.className = "resize-wrap";
+
+  wrap.style.width = "70%";
+  wrap.style.maxWidth = "100%";
+  wrap.style.resize = "both";
+  wrap.style.overflow = "auto";
+  wrap.style.display = "inline-block";
+  wrap.style.borderRadius = "18px";
+  wrap.style.padding = "8px";
+  wrap.style.border = "1px dashed rgba(255,255,255,.18)";
+
+  media.parentNode.insertBefore(wrap, media);
+
+  wrap.appendChild(media);
+
+  media.style.width = "100%";
+  media.style.height = "auto";
+  media.style.display = "block";
+});
+
+document.querySelectorAll("button").forEach(btn => {
+
+  const txt = btn.textContent.trim().toLowerCase();
+
+  if(txt.includes("align left")){
+
+    btn.onclick = () => {
+      document.querySelectorAll(".resize-wrap").forEach(el=>{
+        el.style.marginLeft = "0";
+        el.style.marginRight = "auto";
+      });
+    };
+  }
+
+  if(txt.includes("align center")){
+
+    btn.onclick = () => {
+      document.querySelectorAll(".resize-wrap").forEach(el=>{
+        el.style.marginLeft = "auto";
+        el.style.marginRight = "auto";
+      });
+    };
+  }
+
+  if(txt.includes("align right")){
+
+    btn.onclick = () => {
+      document.querySelectorAll(".resize-wrap").forEach(el=>{
+        el.style.marginLeft = "auto";
+        el.style.marginRight = "0";
+      });
+    };
+  }
+
+});
+
+const viewBtn =
+  document.querySelector("#viewBtn") ||
+  [...document.querySelectorAll("button")]
+  .find(btn => btn.textContent.trim().toLowerCase() === "view");
+
+if(viewBtn){
+
+  viewBtn.onclick = function(e){
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const canvas =
+      document.querySelector(".lesson-canvas") ||
+      document.querySelector("#canvas");
+
+    if(!canvas){
+      alert("No lesson canvas found.");
+      return;
+    }
+
+    const cleanHTML = canvas.innerHTML;
+
+    const win = window.open("", "_blank");
+
+    win.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Lesson View</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sorts+Mill+Goudy&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+  background:#0b1020;
+  color:white;
+  font-family:Inter,sans-serif;
+  margin:0;
+}
+
+main{
+  width:min(900px,92vw);
+  margin:auto;
+  padding:60px 0 100px;
+  line-height:1.8;
+}
+
+img,video{
+  max-width:100%;
+  border-radius:18px;
+  margin:16px 0;
+}
+
+.lesson-card,
+.card,
+.block{
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  margin:0 0 20px !important;
+}
+
+</style>
+</head>
+
+<body>
+<main>
+${cleanHTML}
+</main>
 </body>
 </html>
+`);
+
+    win.document.close();
+  };
+}
+
+})();
+</script>
+</body>
+</html>
+
 
 
 

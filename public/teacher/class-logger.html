@@ -79,6 +79,10 @@ function groupByLearner(items){
     const key=item.learner || "Unnamed Learner";
     if(!groups[key]) groups[key]=[];
     groups[key].push(item);
+
+groups[key].sort((a,b)=>{
+  return new Date(a.startedAt || 0) - new Date(b.startedAt || 0);
+});
   });
   return groups;
 }
@@ -103,7 +107,7 @@ function render(items){
       row.innerHTML=`
         <div class="session-number">${sessionNumber(index)}</div>
         <div>
-          <div class="meta">Level: ${item.level || ""} · Teacher: ${item.teacher || ""} · Room: ${item.meetRoom || ""}</div>
+          <div class="meta">Level: ${item.level || ""} · Session ${sessionNumber(index)} · Teacher: ${item.teacher || ""} · Room: ${item.meetRoom || ""}</div>
           <div class="meta">Started: ${item.startedAtText || ""}</div>
           <div class="meta">Ended: ${item.endedAtText || "Not ended"}</div>
           <div class="meta">Duration: ${item.minutesSpent || 0} minute(s)</div>
@@ -150,3 +154,4 @@ load();
 </script>
 </body>
 </html>
+
