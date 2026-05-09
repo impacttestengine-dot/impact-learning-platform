@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Team Meetings | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-round-icons.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif}
+.nav{position:fixed;top:24px;left:28px;z-index:99;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px)}
+.page{position:relative;z-index:2;width:min(1120px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:34px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.62);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1}
+.grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:22px}
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(22px);box-shadow:0 26px 80px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08);padding:24px}
+.panel h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2rem;font-weight:400;margin-bottom:12px}
+label{display:grid;gap:8px;font-size:.78rem;font-weight:900;color:rgba(255,255,255,.74);margin-bottom:12px}
+input,textarea{width:100%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.10);color:#fff;border-radius:18px;padding:13px 14px;font-weight:800;outline:none}
+textarea{min-height:160px;resize:vertical}
+button{border:none;border-radius:16px;padding:12px 15px;background:rgba(255,255,255,.13);color:#fff;font-weight:900;cursor:pointer;transition:.16s ease}
+button:hover{transform:translateY(-2px) scale(1.03);background:rgba(255,255,255,.18);box-shadow:0 14px 34px rgba(0,0,0,.32)}
+button:active{transform:scale(.94);opacity:.82}
+.status{margin-top:12px;color:#d9f99d;font-weight:900;min-height:20px}
+.record{padding:16px;border-radius:20px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);margin-bottom:12px}
+.record h3{font-size:.98rem;margin-bottom:8px}
+.meta{font-size:.76rem;line-height:1.65;color:rgba(255,255,255,.65);font-weight:800}
+.empty{padding:26px;text-align:center;color:rgba(255,255,255,.62);font-weight:900}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="nav">
+  <a href="/teacher/dashboard.html" title="Dashboard">⌘</a>
+  <a href="javascript:history.back()" title="Back">←</a>
+</nav>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Personnel Workspace</p>
+    <h1>Team Meetings</h1>
+  </section>
+
+  <section class="grid">
+    <section class="panel">
+      <h2>Meeting Room</h2>
+
+      <label>Meeting Link
+        <input id="meetingLink" value="https://meet.google.com/yyf-rwvf-aiw">
+      </label>
+
+      <label>Minutes / Notes
+        <textarea id="meetingMinutes" placeholder="Paste or type meeting minutes here..."></textarea>
+      </label>
+
+      <button id="meetingBtn" type="button">Start Meeting</button>
+      <div class="status" id="meetingStatus"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Team Meeting Records</h2>
+      <div id="records"><div class="empty">Loading meeting records...</div></div>
+    </section>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+const db=firebase.firestore();
+const link=document.getElementById("meetingLink");
+const minutes=document.getElementById("meetingMinutes");
+const btn=document.getElementById("meetingBtn");
+const statusBox=document.getElementById("meetingStatus");
+const records=document.getElementById("records");
+
+let active=null;
+
+function person(){
+  return sessionStorage.getItem("impactAccessName") ||
+         sessionStorage.getItem("impactPersonnelName") ||
+         "User";
+}
+
+async function load(){
+  const snap=await db.collection("teamMeetings").orderBy("startedAt","desc").get();
+  const list=snap.docs.map(d=>({id:d.id,...d.data()}));
+
+  if(!list.length){
+    records.innerHTML='<div class="empty">No team meeting records yet.</div>';
+    return;
+  }
+
+  records.innerHTML="";
+  list.forEach(item=>{
+    const div=document.createElement("div");
+    div.className="record";
+    div.innerHTML=`
+      <h3>${item.title || "Team Meeting"}</h3>
+      <div class="meta">Started by ${item.startedBy || ""}</div>
+      <div class="meta">Started: ${item.startedAtText || ""}</div>
+      <div class="meta">Ended: ${item.endedAtText || "Still running / not ended"}</div>
+      <div class="meta">Duration: ${item.minutesSpent || 0} minute(s)</div>
+      <div class="meta">Link: ${item.meetingLink || ""}</div>
+      <div class="meta">Minutes: ${item.minutes || ""}</div>
+    `;
+    records.appendChild(div);
+  });
+}
+
+btn.onclick=async()=>{
+  if(!active){
+    const startedAt=new Date();
+    const ref=await db.collection("teamMeetings").add({
+      title:"Team Meeting",
+      meetingLink:link.value.trim(),
+      minutes:minutes.value.trim(),
+      startedBy:person(),
+      startedAt:startedAt.toISOString(),
+      startedAtText:startedAt.toLocaleString(),
+      endedAt:"",
+      endedAtText:"",
+      minutesSpent:0,
+      status:"Started"
+    });
+
+    active={id:ref.id,startedAt};
+    window.open(link.value.trim(),"_blank");
+    btn.textContent="End Meeting";
+    statusBox.textContent="Meeting started ✓";
+    await load();
+    return;
+  }
+
+  const endedAt=new Date();
+  const minutesSpent=Math.round((endedAt-active.startedAt)/60000);
+
+  await db.collection("teamMeetings").doc(active.id).set({
+    minutes:minutes.value.trim(),
+    endedAt:endedAt.toISOString(),
+    endedAtText:endedAt.toLocaleString(),
+    minutesSpent,
+    status:"Ended"
+  },{merge:true});
+
+  active=null;
+  btn.textContent="Start Meeting";
+  statusBox.textContent="Meeting ended and logged ✓";
+  await load();
+};
+
+load();
+</script>
+</body>
+</html>

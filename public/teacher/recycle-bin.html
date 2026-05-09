@@ -150,6 +150,40 @@ document.getElementById("refreshBtn").onclick = loadBin;
 loadBin();
 </script>
 <script src="/js/impact-recycle-bin.js"></script>
+<script id="recycle-permanent-delete-fix">
+document.addEventListener("DOMContentLoaded",function(){
+  if(!window.firebase || !firebase.firestore) return;
+
+  const db=firebase.firestore();
+
+  document.addEventListener("click",async function(e){
+    const btn=e.target.closest("[data-delete-permanent], .delete-permanent, .permanent-delete, button");
+    if(!btn) return;
+
+    const text=(btn.textContent||"").toLowerCase();
+    if(!btn.matches("[data-delete-permanent], .delete-permanent, .permanent-delete") && !text.includes("delete permanently")) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const id=btn.dataset.id || btn.dataset.deletePermanent || btn.closest("[data-id]")?.dataset.id;
+    if(!id){
+      alert("Could not find recycle item ID.");
+      return;
+    }
+
+    if(!confirm("Delete this item permanently?")) return;
+
+    await db.collection("recycleBin").doc(id).delete();
+
+    const row=btn.closest(".recycle-row,.bin-row,.record,.item,article,div");
+    if(row) row.remove();
+
+    alert("Deleted permanently.");
+  },true);
+});
+</script>
 </body>
 </html>
+
 
