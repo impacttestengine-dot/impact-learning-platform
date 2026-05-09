@@ -1,55 +1,116 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Class Tracker | Impact Learning Platform</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/personnel-dashboard.css">
-  <link rel="stylesheet" href="/css/personnel-system.css">
-  <link rel="stylesheet" href="/css/impact-global-bg.css?v=blur-bg-logo-clean-001">
-  <link rel="stylesheet" href="/css/impact-page-nav.css?v=nav-global-001">
-<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Class Tracker | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif}
+.nav{position:fixed;top:24px;left:28px;z-index:99;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px)}
+.page{position:relative;z-index:2;width:min(1120px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:34px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.62);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1}
+.hero p{margin-top:12px;color:rgba(255,255,255,.68);font-weight:700}
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(22px);box-shadow:0 26px 80px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08);padding:24px}
+.search{width:100%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.10);color:#fff;border-radius:18px;padding:14px 16px;font-weight:800;margin-bottom:18px}
+.list{display:grid;gap:12px}
+.log-row{padding:17px;border-radius:22px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09)}
+.log-row h3{font-size:1rem;margin-bottom:8px}
+.meta{color:rgba(255,255,255,.62);font-size:.78rem;font-weight:800;line-height:1.65}
+.badge{display:inline-block;margin-top:8px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.early{background:rgba(255,80,80,.16);color:#fecaca}
+.empty{text-align:center;padding:34px;color:rgba(255,255,255,.62);font-weight:900}
+</style>
 </head>
+
 <body>
-  <main class="personnel-page">
-    
+<script src="/js/impact-global-bg.js"></script>
 
-    <section class="personnel-hero">
-      <div class="eyebrow">personnel Workspace</div>
-      <h1>Class Tracker</h1>
-    </section>
+<nav class="nav">
+  <a href="/teacher/dashboard.html" title="Dashboard">⌘</a>
+  <a href="/teacher/classes.html" title="Back">←</a>
+</nav>
 
-    <section class="dashboard-grid">
-      <div class="dashboard-card wide-card">
-        <h2>Tracked Classes</h2>
-        <p>Completed classes, early closures, timestamps, and session records.</p>
-        <div id="loggerList" class="records-list">
-          <div class="empty-state">Loading class logs...</div>
-        </div>
-      </div>
-    </section>
-  </main>
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Teacher Workspace</p>
+    <h1>Class Tracker</h1>
+    <p>Started classes, ended classes, duration, and early-end reasons are logged here.</p>
+  </section>
 
-  <script type="module" src="/js/class-logger.js"></script>
-  <script src="/js/impact-global-bg.js?v=blur-bg-logo-clean-001"></script>
-  <script src="/js/impact-page-nav.js?v=nav-global-001"></script>
-<script src="/js/impact-task-menu-patch.js"></script><script src="/js/impact-round-icons.js?v=001"></script>
-<script src="/js/impact-recycle-bin.js"></script>
+  <section class="panel">
+    <input class="search" id="searchInput" type="search" placeholder="Search learner, teacher, level, room, reason...">
+    <div class="list" id="logList">
+      <div class="empty">Loading class tracker...</div>
+    </div>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+const db=firebase.firestore();
+const logList=document.getElementById("logList");
+const searchInput=document.getElementById("searchInput");
+let logs=[];
+
+function render(items){
+  if(!items.length){
+    logList.innerHTML='<div class="empty">No class logs yet.</div>';
+    return;
+  }
+
+  logList.innerHTML="";
+
+  items.forEach(item=>{
+    const row=document.createElement("article");
+    row.className="log-row";
+
+    row.innerHTML=`
+      <h3>${item.learner || "Unnamed learner"} — ${item.level || "No level"}</h3>
+      <div class="meta">Teacher: ${item.teacher || ""} · Room: ${item.meetRoom || ""}</div>
+      <div class="meta">Started: ${item.startedAtText || ""}</div>
+      <div class="meta">Ended: ${item.endedAtText || "Still running / not ended"}</div>
+      <div class="meta">Duration: ${item.minutesSpent || 0} minute(s)</div>
+      ${
+        item.earlyEnd
+          ? `<span class="badge early">Ended early</span>
+             <div class="meta">Reason: ${item.earlyEndReason || ""}</div>
+             <div class="meta">Remark: ${item.earlyEndRemark || ""}</div>`
+          : `<span class="badge">${item.status || "Logged"}</span>`
+      }
+    `;
+
+    logList.appendChild(row);
+  });
+}
+
+async function load(){
+  const snap=await db.collection("classTracker").orderBy("startedAt","desc").get();
+  logs=snap.docs.map(d=>({id:d.id,...d.data()}));
+  render(logs);
+}
+
+searchInput.oninput=()=>{
+  const q=searchInput.value.toLowerCase().trim();
+  if(!q){render(logs);return;}
+
+  render(logs.filter(item=>[
+    item.learner,item.teacher,item.level,item.meetRoom,item.status,
+    item.earlyEndReason,item.earlyEndRemark,item.startedAtText,item.endedAtText
+  ].join(" ").toLowerCase().includes(q)));
+};
+
+load();
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

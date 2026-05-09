@@ -570,11 +570,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         <div class="class-actions">
 
-          <a
-            href="${item.meetUrl || '#'}"
-            target="_blank">
-            Open Meet
-          </a>
+          <button type="button" data-open-meet data-class="${encodeURIComponent(JSON.stringify(item))}">Open Meet</button>
 
           <button data-edit="${item.id}">
             Edit
@@ -768,3 +764,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
