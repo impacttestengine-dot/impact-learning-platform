@@ -570,7 +570,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         <div class="class-actions">
 
-          <button type="button" data-open-meet data-class="${encodeURIComponent(JSON.stringify(item))}">Open Meet</button>
+          <button type="button" data-open-meet="${encodeURIComponent(JSON.stringify(item))}" data-class="${encodeURIComponent(JSON.stringify(item))}">Open Meet</button>
 
           <button data-edit="${item.id}">
             Edit
@@ -764,4 +764,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
 
