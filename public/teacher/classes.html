@@ -360,15 +360,51 @@ textarea::placeholder{
 
           <div class="field full">
             <label>Google Meet Room</label>
+
             <select id="meetRoom" required>
               <option value="">Select Google Meet Room</option>
-              <option value="Impact Meet Room 1" data-url="https://meet.google.com/">Impact Meet Room 1</option>
-              <option value="Impact Meet Room 2" data-url="https://meet.google.com/">Impact Meet Room 2</option>
-              <option value="Impact Meet Room 3" data-url="https://meet.google.com/">Impact Meet Room 3</option>
+
+              <option
+                value="Impact Meet Room 1"
+                data-url="https://meet.google.com/qpc-biix-whj">
+                Impact Meet Room 1
+              </option>
+
+              <option
+                value="Impact Meet Room 2"
+                data-url="https://meet.google.com/gmh-yodr-tjf">
+                Impact Meet Room 2
+              </option>
+
+              <option
+                value="Impact Meet Room 3"
+                data-url="https://meet.google.com/hxm-snci-jub">
+                Impact Meet Room 3
+              </option>
+
+              <option
+                value="Impact Meet Room 4"
+                data-url="https://meet.google.com/yya-pzhm-ses">
+                Impact Meet Room 4
+              </option>
+
+              <option
+                value="Impact Meet Room 5"
+                data-url="https://meet.google.com/cig-yfqh-xbz">
+                Impact Meet Room 5
+              </option>
+
+              <option
+                value="Impact Meet Room 6"
+                data-url="https://meet.google.com/vwe-pxhu-egh">
+                Impact Meet Room 6
+              </option>
             </select>
           </div>
 
-          <div class="room-note" id="roomNote">Select a day and time to see unavailable meet rooms.</div>
+          <div class="room-note" id="roomNote">
+            Select a day and time to see unavailable meet rooms.
+          </div>
 
           <div class="field">
             <label>Status</label>
@@ -384,7 +420,10 @@ textarea::placeholder{
             <textarea id="notes" placeholder="Optional notes"></textarea>
           </div>
 
-          <button class="save-btn" type="submit">Save Class</button>
+          <button class="save-btn" type="submit">
+            Save Class
+          </button>
+
           <div class="save-status" id="saveStatus"></div>
 
         </div>
@@ -392,21 +431,28 @@ textarea::placeholder{
     </section>
 
     <section class="panel">
+
       <div class="list-top">
         <div>
           <h2 class="panel-title">Scheduled Classes</h2>
-          <p class="panel-sub">All saved classes appear here.</p>
+          <p class="panel-sub">
+            All saved classes appear here.
+          </p>
         </div>
 
-        <div class="class-count" id="classCount">0 classes</div>
+        <div class="class-count" id="classCount">
+          0 classes
+        </div>
       </div>
 
       <div class="class-list" id="classList">
         <div class="empty">Loading classes...</div>
       </div>
+
     </section>
 
   </section>
+
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -415,6 +461,7 @@ textarea::placeholder{
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
+
   const db = firebase.firestore();
 
   const form = document.getElementById("classForm");
@@ -439,7 +486,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   let editingId = null;
 
   function cleanText(text){
-    return String(text || "").replace(/\s+— unavailable.*$/i,"").trim();
+    return String(text || "")
+      .replace(/\s+— unavailable.*$/i,"")
+      .trim();
   }
 
   function getRoomURL(){
@@ -448,9 +497,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function loadClasses(){
-    classList.innerHTML = '<div class="empty">Loading classes...</div>';
 
-    const snapshot = await db.collection("classes").orderBy("createdAt","desc").get();
+    classList.innerHTML = `
+      <div class="empty">
+        Loading classes...
+      </div>
+    `;
+
+    const snapshot = await db
+      .collection("classes")
+      .orderBy("createdAt","desc")
+      .get();
 
     allClasses = snapshot.docs.map(doc => ({
       id:doc.id,
@@ -462,41 +519,88 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function renderClasses(){
-    classCount.textContent = allClasses.length + (allClasses.length === 1 ? " class" : " classes");
+
+    classCount.textContent =
+      allClasses.length +
+      (allClasses.length === 1 ? " class" : " classes");
 
     if(!allClasses.length){
-      classList.innerHTML = '<div class="empty">No classes scheduled yet.</div>';
+
+      classList.innerHTML = `
+        <div class="empty">
+          No classes scheduled yet.
+        </div>
+      `;
+
       return;
     }
 
     classList.innerHTML = "";
 
     allClasses.forEach(item => {
+
       const card = document.createElement("div");
+
       card.className = "class-card";
 
       card.innerHTML = `
         <div>
-          <h3>${item.learner || "Unnamed Learner"} — ${item.level || "No level"}</h3>
-          <div class="class-meta">${item.day || ""} · ${item.time || ""} · ${item.duration || ""}</div>
-          <div class="class-meta">${item.teacher || ""} · ${item.meetRoom || ""} · ${item.status || ""}</div>
+          <h3>
+            ${item.learner || "Unnamed Learner"}
+            —
+            ${item.level || "No level"}
+          </h3>
+
+          <div class="class-meta">
+            ${item.day || ""}
+            ·
+            ${item.time || ""}
+            ·
+            ${item.duration || ""}
+          </div>
+
+          <div class="class-meta">
+            ${item.teacher || ""}
+            ·
+            ${item.meetRoom || ""}
+            ·
+            ${item.status || ""}
+          </div>
         </div>
 
         <div class="class-actions">
-          <a href="${item.meetUrl || '#'}" target="_blank">Open Meet</a>
-          <button data-edit="${item.id}">Edit</button>
-          <button data-delete="${item.id}">Delete</button>
+
+          <a
+            href="${item.meetUrl || '#'}"
+            target="_blank">
+            Open Meet
+          </a>
+
+          <button data-edit="${item.id}">
+            Edit
+          </button>
+
+          <button data-delete="${item.id}">
+            Delete
+          </button>
+
         </div>
       `;
 
-      card.querySelector("[data-edit]").onclick = () => editClass(item);
-      card.querySelector("[data-delete]").onclick = () => deleteClass(item);
+      card.querySelector("[data-edit]").onclick = () => {
+        editClass(item);
+      };
+
+      card.querySelector("[data-delete]").onclick = () => {
+        deleteClass(item);
+      };
 
       classList.appendChild(card);
     });
   }
 
   function editClass(item){
+
     editingId = item.id;
 
     level.value = item.level || "";
@@ -509,25 +613,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     notes.value = item.notes || "";
 
     Array.from(meetRoom.options).forEach(option => {
+
       if(cleanText(option.value) === item.meetRoom){
         meetRoom.value = option.value;
       }
     });
 
     refreshRoomAvailability();
+
     saveStatus.textContent = "Editing selected class";
   }
 
   async function deleteClass(item){
-    await db.collection("classes").doc(item.id).delete();
+
+    await db.collection("classes")
+      .doc(item.id)
+      .delete();
+
     await loadClasses();
   }
 
   function refreshRoomAvailability(){
+
     const selectedDay = day.value;
     const selectedTime = time.value;
 
     Array.from(meetRoom.options).forEach(option => {
+
       if(!option.value) return;
 
       const baseText = cleanText(option.textContent);
@@ -539,6 +651,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if(!selectedDay || !selectedTime) return;
 
       const unavailable = allClasses.some(classItem => {
+
         return (
           classItem.id !== editingId &&
           classItem.day === selectedDay &&
@@ -549,63 +662,89 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       if(unavailable){
+
         option.disabled = true;
+
         option.classList.add("unavailable");
-        option.textContent = baseText + " — unavailable at selected day and time";
+
+        option.textContent =
+          baseText +
+          " — unavailable at selected day and time";
       }
     });
 
-    roomNote.textContent = selectedDay && selectedTime
-      ? "Unavailable rooms are greyed out for the selected day and time."
-      : "Select a day and time to see unavailable meet rooms.";
+    roomNote.textContent =
+      selectedDay && selectedTime
+        ? "Unavailable rooms are greyed out for the selected day and time."
+        : "Select a day and time to see unavailable meet rooms.";
   }
 
   async function saveClass(event){
+
     event.preventDefault();
 
     refreshRoomAvailability();
 
-    const selectedOption = meetRoom.options[meetRoom.selectedIndex];
+    const selectedOption =
+      meetRoom.options[meetRoom.selectedIndex];
 
     if(!selectedOption || !meetRoom.value){
-      saveStatus.textContent = "Please select a Google Meet room.";
+
+      saveStatus.textContent =
+        "Please select a Google Meet room.";
+
       return;
     }
 
     if(selectedOption.disabled){
-      saveStatus.textContent = "This room is unavailable at the selected day and time.";
+
+      saveStatus.textContent =
+        "This room is unavailable at the selected day and time.";
+
       return;
     }
 
     const now = new Date();
 
     const data = {
+
       level:level.value.trim(),
       learner:learner.value.trim(),
       teacher:teacher.value.trim(),
       day:day.value,
       time:time.value,
       duration:duration.value.trim(),
+
       meetRoom:meetRoom.value,
       meetUrl:getRoomURL(),
+
       status:status.value,
       notes:notes.value.trim(),
+
       updatedAt:now.toISOString(),
       updatedAtText:now.toLocaleString()
     };
 
     if(editingId){
-      await db.collection("classes").doc(editingId).set(data,{ merge:true });
+
+      await db.collection("classes")
+        .doc(editingId)
+        .set(data,{ merge:true });
+
     }else{
-      await db.collection("classes").add({
-        ...data,
-        createdAt:now.toISOString(),
-        createdAtText:now.toLocaleString()
-      });
+
+      await db.collection("classes")
+        .add({
+          ...data,
+          createdAt:now.toISOString(),
+          createdAtText:now.toLocaleString()
+        });
     }
 
     form.reset();
+
     editingId = null;
+
     saveStatus.textContent = "Saved ✓";
 
     await loadClasses();
@@ -619,6 +758,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   day.addEventListener("change", refreshRoomAvailability);
   time.addEventListener("change", refreshRoomAvailability);
+
   meetRoom.addEventListener("mousedown", refreshRoomAvailability);
   meetRoom.addEventListener("focus", refreshRoomAvailability);
 
