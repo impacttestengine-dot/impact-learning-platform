@@ -788,38 +788,48 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 
+
 <script id="classes-open-meet-direct-fix">
-document.addEventListener("click", async function(e){
+document.addEventListener("click", function(e){
   const btn = e.target.closest(".open-meet-btn");
   if(!btn) return;
 
   e.preventDefault();
   e.stopPropagation();
 
-  const url = btn.dataset.meetUrl;
+  let url = "";
 
-  if(!url || url === "#"){
-    alert("No Google Meet link found for this class.");
+  try{
+    url = decodeURIComponent(btn.getAttribute("data-meet-url") || "");
+  }catch(err){
+    url = btn.getAttribute("data-meet-url") || "";
+  }
+
+  if(!url || url === "#" || !url.startsWith("https://meet.google.com/")){
+    alert("No valid Google Meet link found for this class. Please edit and save the class again.");
     return;
   }
 
   btn.textContent = "Opening...";
   btn.disabled = true;
 
-  const win = window.open(url, "_blank");
+  const a = document.createElement("a");
+  a.href = url;
+  a.target = "_blank";
+  a.rel = "noopener";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 
   setTimeout(function(){
     btn.disabled = false;
     btn.textContent = "Open Meet";
-  }, 1200);
-
-  if(!win){
-    alert("Popup blocked. Please allow popups for this site.");
-  }
+  }, 900);
 }, true);
 </script>
 </body>
 </html>
+
 
 
 
