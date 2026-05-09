@@ -791,8 +791,93 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
+
+
+
 <script id="classes-open-meet-direct-fix">
-document.addEventListener("click", function(e){
+
+const ACTIVE_CLASS_SESSIONS = {};
+
+async function createClassTrackerLog(item){
+
+  const db = firebase.firestore();
+
+  const now = new Date();
+
+  const ref = await db.collection("classTracker").add({
+    classId:item.id || "",
+    learner:item.learner || "",
+    teacher:item.teacher || "",
+    level:item.level || "",
+    meetRoom:item.meetRoom || "",
+    meetUrl:item.meetUrl || "",
+    startedAt:now.toISOString(),
+    startedAtText:now.toLocaleString(),
+    endedAt:"",
+    endedAtText:"",
+    minutesSpent:0,
+    earlyEnd:false,
+    earlyEndReason:"",
+    earlyEndRemark:"",
+    status:"Started"
+  });
+
+  return {
+    logId:ref.id,
+    startedAt:now
+  };
+}
+
+async function finishClassTrackerLog(item, session, reason="", remark=""){
+
+  const db = firebase.firestore();
+
+  const endedAt = new Date();
+
+  const minutesSpent = Math.round(
+    (endedAt - session.startedAt) / 60000
+  );
+
+  const earlyEnd = minutesSpent < 40;
+
+  await db.collection("classTracker")
+    .doc(session.logId)
+    .set({
+      endedAt:endedAt.toISOString(),
+      endedAtText:endedAt.toLocaleString(),
+      minutesSpent,
+      earlyEnd,
+      earlyEndReason:reason,
+      earlyEndRemark:remark,
+      status:"Ended"
+    }, { merge:true });
+
+  await db.collection("classes")
+    .doc(item.id)
+    .set({
+      lastMinutesSpent:minutesSpent,
+      lastEndedAt:endedAt.toISOString(),
+      lastEarlyEndReason:reason,
+      lastEarlyEndRemark:remark,
+      lastStatus:earlyEnd ? "Ended Early" : "Completed"
+    }, { merge:true });
+}
+
+function showEarlyEndPrompt(callback){
+
+  const reason = prompt(
+    "Class ended before 40 minutes.\n\nReason?"
+  );
+
+  if(reason === null){
+    callback("", "");
+    return;
+  }
+
+  callback(reason, "");
+}
+
+document.addEventListener("click", async function(e){
 
   const btn = e.target.closest(".open-meet-btn");
 
@@ -801,42 +886,93 @@ document.addEventListener("click", function(e){
   e.preventDefault();
   e.stopPropagation();
 
-  let classData = null;
+  let item;
 
   try{
-    classData = JSON.parse(
+    item = JSON.parse(
       decodeURIComponent(
         btn.getAttribute("data-class")
       )
     );
   }catch(err){
     console.error(err);
-    alert("Could not load class data.");
     return;
   }
 
-  const url = classData?.meetUrl || "";
+  const classId = item.id;
 
-  if(!url){
-    alert("No Google Meet link saved.");
+  if(!ACTIVE_CLASS_SESSIONS[classId]){
+
+    const url = item.meetUrl || "";
+
+    if(!url){
+      alert("No Meet link saved.");
+      return;
+    }
+
+    const tracker =
+      await createClassTrackerLog(item);
+
+    ACTIVE_CLASS_SESSIONS[classId] = tracker;
+
+    window.open(url, "_blank");
+
+    btn.textContent = "End Class";
+
+    btn.style.background =
+      "rgba(255,80,80,.18)";
+
     return;
   }
 
-  btn.disabled = true;
-  btn.textContent = "Opening...";
+  const session =
+    ACTIVE_CLASS_SESSIONS[classId];
 
-  window.open(url, "_blank");
+  const minutesSpent = Math.round(
+    (new Date() - session.startedAt) / 60000
+  );
 
-  setTimeout(() => {
-    btn.disabled = false;
+  if(minutesSpent < 40){
+
+    showEarlyEndPrompt(async function(reason, remark){
+
+      await finishClassTrackerLog(
+        item,
+        session,
+        reason,
+        remark
+      );
+
+      delete ACTIVE_CLASS_SESSIONS[classId];
+
+      btn.textContent = "Open Meet";
+
+      btn.style.background =
+        "rgba(255,255,255,.09)";
+    });
+
+  }else{
+
+    await finishClassTrackerLog(
+      item,
+      session
+    );
+
+    delete ACTIVE_CLASS_SESSIONS[classId];
+
     btn.textContent = "Open Meet";
-  }, 1000);
+
+    btn.style.background =
+      "rgba(255,255,255,.09)";
+  }
 
 }, true);
+
 </script>
 
 </body>
 </html>
+
 
 
 
