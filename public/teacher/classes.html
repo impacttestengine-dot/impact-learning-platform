@@ -280,6 +280,58 @@ textarea::placeholder{
   font-weight:800;
 }
 
+.active-class-banner{
+  width:min(1180px,92vw);
+  margin:0 auto 24px;
+  border-radius:28px;
+  padding:18px 22px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(24px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.active-class-tag{
+  font-size:.68rem;
+  font-weight:900;
+  letter-spacing:.2em;
+  color:#d9f99d;
+  margin-bottom:6px;
+}
+
+.active-class-title{
+  font-size:1.05rem;
+  font-weight:900;
+  margin-bottom:5px;
+}
+
+.active-class-meta{
+  font-size:.78rem;
+  color:rgba(255,255,255,.58);
+  font-weight:700;
+}
+
+.active-class-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.active-class-actions button{
+  border:none;
+  cursor:pointer;
+  border-radius:14px;
+  padding:12px 16px;
+  background:rgba(255,255,255,.12);
+  color:white;
+  font-size:.78rem;
+  font-weight:900;
+}
+
 .unavailable{
   color:rgba(255,255,255,0.45);
 }
@@ -784,7 +836,237 @@ document.addEventListener("DOMContentLoaded", async () => {
   meetRoom.addEventListener("mousedown", refreshRoomAvailability);
   meetRoom.addEventListener("focus", refreshRoomAvailability);
 
+  
+  // =====================================================
+  // ACTIVE CLASS SESSION RESTORE
+  // =====================================================
+
+  function getActiveSession(){
+    try{
+      return JSON.parse(localStorage.getItem("impactActiveClass") || "null");
+    }catch{
+      return null;
+    }
+  }
+
+  function setActiveSession(data){
+    localStorage.setItem(
+      "impactActiveClass",
+      JSON.stringify(data)
+    );
+  }
+
+  function clearActiveSession(){
+    localStorage.removeItem("impactActiveClass");
+  }
+
+  function renderActiveSession(){
+
+    const active = getActiveSession();
+
+    if(!active) return;
+
+    const existing =
+      document.querySelector(".active-class-banner");
+
+    if(existing) existing.remove();
+
+    const banner = document.createElement("div");
+
+    banner.className = "active-class-banner";
+
+    banner.innerHTML = `
+      <div class="active-class-left">
+
+        <div class="active-class-tag">
+          CLASS IN PROGRESS
+        </div>
+
+        <div class="active-class-title">
+          ${active.learner || "Learner"}
+          —
+          ${active.level || ""}
+        </div>
+
+        <div class="active-class-meta">
+          ${active.day || ""}
+          ·
+          ${active.time || ""}
+          ·
+          ${active.teacher || ""}
+        </div>
+
+      </div>
+
+      <div class="active-class-actions">
+
+        <button
+          class="resume-class-btn"
+          data-url="${active.meetUrl || "#"}">
+          Return To Meet
+        </button>
+
+        <button
+          class="end-class-btn">
+          End Class
+        </button>
+
+      </div>
+    `;
+
+    document.querySelector(".hero")
+      .insertAdjacentElement("afterend", banner);
+
+    banner.querySelector(".resume-class-btn")
+      .onclick = function(){
+
+      const url = this.dataset.url;
+
+      if(url && url.startsWith("https://")){
+        window.open(url,"_blank");
+      }
+    };
+
+    banner.querySelector(".end-class-btn")
+      .onclick = async function(){
+
+      const endedAt = new Date();
+
+      const durationMinutes =
+        Math.floor(
+          (endedAt - new Date(active.startedAt)) / 60000
+        );
+
+      let earlyReason = "";
+
+      if(durationMinutes < 40){
+
+        const reasonWrap =
+          document.createElement("div");
+
+        reasonWrap.className = "early-end-wrap";
+
+        reasonWrap.innerHTML = `
+          <div class="early-end-title">
+            Class ended before 40 minutes.
+          </div>
+
+          <label>Select reason</label>
+
+          <select class="early-select">
+            <option value="">Choose reason</option>
+            <option>Learner unavailable</option>
+            <option>Internet issue</option>
+            <option>Power outage</option>
+            <option>Teacher emergency</option>
+            <option>Technical issue</option>
+            <option>Other</option>
+          </select>
+
+          <textarea
+            class="early-remark"
+            placeholder="Add remark if needed"></textarea>
+
+          <button class="early-save-btn">
+            Save & End Class
+          </button>
+        `;
+
+        banner.appendChild(reasonWrap);
+
+        reasonWrap.querySelector(".early-save-btn")
+          .onclick = async function(){
+
+          const reason =
+            reasonWrap.querySelector(".early-select").value;
+
+          const remark =
+            reasonWrap.querySelector(".early-remark").value.trim();
+
+          earlyReason =
+            reason +
+            (remark ? " — " + remark : "");
+
+          await finishClass();
+        };
+
+        return;
+      }
+
+      await finishClass();
+
+      async function finishClass(){
+
+        try{
+
+          await db.collection("classLogs").add({
+
+            learner:active.learner || "",
+            level:active.level || "",
+            teacher:active.teacher || "",
+            day:active.day || "",
+            time:active.time || "",
+            duration:active.duration || "",
+            meetRoom:active.meetRoom || "",
+            meetUrl:active.meetUrl || "",
+
+            startedAt:active.startedAt,
+            endedAt:new Date().toISOString(),
+
+            durationMinutes:durationMinutes,
+
+            endedEarly:durationMinutes < 40,
+            earlyReason:earlyReason || "",
+
+            loggedAt:new Date().toISOString()
+          });
+
+        }catch(err){
+          console.error(err);
+        }
+
+        clearActiveSession();
+
+        banner.remove();
+
+        alert("Class ended and tracked.");
+      };
+    };
+  }
+
+  document.addEventListener("click", function(e){
+
+    const btn = e.target.closest("[data-open-meet]");
+
+    if(!btn) return;
+
+    const raw =
+      btn.getAttribute("data-open-meet");
+
+    if(!raw) return;
+
+    let item;
+
+    try{
+      item = JSON.parse(
+        decodeURIComponent(raw)
+      );
+    }catch{
+      return;
+    }
+
+    setActiveSession({
+      ...item,
+      startedAt:new Date().toISOString()
+    });
+
+    setTimeout(renderActiveSession, 200);
+  });
+
+  renderActiveSession();
+
   await loadClasses();
+
 });
 </script>
 
@@ -1009,6 +1291,7 @@ document.addEventListener("click", async function(e){
 
 </body>
 </html>
+
 
 
 
