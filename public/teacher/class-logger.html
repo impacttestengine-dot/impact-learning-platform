@@ -152,6 +152,56 @@ searchInput.oninput=()=>{
 
 load();
 </script>
+
+<script id="team-meetings-menu-fix">
+(function(){
+
+  function injectTeamMeetings(){
+
+    const menu =
+      document.querySelector(".quick-menu") ||
+      document.querySelector(".menu-dropdown") ||
+      document.querySelector(".menu-panel") ||
+      document.querySelector(".menu-links") ||
+      document.querySelector(".dropdown-menu");
+
+    if(!menu) return;
+
+    if(document.getElementById("teamMeetingsMenuLink")) return;
+
+    const recycleLink = Array.from(menu.querySelectorAll("a"))
+      .find(a =>
+        (a.textContent || "")
+          .toLowerCase()
+          .includes("recycle")
+      );
+
+    if(!recycleLink) return;
+
+    const newLink = recycleLink.cloneNode(true);
+
+    newLink.id = "teamMeetingsMenuLink";
+
+    newLink.href = "/teacher/team-meetings.html";
+
+    newLink.textContent = "Team Meetings";
+
+    // REMOVE INLINE STYLES THAT CAUSED STATIC LOOK
+    newLink.removeAttribute("style");
+
+    // insert before recycle bin
+    recycleLink.parentNode.insertBefore(newLink, recycleLink);
+
+  }
+
+  injectTeamMeetings();
+
+  setInterval(injectTeamMeetings, 1500);
+
+})();
+</script>
+
 </body>
 </html>
+
 
