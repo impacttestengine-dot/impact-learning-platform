@@ -1,9 +1,12 @@
 ﻿(function(){
   function makeMenuLink(label, href, likeEl){
-    const el = document.createElement(likeEl && likeEl.tagName.toLowerCase() === "button" ? "button" : "a");
+    const el = document.createElement("a");
     el.textContent = label;
     el.href = href;
-    el.onclick = function(){ window.location.href = href; };
+    el.onclick = function(e){
+      e.preventDefault();
+      window.location.href = href;
+    };
     el.style.display = "block";
     el.style.width = "100%";
     el.style.textAlign = "left";
@@ -15,30 +18,57 @@
     el.style.border = "0";
     el.style.textDecoration = "none";
     el.style.fontWeight = "800";
+    el.style.fontSize = ".86rem";
     return el;
   }
 
   function addMenuItems(){
-    const menuItems = Array.from(document.querySelectorAll("a,button,div,li"));
+    const all = Array.from(document.querySelectorAll("a,button,div,li"));
 
-    const existingTasks = menuItems.filter(el => (el.textContent || "").trim() === "Tasks");
-    existingTasks.slice(1).forEach(el => el.remove());
-
-    const existingBin = menuItems.filter(el => (el.textContent || "").trim() === "Recycle Bin");
-    existingBin.slice(1).forEach(el => el.remove());
-
-    const kpiItem = menuItems.find(el => (el.textContent || "").trim() === "Team KPIs");
+    const kpiItem = all.find(el => (el.textContent || "").trim() === "Team KPIs");
     if(!kpiItem || !kpiItem.parentElement) return;
 
-    if(!existingTasks.length){
-      kpiItem.parentElement.insertBefore(makeMenuLink("Tasks","/teacher/tasks.html",kpiItem), kpiItem.nextSibling);
+    const menu = kpiItem.parentElement;
+
+    Array.from(menu.children).forEach(el => {
+      const text = (el.textContent || "").trim();
+      if(text === "Tasks" || text === "Team Meetings" || text === "Recycle Bin"){
+        el.remove();
+      }
+    });
+
+    const teamDocs = Array.from(menu.children).find(el =>
+      (el.textContent || "").trim() === "Team Docs"
+    );
+
+    if(!teamDocs){
+      const reports = Array.from(menu.children).find(el =>
+        (el.textContent || "").trim() === "Reports"
+      );
+
+      if(reports){
+        reports.textContent = "Team Docs";
+        reports.href = "/teacher/team-docs.html";
+      }
     }
 
-    if(!existingBin.length){
-      kpiItem.parentElement.appendChild(makeMenuLink("Recycle Bin","/teacher/recycle-bin.html",kpiItem));
+    const operations = Array.from(menu.children).find(el =>
+      (el.textContent || "").trim() === "Operations"
+    );
+
+    if(operations){
+      menu.insertBefore(makeMenuLink("Tasks","/teacher/tasks.html",kpiItem), operations);
+      menu.insertBefore(makeMenuLink("Team Meetings","/teacher/team-meetings.html",kpiItem), operations.nextSibling);
+      menu.appendChild(makeMenuLink("Recycle Bin","/teacher/recycle-bin.html",kpiItem));
+    }else{
+      menu.appendChild(makeMenuLink("Tasks","/teacher/tasks.html",kpiItem));
+      menu.appendChild(makeMenuLink("Team Meetings","/teacher/team-meetings.html",kpiItem));
+      menu.appendChild(makeMenuLink("Recycle Bin","/teacher/recycle-bin.html",kpiItem));
     }
   }
 
-  setTimeout(addMenuItems,300);
+  setTimeout(addMenuItems,100);
+  setTimeout(addMenuItems,400);
   setTimeout(addMenuItems,1000);
+  setTimeout(addMenuItems,1800);
 })();
