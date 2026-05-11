@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title><a href="/teacher/team-meetings.html">Team Meetings</a>
-Recycle Bin | Impact</title>
+<title>Recycle Bin | Impact</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
@@ -46,8 +45,7 @@ input[type="checkbox"]{width:20px;height:20px}
 <main class="page">
   <section class="hero">
     <p class="eyebrow">Personnel Workspace</p>
-    <h1><a href="/teacher/team-meetings.html">Team Meetings</a>
-Recycle Bin</h1>
+    <h1>Recycle Bin</h1>
     <p>Deleted files, videos, audio, and records appear here with dates and timestamps.</p>
   </section>
 
@@ -61,7 +59,7 @@ Recycle Bin</h1>
     </div>
 
     <div class="list" id="binList">
-      <div class="empty">Loading <a href="/teacher/team-meetings.html">Team Meetings</a>
+      <div class="empty">Loading 
 recycle bin...</div>
     </div>
   </section>
@@ -92,13 +90,13 @@ function meta(item){
 async function loadBin(){
   selected.clear();
   document.getElementById("selectAll").checked = false;
-  list.innerHTML = '<div class="empty">Loading <a href="/teacher/team-meetings.html">Team Meetings</a>
+  list.innerHTML = '<div class="empty">Loading 
 recycle bin...</div>';
 
   const snap = await db.collection("recycleBin").orderBy("deletedAt","desc").get();
 
   if(snap.empty){
-    list.innerHTML = '<div class="empty"><a href="/teacher/team-meetings.html">Team Meetings</a>
+    list.innerHTML = '<div class="empty">
 Recycle bin is empty.</div>';
     return;
   }
@@ -190,6 +188,7 @@ document.addEventListener("DOMContentLoaded",function(){
 </script>
 </body>
 </html>
+
 
 
 
