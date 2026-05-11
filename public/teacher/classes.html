@@ -3,385 +3,65 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
 <title>Classes | Impact</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sorts+Mill+Goudy:ital@0;1&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Sorts+Mill+Goudy&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
-<link rel="stylesheet" href="/css/impact-round-icons.css">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-
-:root{
-  --glass:rgba(255,255,255,0.08);
-  --line:rgba(255,255,255,0.12);
-  --soft:rgba(255,255,255,0.65);
-  --text:#ffffff;
-}
-
-body{
-  min-height:100vh;
-  background:#05060b;
-  color:var(--text);
-  font-family:"Inter",sans-serif;
-  overflow-x:hidden;
-}
-
-.page{
-  width:min(1180px,92vw);
-  margin:auto;
-  padding:110px 0 80px;
-  position:relative;
-  z-index:2;
-}
-
-.top-nav{
-  position:fixed;
-  top:22px;
-  left:24px;
-  z-index:1000;
-}
-
-.top-nav a{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-decoration:none;
-  color:white;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.14);
-  backdrop-filter:blur(18px);
-  font-size:1.15rem;
-}
-
-.hero{
-  text-align:center;
-  margin-bottom:34px;
-}
-
-.hero-tag{
-  text-transform:uppercase;
-  letter-spacing:0.35em;
-  font-size:0.72rem;
-  font-weight:800;
-  color:rgba(255,255,255,0.6);
-  margin-bottom:14px;
-}
-
-.hero h1{
-  font-family:"Sorts Mill Goudy",serif;
-  font-size:clamp(3.5rem,6vw,5.8rem);
-  font-weight:400;
-  line-height:1;
-}
-
-.tracker-link{
-  display:inline-block;
-  margin-top:12px;
-  color:#dbeafe;
-  font-weight:700;
-  font-size:0.95rem;
-  text-decoration:none;
-  border-bottom:1px solid rgba(219,234,254,0.4);
-}
-
-.layout{
-  display:grid;
-  grid-template-columns:1fr 1.08fr;
-  gap:22px;
-  align-items:start;
-}
-
-.panel{
-  background:var(--glass);
-  border:1px solid var(--line);
-  border-radius:34px;
-  padding:26px;
-  backdrop-filter:blur(24px);
-  box-shadow:0 24px 80px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-.panel-title{
-  font-family:"Sorts Mill Goudy",serif;
-  font-size:2.1rem;
-  margin-bottom:8px;
-}
-
-.panel-sub{
-  font-size:0.83rem;
-  color:var(--soft);
-  font-weight:700;
-  margin-bottom:22px;
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.field.full{
-  grid-column:1/-1;
-}
-
-.field label{
-  font-size:0.82rem;
-  font-weight:800;
-  color:rgba(255,255,255,0.8);
-}
-
-input,
-select,
-textarea{
-  width:100%;
-  border:none;
-  outline:none;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.1);
-  color:white;
-  border-radius:18px;
-  padding:14px 15px;
-  font-size:0.94rem;
-  font-weight:700;
-}
-
-textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-select option{
-  color:#111827;
-}
-
-input::placeholder,
-textarea::placeholder{
-  color:rgba(255,255,255,0.35);
-}
-
-.room-note{
-  grid-column:1/-1;
-  margin-top:-3px;
-  color:rgba(255,255,255,0.45);
-  font-size:0.73rem;
-  font-weight:700;
-}
-
-.save-btn{
-  grid-column:1/-1;
-  border:none;
-  cursor:pointer;
-  background:rgba(255,255,255,0.12);
-  border:1px solid rgba(255,255,255,0.12);
-  min-height:54px;
-  border-radius:18px;
-  color:white;
-  font-weight:900;
-  font-size:0.94rem;
-  transition:0.25s ease;
-}
-
-.save-btn:hover{
-  background:rgba(255,255,255,0.18);
-}
-
-.save-status{
-  grid-column:1/-1;
-  text-align:center;
-  min-height:22px;
-  color:#d9f99d;
-  font-weight:800;
-  font-size:0.82rem;
-}
-
-.list-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  margin-bottom:16px;
-}
-
-.class-count{
-  color:rgba(255,255,255,0.72);
-  font-size:0.82rem;
-  font-weight:900;
-}
-
-.class-list{
-  display:grid;
-  gap:14px;
-}
-
-.class-card{
-  border-radius:24px;
-  padding:18px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:14px;
-  align-items:center;
-}
-
-.class-card h3{
-  font-size:1rem;
-  font-weight:900;
-  margin-bottom:8px;
-}
-
-.class-meta{
-  font-size:0.78rem;
-  color:rgba(255,255,255,0.58);
-  font-weight:700;
-  line-height:1.7;
-}
-
-.class-actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-
-.class-actions a,
-.class-actions button{
-  border:none;
-  cursor:pointer;
-  text-decoration:none;
-  color:white;
-  background:rgba(255,255,255,0.09);
-  border:1px solid rgba(255,255,255,0.1);
-  padding:10px 13px;
-  border-radius:12px;
-  font-size:0.76rem;
-  font-weight:900;
-}
-
-.empty{
-  border-radius:22px;
-  padding:26px;
-  background:rgba(255,255,255,0.05);
-  text-align:center;
-  color:rgba(255,255,255,0.55);
-  font-weight:800;
-}
-
-.active-class-banner{
-  width:min(1180px,92vw);
-  margin:0 auto 24px;
-  border-radius:28px;
-  padding:18px 22px;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.1);
-  backdrop-filter:blur(24px);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:18px;
-  flex-wrap:wrap;
-}
-
-.active-class-tag{
-  font-size:.68rem;
-  font-weight:900;
-  letter-spacing:.2em;
-  color:#d9f99d;
-  margin-bottom:6px;
-}
-
-.active-class-title{
-  font-size:1.05rem;
-  font-weight:900;
-  margin-bottom:5px;
-}
-
-.active-class-meta{
-  font-size:.78rem;
-  color:rgba(255,255,255,.58);
-  font-weight:700;
-}
-
-.active-class-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.active-class-actions button{
-  border:none;
-  cursor:pointer;
-  border-radius:14px;
-  padding:12px 16px;
-  background:rgba(255,255,255,.12);
-  color:white;
-  font-size:.78rem;
-  font-weight:900;
-}
-
-.unavailable{
-  color:rgba(255,255,255,0.45);
-}
-
-@media(max-width:980px){
-  .layout{grid-template-columns:1fr}
-}
-
-@media(max-width:700px){
-  .form-grid{grid-template-columns:1fr}
-}
-.class-actions button,
-.class-actions a,
-.save-btn,
-button{
-  transition:transform .15s ease, background .18s ease, box-shadow .18s ease, opacity .15s ease !important;
-}
-
-.class-actions button:hover,
-.class-actions a:hover,
-.save-btn:hover,
-button:hover{
-  transform:translateY(-2px) scale(1.03) !important;
-  background:rgba(255,255,255,.18) !important;
-  box-shadow:0 14px 34px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.16) !important;
-  cursor:pointer !important;
-}
-
-.class-actions button:active,
-.class-actions a:active,
-.save-btn:active,
-button:active{
-  transform:scale(.94) !important;
-  opacity:.82 !important;
-}
-
-/* classes-button-reaction-fix */
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif;overflow-x:hidden}
+.page{width:min(1180px,92vw);margin:auto;padding:110px 0 80px;position:relative;z-index:2}
+.top-nav{position:fixed;top:22px;left:24px;z-index:1000}
+.top-nav a{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;color:white;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:34px}
+.hero-tag{text-transform:uppercase;letter-spacing:.35em;font-size:.72rem;font-weight:800;color:rgba(255,255,255,.6);margin-bottom:14px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3.5rem,6vw,5.8rem);font-weight:400;line-height:1}
+.tracker-link{display:inline-block;margin-top:12px;color:#dbeafe;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(219,234,254,.4)}
+.layout{display:grid;grid-template-columns:1fr 1.08fr;gap:22px;align-items:start}
+.panel{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:34px;padding:26px;backdrop-filter:blur(24px);box-shadow:0 24px 80px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.05)}
+.panel-title{font-family:"Sorts Mill Goudy",serif;font-size:2.1rem;margin-bottom:8px}
+.panel-sub{font-size:.83rem;color:rgba(255,255,255,.65);font-weight:700;margin-bottom:22px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field.full{grid-column:1/-1}
+.field label{font-size:.82rem;font-weight:800;color:rgba(255,255,255,.8)}
+input,select,textarea{width:100%;border:none;outline:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:white;border-radius:18px;padding:14px 15px;font-size:.94rem;font-weight:700}
+textarea{min-height:100px;resize:vertical}
+select option{color:#111827}
+.room-note{grid-column:1/-1;margin-top:-3px;color:rgba(255,255,255,.45);font-size:.73rem;font-weight:700}
+.save-btn{grid-column:1/-1;border:none;cursor:pointer;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.12);min-height:54px;border-radius:18px;color:white;font-weight:900;font-size:.94rem}
+.save-status{grid-column:1/-1;text-align:center;min-height:22px;color:#d9f99d;font-weight:800;font-size:.82rem}
+.list-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
+.class-count{color:rgba(255,255,255,.72);font-size:.82rem;font-weight:900}
+.class-list{display:grid;gap:14px}
+.class-card{border-radius:24px;padding:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+.class-card h3{font-size:1rem;font-weight:900;margin-bottom:8px}
+.class-meta{font-size:.78rem;color:rgba(255,255,255,.58);font-weight:700;line-height:1.7}
+.class-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.class-actions button{border:none;cursor:pointer;color:white;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);padding:10px 13px;border-radius:14px;font-size:.76rem;font-weight:900}
+.open-meet-btn.running{background:rgba(255,80,80,.18)!important}
+.empty{border-radius:22px;padding:26px;background:rgba(255,255,255,.05);text-align:center;color:rgba(255,255,255,.55);font-weight:800}
+.early-box{grid-column:1/-1;margin-top:12px;padding:13px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.early-box h4{font-size:.82rem;margin-bottom:8px}
+.early-box label{font-size:.72rem;font-weight:800;color:rgba(255,255,255,.68)}
+.early-box select,.early-box textarea{margin-top:6px;margin-bottom:9px;border-radius:13px;padding:10px 11px;font-size:.76rem}
+.early-box textarea{min-height:62px}
+.early-save{min-width:130px}
+button{transition:transform .15s ease,background .18s ease,box-shadow .18s ease,opacity .15s ease!important}
+button:hover{transform:translateY(-2px) scale(1.03)!important;background:rgba(255,255,255,.18)!important;box-shadow:0 14px 34px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.16)!important}
+button:active{transform:scale(.94)!important;opacity:.82!important}
+@media(max-width:980px){.layout{grid-template-columns:1fr}}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
 </style>
 </head>
 
 <body>
-
 <script src="/js/impact-global-bg.js"></script>
 
-<div class="top-nav">
-  <a href="/teacher/dashboard.html">⌘</a>
-</div>
+<div class="top-nav"><a href="/teacher/dashboard.html">⌘</a></div>
 
 <main class="page">
-
   <section class="hero">
     <div class="hero-tag">TEACHER WORKSPACE</div>
     <h1>Classes</h1>
@@ -389,148 +69,66 @@ button:active{
   </section>
 
   <section class="layout">
-
     <section class="panel">
       <h2 class="panel-title">Schedule Class</h2>
       <p class="panel-sub">Create an upcoming online class session.</p>
 
       <form id="classForm">
         <div class="form-grid">
-
-          <div class="field">
-            <label>Level</label>
-            <input id="level" type="text" placeholder="A0">
-          </div>
-
-          <div class="field">
-            <label>Learner</label>
-            <input id="learner" type="text" placeholder="Learner name">
-          </div>
-
-          <div class="field">
-            <label>Teacher</label>
-            <input id="teacher" type="text" placeholder="Teacher name">
-          </div>
+          <div class="field"><label>Level</label><input id="level" type="text" placeholder="A0"></div>
+          <div class="field"><label>Learner</label><input id="learner" type="text" placeholder="Learner name"></div>
+          <div class="field"><label>Teacher</label><input id="teacher" type="text" placeholder="Teacher name"></div>
 
           <div class="field">
             <label>Day</label>
             <select id="day" required>
               <option value="">Select Day</option>
-              <option>Monday</option>
-              <option>Tuesday</option>
-              <option>Wednesday</option>
-              <option>Thursday</option>
-              <option>Friday</option>
-              <option>Saturday</option>
-              <option>Sunday</option>
+              <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
             </select>
           </div>
 
-          <div class="field">
-            <label>Time</label>
-            <input id="time" type="time" required>
-          </div>
-
-          <div class="field">
-            <label>Duration</label>
-            <input id="duration" type="text" placeholder="1 hour">
-          </div>
+          <div class="field"><label>Time</label><input id="time" type="time" required></div>
+          <div class="field"><label>Duration</label><input id="duration" type="text" placeholder="1 hour"></div>
 
           <div class="field full">
             <label>Google Meet Room</label>
-
             <select id="meetRoom" required>
               <option value="">Select Google Meet Room</option>
-
-              <option
-                value="Impact Meet Room 1"
-                data-url="https://meet.google.com/qpc-biix-whj">
-                Impact Meet Room 1
-              </option>
-
-              <option
-                value="Impact Meet Room 2"
-                data-url="https://meet.google.com/gmh-yodr-tjf">
-                Impact Meet Room 2
-              </option>
-
-              <option
-                value="Impact Meet Room 3"
-                data-url="https://meet.google.com/hxm-snci-jub">
-                Impact Meet Room 3
-              </option>
-
-              <option
-                value="Impact Meet Room 4"
-                data-url="https://meet.google.com/yya-pzhm-ses">
-                Impact Meet Room 4
-              </option>
-
-              <option
-                value="Impact Meet Room 5"
-                data-url="https://meet.google.com/cig-yfqh-xbz">
-                Impact Meet Room 5
-              </option>
-
-              <option
-                value="Impact Meet Room 6"
-                data-url="https://meet.google.com/vwe-pxhu-egh">
-                Impact Meet Room 6
-              </option>
+              <option value="Impact Meet Room 1" data-url="https://meet.google.com/qpc-biix-whj">Impact Meet Room 1</option>
+              <option value="Impact Meet Room 2" data-url="https://meet.google.com/gmh-yodr-tjf">Impact Meet Room 2</option>
+              <option value="Impact Meet Room 3" data-url="https://meet.google.com/hxm-snci-jub">Impact Meet Room 3</option>
+              <option value="Impact Meet Room 4" data-url="https://meet.google.com/yya-pzhm-ses">Impact Meet Room 4</option>
+              <option value="Impact Meet Room 5" data-url="https://meet.google.com/cig-yfqh-xbz">Impact Meet Room 5</option>
+              <option value="Impact Meet Room 6" data-url="https://meet.google.com/vwe-pxhu-egh">Impact Meet Room 6</option>
             </select>
           </div>
 
-          <div class="room-note" id="roomNote">
-            Select a day and time to see unavailable meet rooms.
-          </div>
+          <div class="room-note" id="roomNote">Select a day and time to see unavailable meet rooms.</div>
 
           <div class="field">
             <label>Status</label>
-            <select id="status">
-              <option>Scheduled</option>
-              <option>Completed</option>
-              <option>Cancelled</option>
-            </select>
+            <select id="status"><option>Scheduled</option><option>Completed</option><option>Cancelled</option></select>
           </div>
 
-          <div class="field full">
-            <label>Class Notes</label>
-            <textarea id="notes" placeholder="Optional notes"></textarea>
-          </div>
+          <div class="field full"><label>Class Notes</label><textarea id="notes" placeholder="Optional notes"></textarea></div>
 
-          <button class="save-btn" type="submit">
-            Save Class
-          </button>
-
+          <button class="save-btn" type="submit">Save Class</button>
           <div class="save-status" id="saveStatus"></div>
-
         </div>
       </form>
     </section>
 
     <section class="panel">
-
       <div class="list-top">
         <div>
           <h2 class="panel-title">Scheduled Classes</h2>
-          <p class="panel-sub">
-            All saved classes appear here.
-          </p>
+          <p class="panel-sub">All saved classes appear here.</p>
         </div>
-
-        <div class="class-count" id="classCount">
-          0 classes
-        </div>
+        <div class="class-count" id="classCount">0 classes</div>
       </div>
-
-      <div class="class-list" id="classList">
-        <div class="empty">Loading classes...</div>
-      </div>
-
+      <div class="class-list" id="classList"><div class="empty">Loading classes...</div></div>
     </section>
-
   </section>
-
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -539,11 +137,9 @@ button:active{
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-
   const db = firebase.firestore();
 
   const form = document.getElementById("classForm");
-
   const level = document.getElementById("level");
   const learner = document.getElementById("learner");
   const teacher = document.getElementById("teacher");
@@ -553,751 +149,310 @@ document.addEventListener("DOMContentLoaded", async () => {
   const meetRoom = document.getElementById("meetRoom");
   const status = document.getElementById("status");
   const notes = document.getElementById("notes");
-
   const roomNote = document.getElementById("roomNote");
   const saveStatus = document.getElementById("saveStatus");
-
   const classList = document.getElementById("classList");
   const classCount = document.getElementById("classCount");
 
   let allClasses = [];
   let editingId = null;
 
-  function cleanText(text){
-    return String(text || "")
-      .replace(/\s+— unavailable.*$/i,"")
-      .trim();
+  function activeKey(id){ return "impactActiveClass_" + id; }
+  function getActive(id){
+    try { return JSON.parse(localStorage.getItem(activeKey(id)) || "null"); }
+    catch(e){ return null; }
   }
+  function setActive(id, data){ localStorage.setItem(activeKey(id), JSON.stringify(data)); }
+  function clearActive(id){ localStorage.removeItem(activeKey(id)); }
 
   function getRoomURL(){
     const option = meetRoom.options[meetRoom.selectedIndex];
-    return option?.dataset?.url || "#";
+    return option?.dataset?.url || "";
   }
 
   async function loadClasses(){
+    classList.innerHTML = '<div class="empty">Loading classes...</div>';
 
-    classList.innerHTML = `
-      <div class="empty">
-        Loading classes...
-      </div>
-    `;
+    const snapshot = await db.collection("classes").orderBy("createdAt","desc").get();
 
-    const snapshot = await db
-      .collection("classes")
-      .orderBy("createdAt","desc")
-      .get();
-
-    allClasses = snapshot.docs.map(doc => ({
-      id:doc.id,
-      ...doc.data()
-    }));
+    allClasses = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data() }));
 
     renderClasses();
     refreshRoomAvailability();
   }
 
   function renderClasses(){
-
-    classCount.textContent =
-      allClasses.length +
-      (allClasses.length === 1 ? " class" : " classes");
+    classCount.textContent = allClasses.length + (allClasses.length === 1 ? " class" : " classes");
 
     if(!allClasses.length){
-
-      classList.innerHTML = `
-        <div class="empty">
-          No classes scheduled yet.
-        </div>
-      `;
-
+      classList.innerHTML = '<div class="empty">No classes scheduled yet.</div>';
       return;
     }
 
     classList.innerHTML = "";
 
     allClasses.forEach(item => {
-
+      const active = getActive(item.id);
       const card = document.createElement("div");
-
       card.className = "class-card";
+      card.dataset.classId = item.id;
 
       card.innerHTML = `
         <div>
-          <h3>
-            ${item.learner || "Unnamed Learner"}
-            —
-            ${item.level || "No level"}
-          </h3>
-
-          <div class="class-meta">
-            ${item.day || ""}
-            ·
-            ${item.time || ""}
-            ·
-            ${item.duration || ""}
-          </div>
-
-          <div class="class-meta">
-            ${item.teacher || ""}
-            ·
-            ${item.meetRoom || ""}
-            ·
-            ${item.status || ""}
-          </div>
+          <h3>${item.learner || "Unnamed Learner"} — ${item.level || "No level"}</h3>
+          <div class="class-meta">${item.day || ""} · ${item.time || ""} · ${item.duration || ""}</div>
+          <div class="class-meta">${item.teacher || ""} · ${item.meetRoom || ""} · ${item.status || ""}</div>
+          ${active ? '<div class="class-meta" style="color:#d9f99d;font-weight:900;">Class in progress — started ' + (active.startedAtText || "") + '</div>' : ""}
         </div>
 
         <div class="class-actions">
-
-          <button type="button" class="open-meet-btn" data-open-meet="${encodeURIComponent(JSON.stringify(item))}" data-class="${encodeURIComponent(JSON.stringify(item))}">Open Meet</button>
-
-          <button data-edit="${item.id}">
-            Edit
+          <button type="button" class="open-meet-btn ${active ? "running" : ""}">
+            ${active ? "End Class" : "Open Meet"}
           </button>
-
-          <button data-delete="${item.id}">
-            Delete
-          </button>
-
+          <button type="button" data-edit="${item.id}">Edit</button>
+          <button type="button" data-delete="${item.id}">Delete</button>
         </div>
       `;
 
-      card.querySelector("[data-edit]").onclick = () => {
-        editClass(item);
-      };
-
-      card.querySelector("[data-delete]").onclick = () => {
-        deleteClass(item);
-      };
+      card.querySelector(".open-meet-btn").onclick = () => handleClassStartEnd(item, card);
+      card.querySelector("[data-edit]").onclick = () => editClass(item);
+      card.querySelector("[data-delete]").onclick = () => deleteClass(item);
 
       classList.appendChild(card);
     });
   }
 
+  async function handleClassStartEnd(item, card){
+    const active = getActive(item.id);
+
+    if(!active){
+      if(!item.meetUrl){
+        alert("No Meet link saved.");
+        return;
+      }
+
+      const now = new Date();
+
+      const logRef = await db.collection("classTracker").add({
+        classId:item.id,
+        learner:item.learner || "",
+        teacher:item.teacher || "",
+        level:item.level || "",
+        day:item.day || "",
+        time:item.time || "",
+        duration:item.duration || "",
+        meetRoom:item.meetRoom || "",
+        meetUrl:item.meetUrl || "",
+        startedAt:now.toISOString(),
+        startedAtText:now.toLocaleString(),
+        endedAt:"",
+        endedAtText:"",
+        minutesSpent:0,
+        earlyEnd:false,
+        earlyEndReason:"",
+        earlyEndRemark:"",
+        status:"Started"
+      });
+
+      setActive(item.id, {
+        logId:logRef.id,
+        startedAt:now.toISOString(),
+        startedAtText:now.toLocaleString()
+      });
+
+      window.open(item.meetUrl, "_blank");
+      renderClasses();
+      return;
+    }
+
+    const startedAt = new Date(active.startedAt);
+    const endedAt = new Date();
+    const minutesSpent = Math.round((endedAt - startedAt) / 60000);
+
+    if(minutesSpent < 40){
+      showEarlyBox(item, card, active, minutesSpent);
+      return;
+    }
+
+    await finishClass(item, active, minutesSpent, "", "");
+    clearActive(item.id);
+    renderClasses();
+  }
+
+  function showEarlyBox(item, card, active, minutesSpent){
+    const old = card.querySelector(".early-box");
+    if(old) old.remove();
+
+    const box = document.createElement("div");
+    box.className = "early-box";
+    box.innerHTML = `
+      <h4>Class ended before 40 minutes.</h4>
+      <label>Reason</label>
+      <select class="early-reason">
+        <option value="">Select reason</option>
+        <option>Learner did not join</option>
+        <option>Internet issue</option>
+        <option>Power outage</option>
+        <option>Technical issue</option>
+        <option>Teacher emergency</option>
+        <option>Learner emergency</option>
+        <option>Rescheduled</option>
+        <option>Other</option>
+      </select>
+      <textarea class="early-remark" placeholder="Add remark if needed..."></textarea>
+      <button type="button" class="early-save">Save Reason & End Class</button>
+    `;
+
+    card.appendChild(box);
+
+    box.querySelector(".early-save").onclick = async () => {
+      const reason = box.querySelector(".early-reason").value;
+      const remark = box.querySelector(".early-remark").value.trim();
+
+      if(!reason){
+        alert("Please select a reason.");
+        return;
+      }
+
+      await finishClass(item, active, minutesSpent, reason, remark);
+      clearActive(item.id);
+      renderClasses();
+    };
+  }
+
+  async function finishClass(item, active, minutesSpent, reason, remark){
+    const endedAt = new Date();
+
+    await db.collection("classTracker").doc(active.logId).set({
+      endedAt:endedAt.toISOString(),
+      endedAtText:endedAt.toLocaleString(),
+      minutesSpent,
+      earlyEnd:minutesSpent < 40,
+      earlyEndReason:reason || "",
+      earlyEndRemark:remark || "",
+      status:"Ended"
+    }, { merge:true });
+
+    await db.collection("classes").doc(item.id).set({
+      lastClassStatus:minutesSpent < 40 ? "Ended Early" : "Completed",
+      lastClassStartedAt:active.startedAt,
+      lastClassEndedAt:endedAt.toISOString(),
+      lastClassMinutes:minutesSpent,
+      lastEarlyEndReason:reason || "",
+      lastEarlyEndRemark:remark || ""
+    }, { merge:true });
+  }
+
   function editClass(item){
-
     editingId = item.id;
-
     level.value = item.level || "";
     learner.value = item.learner || "";
     teacher.value = item.teacher || "";
     day.value = item.day || "";
     time.value = item.time || "";
     duration.value = item.duration || "";
+    meetRoom.value = item.meetRoom || "";
     status.value = item.status || "Scheduled";
     notes.value = item.notes || "";
-
-    Array.from(meetRoom.options).forEach(option => {
-
-      if(cleanText(option.value) === item.meetRoom){
-        meetRoom.value = option.value;
-      }
-    });
-
-    refreshRoomAvailability();
-
     saveStatus.textContent = "Editing selected class";
   }
 
   async function deleteClass(item){
-
-    await db.collection("classes")
-      .doc(item.id)
-      .delete();
-
+    if(!confirm("Delete this scheduled class?")) return;
+    clearActive(item.id);
+    await db.collection("classes").doc(item.id).delete();
     await loadClasses();
   }
 
   function refreshRoomAvailability(){
-
     const selectedDay = day.value;
     const selectedTime = time.value;
 
     Array.from(meetRoom.options).forEach(option => {
-
       if(!option.value) return;
 
-      const baseText = cleanText(option.textContent);
-
-      option.textContent = baseText;
       option.disabled = false;
-      option.classList.remove("unavailable");
+      option.textContent = option.value;
 
       if(!selectedDay || !selectedTime) return;
 
-      const unavailable = allClasses.some(classItem => {
-
-        return (
-          classItem.id !== editingId &&
-          classItem.day === selectedDay &&
-          classItem.time === selectedTime &&
-          classItem.meetRoom === option.value &&
-          classItem.status !== "Cancelled"
-        );
-      });
+      const unavailable = allClasses.some(classItem =>
+        classItem.id !== editingId &&
+        classItem.day === selectedDay &&
+        classItem.time === selectedTime &&
+        classItem.meetRoom === option.value &&
+        classItem.status !== "Cancelled"
+      );
 
       if(unavailable){
-
         option.disabled = true;
-
-        option.classList.add("unavailable");
-
-        option.textContent =
-          baseText +
-          " — unavailable at selected day and time";
+        option.textContent = option.value + " — unavailable at selected day and time";
       }
     });
 
-    roomNote.textContent =
-      selectedDay && selectedTime
-        ? "Unavailable rooms are greyed out for the selected day and time."
-        : "Select a day and time to see unavailable meet rooms.";
+    roomNote.textContent = selectedDay && selectedTime
+      ? "Unavailable rooms are greyed out for the selected day and time."
+      : "Select a day and time to see unavailable meet rooms.";
   }
 
   async function saveClass(event){
-
     event.preventDefault();
 
-    refreshRoomAvailability();
-
-    const selectedOption =
-      meetRoom.options[meetRoom.selectedIndex];
+    const selectedOption = meetRoom.options[meetRoom.selectedIndex];
 
     if(!selectedOption || !meetRoom.value){
-
-      saveStatus.textContent =
-        "Please select a Google Meet room.";
-
+      saveStatus.textContent = "Please select a Google Meet room.";
       return;
     }
 
     if(selectedOption.disabled){
-
-      saveStatus.textContent =
-        "This room is unavailable at the selected day and time.";
-
+      saveStatus.textContent = "This room is unavailable at the selected day and time.";
       return;
     }
 
     const now = new Date();
 
     const data = {
-
       level:level.value.trim(),
       learner:learner.value.trim(),
       teacher:teacher.value.trim(),
       day:day.value,
       time:time.value,
       duration:duration.value.trim(),
-
       meetRoom:meetRoom.value,
       meetUrl:getRoomURL(),
-
       status:status.value,
       notes:notes.value.trim(),
-
       updatedAt:now.toISOString(),
       updatedAtText:now.toLocaleString()
     };
 
     if(editingId){
-
-      await db.collection("classes")
-        .doc(editingId)
-        .set(data,{ merge:true });
-
+      await db.collection("classes").doc(editingId).set(data,{ merge:true });
     }else{
-
-      await db.collection("classes")
-        .add({
-          ...data,
-          createdAt:now.toISOString(),
-          createdAtText:now.toLocaleString()
-        });
+      await db.collection("classes").add({
+        ...data,
+        createdAt:now.toISOString(),
+        createdAtText:now.toLocaleString()
+      });
     }
 
     form.reset();
-
     editingId = null;
-
     saveStatus.textContent = "Saved ✓";
-
     await loadClasses();
 
-    setTimeout(() => {
-      saveStatus.textContent = "";
-    },1600);
+    setTimeout(() => saveStatus.textContent = "", 1400);
   }
 
   form.addEventListener("submit", saveClass);
-
   day.addEventListener("change", refreshRoomAvailability);
   time.addEventListener("change", refreshRoomAvailability);
-
-  meetRoom.addEventListener("mousedown", refreshRoomAvailability);
   meetRoom.addEventListener("focus", refreshRoomAvailability);
 
-  
-  // =====================================================
-  // ACTIVE CLASS SESSION RESTORE
-  // =====================================================
-
-  function getActiveSession(){
-    try{
-      return JSON.parse(localStorage.getItem("impactActiveClass") || "null");
-    }catch{
-      return null;
-    }
-  }
-
-  function setActiveSession(data){
-    localStorage.setItem(
-      "impactActiveClass",
-      JSON.stringify(data)
-    );
-  }
-
-  function clearActiveSession(){
-    localStorage.removeItem("impactActiveClass");
-  }
-
-  function renderActiveSession(){
-
-    const active = getActiveSession();
-
-    if(!active) return;
-
-    const existing =
-      document.querySelector(".active-class-banner");
-
-    if(existing) existing.remove();
-
-    const banner = document.createElement("div");
-
-    banner.className = "active-class-banner";
-
-    banner.innerHTML = `
-      <div class="active-class-left">
-
-        <div class="active-class-tag">
-          CLASS IN PROGRESS
-        </div>
-
-        <div class="active-class-title">
-          ${active.learner || "Learner"}
-          —
-          ${active.level || ""}
-        </div>
-
-        <div class="active-class-meta">
-          ${active.day || ""}
-          ·
-          ${active.time || ""}
-          ·
-          ${active.teacher || ""}
-        </div>
-
-      </div>
-
-      <div class="active-class-actions">
-
-        <button
-          class="resume-class-btn"
-          data-url="${active.meetUrl || "#"}">
-          Return To Meet
-        </button>
-
-        <button
-          class="end-class-btn">
-          End Class
-        </button>
-
-      </div>
-    `;
-
-    document.querySelector(".hero")
-      .insertAdjacentElement("afterend", banner);
-
-    banner.querySelector(".resume-class-btn")
-      .onclick = function(){
-
-      const url = this.dataset.url;
-
-      if(url && url.startsWith("https://")){
-        window.open(url,"_blank");
-      }
-    };
-
-    banner.querySelector(".end-class-btn")
-      .onclick = async function(){
-
-      const endedAt = new Date();
-
-      const durationMinutes =
-        Math.floor(
-          (endedAt - new Date(active.startedAt)) / 60000
-        );
-
-      let earlyReason = "";
-
-      if(durationMinutes < 40){
-
-        const reasonWrap =
-          document.createElement("div");
-
-        reasonWrap.className = "early-end-wrap";
-
-        reasonWrap.innerHTML = `
-          <div class="early-end-title">
-            Class ended before 40 minutes.
-          </div>
-
-          <label>Select reason</label>
-
-          <select class="early-select">
-            <option value="">Choose reason</option>
-            <option>Learner unavailable</option>
-            <option>Internet issue</option>
-            <option>Power outage</option>
-            <option>Teacher emergency</option>
-            <option>Technical issue</option>
-            <option>Other</option>
-          </select>
-
-          <textarea
-            class="early-remark"
-            placeholder="Add remark if needed"></textarea>
-
-          <button class="early-save-btn">
-            Save & End Class
-          </button>
-        `;
-
-        banner.appendChild(reasonWrap);
-
-        reasonWrap.querySelector(".early-save-btn")
-          .onclick = async function(){
-
-          const reason =
-            reasonWrap.querySelector(".early-select").value;
-
-          const remark =
-            reasonWrap.querySelector(".early-remark").value.trim();
-
-          earlyReason =
-            reason +
-            (remark ? " — " + remark : "");
-
-          await finishClass();
-        };
-
-        return;
-      }
-
-      await finishClass();
-
-      async function finishClass(){
-
-        try{
-
-          await db.collection("classLogs").add({
-
-            learner:active.learner || "",
-            level:active.level || "",
-            teacher:active.teacher || "",
-            day:active.day || "",
-            time:active.time || "",
-            duration:active.duration || "",
-            meetRoom:active.meetRoom || "",
-            meetUrl:active.meetUrl || "",
-
-            startedAt:active.startedAt,
-            endedAt:new Date().toISOString(),
-
-            durationMinutes:durationMinutes,
-
-            endedEarly:durationMinutes < 40,
-            earlyReason:earlyReason || "",
-
-            loggedAt:new Date().toISOString()
-          });
-
-        }catch(err){
-          console.error(err);
-        }
-
-        clearActiveSession();
-
-        banner.remove();
-
-        alert("Class ended and tracked.");
-      };
-    };
-  }
-
-  document.addEventListener("click", function(e){
-
-    const btn = e.target.closest("[data-open-meet]");
-
-    if(!btn) return;
-
-    const raw =
-      btn.getAttribute("data-open-meet");
-
-    if(!raw) return;
-
-    let item;
-
-    try{
-      item = JSON.parse(
-        decodeURIComponent(raw)
-      );
-    }catch{
-      return;
-    }
-
-    setActiveSession({
-      ...item,
-      startedAt:new Date().toISOString()
-    });
-
-    setTimeout(renderActiveSession, 200);
-  });
-
-  renderActiveSession();
-
   await loadClasses();
-
 });
-</script>
-
-
-
-
-
-
-
-<script id="classes-open-meet-direct-fix">
-
-const ACTIVE_CLASS_SESSIONS = {};
-
-async function createClassTrackerLog(item){
-
-  const db = firebase.firestore();
-
-  const now = new Date();
-
-  const ref = await db.collection("classTracker").add({
-    classId:item.id || "",
-    learner:item.learner || "",
-    teacher:item.teacher || "",
-    level:item.level || "",
-    meetRoom:item.meetRoom || "",
-    meetUrl:item.meetUrl || "",
-    startedAt:now.toISOString(),
-    startedAtText:now.toLocaleString(),
-    endedAt:"",
-    endedAtText:"",
-    minutesSpent:0,
-    earlyEnd:false,
-    earlyEndReason:"",
-    earlyEndRemark:"",
-    status:"Started"
-  });
-
-  return {
-    logId:ref.id,
-    startedAt:now
-  };
-}
-
-async function finishClassTrackerLog(item, session, reason="", remark=""){
-
-  const db = firebase.firestore();
-
-  const endedAt = new Date();
-
-  const minutesSpent = Math.round(
-    (endedAt - session.startedAt) / 60000
-  );
-
-  const earlyEnd = minutesSpent < 40;
-
-  await db.collection("classTracker")
-    .doc(session.logId)
-    .set({
-      endedAt:endedAt.toISOString(),
-      endedAtText:endedAt.toLocaleString(),
-      minutesSpent,
-      earlyEnd,
-      earlyEndReason:reason,
-      earlyEndRemark:remark,
-      status:"Ended"
-    }, { merge:true });
-
-  await db.collection("classes")
-    .doc(item.id)
-    .set({
-      lastMinutesSpent:minutesSpent,
-      lastEndedAt:endedAt.toISOString(),
-      lastEarlyEndReason:reason,
-      lastEarlyEndRemark:remark,
-      lastStatus:earlyEnd ? "Ended Early" : "Completed"
-    }, { merge:true });
-}
-
-function showEarlyEndPrompt(card, callback){
-
-  if(!card) return;
-
-  const oldBox = card.querySelector(".early-end-inline-box");
-  if(oldBox) oldBox.remove();
-
-  const box = document.createElement("div");
-  box.className = "early-end-inline-box";
-
-  box.innerHTML = `
-    <div class="early-end-title"><div class="early-end-title">Class ended before 40 minutes.</div></div>
-
-    <label class="early-end-label">Reason</label>
-
-    <select class="early-end-select">
-      <option value="">Select reason</option>
-      <option>Learner did not join</option>
-      <option>Internet issue</option>
-      <option>Teacher emergency</option>
-      <option>Learner emergency</option>
-      <option>Class rescheduled</option>
-      <option>Other</option>
-    </select>
-
-    <textarea class="early-end-remark" placeholder="Add remark if needed..."></textarea>
-
-    <button type="button" class="early-end-save">Save Reason</button>
-  `;
-
-  card.appendChild(box);
-
-  const select = box.querySelector(".early-end-select");
-  const remark = box.querySelector(".early-end-remark");
-  const save = box.querySelector(".early-end-save");
-
-  save.onclick = async () => {
-    const reason = select.value;
-    const note = remark.value.trim();
-
-    if(!reason){
-      box.querySelector(".early-end-title").textContent = "Please select a reason.";
-      return;
-    }
-
-    await callback(reason, note);
-
-    box.innerHTML = `<div class="early-end-saved">Early-end reason saved ✓</div>`;
-  };
-}
-
-document.addEventListener("click", async function(e){
-
-  const btn = e.target.closest(".open-meet-btn");
-
-  if(!btn) return;
-
-  e.preventDefault();
-  e.stopPropagation();
-
-  let item;
-
-  try{
-    item = JSON.parse(
-      decodeURIComponent(
-        btn.getAttribute("data-class")
-      )
-    );
-  }catch(err){
-    console.error(err);
-    return;
-  }
-
-  const classId = item.id;
-
-  if(!ACTIVE_CLASS_SESSIONS[classId]){
-
-    const url = item.meetUrl || "";
-
-    if(!url){
-      alert("No Meet link saved.");
-      return;
-    }
-
-    const tracker =
-      await createClassTrackerLog(item);
-
-    ACTIVE_CLASS_SESSIONS[classId] = tracker;
-
-    window.open(url, "_blank");
-
-    btn.textContent = "End Class";
-
-    btn.style.background =
-      "rgba(255,80,80,.18)";
-
-    return;
-  }
-
-  const session =
-    ACTIVE_CLASS_SESSIONS[classId];
-
-  const minutesSpent = Math.round(
-    (new Date() - session.startedAt) / 60000
-  );
-
-  if(minutesSpent < 40){
-
-    showEarlyEndPrompt(btn.closest(".class-card"), async function(reason, remark){
-
-      await finishClassTrackerLog(
-        item,
-        session,
-        reason,
-        remark
-      );
-
-      delete ACTIVE_CLASS_SESSIONS[classId];
-
-      btn.textContent = "Open Meet";
-
-      btn.style.background =
-        "rgba(255,255,255,.09)";
-    });
-
-  }else{
-
-    await finishClassTrackerLog(
-      item,
-      session
-    );
-
-    delete ACTIVE_CLASS_SESSIONS[classId];
-
-    btn.textContent = "Open Meet";
-
-    btn.style.background =
-      "rgba(255,255,255,.09)";
-  }
-
-}, true);
-
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
