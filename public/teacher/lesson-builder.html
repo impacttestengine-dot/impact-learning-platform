@@ -726,6 +726,129 @@ ${cleanHTML}
 })();
 </script>
 
+
+
+<script id="lesson-builder-placement-sync">
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* =========================================
+     BUTTON REACTIONS
+  ========================================= */
+
+  const style = document.createElement("style");
+
+  style.innerHTML = `
+
+  button,
+  .builder-btn,
+  .tool-btn,
+  .action-btn{
+
+    transition:
+      transform .15s ease,
+      opacity .15s ease,
+      background .15s ease !important;
+  }
+
+  button:hover,
+  .builder-btn:hover,
+  .tool-btn:hover,
+  .action-btn:hover{
+
+    transform:translateY(-2px) scale(1.03);
+  }
+
+  button:active,
+  .builder-btn:active,
+  .tool-btn:active,
+  .action-btn:active{
+
+    transform:scale(.93);
+    opacity:.82;
+  }
+
+  img,
+  video{
+    resize:both;
+    overflow:auto;
+    max-width:100%;
+  }
+
+  .clean-document-view .builder-block{
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+  }
+
+  `;
+
+  document.head.appendChild(style);
+
+  /* =========================================
+     MEDIA ALIGNMENT
+  ========================================= */
+
+  window.applyMediaAlignment = function(direction){
+
+    document
+      .querySelectorAll(".selected img, .selected video")
+      .forEach(el => {
+
+        el.style.display = "block";
+
+        if(direction === "left"){
+          el.style.margin = "0 auto 0 0";
+        }
+
+        if(direction === "center"){
+          el.style.margin = "0 auto";
+        }
+
+        if(direction === "right"){
+          el.style.margin = "0 0 0 auto";
+        }
+
+      });
+  };
+
+  /* =========================================
+     SAFE AUTOSAVE THROTTLE
+  ========================================= */
+
+  let autosaveTimer;
+
+  window.safeAutosave = function(fn){
+
+    clearTimeout(autosaveTimer);
+
+    autosaveTimer = setTimeout(() => {
+
+      try{
+        fn();
+      }catch(err){
+        console.log(err);
+      }
+
+    }, 2500);
+  };
+
+  /* =========================================
+     CLEAN VIEW MODE
+  ========================================= */
+
+  window.enableCleanLessonView = function(){
+
+    document.body.classList.add("clean-document-view");
+  };
+
+  console.log("Lesson Builder Placement Logic Synced");
+
+});
+
+</script>
+
+
 </body>
 </html>
 `);
@@ -785,8 +908,132 @@ ${cleanHTML}
 })();
 </script>
 
+
+
+<script id="lesson-builder-placement-sync">
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* =========================================
+     BUTTON REACTIONS
+  ========================================= */
+
+  const style = document.createElement("style");
+
+  style.innerHTML = `
+
+  button,
+  .builder-btn,
+  .tool-btn,
+  .action-btn{
+
+    transition:
+      transform .15s ease,
+      opacity .15s ease,
+      background .15s ease !important;
+  }
+
+  button:hover,
+  .builder-btn:hover,
+  .tool-btn:hover,
+  .action-btn:hover{
+
+    transform:translateY(-2px) scale(1.03);
+  }
+
+  button:active,
+  .builder-btn:active,
+  .tool-btn:active,
+  .action-btn:active{
+
+    transform:scale(.93);
+    opacity:.82;
+  }
+
+  img,
+  video{
+    resize:both;
+    overflow:auto;
+    max-width:100%;
+  }
+
+  .clean-document-view .builder-block{
+    background:transparent !important;
+    border:none !important;
+    box-shadow:none !important;
+  }
+
+  `;
+
+  document.head.appendChild(style);
+
+  /* =========================================
+     MEDIA ALIGNMENT
+  ========================================= */
+
+  window.applyMediaAlignment = function(direction){
+
+    document
+      .querySelectorAll(".selected img, .selected video")
+      .forEach(el => {
+
+        el.style.display = "block";
+
+        if(direction === "left"){
+          el.style.margin = "0 auto 0 0";
+        }
+
+        if(direction === "center"){
+          el.style.margin = "0 auto";
+        }
+
+        if(direction === "right"){
+          el.style.margin = "0 0 0 auto";
+        }
+
+      });
+  };
+
+  /* =========================================
+     SAFE AUTOSAVE THROTTLE
+  ========================================= */
+
+  let autosaveTimer;
+
+  window.safeAutosave = function(fn){
+
+    clearTimeout(autosaveTimer);
+
+    autosaveTimer = setTimeout(() => {
+
+      try{
+        fn();
+      }catch(err){
+        console.log(err);
+      }
+
+    }, 2500);
+  };
+
+  /* =========================================
+     CLEAN VIEW MODE
+  ========================================= */
+
+  window.enableCleanLessonView = function(){
+
+    document.body.classList.add("clean-document-view");
+  };
+
+  console.log("Lesson Builder Placement Logic Synced");
+
+});
+
+</script>
+
+
 </body>
 </html>
+
 
 
 
