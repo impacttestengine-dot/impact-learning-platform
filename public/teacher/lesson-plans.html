@@ -247,62 +247,7 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem)
 </script>
 <script src="/js/impact-round-icons.js?v=001"></script>
 <script src="/js/impact-recycle-bin.js"></script>
-<script id="lesson-plan-delete-fix">
-document.addEventListener("click", async function(e){
 
-  const btn = e.target.closest(".delete-btn,.delete-plan,[data-delete],[data-delete-id]");
-
-  if(!btn) return;
-
-  const txt = (btn.textContent || "").toLowerCase();
-
-  if(
-    !txt.includes("delete") &&
-    !btn.classList.contains("delete-btn") &&
-    !btn.classList.contains("delete-plan")
-  ){
-    return;
-  }
-
-  e.preventDefault();
-  e.stopPropagation();
-
-  const id =
-    btn.dataset.delete ||
-    btn.dataset.deleteId ||
-    btn.dataset.id ||
-    btn.closest("[data-id]")?.dataset?.id;
-
-  if(!id){
-    alert("Could not find lesson plan ID.");
-    return;
-  }
-
-  if(!confirm("Delete this lesson plan?")) return;
-
-  try{
-
-    if(window.firebase && firebase.firestore){
-
-      await firebase.firestore()
-        .collection("lessonPlans")
-        .doc(id)
-        .delete();
-    }
-
-    const row =
-      btn.closest(".lesson-row,.lesson-item,.template-row,.card");
-
-    if(row) row.remove();
-
-  }catch(err){
-
-    console.error(err);
-    alert("Delete failed.");
-  }
-
-}, true);
-</script>
 
 <script id="team-meetings-menu-fix">
 (function(){
@@ -352,8 +297,120 @@ document.addEventListener("click", async function(e){
 })();
 </script>
 
+
+<script id="lesson-plan-delete-fix">
+document.addEventListener("DOMContentLoaded", function(){
+
+  function getDb(){
+    if(window.firebase && firebase.firestore){
+      return firebase.firestore();
+    }
+    return null;
+  }
+
+  document.addEventListener("click", async function(e){
+
+    const btn = e.target.closest(
+      "[data-delete-id], [data-delete], .delete-plan, .delete-btn, .plan-delete-btn, button"
+    );
+
+    if(!btn) return;
+
+    const label = (btn.textContent || "").trim().toLowerCase();
+    const looksLikeDelete =
+      label.includes("delete") ||
+      label === "×" ||
+      label === "x" ||
+      btn.classList.contains("delete-plan") ||
+      btn.classList.contains("delete-btn") ||
+      btn.classList.contains("plan-delete-btn") ||
+      btn.hasAttribute("data-delete") ||
+      btn.hasAttribute("data-delete-id");
+
+    if(!looksLikeDelete) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const row =
+      btn.closest("[data-id]") ||
+      btn.closest("[data-plan-id]") ||
+      btn.closest(".lesson-plan-row") ||
+      btn.closest(".lesson-plan-item") ||
+      btn.closest(".plan-row") ||
+      btn.closest(".saved-plan") ||
+      btn.closest(".folder-plan") ||
+      btn.closest("article") ||
+      btn.closest("li") ||
+      btn.closest(".card");
+
+    const id =
+      btn.dataset.deleteId ||
+      btn.dataset.delete ||
+      btn.dataset.id ||
+      row?.dataset?.id ||
+      row?.dataset?.planId;
+
+    if(!id){
+      alert("Could not find this lesson plan ID.");
+      return;
+    }
+
+    if(!confirm("Delete this lesson plan?")) return;
+
+    try{
+      const db = getDb();
+
+      if(db){
+        const collections = [
+          "lessonPlans",
+          "lessons",
+          "savedLessonPlans"
+        ];
+
+        for(const name of collections){
+          try{
+            await db.collection(name).doc(id).delete();
+          }catch(err){}
+        }
+      }
+
+      // Also remove from localStorage backup if the page uses local saved plans
+      const keys = [
+        "impactLessonPlans",
+        "impactSavedLessonPlans",
+        "lessonPlans"
+      ];
+
+      keys.forEach(key => {
+        try{
+          const list = JSON.parse(localStorage.getItem(key) || "[]");
+          if(Array.isArray(list)){
+            const next = list.filter(item => item.id !== id && item.planId !== id);
+            localStorage.setItem(key, JSON.stringify(next));
+          }
+        }catch(err){}
+      });
+
+      if(row){
+        row.remove();
+      }else{
+        window.location.reload();
+      }
+
+    }catch(err){
+      console.error(err);
+      alert("Delete failed. Check console for details.");
+    }
+
+  }, true);
+
+});
+</script>
+
 </body>
 </html>
+
 
 
 
