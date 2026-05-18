@@ -11,28 +11,27 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif}
-.nav{position:fixed;top:24px;left:28px;z-index:99;display:flex;gap:12px}
-.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px)}
-.page{position:relative;z-index:2;width:min(1120px,92vw);margin:0 auto;padding:118px 0 80px}
+body{min-height:100vh;background:#05060b;color:white;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+.page{position:relative;z-index:2;width:min(1120px,92vw);margin:0 auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
 .hero{text-align:center;margin-bottom:34px}
-.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.62);margin-bottom:12px}
-h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1}
-.hero p{margin-top:12px;color:rgba(255,255,255,.68);font-weight:700}
-.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(22px);box-shadow:0 26px 80px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08);padding:24px}
-.search{width:100%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.10);color:#fff;border-radius:18px;padding:14px 16px;font-weight:800;margin-bottom:18px}
-.learner-card{margin-bottom:18px;padding:18px;border-radius:24px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10)}
-.learner-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400;font-size:1.8rem;margin-bottom:12px}
-.session-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:13px;border-radius:18px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);margin-bottom:10px}
-.session-number{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);font-weight:900}
-.meta{color:rgba(255,255,255,.65);font-size:.76rem;font-weight:800;line-height:1.65}
-.delete-log{border:none;border-radius:13px;padding:9px 12px;background:rgba(255,80,80,.14);color:#fff;font-weight:900;cursor:pointer}
-.badge{display:inline-block;margin-top:7px;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.7rem;font-weight:900}
-.early{background:rgba(255,80,80,.16);color:#fecaca}
-.empty{text-align:center;padding:34px;color:rgba(255,255,255,.62);font-weight:900}
-button{transition:transform .15s ease, background .18s ease, box-shadow .18s ease}
-button:hover{transform:translateY(-2px) scale(1.03);background:rgba(255,255,255,.18)!important;box-shadow:0 14px 34px rgba(0,0,0,.32)}
-button:active{transform:scale(.94);opacity:.82}
+.hero h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
+.hero p{color:rgba(255,255,255,.65);font-weight:800}
+.search{width:100%;margin-bottom:22px;border:none;outline:none;border-radius:22px;padding:16px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;font-weight:800}
+.learner-group{margin-bottom:28px}
+.learner-name{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2rem;font-weight:400;margin:0 0 14px}
+.log-card{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:start;margin-bottom:14px;padding:20px;border-radius:28px;background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(22px)}
+.session-pill{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);font-weight:900}
+.log-main{font-size:.84rem;font-weight:800;color:rgba(255,255,255,.82);line-height:1.75}
+.log-top{font-weight:900;color:white;margin-bottom:4px}
+.status{display:inline-block;margin-top:10px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.delete-btn{border:none;cursor:pointer;border-radius:14px;padding:10px 13px;background:rgba(255,80,80,.14);border:1px solid rgba(255,120,120,.2);color:white;font-weight:900}
+.empty{padding:24px;border-radius:24px;background:rgba(255,255,255,.06);text-align:center;color:rgba(255,255,255,.6);font-weight:800}
+button{transition:transform .15s ease,background .18s ease,opacity .15s ease}
+button:hover{transform:translateY(-2px) scale(1.03);background:rgba(255,255,255,.18)}
+button:active{transform:scale(.94);opacity:.8}
+@media(max-width:700px){.log-card{grid-template-columns:1fr}.session-pill{width:auto;border-radius:999px}}
 </style>
 </head>
 
@@ -40,20 +39,20 @@ button:active{transform:scale(.94);opacity:.82}
 <script src="/js/impact-global-bg.js"></script>
 
 <nav class="nav">
-  <a href="/teacher/dashboard.html" title="Dashboard">⌘</a>
-  <a href="/teacher/classes.html" title="Back">←</a>
+  <a href="/teacher/dashboard.html">⌘</a>
+  <a href="/teacher/classes.html">←</a>
 </nav>
 
 <main class="page">
   <section class="hero">
-    <p class="eyebrow">Teacher Workspace</p>
     <h1>Class Tracker</h1>
-    <p>Class logs grouped by learner. Sessions are counted in repeating sets of 4.</p>
+    <p>Started classes, ended classes, duration, participation, and teacher remarks are logged here.</p>
   </section>
 
-  <section class="panel">
-    <input class="search" id="searchInput" type="search" placeholder="Search learner, teacher, level, room, reason...">
-    <div id="logList"><div class="empty">Loading class tracker...</div></div>
+  <input id="searchInput" class="search" placeholder="Search learner, teacher, level, room, remark...">
+
+  <section id="logsWrap">
+    <div class="empty">Loading class tracker...</div>
   </section>
 </main>
 
@@ -62,184 +61,169 @@ button:active{transform:scale(.94);opacity:.82}
 <script src="/__/firebase/init.js"></script>
 
 <script>
-const db=firebase.firestore();
-const logList=document.getElementById("logList");
-const searchInput=document.getElementById("searchInput");
-let logs=[];
-
-function clean(v){return String(v||"").toLowerCase();}
-
-function sessionNumber(index){
-  return ((index % 4) + 1) + "/4";
-}
-
-function groupByLearner(items){
-  const groups={};
-  items.forEach(item=>{
-    const key=item.learner || "Unnamed Learner";
-    if(!groups[key]) groups[key]=[];
-    groups[key].push(item);
-
-groups[key].sort((a,b)=>{
-  return new Date(a.startedAt || 0) - new Date(b.startedAt || 0);
-});
-  });
-  return groups;
-}
-
-function render(items){
-  if(!items.length){
-    logList.innerHTML='<div class="empty">No class logs yet.</div>';
-    return;
-  }
-
-  const groups=groupByLearner(items);
-  logList.innerHTML="";
-
-  Object.keys(groups).sort().forEach(name=>{
-    const card=document.createElement("article");
-    card.className="learner-card";
-    card.innerHTML=`<h2>${name}</h2>`;
-
-    groups[name].forEach((item,index)=>{
-      const row=document.createElement("div");
-      row.className="session-row";
-      row.innerHTML=`
-        <div class="session-number">${sessionNumber(index)}</div>
-        <div>
-          <div class="meta">Level: ${item.level || ""} · Session ${sessionNumber(index)} · Teacher: ${item.teacher || ""} · Room: ${item.meetRoom || ""}</div>
-          <div class="meta">Started: ${item.startedAtText || ""}</div>
-          <div class="meta">Ended: ${item.endedAtText || "Not ended"}</div>
-          <div class="meta">Duration: ${item.minutesSpent || item.durationMinutes || 0} minute(s)
-<br>Lesson completed: ${item.lessonCompleted || ""}
-<br>Lesson canceled: ${item.lessonCanceled || ""}
-<br>Student participation: ${item.studentParticipation || ""}
-<br>Remarks: ${item.teacherRemarks || item.earlyEndRemark || ""}
-<br>Lesson completed: ${item.lessonCompleted || ""}
-<br>Lesson canceled: ${item.lessonCanceled || ""}
-<br>Student participation: ${item.studentParticipation || ""}
-<br>Remarks: ${item.teacherRemarks || item.earlyEndRemark || ""}</div>
-          ${
-            item.earlyEnd
-              ? `<span class="badge early">Ended early</span>
-                 <div class="meta">Reason: ${item.earlyEndReason || ""}</div>
-                 <div class="meta">Remark: ${item.earlyEndRemark || ""}</div>`
-              : `<span class="badge">${item.status || "Logged"}</span>`
-          }
-        </div>
-        <button class="delete-log" data-id="${item.id}">Delete</button>
-      `;
-      row.querySelector(".delete-log").onclick=()=>deleteLog(item.id);
-      card.appendChild(row);
-    });
-
-    logList.appendChild(card);
-  });
-}
-
-async function deleteLog(id){
-  if(!confirm("Delete this class log permanently?")) return;
-  await db.collection("classTracker").doc(id).delete();
-  await load();
-}
-
-async function load(){
-  const snap=await db.collection("classTracker").orderBy("startedAt","desc").get();
-  logs=snap.docs.map(d=>({id:d.id,...d.data()}));
-  render(logs);
-}
-
-searchInput.oninput=()=>{
-  const q=clean(searchInput.value);
-  if(!q){render(logs);return;}
-  render(logs.filter(item=>clean([
-    item.learner,item.teacher,item.level,item.meetRoom,item.status,
-    item.earlyEndReason,item.earlyEndRemark,item.startedAtText,item.endedAtText
-  ].join(" ")).includes(q)));
-};
-
-load();
-</script>
-
-<script id="team-meetings-menu-fix">
-(function(){
-
-  function injectTeamMeetings(){
-
-    const menu =
-      document.querySelector(".quick-menu") ||
-      document.querySelector(".menu-dropdown") ||
-      document.querySelector(".menu-panel") ||
-      document.querySelector(".menu-links") ||
-      document.querySelector(".dropdown-menu");
-
-    if(!menu) return;
-
-    if(document.getElementById("teamMeetingsMenuLink")) return;
-
-    const recycleLink = Array.from(menu.querySelectorAll("a"))
-      .find(a =>
-        (a.textContent || "")
-          .toLowerCase()
-          .includes("recycle")
-      );
-
-    if(!recycleLink) return;
-
-    const newLink = recycleLink.cloneNode(true);
-
-    newLink.id = "teamMeetingsMenuLink";
-
-    newLink.href = "/teacher/team-meetings.html";
-
-    newLink.textContent = "Team Meetings";
-
-    // REMOVE INLINE STYLES THAT CAUSED STATIC LOOK
-    newLink.removeAttribute("style");
-
-    // insert before recycle bin
-    recycleLink.parentNode.insertBefore(newLink, recycleLink);
-
-  }
-
-  injectTeamMeetings();
-
-  setInterval(injectTeamMeetings, 1500);
-
-})();
-</script>
-
-
-
-
-<script id="michael-session-2-questionnaire-fix">
 document.addEventListener("DOMContentLoaded", async function(){
-  if(!window.firebase || !firebase.firestore) return;
-
   const db = firebase.firestore();
+  const wrap = document.getElementById("logsWrap");
+  const searchInput = document.getElementById("searchInput");
 
-  const snap = await db.collection("classTracker")
-    .where("learner","==","Michael")
-    .where("startedAt","==","2026-05-17T17:23:57")
-    .get();
+  const michaelRemark1 = "Michael is very engaged and enthusiastic and sharp.";
+  const michaelRemark2 = "Michael was very enthusiastic and can answer correctly questions 1 to 3 of the video with correct pronunciation and accent.";
 
-  snap.forEach(async doc => {
-    await db.collection("classTracker").doc(doc.id).set({
-      sessionNumber:"2/4",
+  async function fixMichaelRecords(){
+    await db.collection("classTracker").doc("michael-2026-05-10-session-1").set({
+      learner:"Michael",
+      level:"A0",
+      teacher:"Adelaide",
+      meetRoom:"Impact Meet Room 2",
+      sessionNumber:"1/4",
+      startedAt:"2026-05-10T17:50:00",
+      startedAtText:"10/05/2026, 5:50 PM",
+      endedAt:"2026-05-10T18:50:00",
+      endedAtText:"10/05/2026, 6:50 PM",
+      minutesSpent:60,
+      status:"Ended",
       lessonCompleted:"Yes",
       lessonCanceled:"No",
       studentParticipation:"100%",
-      teacherRemarks:"Michael was very enthusiastic and can answer correctly questions 1 to 3 of the video with correct pronunciation and accent.",
-      updatedAt:new Date().toISOString()
-    }, { merge:true });
-  });
+      teacherRemarks:michaelRemark1,
+      manuallyAdded:true
+    }, {merge:true});
+
+    try{
+      await db.collection("classTracker").doc("michael-2026-05-17-session-2").delete();
+    }catch(e){}
+
+    const snap = await db.collection("classTracker")
+      .where("learner","==","Michael")
+      .where("startedAt","==","2026-05-17T17:23:57")
+      .get();
+
+    snap.forEach(doc => {
+      db.collection("classTracker").doc(doc.id).set({
+        sessionNumber:"2/4",
+        lessonCompleted:"Yes",
+        lessonCanceled:"No",
+        studentParticipation:"100%",
+        teacherRemarks:michaelRemark2
+      }, {merge:true});
+    });
+  }
+
+  function clean(value){
+    return String(value || "").replace(/\s*minute\(s\)\s*$/i,"").trim();
+  }
+
+  function sessionNumber(item, index){
+    if(item.sessionNumber) return item.sessionNumber;
+    return ((index % 4) + 1) + "/4";
+  }
+
+  function dateValue(item){
+    return new Date(item.startedAt || item.createdAt || item.loggedAt || 0).getTime();
+  }
+
+  async function loadLogs(){
+    await fixMichaelRecords();
+
+    const snap = await db.collection("classTracker").get();
+
+    let logs = snap.docs.map(doc => ({id:doc.id, ...doc.data()}));
+
+    const seen = new Set();
+    logs = logs
+      .sort((a,b)=>dateValue(a)-dateValue(b))
+      .filter(item => {
+        const key = [
+          item.learner || "",
+          item.startedAt || "",
+          item.endedAt || "",
+          item.meetRoom || ""
+        ].join("|");
+
+        if(seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
+    render(logs);
+
+    searchInput.oninput = function(){
+      const q = searchInput.value.toLowerCase();
+      const filtered = logs.filter(item => JSON.stringify(item).toLowerCase().includes(q));
+      render(filtered);
+    };
+  }
+
+  function render(logs){
+    if(!logs.length){
+      wrap.innerHTML = '<div class="empty">No class tracker records found.</div>';
+      return;
+    }
+
+    const grouped = {};
+    logs.forEach(item => {
+      const learner = item.learner || "Unnamed Learner";
+      if(!grouped[learner]) grouped[learner] = [];
+      grouped[learner].push(item);
+    });
+
+    wrap.innerHTML = "";
+
+    Object.keys(grouped).sort().forEach(learner => {
+      const group = document.createElement("section");
+      group.className = "learner-group";
+
+      const title = document.createElement("h2");
+      title.className = "learner-name";
+      title.textContent = learner;
+      group.appendChild(title);
+
+      grouped[learner]
+        .sort((a,b)=>dateValue(a)-dateValue(b))
+        .forEach((item,index) => {
+          const card = document.createElement("article");
+          card.className = "log-card";
+
+          const completed = clean(item.lessonCompleted);
+          const canceled = clean(item.lessonCanceled);
+          const participation = clean(item.studentParticipation);
+          const remarks = clean(item.teacherRemarks || item.earlyEndRemark);
+
+          card.innerHTML = `
+            <div class="session-pill">${sessionNumber(item,index)}</div>
+
+            <div class="log-main">
+              <div class="log-top">
+                Level: ${item.level || ""} · Session ${sessionNumber(item,index)} · Teacher: ${item.teacher || ""} · Room: ${item.meetRoom || ""}
+              </div>
+              <div>Started: ${item.startedAtText || item.startedAt || ""}</div>
+              <div>Ended: ${item.endedAtText || item.endedAt || "Not ended"}</div>
+              <div>Duration: ${item.minutesSpent || item.durationMinutes || 0} minute(s)</div>
+              ${completed ? `<div>Lesson completed: ${completed}</div>` : ""}
+              ${canceled ? `<div>Lesson canceled: ${canceled}</div>` : ""}
+              ${participation ? `<div>Student participation: ${participation}</div>` : ""}
+              ${remarks ? `<div>Remarks: ${remarks}</div>` : ""}
+              <span class="status">${item.status || "Logged"}</span>
+            </div>
+
+            <button class="delete-btn" type="button">Delete</button>
+          `;
+
+          card.querySelector(".delete-btn").onclick = async function(){
+            if(!confirm("Delete this class tracker record?")) return;
+            await db.collection("classTracker").doc(item.id).delete();
+            card.remove();
+          };
+
+          group.appendChild(card);
+        });
+
+      wrap.appendChild(group);
+    });
+  }
+
+  loadLogs();
 });
 </script>
 </body>
 </html>
-
-
-
-
-
-
