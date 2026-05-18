@@ -110,7 +110,11 @@ function render(items){
           <div class="meta">Level: ${item.level || ""} · Session ${sessionNumber(index)} · Teacher: ${item.teacher || ""} · Room: ${item.meetRoom || ""}</div>
           <div class="meta">Started: ${item.startedAtText || ""}</div>
           <div class="meta">Ended: ${item.endedAtText || "Not ended"}</div>
-          <div class="meta">Duration: ${item.minutesSpent || 0} minute(s)</div>
+          <div class="meta">Duration: ${item.minutesSpent || item.durationMinutes || 0} minute(s)
+<br>Lesson completed: ${item.lessonCompleted || ""}
+<br>Lesson canceled: ${item.lessonCanceled || ""}
+<br>Student participation: ${item.studentParticipation || ""}
+<br>Remarks: ${item.teacherRemarks || item.earlyEndRemark || ""} minute(s)</div>
           ${
             item.earlyEnd
               ? `<span class="badge early">Ended early</span>
@@ -201,59 +205,64 @@ load();
 })();
 </script>
 
-<script id="michael-manual-session-fix">
+
+<script id="class-tracker-cleanup-and-details">
 document.addEventListener("DOMContentLoaded", async function(){
   if(!window.firebase || !firebase.firestore) return;
 
   const db = firebase.firestore();
 
-  const remarks = "Michael is very engaged and enthusiastic and sharp.";
+  // Delete the duplicated Michael 17 May manual record if it exists
+  try{
+    await db.collection("classTracker")
+      .doc("michael-2026-05-17-session-2")
+      .delete();
+  }catch(e){}
 
-  await db.collection("classTracker").doc("michael-2026-05-10-session-1").set({
-    learner:"Michael",
-    level:"A0",
-    teacher:"Adelaide",
-    meetRoom:"Impact Meet Room 2",
-    sessionNumber:"1/4",
-    startedAt:"2026-05-10T17:50:00",
-    startedAtText:"10/05/2026, 5:50 PM",
-    endedAt:"2026-05-10T18:50:00",
-    endedAtText:"10/05/2026, 6:50 PM",
-    minutesSpent:60,
-    durationMinutes:60,
-    status:"Ended",
-    lessonCompleted:"Yes",
-    lessonCanceled:"No",
-    studentParticipation:"100%",
-    teacherRemarks:remarks,
-    manuallyAdded:true,
-    updatedAt:new Date().toISOString()
-  }, { merge:true });
+  // Ensure 10 May record remains as session 1/4 with questionnaire data
+  await db.collection("classTracker")
+    .doc("michael-2026-05-10-session-1")
+    .set({
+      learner:"Michael",
+      level:"A0",
+      teacher:"Adelaide",
+      meetRoom:"Impact Meet Room 2",
+      sessionNumber:"1/4",
+      startedAt:"2026-05-10T17:50:00",
+      startedAtText:"10/05/2026, 5:50 PM",
+      endedAt:"2026-05-10T18:50:00",
+      endedAtText:"10/05/2026, 6:50 PM",
+      minutesSpent:60,
+      durationMinutes:60,
+      status:"Ended",
+      lessonCompleted:"Yes",
+      lessonCanceled:"No",
+      studentParticipation:"100%",
+      teacherRemarks:"Michael is very engaged and enthusiastic and sharp.",
+      manuallyAdded:true,
+      updatedAt:new Date().toISOString()
+    }, { merge:true });
 
-  await db.collection("classTracker").doc("michael-2026-05-17-session-2").set({
-    learner:"Michael",
-    level:"A0",
-    teacher:"Adelaide",
-    meetRoom:"Impact Meet Room 6",
-    sessionNumber:"2/4",
-    startedAt:"2026-05-17T17:23:57",
-    startedAtText:"17/05/2026, 17:23:57",
-    endedAt:"2026-05-17T18:28:12",
-    endedAtText:"17/05/2026, 18:28:12",
-    minutesSpent:64,
-    durationMinutes:64,
-    status:"Ended",
-    lessonCompleted:"Yes",
-    lessonCanceled:"No",
-    studentParticipation:"100%",
-    teacherRemarks:remarks,
-    manuallyAdded:true,
-    updatedAt:new Date().toISOString()
-  }, { merge:true });
+  // Add missing questionnaire info to existing Michael 17 May tracked record
+  const snap = await db.collection("classTracker")
+    .where("learner","==","Michael")
+    .where("startedAt","==","2026-05-17T17:23:57")
+    .get();
+
+  snap.forEach(async doc => {
+    await db.collection("classTracker").doc(doc.id).set({
+      sessionNumber:"2/4",
+      lessonCompleted:"Yes",
+      lessonCanceled:"No",
+      studentParticipation:"100%",
+      teacherRemarks:"Michael is very engaged and enthusiastic and sharp."
+    }, { merge:true });
+  });
 });
 </script>
 </body>
 </html>
+
 
 
 
