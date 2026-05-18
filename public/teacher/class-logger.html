@@ -114,11 +114,11 @@ function render(items){
 <br>Lesson completed: ${item.lessonCompleted || ""}
 <br>Lesson canceled: ${item.lessonCanceled || ""}
 <br>Student participation: ${item.studentParticipation || ""}
-<br>Remarks: ${item.teacherRemarks || item.earlyEndRemark || ""} minute(s)
+<br>Remarks: ${item.teacherRemarks || item.earlyEndRemark || ""}
 <br>Lesson completed: ${item.lessonCompleted || ""}
 <br>Lesson canceled: ${item.lessonCanceled || ""}
 <br>Student participation: ${item.studentParticipation || ""}
-<br>Remarks: ${item.teacherRemarks || item.earlyEndRemark || ""} minute(s)</div>
+<br>Remarks: ${item.teacherRemarks || item.earlyEndRemark || ""}</div>
           ${
             item.earlyEnd
               ? `<span class="badge early">Ended early</span>
@@ -210,44 +210,14 @@ load();
 </script>
 
 
-<script id="class-tracker-cleanup-and-details">
+
+
+<script id="michael-session-2-questionnaire-fix">
 document.addEventListener("DOMContentLoaded", async function(){
   if(!window.firebase || !firebase.firestore) return;
 
   const db = firebase.firestore();
 
-  // Delete the duplicated Michael 17 May manual record if it exists
-  try{
-    await db.collection("classTracker")
-      .doc("michael-2026-05-17-session-2")
-      .delete();
-  }catch(e){}
-
-  // Ensure 10 May record remains as session 1/4 with questionnaire data
-  await db.collection("classTracker")
-    .doc("michael-2026-05-10-session-1")
-    .set({
-      learner:"Michael",
-      level:"A0",
-      teacher:"Adelaide",
-      meetRoom:"Impact Meet Room 2",
-      sessionNumber:"1/4",
-      startedAt:"2026-05-10T17:50:00",
-      startedAtText:"10/05/2026, 5:50 PM",
-      endedAt:"2026-05-10T18:50:00",
-      endedAtText:"10/05/2026, 6:50 PM",
-      minutesSpent:60,
-      durationMinutes:60,
-      status:"Ended",
-      lessonCompleted:"Yes",
-      lessonCanceled:"No",
-      studentParticipation:"100%",
-      teacherRemarks:"Michael is very engaged and enthusiastic and sharp.",
-      manuallyAdded:true,
-      updatedAt:new Date().toISOString()
-    }, { merge:true });
-
-  // Add missing questionnaire info to existing Michael 17 May tracked record
   const snap = await db.collection("classTracker")
     .where("learner","==","Michael")
     .where("startedAt","==","2026-05-17T17:23:57")
@@ -259,67 +229,15 @@ document.addEventListener("DOMContentLoaded", async function(){
       lessonCompleted:"Yes",
       lessonCanceled:"No",
       studentParticipation:"100%",
-      teacherRemarks:"Michael is very engaged and enthusiastic and sharp."
-    }, { merge:true });
-  });
-});
-</script>
-<script id="class-tracker-cleanup-and-details">
-document.addEventListener("DOMContentLoaded", async function(){
-  if(!window.firebase || !firebase.firestore) return;
-
-  const db = firebase.firestore();
-
-  // Delete the duplicated Michael 17 May manual record if it exists
-  try{
-    await db.collection("classTracker")
-      .doc("michael-2026-05-17-session-2")
-      .delete();
-  }catch(e){}
-
-  // Ensure 10 May record remains as session 1/4 with questionnaire data
-  await db.collection("classTracker")
-    .doc("michael-2026-05-10-session-1")
-    .set({
-      learner:"Michael",
-      level:"A0",
-      teacher:"Adelaide",
-      meetRoom:"Impact Meet Room 2",
-      sessionNumber:"1/4",
-      startedAt:"2026-05-10T17:50:00",
-      startedAtText:"10/05/2026, 5:50 PM",
-      endedAt:"2026-05-10T18:50:00",
-      endedAtText:"10/05/2026, 6:50 PM",
-      minutesSpent:60,
-      durationMinutes:60,
-      status:"Ended",
-      lessonCompleted:"Yes",
-      lessonCanceled:"No",
-      studentParticipation:"100%",
-      teacherRemarks:"Michael is very engaged and enthusiastic and sharp.",
-      manuallyAdded:true,
+      teacherRemarks:"Michael was very enthusiastic and can answer correctly questions 1 to 3 of the video with correct pronunciation and accent.",
       updatedAt:new Date().toISOString()
-    }, { merge:true });
-
-  // Add missing questionnaire info to existing Michael 17 May tracked record
-  const snap = await db.collection("classTracker")
-    .where("learner","==","Michael")
-    .where("startedAt","==","2026-05-17T17:23:57")
-    .get();
-
-  snap.forEach(async doc => {
-    await db.collection("classTracker").doc(doc.id).set({
-      sessionNumber:"2/4",
-      lessonCompleted:"Yes",
-      lessonCanceled:"No",
-      studentParticipation:"100%",
-      teacherRemarks:"Michael is very engaged and enthusiastic and sharp."
     }, { merge:true });
   });
 });
 </script>
 </body>
 </html>
+
 
 
 
