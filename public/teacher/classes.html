@@ -503,6 +503,100 @@ document.addEventListener("DOMContentLoaded", async () => {
 })();
 </script>
 
+<script id="class-end-questionnaire-fix">
+document.addEventListener("click", function(e){
+  const btn = e.target.closest("button");
+  if(!btn) return;
+  if((btn.textContent || "").trim().toLowerCase() !== "end class") return;
+
+  const card = btn.closest(".class-card");
+  if(!card) return;
+
+  const classId = card.dataset.classId;
+  if(!classId) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+
+  if(card.querySelector(".class-end-questionnaire")) return;
+
+  const box = document.createElement("div");
+  box.className = "class-end-questionnaire";
+  box.innerHTML = `
+    <h4>End Class Report</h4>
+
+    <label>Lesson completed?</label>
+    <select class="q-completed">
+      <option>Yes</option>
+      <option>No</option>
+    </select>
+
+    <label>Lesson canceled?</label>
+    <select class="q-cancelled">
+      <option>No</option>
+      <option>Yes</option>
+    </select>
+
+    <label>Student Participation?</label>
+    <select class="q-participation">
+      <option>100%</option>
+      <option>83%</option>
+      <option>67%</option>
+      <option>50%</option>
+      <option>33%</option>
+      <option>0%</option>
+    </select>
+
+    <label>Remarks</label>
+    <textarea class="q-remarks" placeholder="Add teacher remarks..."></textarea>
+
+    <button type="button" class="q-submit">Submit & End Class</button>
+  `;
+
+  card.appendChild(box);
+
+  box.querySelector(".q-submit").onclick = async function(){
+    const active = JSON.parse(localStorage.getItem("impactActiveClass_" + classId) || "null");
+    const endedAt = new Date();
+    const startedAt = active?.startedAt ? new Date(active.startedAt) : endedAt;
+    const minutesSpent = Math.round((endedAt - startedAt) / 60000);
+
+    const report = {
+      lessonCompleted: box.querySelector(".q-completed").value,
+      lessonCanceled: box.querySelector(".q-cancelled").value,
+      studentParticipation: box.querySelector(".q-participation").value,
+      teacherRemarks: box.querySelector(".q-remarks").value.trim()
+    };
+
+    const db = firebase.firestore();
+
+    if(active?.logId){
+      await db.collection("classTracker").doc(active.logId).set({
+        endedAt: endedAt.toISOString(),
+        endedAtText: endedAt.toLocaleString(),
+        minutesSpent,
+        status: "Ended",
+        ...report
+      }, { merge:true });
+    }else{
+      await db.collection("classTracker").add({
+        classId,
+        endedAt: endedAt.toISOString(),
+        endedAtText: endedAt.toLocaleString(),
+        minutesSpent,
+        status: "Ended",
+        ...report
+      });
+    }
+
+    localStorage.removeItem("impactActiveClass_" + classId);
+    alert("Class report submitted and tracked.");
+    location.reload();
+  };
+}, true);
+</script>
 </body>
 </html>
+
 
