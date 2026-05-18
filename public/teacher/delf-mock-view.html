@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>View DELF Mock | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(920px,92vw);margin:auto;padding:90px 0 120px}
+h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5rem);font-weight:400;text-align:center;margin-bottom:28px}
+.doc{line-height:1.8}
+.doc .lesson-card{background:transparent!important;border:none!important;box-shadow:none!important;padding:0!important;margin:0 0 22px!important}
+.doc .delete-card{display:none!important}
+.doc img,.doc video{max-width:100%;border-radius:18px}
+.nav{position:fixed;top:24px;left:28px;z-index:20}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14)}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="nav"><a href="/teacher/delf-mocks.html">←</a></nav>
+<main class="page">
+  <h1 id="title">DELF Mock</h1>
+  <section id="doc" class="doc"></section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+  const id = new URLSearchParams(location.search).get("id");
+  const title = document.getElementById("title");
+  const doc = document.getElementById("doc");
+
+  if(!id){
+    doc.innerHTML = "No DELF mock selected.";
+    return;
+  }
+
+  const snap = await firebase.firestore().collection("delfMocks").doc(id).get();
+
+  if(!snap.exists){
+    doc.innerHTML = "DELF mock not found.";
+    return;
+  }
+
+  const data = snap.data();
+  title.textContent = data.title || "DELF Mock";
+  doc.innerHTML = data.content || "";
+});
+</script>
+<script src="/js/impact-route-guard.js"></script>
+</body>
+</html>

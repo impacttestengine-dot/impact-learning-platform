@@ -1,0 +1,2874 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lesson Builder | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-height:100vh;overflow-x:hidden}
+.page{position:relative;z-index:20;width:min(1220px,94vw);margin:0 auto;padding:128px 0 80px}
+.workspace{display:grid;grid-template-columns:260px minmax(0,1fr) 240px;gap:22px;align-items:start}
+.panel{border-radius:30px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);box-shadow:0 24px 70px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.10);backdrop-filter:blur(20px)}
+.blocks-panel,.settings-panel{padding:22px}
+.block-list{display:grid;gap:12px}
+.block-btn,.control-btn,.toolbar button,.toolbar select,.toolbar input,.settings-panel input,.settings-panel select,.modal button{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.10);color:#fff;border-radius:16px;padding:12px 14px;font-family:Inter,system-ui,sans-serif;font-weight:800;cursor:pointer;backdrop-filter:blur(18px);transition:transform .15s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease}
+.block-btn{width:100%;min-height:54px;text-align:center}
+.block-btn:hover,.control-btn:hover,.toolbar button:hover{background:rgba(255,255,255,.17);border-color:rgba(232,216,166,.34);transform:translateY(-1px);box-shadow:0 14px 34px rgba(0,0,0,.24)}
+.block-btn:active,.control-btn:active,.toolbar button:active{transform:scale(.97)}
+.canvas-panel{padding:18px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.toolbar select,.toolbar input{min-height:40px;padding:8px 10px}
+.toolbar option,.settings-panel option,.modal option{color:#111827}
+.canvas{min-height:540px;border-radius:26px;padding:22px;background:radial-gradient(circle at 20% 0%,rgba(255,255,255,.09),transparent 28%),linear-gradient(180deg,rgba(6,10,22,.88),rgba(9,12,24,.76));border:1px solid rgba(255,255,255,.13)}
+.empty-state{padding:18px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);color:rgba(255,255,255,.74);font-weight:800;line-height:1.5}
+.lesson-card{margin-bottom:16px;padding:20px;border-radius:24px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);color:#fff;outline:none}
+.lesson-card:focus,.lesson-card.active{border-color:rgba(232,216,166,.44);box-shadow:0 0 0 2px rgba(232,216,166,.18)}
+.lesson-card h1,.lesson-card h2,.lesson-card h3{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400;color:#fbfbf8;margin-bottom:8px}
+.lesson-card h1{font-size:2.2rem}.lesson-card h2{font-size:1.8rem}.lesson-card h3{font-size:1.45rem}
+.lesson-card p,.lesson-card li{color:rgba(255,255,255,.82);font-weight:600;line-height:1.65}
+.lesson-card ul{margin:10px 0 0 22px}
+.lesson-card img,.lesson-card video{max-width:100%;border-radius:16px;display:block;margin-top:12px}
+.lesson-card audio{width:100%;margin-top:12px}
+.lesson-media-resizer{display:inline-block;width:70%;max-width:100%;min-width:140px;resize:horizontal;overflow:auto;padding:8px;border-radius:18px;border:1px dashed rgba(232,216,166,.38)}
+.lesson-media-resizer img,.lesson-media-resizer video{width:100%!important;height:auto!important;object-fit:contain!important;display:block!important;border-radius:14px}
+.settings-panel{display:grid;gap:16px}
+.settings-label{display:block;margin-bottom:8px;font-size:.82rem;font-weight:900;color:rgba(255,255,255,.78)}
+.settings-panel input,.settings-panel select{width:100%;min-height:50px}
+.settings-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+.control-btn{min-height:48px}
+.save-tick{display:block;height:18px;margin-top:6px;text-align:center;color:#d9f99d;font-weight:900;font-size:1.05rem;opacity:0;transform:scale(.8);transition:.18s ease}
+.save-tick.show{opacity:1;transform:scale(1)}
+.hidden-file{display:none}
+.toast{position:fixed;top:88px;left:50%;transform:translateX(-50%) translateY(-12px);z-index:99999;padding:14px 20px;border-radius:18px;background:rgba(10,13,24,.94);border:1px solid rgba(232,216,166,.35);color:#fff;font-weight:900;box-shadow:0 22px 70px rgba(0,0,0,.38);opacity:0;pointer-events:none;transition:.22s ease}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:980px){.page{padding-top:118px}.workspace{grid-template-columns:1fr}}
+</style>
+
+<style id="LESSON_BUILDER_AUTOSAVE_AND_DELETE_STYLE">
+.lesson-block-delete{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+  transition:transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.lesson-block-delete:hover{
+  transform:scale(1.1);
+  background:rgba(255,80,80,.72);
+  box-shadow:0 10px 30px rgba(255,80,80,.22);
+}
+
+.lesson-block-delete:active{
+  transform:scale(.92);
+}
+</style>
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+</head>
+
+<body>
+<div id="toast" class="toast">Saved</div>
+
+<main class="page">
+  <section class="workspace">
+    <aside class="panel blocks-panel">
+      <div class="block-list">
+        <button class="block-btn" data-block="header" type="button">Header</button>
+        <button class="block-btn" data-block="subheader" type="button">Sub Header</button>
+        <button class="block-btn" data-block="outline" type="button">Lesson Outline</button>
+        <button class="block-btn" data-block="title" type="button">Title</button>
+        <button class="block-btn" data-block="objectives" type="button">Objectives</button>
+        <button class="block-btn" data-block="text" type="button">Text</button>
+        <button class="block-btn" data-block="image" type="button">Image</button>
+        <button class="block-btn" data-block="audio" type="button">Audio</button>
+        <button class="block-btn" data-block="video" type="button">Video</button>
+      </div>
+    </aside>
+
+    <section class="panel canvas-panel">
+      <div class="toolbar">
+        <button id="undoBtn" type="button">↶</button>
+        <select id="fontFamily"><option value="Inter">Inter</option><option value="Arial">Arial</option><option value="Georgia">Georgia</option><option value="Times New Roman">Times New Roman</option><option value="Verdana">Verdana</option></select>
+        <select id="fontSize"><option value="14px">14</option><option value="16px" selected>16</option><option value="18px">18</option><option value="20px">20</option><option value="24px">24</option><option value="32px">32</option></select>
+        <select id="lineSpacing"><option value="1.2">Line 1.2</option><option value="1.5" selected>Line 1.5</option><option value="1.8">Line 1.8</option><option value="2">Line 2</option></select>
+        <select id="letterSpacing"><option value="0px">Letter 0</option><option value=".5px">Letter .5</option><option value="1px">Letter 1</option><option value="2px">Letter 2</option></select>
+        <button data-toggle="bold" type="button">B</button>
+        <button data-toggle="italic" type="button">I</button>
+        <button data-toggle="underline" type="button">U</button>
+        <select id="alignment"><option value="left">Align Left</option><option value="center">Align Center</option><option value="right">Align Right</option><option value="justify">Justify</option></select>
+        <input id="fontColor" type="color" value="#ffffff">
+        <input id="backgroundColor" type="color" value="#24304f">
+      </div>
+
+      <div class="canvas" id="canvas">
+        <div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>
+      </div>
+    </section>
+
+    <aside class="panel settings-panel">
+      <div>
+        <label class="settings-label">Lesson Title</label>
+        <input id="lessonTitle" type="text" placeholder="Lesson Title">
+      </div>
+
+      <div>
+        <label class="settings-label">Select Level</label>
+        <select id="lessonLevel">
+          <option>Absolute Beginner</option><option>A0</option><option>A1</option><option>A1.1</option><option>A2</option><option>B1</option><option>B2</option>
+        </select>
+      </div>
+
+      <div class="settings-actions">
+        <button class="control-btn" id="newBtn" type="button">New +</button>
+        <button class="control-btn" id="editBtn" type="button">Edit</button>
+        <div><button class="control-btn" id="saveBtn" type="button">Save</button><span id="saveTick" class="save-tick">✓</span></div>
+        <button class="control-btn" id="viewBtn" type="button">View</button>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<input id="imageInput" class="hidden-file" type="file" accept="image/*">
+<input id="audioInput" class="hidden-file" type="file" accept="audio/*">
+<input id="videoInput" class="hidden-file" type="file" accept="video/*">
+
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+<script src="/js/impact-firebase-store.js?v=firebase-final-001"></script>
+<script src="/js/impact-task-menu-patch.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+  const canvas=document.getElementById("canvas");
+  const lessonTitle=document.getElementById("lessonTitle");
+  const lessonLevel=document.getElementById("lessonLevel");
+  const saveBtn=document.getElementById("saveBtn");
+  const editBtn=document.getElementById("editBtn");
+  const viewBtn=document.getElementById("viewBtn");
+  const newBtn=document.getElementById("newBtn");
+  const undoBtn=document.getElementById("undoBtn");
+  const toast=document.getElementById("toast");
+  let selectedCard=null;
+  let undoStack=[];
+  let currentLessonId=new URLSearchParams(location.search).get("edit") || sessionStorage.getItem("impactEditingLessonId") || "";
+
+  const levelFromUrl=new URLSearchParams(location.search).get("level");
+  if(levelFromUrl) lessonLevel.value=levelFromUrl;
+
+  function showToast(text){toast.textContent=text;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1600)}
+  function tick(){const t=document.getElementById("saveTick");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1200)}
+  function pushUndo(){undoStack.push(canvas.innerHTML);if(undoStack.length>50)undoStack.shift()}
+  function clearEmpty(){const e=canvas.querySelector(".empty-state");if(e)e.remove()}
+  function selectCard(card){selectedCard=card;document.querySelectorAll(".lesson-card").forEach(c=>c.classList.remove("active"));card.classList.add("active")}
+  function bindCard(card){card.onclick=()=>selectCard(card);card.onfocus=()=>selectCard(card);card.oninput=()=>{}}
+  function rebind(){document.querySelectorAll(".lesson-card").forEach(bindCard)}
+  function addCard(html,editable=true){pushUndo();clearEmpty();const card=document.createElement("article");card.className="lesson-card";card.contentEditable=editable?"true":"false";card.innerHTML=html;bindCard(card);canvas.appendChild(card);selectCard(card);card.focus()}
+
+  document.querySelectorAll(".block-btn").forEach(btn=>{
+    btn.onclick=()=>{
+      const type=btn.dataset.block;
+      if(type==="header")addCard("<h1>New Header</h1>");
+      if(type==="subheader")addCard("<h2>New Sub Header</h2>");
+      if(type==="outline")addCard("<h2>Lesson Outline</h2><ul><li>Warm-up</li><li>Main lesson</li><li>Practice</li><li>Review</li></ul>");
+      if(type==="title")addCard("<h1>Lesson Title</h1><p>Add a short description of the lesson here.</p>");
+      if(type==="objectives")addCard("<h2>Objectives</h2><p><strong>A la fin du cours, l’apprenant doit:</strong></p><ul><li>objectif 1</li><li>objectif 2</li><li>objectif 3</li></ul>");
+      if(type==="text")addCard("<p>Write lesson content here...</p>");
+      if(type==="image")document.getElementById("imageInput").click();
+      if(type==="audio")document.getElementById("audioInput").click();
+      if(type==="video")document.getElementById("videoInput").click();
+    };
+  });
+
+  function apply(prop,val){if(!selectedCard){showToast("Select a lesson block first");return}selectedCard.style[prop]=val}
+  document.getElementById("fontFamily").onchange=e=>apply("fontFamily",e.target.value);
+  document.getElementById("fontSize").onchange=e=>apply("fontSize",e.target.value);
+  document.getElementById("lineSpacing").onchange=e=>apply("lineHeight",e.target.value);
+  document.getElementById("letterSpacing").onchange=e=>apply("letterSpacing",e.target.value);
+  document.getElementById("alignment").onchange=e=>apply("textAlign",e.target.value);
+  document.getElementById("fontColor").oninput=e=>apply("color",e.target.value);
+  document.getElementById("backgroundColor").oninput=e=>apply("backgroundColor",e.target.value);
+
+  document.querySelectorAll("[data-toggle]").forEach(btn=>{
+    btn.onclick=()=>{
+      if(!selectedCard){showToast("Select a lesson block first");return}
+      const t=btn.dataset.toggle;
+      if(t==="bold")selectedCard.style.fontWeight=selectedCard.style.fontWeight==="900"?"500":"900";
+      if(t==="italic")selectedCard.style.fontStyle=selectedCard.style.fontStyle==="italic"?"normal":"italic";
+      if(t==="underline")selectedCard.style.textDecoration=selectedCard.style.textDecoration==="underline"?"none":"underline";
+    };
+  });
+
+  function readFile(file,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file)}
+  document.getElementById("imageInput").onchange=e=>{const f=e.target.files[0];if(f)readFile(f,src=>addCard(`<div class="lesson-media-resizer"><img src="${src}" alt="Lesson image"></div>`,false));e.target.value=""};
+  document.getElementById("audioInput").onchange=e=>{const f=e.target.files[0];if(f)readFile(f,src=>addCard(`<audio src="${src}" controls></audio>`,false));e.target.value=""};
+  document.getElementById("videoInput").onchange=e=>{const f=e.target.files[0];if(f)readFile(f,src=>addCard(`<div class="lesson-media-resizer"><video src="${src}" controls></video></div>`,false));e.target.value=""};
+
+  undoBtn.onclick=()=>{if(!undoStack.length)return;canvas.innerHTML=undoStack.pop();rebind()};
+  newBtn.onclick=()=>{currentLessonId="";sessionStorage.removeItem("impactEditingLessonId");lessonTitle.value="";canvas.innerHTML='<div class="empty-state">Add lesson blocks from the left. Each block will appear here as an editable card.</div>';showToast("New lesson ready")};
+
+  async function saveLesson(){
+    const data={id:currentLessonId,title:lessonTitle.value.trim()||"Untitled Lesson Plan",name:lessonTitle.value.trim()||"Untitled Lesson Plan",level:lessonLevel.value,content:canvas.innerHTML,updatedAt:new Date().toISOString()};
+    if(window.ImpactFirebaseStore && window.ImpactFirebaseStore.saveLessonPlan){
+      currentLessonId=await window.ImpactFirebaseStore.saveLessonPlan(data);
+    }else{
+      currentLessonId=currentLessonId||("LP-"+Date.now());
+      data.id=currentLessonId;
+      const all=JSON.parse(localStorage.getItem("impactLessonPlans")||"[]");
+      const i=all.findIndex(x=>x.id===currentLessonId);
+      if(i>=0)all[i]=data;else all.push(data);
+      localStorage.setItem("impactLessonPlans",JSON.stringify(all));
+    }
+    sessionStorage.setItem("impactEditingLessonId",currentLessonId);
+    tick();showToast("Saved");
+  }
+
+  saveBtn.onclick=saveLesson;
+  editBtn.onclick=async()=>{location.href="/teacher/lesson-plans.html"};
+  viewBtn.onclick=async()=>{await saveLesson();window.open("/teacher/lesson-view.html?id="+encodeURIComponent(currentLessonId),"_blank")};
+
+  const template=JSON.parse(localStorage.getItem("impactSelectedLessonPlan")||"{}");
+  if(template && template.type==="template"){
+    lessonTitle.value=template.title||"";
+    lessonLevel.value=template.level||lessonLevel.value;
+    canvas.innerHTML=`
+      <article class="lesson-card" contenteditable="true"><h2>${template.title||"Lesson Template"}</h2><p><strong>Objective:</strong> ${template.objective||""}</p></article>
+      <article class="lesson-card" contenteditable="true"><p><strong>Lesson Flow:</strong> ${template.flow||""}</p></article>
+      <article class="lesson-card" contenteditable="true"><p><strong>Materials:</strong> ${template.materials||""}</p></article>`;
+    rebind();
+  }else if(currentLessonId && window.ImpactFirebaseStore && window.ImpactFirebaseStore.getLessonPlan){
+    const plan=await window.ImpactFirebaseStore.getLessonPlan(currentLessonId);
+    if(plan){lessonTitle.value=plan.title||plan.name||"";lessonLevel.value=plan.level||lessonLevel.value;canvas.innerHTML=plan.content||canvas.innerHTML;rebind()}
+  }
+});
+</script>
+
+<script id="LESSON_BUILDER_AUTOSAVE_AND_DELETE">
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("canvas");
+  const titleInput = document.getElementById("lessonTitle");
+  const levelInput = document.getElementById("lessonLevel");
+  const saveTick = document.getElementById("saveTick");
+
+  let autosaveTimer = null;
+
+  function showSaving(){
+    if(!saveTick) return;
+    saveTick.textContent = "Saving...";
+    saveTick.style.opacity = "1";
+    saveTick.classList.add("show");
+  }
+
+  function showSaved(){
+    if(!saveTick) return;
+    saveTick.textContent = "Saved ✓";
+    saveTick.classList.add("show");
+    setTimeout(() => {
+      saveTick.classList.remove("show");
+      saveTick.textContent = "✓";
+    }, 1400);
+  }
+
+  async function autoSave(){
+    if(!canvas) return;
+    showSaving();
+
+    const existingId =
+      window.currentLessonId ||
+      sessionStorage.getItem("impactEditingLessonId") ||
+      "";
+
+    const data = {
+      id: existingId,
+      title: titleInput?.value.trim() || "Untitled Lesson Plan",
+      name: titleInput?.value.trim() || "Untitled Lesson Plan",
+      level: levelInput?.value || "Absolute Beginner",
+      content: canvas.innerHTML || "",
+      updatedAt: new Date().toISOString()
+    };
+
+    try{
+      if(window.ImpactFirebaseStore && window.ImpactFirebaseStore.saveLessonPlan){
+        const id = await window.ImpactFirebaseStore.saveLessonPlan(data);
+        window.currentLessonId = id;
+        sessionStorage.setItem("impactEditingLessonId", id);
+      }else{
+        const all = JSON.parse(localStorage.getItem("impactLessonPlans") || "[]");
+        const id = data.id || ("LP-" + Date.now());
+        data.id = id;
+
+        const i = all.findIndex(x => x.id === id);
+        if(i >= 0) all[i] = data;
+        else all.push(data);
+
+        localStorage.setItem("impactLessonPlans", JSON.stringify(all));
+        window.currentLessonId = id;
+        sessionStorage.setItem("impactEditingLessonId", id);
+      }
+
+      showSaved();
+    }catch(err){
+      console.error("Autosave error:", err);
+      if(saveTick){
+        saveTick.textContent = "Not saved";
+        saveTick.classList.add("show");
+      }
+    }
+  }
+
+  function triggerAutoSave(){
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(autoSave, 900);
+  }
+
+  function attachDeleteButtons(){
+    document.querySelectorAll(".lesson-card").forEach(card => {
+      if(card.querySelector(".lesson-block-delete")) return;
+
+      card.style.position = "relative";
+
+      const btn = document.createElement("button");
+      btn.className = "lesson-block-delete";
+      btn.type = "button";
+      btn.textContent = "×";
+      btn.title = "Delete block";
+
+      btn.onclick = e => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        card.style.transition = "transform .18s ease, opacity .18s ease";
+        card.style.transform = "scale(.96)";
+        card.style.opacity = "0";
+
+        setTimeout(() => {
+          card.remove();
+          triggerAutoSave();
+        }, 180);
+      };
+
+      card.appendChild(btn);
+    });
+  }
+
+  if(canvas){
+    canvas.addEventListener("input", triggerAutoSave);
+    canvas.addEventListener("change", triggerAutoSave);
+
+    const observer = new MutationObserver(() => attachDeleteButtons());
+    observer.observe(canvas, { childList:true, subtree:false });
+
+    attachDeleteButtons();
+  }
+
+  titleInput?.addEventListener("input", triggerAutoSave);
+  levelInput?.addEventListener("change", triggerAutoSave);
+});
+</script>
+
+<script id="LESSON_BUILDER_LOAD_FIX">
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const canvas = document.getElementById("canvas");
+  const titleInput = document.getElementById("lessonTitle");
+  const levelInput = document.getElementById("lessonLevel");
+
+  let lessonId =
+    new URLSearchParams(location.search).get("edit") ||
+    sessionStorage.getItem("impactEditingLessonId");
+
+  // =========================
+  // LOAD FROM FIREBASE
+  // =========================
+  async function loadFromFirebase(id){
+    if(!window.ImpactFirebaseStore || !window.ImpactFirebaseStore.getLessonPlan) return null;
+    try{
+      return await window.ImpactFirebaseStore.getLessonPlan(id);
+    }catch(e){
+      console.warn("Firebase load failed", e);
+      return null;
+    }
+  }
+
+  // =========================
+  // LOAD FROM LOCAL STORAGE
+  // =========================
+  function loadFromLocal(id){
+    const all = JSON.parse(localStorage.getItem("impactLessonPlans") || "[]");
+    return all.find(x => x.id === id);
+  }
+
+  // =========================
+  // APPLY LESSON TO UI
+  // =========================
+  function applyLesson(data){
+    if(!data) return;
+
+    if(titleInput) titleInput.value = data.title || data.name || "";
+    if(levelInput) levelInput.value = data.level || "Absolute Beginner";
+    if(canvas) canvas.innerHTML = data.content || "";
+
+    window.currentLessonId = data.id;
+    sessionStorage.setItem("impactEditingLessonId", data.id);
+  }
+
+  // =========================
+  // LOAD FLOW
+  // =========================
+  if(lessonId){
+
+    let lesson = await loadFromFirebase(lessonId);
+
+    if(!lesson){
+      lesson = loadFromLocal(lessonId);
+    }
+
+    if(lesson){
+      applyLesson(lesson);
+    }
+
+  } else {
+
+    // Load LAST SAVED automatically
+    const all = JSON.parse(localStorage.getItem("impactLessonPlans") || "[]");
+
+    if(all.length){
+      const latest = all.sort((a,b)=> new Date(b.updatedAt) - new Date(a.updatedAt))[0];
+      applyLesson(latest);
+    }
+  }
+
+});
+</script>
+<script id="LESSON_BUILDER_DELETE_FINAL_FIX">
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("canvas");
+  const saveBtn = document.getElementById("saveBtn");
+
+  function addDeleteButtons(){
+    if(!canvas) return;
+
+    canvas.querySelectorAll(".lesson-card").forEach(card => {
+      if(card.querySelector(".lesson-block-delete")) return;
+
+      card.style.position = "relative";
+
+      const btn = document.createElement("button");
+      btn.className = "lesson-block-delete";
+      btn.type = "button";
+      btn.textContent = "×";
+      btn.setAttribute("contenteditable","false");
+
+      btn.addEventListener("mousedown", e => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        card.remove();
+
+        setTimeout(() => {
+          if(saveBtn) saveBtn.click();
+        }, 150);
+      });
+
+      card.appendChild(btn);
+    });
+  }
+
+  addDeleteButtons();
+
+  const observer = new MutationObserver(() => {
+    setTimeout(addDeleteButtons, 50);
+  });
+
+  if(canvas){
+    observer.observe(canvas, {
+      childList:true,
+      subtree:true
+    });
+  }
+
+  setTimeout(addDeleteButtons, 500);
+  setTimeout(addDeleteButtons, 1500);
+});
+</script>
+<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script id="lesson-builder-stability-fix">
+
+(function(){
+
+let autosaveTimer = null;
+const AUTOSAVE_DELAY = 3000;
+
+function scheduleAutosave(){
+
+  clearTimeout(autosaveTimer);
+
+  autosaveTimer = setTimeout(() => {
+
+    const saveBtn =
+      document.querySelector("#saveBtn") ||
+      [...document.querySelectorAll("button")]
+      .find(btn => btn.textContent.trim().toLowerCase() === "save");
+
+    if(saveBtn){
+      saveBtn.click();
+    }
+
+  }, AUTOSAVE_DELAY);
+}
+
+document.addEventListener("input", scheduleAutosave);
+
+document.querySelectorAll("img,video").forEach(media => {
+
+  if(media.closest(".resize-wrap")) return;
+
+  const wrap = document.createElement("div");
+
+  wrap.className = "resize-wrap";
+
+  wrap.style.width = "70%";
+  wrap.style.maxWidth = "100%";
+  wrap.style.resize = "both";
+  wrap.style.overflow = "auto";
+  wrap.style.display = "inline-block";
+  wrap.style.borderRadius = "18px";
+  wrap.style.padding = "8px";
+  wrap.style.border = "1px dashed rgba(255,255,255,.18)";
+
+  media.parentNode.insertBefore(wrap, media);
+
+  wrap.appendChild(media);
+
+  media.style.width = "100%";
+  media.style.height = "auto";
+  media.style.display = "block";
+});
+
+document.querySelectorAll("button").forEach(btn => {
+
+  const txt = btn.textContent.trim().toLowerCase();
+
+  if(txt.includes("align left")){
+
+    btn.onclick = () => {
+      document.querySelectorAll(".resize-wrap").forEach(el=>{
+        el.style.marginLeft = "0";
+        el.style.marginRight = "auto";
+      });
+    };
+  }
+
+  if(txt.includes("align center")){
+
+    btn.onclick = () => {
+      document.querySelectorAll(".resize-wrap").forEach(el=>{
+        el.style.marginLeft = "auto";
+        el.style.marginRight = "auto";
+      });
+    };
+  }
+
+  if(txt.includes("align right")){
+
+    btn.onclick = () => {
+      document.querySelectorAll(".resize-wrap").forEach(el=>{
+        el.style.marginLeft = "auto";
+        el.style.marginRight = "0";
+      });
+    };
+  }
+
+});
+
+const viewBtn =
+  document.querySelector("#viewBtn") ||
+  [...document.querySelectorAll("button")]
+  .find(btn => btn.textContent.trim().toLowerCase() === "view");
+
+if(viewBtn){
+
+  viewBtn.onclick = function(e){
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const canvas =
+      document.querySelector(".lesson-canvas") ||
+      document.querySelector("#canvas");
+
+    if(!canvas){
+      alert("No lesson canvas found.");
+      return;
+    }
+
+    const cleanHTML = canvas.innerHTML;
+
+    const win = window.open("", "_blank");
+
+    win.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Lesson View</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Sorts+Mill+Goudy&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+  background:#0b1020;
+  color:white;
+  font-family:Inter,sans-serif;
+  margin:0;
+}
+
+main{
+  width:min(900px,92vw);
+  margin:auto;
+  padding:60px 0 100px;
+  line-height:1.8;
+}
+
+img,video{
+  max-width:100%;
+  border-radius:18px;
+  margin:16px 0;
+}
+
+.lesson-card,
+.card,
+.block{
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  margin:0 0 20px !important;
+}
+
+</style>
+</head>
+
+<body>
+<main>
+${cleanHTML}
+</main>
+
+<script id="team-meetings-menu-fix">
+(function(){
+
+  function injectTeamMeetings(){
+
+    const menu =
+      document.querySelector(".quick-menu") ||
+      document.querySelector(".menu-dropdown") ||
+      document.querySelector(".menu-panel") ||
+      document.querySelector(".menu-links") ||
+      document.querySelector(".dropdown-menu");
+
+    if(!menu) return;
+
+    if(document.getElementById("teamMeetingsMenuLink")) return;
+
+    const recycleLink = Array.from(menu.querySelectorAll("a"))
+      .find(a =>
+        (a.textContent || "")
+          .toLowerCase()
+          .includes("recycle")
+      );
+
+    if(!recycleLink) return;
+
+    const newLink = recycleLink.cloneNode(true);
+
+    newLink.id = "teamMeetingsMenuLink";
+
+    newLink.href = "/teacher/team-meetings.html";
+
+    newLink.textContent = "Team Meetings";
+
+    // REMOVE INLINE STYLES THAT CAUSED STATIC LOOK
+    newLink.removeAttribute("style");
+
+    // insert before recycle bin
+    recycleLink.parentNode.insertBefore(newLink, recycleLink);
+
+  }
+
+  injectTeamMeetings();
+
+  setInterval(injectTeamMeetings, 1500);
+
+})();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<script id="lesson-builder-placement-behavior-sync">
+(function(){
+  const canvas =
+    document.querySelector(".lesson-canvas") ||
+    document.querySelector(".builder-canvas") ||
+    document.querySelector("#canvas");
+
+  if(!canvas) return;
+
+  let selectedCard = null;
+  let autosaveTimer = null;
+
+  function cards(){
+    return Array.from(canvas.querySelectorAll(".lesson-card,.builder-card,.card,.block"));
+  }
+
+  function selectCard(card){
+    selectedCard = card;
+    cards().forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+  }
+
+  canvas.addEventListener("click", function(e){
+    const card = e.target.closest(".lesson-card,.builder-card,.card,.block");
+    if(card && canvas.contains(card)) selectCard(card);
+  });
+
+  canvas.addEventListener("input", function(){
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(function(){
+      const saveBtn = Array.from(document.querySelectorAll("button"))
+        .find(b => b.textContent.trim().toLowerCase() === "save");
+      if(saveBtn) saveBtn.click();
+    }, 3000);
+  });
+
+  document.querySelectorAll("img,video").forEach(media=>{
+    if(media.closest(".resize-wrap")) return;
+    const wrap = document.createElement("div");
+    wrap.className = "resize-wrap";
+    wrap.style.resize = "both";
+    wrap.style.overflow = "auto";
+    wrap.style.display = "inline-block";
+    wrap.style.width = "70%";
+    wrap.style.maxWidth = "100%";
+    wrap.style.border = "1px dashed rgba(255,255,255,.2)";
+    wrap.style.borderRadius = "18px";
+    wrap.style.padding = "8px";
+    media.parentNode.insertBefore(wrap, media);
+    wrap.appendChild(media);
+    media.style.width = "100%";
+    media.style.height = "auto";
+    media.style.display = "block";
+  });
+
+  document.querySelectorAll("button,select").forEach(el=>{
+    const text = (el.textContent || el.value || "").toLowerCase();
+
+    el.addEventListener("click", function(){
+      if(!selectedCard) return;
+
+      if(text.includes("align left")) selectedCard.style.textAlign = "left";
+      if(text.includes("align center")) selectedCard.style.textAlign = "center";
+      if(text.includes("align right")) selectedCard.style.textAlign = "right";
+    });
+
+    el.addEventListener("change", function(){
+      if(!selectedCard) return;
+      const value = (el.value || "").toLowerCase();
+      if(value.includes("left")) selectedCard.style.textAlign = "left";
+      if(value.includes("center")) selectedCard.style.textAlign = "center";
+      if(value.includes("right")) selectedCard.style.textAlign = "right";
+    });
+  });
+
+  const viewBtn = Array.from(document.querySelectorAll("button"))
+    .find(b => b.textContent.trim().toLowerCase() === "view");
+
+  if(viewBtn){
+    viewBtn.onclick = function(e){
+      e.preventDefault();
+
+      const clone = canvas.cloneNode(true);
+
+      clone.querySelectorAll(".lesson-card,.builder-card,.card,.block").forEach(card=>{
+        card.style.background = "transparent";
+        card.style.border = "none";
+        card.style.boxShadow = "none";
+        card.style.padding = "0";
+        card.style.margin = "0 0 18px";
+      });
+
+      const win = window.open("", "_blank");
+      if(!win){
+        alert("Allow popups so View can open.");
+        return;
+      }
+
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Lesson View</title>
+          <style>
+            body{background:#090b12;color:white;font-family:Inter,Arial,sans-serif;margin:0;}
+            main{width:min(900px,92vw);margin:auto;padding:60px 0 100px;line-height:1.8;}
+            img,video{max-width:100%;height:auto;border-radius:18px;}
+          </style>
+        </head>
+        <body><main>${clone.innerHTML}</main>
+<script id="lesson-builder-placement-sync">
+
+/* =====================================================
+   PLACEMENT BUILDER ENGINE IMPORT
+===================================================== */
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+const db=firebase.firestore();
+const canvas=document.getElementById("canvas");
+const titleInput=document.getElementById("testTitle");
+const saveTick=document.getElementById("saveTick");
+let currentId=new URLSearchParams(location.search).get("edit")||"";
+let selectedCard=null,allSelected=false,undoStack=[],draggedCard=null;
+
+function tick(){saveTick.classList.add("show");setTimeout(()=>saveTick.classList.remove("show"),1300)}
+function clearEmpty(){const e=canvas.querySelector(".empty-state");if(e)e.remove()}
+function allCards(){return Array.from(canvas.querySelectorAll(".lesson-card"))}
+function targetCards(){return allSelected?allCards():(selectedCard?[selectedCard]:[])}
+function selectCard(card){allSelected=false;canvas.classList.remove("all-selected");selectedCard=card;allCards().forEach(c=>c.classList.remove("active"));card.classList.add("active")}
+function selectAll(){if(!allCards().length)return;allSelected=true;selectedCard=null;canvas.classList.add("all-selected");allCards().forEach(c=>c.classList.add("active"))}
+function pushUndo(){undoStack.push(canvas.innerHTML);if(undoStack.length>30)undoStack.shift()}
+
+function bindCard(card){
+card.setAttribute("draggable","true");
+card.onclick=e=>{e.stopPropagation();selectCard(card)};
+card.oninput=()=>{};
+const del=card.querySelector(".delete-card");
+if(del){del.onclick=e=>{e.preventDefault();e.stopPropagation();pushUndo();card.remove();if(!allCards().length)canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>'}};
+
+card.ondragstart=e=>{draggedCard=card;card.classList.add("dragging");e.dataTransfer.effectAllowed="move"};
+card.ondragend=()=>{card.classList.remove("dragging");allCards().forEach(c=>c.classList.remove("drag-over"));draggedCard=null};
+card.ondragover=e=>{e.preventDefault();if(draggedCard&&draggedCard!==card)card.classList.add("drag-over")};
+card.ondragleave=()=>card.classList.remove("drag-over");
+card.ondrop=e=>{e.preventDefault();card.classList.remove("drag-over");if(!draggedCard||draggedCard===card)return;pushUndo();const r=card.getBoundingClientRect();if(e.clientY>r.top+r.height/2)card.after(draggedCard);else card.before(draggedCard)};
+}
+
+function createCard(html,isGap){
+const card=document.createElement("article");
+card.className="lesson-card"+(isGap?" gap-card":"");
+card.contentEditable=isGap?"false":"true";
+card.innerHTML='<button class="delete-card" contenteditable="false" type="button">×</button>'+html;
+bindCard(card);
+return card;
+}
+
+function addCard(html,isGap=false){
+pushUndo();clearEmpty();
+const card=createCard(html,isGap);
+if(isGap&&selectedCard&&canvas.contains(selectedCard))selectedCard.after(card);else canvas.appendChild(card);
+selectCard(card);
+}
+
+function template(type){
+if(type==="header")return '<h1>PLACEMENT TEST</h1>';
+if(type==="subheader")return '<h2>A.</h2>';
+if(type==="text")return '<p>Write test content here...</p>';
+if(type==="gap")return '<div style="height:70px"></div>';
+if(type==="image"){imageInput.click();return ""}
+if(type==="audio"){audioInput.click();return ""}
+if(type==="video"){videoInput.click();return ""}
+return "";
+}
+
+document.querySelectorAll(".block-btn").forEach(btn=>btn.onclick=()=>{const type=btn.dataset.block;const html=template(type);if(html)addCard(html,type==="gap")});
+canvas.onclick=e=>{if(e.target===canvas||e.target.classList.contains("empty-state"))selectAll()};
+
+function read(file,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file)}
+imageInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<div class="media-resizer"><img src="'+src+'"></div>'));e.target.value=""};
+audioInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<audio src="'+src+'" controls style="width:100%"></audio>'));e.target.value=""};
+videoInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<div class="media-resizer"><video src="'+src+'" controls></video></div>'));e.target.value=""};
+
+function apply(prop,val){targetCards().forEach(c=>c.style[prop]=val)}
+fontFamily.onchange=e=>apply("fontFamily",e.target.value);
+fontSize.onchange=e=>apply("fontSize",e.target.value);
+lineSpacing.onchange=e=>apply("lineHeight",e.target.value);
+alignment.onchange=e=>apply("textAlign",e.target.value);
+fontColor.oninput=e=>apply("color",e.target.value);
+backgroundColor.oninput=e=>apply("backgroundColor",e.target.value);
+cardSize.onchange=e=>targetCards().forEach(c=>c.style.width=e.target.value);
+cardAlignLeft.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="0";c.style.marginRight="auto"});
+cardAlignCenter.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="auto";c.style.marginRight="auto"});
+cardAlignRight.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="auto";c.style.marginRight="0"});
+document.querySelectorAll("[data-toggle]").forEach(btn=>btn.onclick=()=>targetCards().forEach(c=>{if(btn.dataset.toggle==="bold")c.style.fontWeight=c.style.fontWeight==="900"?"700":"900";if(btn.dataset.toggle==="italic")c.style.fontStyle=c.style.fontStyle==="italic"?"normal":"italic";if(btn.dataset.toggle==="underline")c.style.textDecoration=c.style.textDecoration==="underline"?"none":"underline"}));
+
+undoBtn.onclick=()=>{if(!undoStack.length)return;canvas.innerHTML=undoStack.pop();allCards().forEach(bindCard)};
+
+async function saveTest(){
+const payload={title:titleInput.value.trim()||"Untitled Placement Test",content:canvas.innerHTML,updatedAt:new Date().toISOString()};
+if(currentId){await db.collection("placementTests").doc(currentId).set(payload,{merge:true})}
+else{const ref=await db.collection("placementTests").add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/placements/builder.html?edit="+currentId)}
+tick();return currentId;
+}
+
+saveBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();await saveTest()};
+newBtn.onclick=e=>{e.preventDefault();e.stopPropagation();currentId="";titleInput.value="";canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';history.replaceState(null,"","/teacher/placements/builder.html")};
+viewBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();const id=await saveTest();window.open("/teacher/placements/view-test.html?id="+encodeURIComponent(id),"_blank")};
+
+async function load(){
+if(!currentId)return;
+const doc=await db.collection("placementTests").doc(currentId).get();
+if(!doc.exists)return;
+const d=doc.data();
+titleInput.value=d.title||"";
+canvas.innerHTML=d.content||'<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+allCards().forEach(bindCard);
+}
+load();
+});
+</script>
+
+/* =====================================================
+   LESSON BUILDER COMPATIBILITY LAYER
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  console.log("Lesson Builder synced with Placement Builder");
+
+  const canvas =
+    document.querySelector(".builder-canvas") ||
+    document.querySelector(".lesson-canvas") ||
+    document.querySelector(".editor-canvas") ||
+    document.querySelector("#builderCanvas");
+
+  if(!canvas) return;
+
+  /* -------------------------------------------------
+     CARD CLICK SELECTION
+  ------------------------------------------------- */
+
+  function getCards(){
+
+    return Array.from(
+      canvas.querySelectorAll(
+        ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+      )
+    );
+  }
+
+  let selectedCard = null;
+
+  function selectCard(card){
+
+    getCards().forEach(c => {
+      c.classList.remove("selected");
+      c.style.outline = "";
+    });
+
+    selectedCard = card;
+
+    card.classList.add("selected");
+
+    card.style.outline =
+      "2px solid rgba(255,255,255,.35)";
+  }
+
+  canvas.addEventListener("click", e => {
+
+    const card = e.target.closest(
+      ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+    );
+
+    if(card){
+      selectCard(card);
+    }
+  });
+
+  /* -------------------------------------------------
+     DRAG + DROP
+  ------------------------------------------------- */
+
+  getCards().forEach(card => {
+
+    card.draggable = true;
+
+    card.addEventListener("dragstart", () => {
+      card.classList.add("dragging");
+    });
+
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+    });
+  });
+
+  canvas.addEventListener("dragover", e => {
+
+    e.preventDefault();
+
+    const dragging =
+      document.querySelector(".dragging");
+
+    const afterElement =
+      [...getCards()].find(card => {
+
+        const box =
+          card.getBoundingClientRect();
+
+        return e.clientY < box.top + box.height / 2;
+      });
+
+    if(!dragging) return;
+
+    if(afterElement){
+      canvas.insertBefore(dragging, afterElement);
+    }else{
+      canvas.appendChild(dragging);
+    }
+  });
+
+  /* -------------------------------------------------
+     IMAGE + VIDEO RESIZING
+  ------------------------------------------------- */
+
+  function enableResize(media){
+
+    if(media.dataset.resizeReady) return;
+
+    media.dataset.resizeReady = "true";
+
+    const wrap = document.createElement("div");
+
+    wrap.className = "resize-wrap";
+
+    wrap.style.resize = "both";
+    wrap.style.overflow = "auto";
+    wrap.style.maxWidth = "100%";
+    wrap.style.display = "inline-block";
+    wrap.style.minWidth = "120px";
+    wrap.style.minHeight = "120px";
+
+    media.parentNode.insertBefore(wrap, media);
+
+    wrap.appendChild(media);
+
+    media.style.width = "100%";
+    media.style.height = "auto";
+    media.style.display = "block";
+  }
+
+  function scanMedia(){
+
+    document
+      .querySelectorAll("img,video")
+      .forEach(enableResize);
+  }
+
+  scanMedia();
+
+  setInterval(scanMedia, 1500);
+
+  /* -------------------------------------------------
+     ALIGNMENT
+  ------------------------------------------------- */
+
+  document
+    .querySelectorAll("select,button")
+    .forEach(control => {
+
+      control.addEventListener("click", () => {
+
+        if(!selectedCard) return;
+
+        const text =
+          (control.innerText || "").toLowerCase();
+
+        if(text.includes("left")){
+          selectedCard.style.textAlign = "left";
+        }
+
+        if(text.includes("center")){
+          selectedCard.style.textAlign = "center";
+        }
+
+        if(text.includes("right")){
+          selectedCard.style.textAlign = "right";
+        }
+      });
+
+      control.addEventListener("change", () => {
+
+        if(!selectedCard) return;
+
+        const value =
+          (control.value || "").toLowerCase();
+
+        if(value.includes("left")){
+          selectedCard.style.textAlign = "left";
+        }
+
+        if(value.includes("center")){
+          selectedCard.style.textAlign = "center";
+        }
+
+        if(value.includes("right")){
+          selectedCard.style.textAlign = "right";
+        }
+      });
+    });
+
+  /* -------------------------------------------------
+     SAVE RELIABILITY
+  ------------------------------------------------- */
+
+  let autosaveTimer = null;
+
+  function triggerSave(){
+
+    const saveBtn =
+      [...document.querySelectorAll("button")]
+      .find(btn =>
+        btn.innerText.trim().toLowerCase() === "save"
+      );
+
+    if(saveBtn){
+      saveBtn.click();
+    }
+  }
+
+  canvas.addEventListener("input", () => {
+
+    clearTimeout(autosaveTimer);
+
+    autosaveTimer =
+      setTimeout(triggerSave, 2500);
+  });
+
+  /* -------------------------------------------------
+     VIEW PAGE
+  ------------------------------------------------- */
+
+  const viewBtn =
+    [...document.querySelectorAll("button")]
+    .find(btn =>
+      btn.innerText.trim().toLowerCase() === "view"
+    );
+
+  if(viewBtn){
+
+    viewBtn.addEventListener("click", e => {
+
+      e.preventDefault();
+
+      const clean =
+        canvas.cloneNode(true);
+
+      clean.querySelectorAll(
+        ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+      ).forEach(card => {
+
+        card.style.background = "transparent";
+        card.style.border = "none";
+        card.style.boxShadow = "none";
+        card.style.padding = "0";
+        card.style.marginBottom = "22px";
+      });
+
+      const win =
+        window.open("", "_blank");
+
+      if(!win){
+        alert("Allow popups for View.");
+        return;
+      }
+
+      win.document.write(\
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Lesson View</title>
+
+<style>
+
+body{
+  background:#080910;
+  color:white;
+  font-family:Inter,sans-serif;
+  margin:0;
+}
+
+main{
+  width:min(920px,92vw);
+  margin:auto;
+  padding:70px 0 120px;
+  line-height:1.8;
+}
+
+img,
+video{
+  max-width:100%;
+  height:auto;
+  border-radius:18px;
+}
+
+</style>
+</head>
+
+<body>
+<main>\</main>
+<script src="/js/impact-route-guard.js"></script>
+</body>
+</html>
+      \);
+
+      win.document.close();
+    });
+  }
+
+  /* -------------------------------------------------
+     BUTTON REACTIONS
+  ------------------------------------------------- */
+
+  const style =
+    document.createElement("style");
+
+  style.innerHTML = \
+
+button{
+  transition:
+    transform .14s ease,
+    opacity .14s ease,
+    background .14s ease !important;
+}
+
+button:hover{
+  transform:translateY(-2px) scale(1.03);
+}
+
+button:active{
+  transform:scale(.93);
+  opacity:.8;
+}
+
+.selected{
+  outline:
+    2px solid rgba(255,255,255,.35) !important;
+}
+
+.dragging{
+  opacity:.4;
+}
+
+\;
+
+  document.head.appendChild(style);
+
+});
+
+</script>
+
+<script src="/js/impact-route-guard.js"></script>
+</body>
+        </html>
+      `);
+
+      win.document.close();
+    };
+  }
+})();
+</script>
+
+<script id="lesson-builder-placement-sync">
+
+/* =====================================================
+   PLACEMENT BUILDER ENGINE IMPORT
+===================================================== */
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+const db=firebase.firestore();
+const canvas=document.getElementById("canvas");
+const titleInput=document.getElementById("testTitle");
+const saveTick=document.getElementById("saveTick");
+let currentId=new URLSearchParams(location.search).get("edit")||"";
+let selectedCard=null,allSelected=false,undoStack=[],draggedCard=null;
+
+function tick(){saveTick.classList.add("show");setTimeout(()=>saveTick.classList.remove("show"),1300)}
+function clearEmpty(){const e=canvas.querySelector(".empty-state");if(e)e.remove()}
+function allCards(){return Array.from(canvas.querySelectorAll(".lesson-card"))}
+function targetCards(){return allSelected?allCards():(selectedCard?[selectedCard]:[])}
+function selectCard(card){allSelected=false;canvas.classList.remove("all-selected");selectedCard=card;allCards().forEach(c=>c.classList.remove("active"));card.classList.add("active")}
+function selectAll(){if(!allCards().length)return;allSelected=true;selectedCard=null;canvas.classList.add("all-selected");allCards().forEach(c=>c.classList.add("active"))}
+function pushUndo(){undoStack.push(canvas.innerHTML);if(undoStack.length>30)undoStack.shift()}
+
+function bindCard(card){
+card.setAttribute("draggable","true");
+card.onclick=e=>{e.stopPropagation();selectCard(card)};
+card.oninput=()=>{};
+const del=card.querySelector(".delete-card");
+if(del){del.onclick=e=>{e.preventDefault();e.stopPropagation();pushUndo();card.remove();if(!allCards().length)canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>'}};
+
+card.ondragstart=e=>{draggedCard=card;card.classList.add("dragging");e.dataTransfer.effectAllowed="move"};
+card.ondragend=()=>{card.classList.remove("dragging");allCards().forEach(c=>c.classList.remove("drag-over"));draggedCard=null};
+card.ondragover=e=>{e.preventDefault();if(draggedCard&&draggedCard!==card)card.classList.add("drag-over")};
+card.ondragleave=()=>card.classList.remove("drag-over");
+card.ondrop=e=>{e.preventDefault();card.classList.remove("drag-over");if(!draggedCard||draggedCard===card)return;pushUndo();const r=card.getBoundingClientRect();if(e.clientY>r.top+r.height/2)card.after(draggedCard);else card.before(draggedCard)};
+}
+
+function createCard(html,isGap){
+const card=document.createElement("article");
+card.className="lesson-card"+(isGap?" gap-card":"");
+card.contentEditable=isGap?"false":"true";
+card.innerHTML='<button class="delete-card" contenteditable="false" type="button">×</button>'+html;
+bindCard(card);
+return card;
+}
+
+function addCard(html,isGap=false){
+pushUndo();clearEmpty();
+const card=createCard(html,isGap);
+if(isGap&&selectedCard&&canvas.contains(selectedCard))selectedCard.after(card);else canvas.appendChild(card);
+selectCard(card);
+}
+
+function template(type){
+if(type==="header")return '<h1>PLACEMENT TEST</h1>';
+if(type==="subheader")return '<h2>A.</h2>';
+if(type==="text")return '<p>Write test content here...</p>';
+if(type==="gap")return '<div style="height:70px"></div>';
+if(type==="image"){imageInput.click();return ""}
+if(type==="audio"){audioInput.click();return ""}
+if(type==="video"){videoInput.click();return ""}
+return "";
+}
+
+document.querySelectorAll(".block-btn").forEach(btn=>btn.onclick=()=>{const type=btn.dataset.block;const html=template(type);if(html)addCard(html,type==="gap")});
+canvas.onclick=e=>{if(e.target===canvas||e.target.classList.contains("empty-state"))selectAll()};
+
+function read(file,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file)}
+imageInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<div class="media-resizer"><img src="'+src+'"></div>'));e.target.value=""};
+audioInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<audio src="'+src+'" controls style="width:100%"></audio>'));e.target.value=""};
+videoInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<div class="media-resizer"><video src="'+src+'" controls></video></div>'));e.target.value=""};
+
+function apply(prop,val){targetCards().forEach(c=>c.style[prop]=val)}
+fontFamily.onchange=e=>apply("fontFamily",e.target.value);
+fontSize.onchange=e=>apply("fontSize",e.target.value);
+lineSpacing.onchange=e=>apply("lineHeight",e.target.value);
+alignment.onchange=e=>apply("textAlign",e.target.value);
+fontColor.oninput=e=>apply("color",e.target.value);
+backgroundColor.oninput=e=>apply("backgroundColor",e.target.value);
+cardSize.onchange=e=>targetCards().forEach(c=>c.style.width=e.target.value);
+cardAlignLeft.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="0";c.style.marginRight="auto"});
+cardAlignCenter.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="auto";c.style.marginRight="auto"});
+cardAlignRight.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="auto";c.style.marginRight="0"});
+document.querySelectorAll("[data-toggle]").forEach(btn=>btn.onclick=()=>targetCards().forEach(c=>{if(btn.dataset.toggle==="bold")c.style.fontWeight=c.style.fontWeight==="900"?"700":"900";if(btn.dataset.toggle==="italic")c.style.fontStyle=c.style.fontStyle==="italic"?"normal":"italic";if(btn.dataset.toggle==="underline")c.style.textDecoration=c.style.textDecoration==="underline"?"none":"underline"}));
+
+undoBtn.onclick=()=>{if(!undoStack.length)return;canvas.innerHTML=undoStack.pop();allCards().forEach(bindCard)};
+
+async function saveTest(){
+const payload={title:titleInput.value.trim()||"Untitled Placement Test",content:canvas.innerHTML,updatedAt:new Date().toISOString()};
+if(currentId){await db.collection("placementTests").doc(currentId).set(payload,{merge:true})}
+else{const ref=await db.collection("placementTests").add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/placements/builder.html?edit="+currentId)}
+tick();return currentId;
+}
+
+saveBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();await saveTest()};
+newBtn.onclick=e=>{e.preventDefault();e.stopPropagation();currentId="";titleInput.value="";canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';history.replaceState(null,"","/teacher/placements/builder.html")};
+viewBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();const id=await saveTest();window.open("/teacher/placements/view-test.html?id="+encodeURIComponent(id),"_blank")};
+
+async function load(){
+if(!currentId)return;
+const doc=await db.collection("placementTests").doc(currentId).get();
+if(!doc.exists)return;
+const d=doc.data();
+titleInput.value=d.title||"";
+canvas.innerHTML=d.content||'<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+allCards().forEach(bindCard);
+}
+load();
+});
+</script>
+
+/* =====================================================
+   LESSON BUILDER COMPATIBILITY LAYER
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  console.log("Lesson Builder synced with Placement Builder");
+
+  const canvas =
+    document.querySelector(".builder-canvas") ||
+    document.querySelector(".lesson-canvas") ||
+    document.querySelector(".editor-canvas") ||
+    document.querySelector("#builderCanvas");
+
+  if(!canvas) return;
+
+  /* -------------------------------------------------
+     CARD CLICK SELECTION
+  ------------------------------------------------- */
+
+  function getCards(){
+
+    return Array.from(
+      canvas.querySelectorAll(
+        ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+      )
+    );
+  }
+
+  let selectedCard = null;
+
+  function selectCard(card){
+
+    getCards().forEach(c => {
+      c.classList.remove("selected");
+      c.style.outline = "";
+    });
+
+    selectedCard = card;
+
+    card.classList.add("selected");
+
+    card.style.outline =
+      "2px solid rgba(255,255,255,.35)";
+  }
+
+  canvas.addEventListener("click", e => {
+
+    const card = e.target.closest(
+      ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+    );
+
+    if(card){
+      selectCard(card);
+    }
+  });
+
+  /* -------------------------------------------------
+     DRAG + DROP
+  ------------------------------------------------- */
+
+  getCards().forEach(card => {
+
+    card.draggable = true;
+
+    card.addEventListener("dragstart", () => {
+      card.classList.add("dragging");
+    });
+
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+    });
+  });
+
+  canvas.addEventListener("dragover", e => {
+
+    e.preventDefault();
+
+    const dragging =
+      document.querySelector(".dragging");
+
+    const afterElement =
+      [...getCards()].find(card => {
+
+        const box =
+          card.getBoundingClientRect();
+
+        return e.clientY < box.top + box.height / 2;
+      });
+
+    if(!dragging) return;
+
+    if(afterElement){
+      canvas.insertBefore(dragging, afterElement);
+    }else{
+      canvas.appendChild(dragging);
+    }
+  });
+
+  /* -------------------------------------------------
+     IMAGE + VIDEO RESIZING
+  ------------------------------------------------- */
+
+  function enableResize(media){
+
+    if(media.dataset.resizeReady) return;
+
+    media.dataset.resizeReady = "true";
+
+    const wrap = document.createElement("div");
+
+    wrap.className = "resize-wrap";
+
+    wrap.style.resize = "both";
+    wrap.style.overflow = "auto";
+    wrap.style.maxWidth = "100%";
+    wrap.style.display = "inline-block";
+    wrap.style.minWidth = "120px";
+    wrap.style.minHeight = "120px";
+
+    media.parentNode.insertBefore(wrap, media);
+
+    wrap.appendChild(media);
+
+    media.style.width = "100%";
+    media.style.height = "auto";
+    media.style.display = "block";
+  }
+
+  function scanMedia(){
+
+    document
+      .querySelectorAll("img,video")
+      .forEach(enableResize);
+  }
+
+  scanMedia();
+
+  setInterval(scanMedia, 1500);
+
+  /* -------------------------------------------------
+     ALIGNMENT
+  ------------------------------------------------- */
+
+  document
+    .querySelectorAll("select,button")
+    .forEach(control => {
+
+      control.addEventListener("click", () => {
+
+        if(!selectedCard) return;
+
+        const text =
+          (control.innerText || "").toLowerCase();
+
+        if(text.includes("left")){
+          selectedCard.style.textAlign = "left";
+        }
+
+        if(text.includes("center")){
+          selectedCard.style.textAlign = "center";
+        }
+
+        if(text.includes("right")){
+          selectedCard.style.textAlign = "right";
+        }
+      });
+
+      control.addEventListener("change", () => {
+
+        if(!selectedCard) return;
+
+        const value =
+          (control.value || "").toLowerCase();
+
+        if(value.includes("left")){
+          selectedCard.style.textAlign = "left";
+        }
+
+        if(value.includes("center")){
+          selectedCard.style.textAlign = "center";
+        }
+
+        if(value.includes("right")){
+          selectedCard.style.textAlign = "right";
+        }
+      });
+    });
+
+  /* -------------------------------------------------
+     SAVE RELIABILITY
+  ------------------------------------------------- */
+
+  let autosaveTimer = null;
+
+  function triggerSave(){
+
+    const saveBtn =
+      [...document.querySelectorAll("button")]
+      .find(btn =>
+        btn.innerText.trim().toLowerCase() === "save"
+      );
+
+    if(saveBtn){
+      saveBtn.click();
+    }
+  }
+
+  canvas.addEventListener("input", () => {
+
+    clearTimeout(autosaveTimer);
+
+    autosaveTimer =
+      setTimeout(triggerSave, 2500);
+  });
+
+  /* -------------------------------------------------
+     VIEW PAGE
+  ------------------------------------------------- */
+
+  const viewBtn =
+    [...document.querySelectorAll("button")]
+    .find(btn =>
+      btn.innerText.trim().toLowerCase() === "view"
+    );
+
+  if(viewBtn){
+
+    viewBtn.addEventListener("click", e => {
+
+      e.preventDefault();
+
+      const clean =
+        canvas.cloneNode(true);
+
+      clean.querySelectorAll(
+        ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+      ).forEach(card => {
+
+        card.style.background = "transparent";
+        card.style.border = "none";
+        card.style.boxShadow = "none";
+        card.style.padding = "0";
+        card.style.marginBottom = "22px";
+      });
+
+      const win =
+        window.open("", "_blank");
+
+      if(!win){
+        alert("Allow popups for View.");
+        return;
+      }
+
+      win.document.write(\
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Lesson View</title>
+
+<style>
+
+body{
+  background:#080910;
+  color:white;
+  font-family:Inter,sans-serif;
+  margin:0;
+}
+
+main{
+  width:min(920px,92vw);
+  margin:auto;
+  padding:70px 0 120px;
+  line-height:1.8;
+}
+
+img,
+video{
+  max-width:100%;
+  height:auto;
+  border-radius:18px;
+}
+
+</style>
+</head>
+
+<body>
+<main>\</main>
+<script src="/js/impact-route-guard.js"></script>
+</body>
+</html>
+      \);
+
+      win.document.close();
+    });
+  }
+
+  /* -------------------------------------------------
+     BUTTON REACTIONS
+  ------------------------------------------------- */
+
+  const style =
+    document.createElement("style");
+
+  style.innerHTML = \
+
+button{
+  transition:
+    transform .14s ease,
+    opacity .14s ease,
+    background .14s ease !important;
+}
+
+button:hover{
+  transform:translateY(-2px) scale(1.03);
+}
+
+button:active{
+  transform:scale(.93);
+  opacity:.8;
+}
+
+.selected{
+  outline:
+    2px solid rgba(255,255,255,.35) !important;
+}
+
+.dragging{
+  opacity:.4;
+}
+
+\;
+
+  document.head.appendChild(style);
+
+});
+
+</script>
+
+<script src="/js/impact-route-guard.js"></script>
+</body>
+</html>
+`);
+
+    win.document.close();
+  };
+}
+
+})();
+</script>
+
+<script id="team-meetings-menu-fix">
+(function(){
+
+  function injectTeamMeetings(){
+
+    const menu =
+      document.querySelector(".quick-menu") ||
+      document.querySelector(".menu-dropdown") ||
+      document.querySelector(".menu-panel") ||
+      document.querySelector(".menu-links") ||
+      document.querySelector(".dropdown-menu");
+
+    if(!menu) return;
+
+    if(document.getElementById("teamMeetingsMenuLink")) return;
+
+    const recycleLink = Array.from(menu.querySelectorAll("a"))
+      .find(a =>
+        (a.textContent || "")
+          .toLowerCase()
+          .includes("recycle")
+      );
+
+    if(!recycleLink) return;
+
+    const newLink = recycleLink.cloneNode(true);
+
+    newLink.id = "teamMeetingsMenuLink";
+
+    newLink.href = "/teacher/team-meetings.html";
+
+    newLink.textContent = "Team Meetings";
+
+    // REMOVE INLINE STYLES THAT CAUSED STATIC LOOK
+    newLink.removeAttribute("style");
+
+    // insert before recycle bin
+    recycleLink.parentNode.insertBefore(newLink, recycleLink);
+
+  }
+
+  injectTeamMeetings();
+
+  setInterval(injectTeamMeetings, 1500);
+
+})();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<script id="lesson-builder-placement-behavior-sync">
+(function(){
+  const canvas =
+    document.querySelector(".lesson-canvas") ||
+    document.querySelector(".builder-canvas") ||
+    document.querySelector("#canvas");
+
+  if(!canvas) return;
+
+  let selectedCard = null;
+  let autosaveTimer = null;
+
+  function cards(){
+    return Array.from(canvas.querySelectorAll(".lesson-card,.builder-card,.card,.block"));
+  }
+
+  function selectCard(card){
+    selectedCard = card;
+    cards().forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+  }
+
+  canvas.addEventListener("click", function(e){
+    const card = e.target.closest(".lesson-card,.builder-card,.card,.block");
+    if(card && canvas.contains(card)) selectCard(card);
+  });
+
+  canvas.addEventListener("input", function(){
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(function(){
+      const saveBtn = Array.from(document.querySelectorAll("button"))
+        .find(b => b.textContent.trim().toLowerCase() === "save");
+      if(saveBtn) saveBtn.click();
+    }, 3000);
+  });
+
+  document.querySelectorAll("img,video").forEach(media=>{
+    if(media.closest(".resize-wrap")) return;
+    const wrap = document.createElement("div");
+    wrap.className = "resize-wrap";
+    wrap.style.resize = "both";
+    wrap.style.overflow = "auto";
+    wrap.style.display = "inline-block";
+    wrap.style.width = "70%";
+    wrap.style.maxWidth = "100%";
+    wrap.style.border = "1px dashed rgba(255,255,255,.2)";
+    wrap.style.borderRadius = "18px";
+    wrap.style.padding = "8px";
+    media.parentNode.insertBefore(wrap, media);
+    wrap.appendChild(media);
+    media.style.width = "100%";
+    media.style.height = "auto";
+    media.style.display = "block";
+  });
+
+  document.querySelectorAll("button,select").forEach(el=>{
+    const text = (el.textContent || el.value || "").toLowerCase();
+
+    el.addEventListener("click", function(){
+      if(!selectedCard) return;
+
+      if(text.includes("align left")) selectedCard.style.textAlign = "left";
+      if(text.includes("align center")) selectedCard.style.textAlign = "center";
+      if(text.includes("align right")) selectedCard.style.textAlign = "right";
+    });
+
+    el.addEventListener("change", function(){
+      if(!selectedCard) return;
+      const value = (el.value || "").toLowerCase();
+      if(value.includes("left")) selectedCard.style.textAlign = "left";
+      if(value.includes("center")) selectedCard.style.textAlign = "center";
+      if(value.includes("right")) selectedCard.style.textAlign = "right";
+    });
+  });
+
+  const viewBtn = Array.from(document.querySelectorAll("button"))
+    .find(b => b.textContent.trim().toLowerCase() === "view");
+
+  if(viewBtn){
+    viewBtn.onclick = function(e){
+      e.preventDefault();
+
+      const clone = canvas.cloneNode(true);
+
+      clone.querySelectorAll(".lesson-card,.builder-card,.card,.block").forEach(card=>{
+        card.style.background = "transparent";
+        card.style.border = "none";
+        card.style.boxShadow = "none";
+        card.style.padding = "0";
+        card.style.margin = "0 0 18px";
+      });
+
+      const win = window.open("", "_blank");
+      if(!win){
+        alert("Allow popups so View can open.");
+        return;
+      }
+
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Lesson View</title>
+          <style>
+            body{background:#090b12;color:white;font-family:Inter,Arial,sans-serif;margin:0;}
+            main{width:min(900px,92vw);margin:auto;padding:60px 0 100px;line-height:1.8;}
+            img,video{max-width:100%;height:auto;border-radius:18px;}
+          </style>
+        </head>
+        <body><main>${clone.innerHTML}</main>
+<script id="lesson-builder-placement-sync">
+
+/* =====================================================
+   PLACEMENT BUILDER ENGINE IMPORT
+===================================================== */
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+const db=firebase.firestore();
+const canvas=document.getElementById("canvas");
+const titleInput=document.getElementById("testTitle");
+const saveTick=document.getElementById("saveTick");
+let currentId=new URLSearchParams(location.search).get("edit")||"";
+let selectedCard=null,allSelected=false,undoStack=[],draggedCard=null;
+
+function tick(){saveTick.classList.add("show");setTimeout(()=>saveTick.classList.remove("show"),1300)}
+function clearEmpty(){const e=canvas.querySelector(".empty-state");if(e)e.remove()}
+function allCards(){return Array.from(canvas.querySelectorAll(".lesson-card"))}
+function targetCards(){return allSelected?allCards():(selectedCard?[selectedCard]:[])}
+function selectCard(card){allSelected=false;canvas.classList.remove("all-selected");selectedCard=card;allCards().forEach(c=>c.classList.remove("active"));card.classList.add("active")}
+function selectAll(){if(!allCards().length)return;allSelected=true;selectedCard=null;canvas.classList.add("all-selected");allCards().forEach(c=>c.classList.add("active"))}
+function pushUndo(){undoStack.push(canvas.innerHTML);if(undoStack.length>30)undoStack.shift()}
+
+function bindCard(card){
+card.setAttribute("draggable","true");
+card.onclick=e=>{e.stopPropagation();selectCard(card)};
+card.oninput=()=>{};
+const del=card.querySelector(".delete-card");
+if(del){del.onclick=e=>{e.preventDefault();e.stopPropagation();pushUndo();card.remove();if(!allCards().length)canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>'}};
+
+card.ondragstart=e=>{draggedCard=card;card.classList.add("dragging");e.dataTransfer.effectAllowed="move"};
+card.ondragend=()=>{card.classList.remove("dragging");allCards().forEach(c=>c.classList.remove("drag-over"));draggedCard=null};
+card.ondragover=e=>{e.preventDefault();if(draggedCard&&draggedCard!==card)card.classList.add("drag-over")};
+card.ondragleave=()=>card.classList.remove("drag-over");
+card.ondrop=e=>{e.preventDefault();card.classList.remove("drag-over");if(!draggedCard||draggedCard===card)return;pushUndo();const r=card.getBoundingClientRect();if(e.clientY>r.top+r.height/2)card.after(draggedCard);else card.before(draggedCard)};
+}
+
+function createCard(html,isGap){
+const card=document.createElement("article");
+card.className="lesson-card"+(isGap?" gap-card":"");
+card.contentEditable=isGap?"false":"true";
+card.innerHTML='<button class="delete-card" contenteditable="false" type="button">×</button>'+html;
+bindCard(card);
+return card;
+}
+
+function addCard(html,isGap=false){
+pushUndo();clearEmpty();
+const card=createCard(html,isGap);
+if(isGap&&selectedCard&&canvas.contains(selectedCard))selectedCard.after(card);else canvas.appendChild(card);
+selectCard(card);
+}
+
+function template(type){
+if(type==="header")return '<h1>PLACEMENT TEST</h1>';
+if(type==="subheader")return '<h2>A.</h2>';
+if(type==="text")return '<p>Write test content here...</p>';
+if(type==="gap")return '<div style="height:70px"></div>';
+if(type==="image"){imageInput.click();return ""}
+if(type==="audio"){audioInput.click();return ""}
+if(type==="video"){videoInput.click();return ""}
+return "";
+}
+
+document.querySelectorAll(".block-btn").forEach(btn=>btn.onclick=()=>{const type=btn.dataset.block;const html=template(type);if(html)addCard(html,type==="gap")});
+canvas.onclick=e=>{if(e.target===canvas||e.target.classList.contains("empty-state"))selectAll()};
+
+function read(file,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file)}
+imageInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<div class="media-resizer"><img src="'+src+'"></div>'));e.target.value=""};
+audioInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<audio src="'+src+'" controls style="width:100%"></audio>'));e.target.value=""};
+videoInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<div class="media-resizer"><video src="'+src+'" controls></video></div>'));e.target.value=""};
+
+function apply(prop,val){targetCards().forEach(c=>c.style[prop]=val)}
+fontFamily.onchange=e=>apply("fontFamily",e.target.value);
+fontSize.onchange=e=>apply("fontSize",e.target.value);
+lineSpacing.onchange=e=>apply("lineHeight",e.target.value);
+alignment.onchange=e=>apply("textAlign",e.target.value);
+fontColor.oninput=e=>apply("color",e.target.value);
+backgroundColor.oninput=e=>apply("backgroundColor",e.target.value);
+cardSize.onchange=e=>targetCards().forEach(c=>c.style.width=e.target.value);
+cardAlignLeft.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="0";c.style.marginRight="auto"});
+cardAlignCenter.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="auto";c.style.marginRight="auto"});
+cardAlignRight.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="auto";c.style.marginRight="0"});
+document.querySelectorAll("[data-toggle]").forEach(btn=>btn.onclick=()=>targetCards().forEach(c=>{if(btn.dataset.toggle==="bold")c.style.fontWeight=c.style.fontWeight==="900"?"700":"900";if(btn.dataset.toggle==="italic")c.style.fontStyle=c.style.fontStyle==="italic"?"normal":"italic";if(btn.dataset.toggle==="underline")c.style.textDecoration=c.style.textDecoration==="underline"?"none":"underline"}));
+
+undoBtn.onclick=()=>{if(!undoStack.length)return;canvas.innerHTML=undoStack.pop();allCards().forEach(bindCard)};
+
+async function saveTest(){
+const payload={title:titleInput.value.trim()||"Untitled Placement Test",content:canvas.innerHTML,updatedAt:new Date().toISOString()};
+if(currentId){await db.collection("placementTests").doc(currentId).set(payload,{merge:true})}
+else{const ref=await db.collection("placementTests").add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/placements/builder.html?edit="+currentId)}
+tick();return currentId;
+}
+
+saveBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();await saveTest()};
+newBtn.onclick=e=>{e.preventDefault();e.stopPropagation();currentId="";titleInput.value="";canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';history.replaceState(null,"","/teacher/placements/builder.html")};
+viewBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();const id=await saveTest();window.open("/teacher/placements/view-test.html?id="+encodeURIComponent(id),"_blank")};
+
+async function load(){
+if(!currentId)return;
+const doc=await db.collection("placementTests").doc(currentId).get();
+if(!doc.exists)return;
+const d=doc.data();
+titleInput.value=d.title||"";
+canvas.innerHTML=d.content||'<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+allCards().forEach(bindCard);
+}
+load();
+});
+</script>
+
+/* =====================================================
+   LESSON BUILDER COMPATIBILITY LAYER
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  console.log("Lesson Builder synced with Placement Builder");
+
+  const canvas =
+    document.querySelector(".builder-canvas") ||
+    document.querySelector(".lesson-canvas") ||
+    document.querySelector(".editor-canvas") ||
+    document.querySelector("#builderCanvas");
+
+  if(!canvas) return;
+
+  /* -------------------------------------------------
+     CARD CLICK SELECTION
+  ------------------------------------------------- */
+
+  function getCards(){
+
+    return Array.from(
+      canvas.querySelectorAll(
+        ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+      )
+    );
+  }
+
+  let selectedCard = null;
+
+  function selectCard(card){
+
+    getCards().forEach(c => {
+      c.classList.remove("selected");
+      c.style.outline = "";
+    });
+
+    selectedCard = card;
+
+    card.classList.add("selected");
+
+    card.style.outline =
+      "2px solid rgba(255,255,255,.35)";
+  }
+
+  canvas.addEventListener("click", e => {
+
+    const card = e.target.closest(
+      ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+    );
+
+    if(card){
+      selectCard(card);
+    }
+  });
+
+  /* -------------------------------------------------
+     DRAG + DROP
+  ------------------------------------------------- */
+
+  getCards().forEach(card => {
+
+    card.draggable = true;
+
+    card.addEventListener("dragstart", () => {
+      card.classList.add("dragging");
+    });
+
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+    });
+  });
+
+  canvas.addEventListener("dragover", e => {
+
+    e.preventDefault();
+
+    const dragging =
+      document.querySelector(".dragging");
+
+    const afterElement =
+      [...getCards()].find(card => {
+
+        const box =
+          card.getBoundingClientRect();
+
+        return e.clientY < box.top + box.height / 2;
+      });
+
+    if(!dragging) return;
+
+    if(afterElement){
+      canvas.insertBefore(dragging, afterElement);
+    }else{
+      canvas.appendChild(dragging);
+    }
+  });
+
+  /* -------------------------------------------------
+     IMAGE + VIDEO RESIZING
+  ------------------------------------------------- */
+
+  function enableResize(media){
+
+    if(media.dataset.resizeReady) return;
+
+    media.dataset.resizeReady = "true";
+
+    const wrap = document.createElement("div");
+
+    wrap.className = "resize-wrap";
+
+    wrap.style.resize = "both";
+    wrap.style.overflow = "auto";
+    wrap.style.maxWidth = "100%";
+    wrap.style.display = "inline-block";
+    wrap.style.minWidth = "120px";
+    wrap.style.minHeight = "120px";
+
+    media.parentNode.insertBefore(wrap, media);
+
+    wrap.appendChild(media);
+
+    media.style.width = "100%";
+    media.style.height = "auto";
+    media.style.display = "block";
+  }
+
+  function scanMedia(){
+
+    document
+      .querySelectorAll("img,video")
+      .forEach(enableResize);
+  }
+
+  scanMedia();
+
+  setInterval(scanMedia, 1500);
+
+  /* -------------------------------------------------
+     ALIGNMENT
+  ------------------------------------------------- */
+
+  document
+    .querySelectorAll("select,button")
+    .forEach(control => {
+
+      control.addEventListener("click", () => {
+
+        if(!selectedCard) return;
+
+        const text =
+          (control.innerText || "").toLowerCase();
+
+        if(text.includes("left")){
+          selectedCard.style.textAlign = "left";
+        }
+
+        if(text.includes("center")){
+          selectedCard.style.textAlign = "center";
+        }
+
+        if(text.includes("right")){
+          selectedCard.style.textAlign = "right";
+        }
+      });
+
+      control.addEventListener("change", () => {
+
+        if(!selectedCard) return;
+
+        const value =
+          (control.value || "").toLowerCase();
+
+        if(value.includes("left")){
+          selectedCard.style.textAlign = "left";
+        }
+
+        if(value.includes("center")){
+          selectedCard.style.textAlign = "center";
+        }
+
+        if(value.includes("right")){
+          selectedCard.style.textAlign = "right";
+        }
+      });
+    });
+
+  /* -------------------------------------------------
+     SAVE RELIABILITY
+  ------------------------------------------------- */
+
+  let autosaveTimer = null;
+
+  function triggerSave(){
+
+    const saveBtn =
+      [...document.querySelectorAll("button")]
+      .find(btn =>
+        btn.innerText.trim().toLowerCase() === "save"
+      );
+
+    if(saveBtn){
+      saveBtn.click();
+    }
+  }
+
+  canvas.addEventListener("input", () => {
+
+    clearTimeout(autosaveTimer);
+
+    autosaveTimer =
+      setTimeout(triggerSave, 2500);
+  });
+
+  /* -------------------------------------------------
+     VIEW PAGE
+  ------------------------------------------------- */
+
+  const viewBtn =
+    [...document.querySelectorAll("button")]
+    .find(btn =>
+      btn.innerText.trim().toLowerCase() === "view"
+    );
+
+  if(viewBtn){
+
+    viewBtn.addEventListener("click", e => {
+
+      e.preventDefault();
+
+      const clean =
+        canvas.cloneNode(true);
+
+      clean.querySelectorAll(
+        ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+      ).forEach(card => {
+
+        card.style.background = "transparent";
+        card.style.border = "none";
+        card.style.boxShadow = "none";
+        card.style.padding = "0";
+        card.style.marginBottom = "22px";
+      });
+
+      const win =
+        window.open("", "_blank");
+
+      if(!win){
+        alert("Allow popups for View.");
+        return;
+      }
+
+      win.document.write(\
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Lesson View</title>
+
+<style>
+
+body{
+  background:#080910;
+  color:white;
+  font-family:Inter,sans-serif;
+  margin:0;
+}
+
+main{
+  width:min(920px,92vw);
+  margin:auto;
+  padding:70px 0 120px;
+  line-height:1.8;
+}
+
+img,
+video{
+  max-width:100%;
+  height:auto;
+  border-radius:18px;
+}
+
+</style>
+</head>
+
+<body>
+<main>\</main>
+<script src="/js/impact-route-guard.js"></script>
+</body>
+</html>
+      \);
+
+      win.document.close();
+    });
+  }
+
+  /* -------------------------------------------------
+     BUTTON REACTIONS
+  ------------------------------------------------- */
+
+  const style =
+    document.createElement("style");
+
+  style.innerHTML = \
+
+button{
+  transition:
+    transform .14s ease,
+    opacity .14s ease,
+    background .14s ease !important;
+}
+
+button:hover{
+  transform:translateY(-2px) scale(1.03);
+}
+
+button:active{
+  transform:scale(.93);
+  opacity:.8;
+}
+
+.selected{
+  outline:
+    2px solid rgba(255,255,255,.35) !important;
+}
+
+.dragging{
+  opacity:.4;
+}
+
+\;
+
+  document.head.appendChild(style);
+
+});
+
+</script>
+
+<script src="/js/impact-route-guard.js"></script>
+</body>
+        </html>
+      `);
+
+      win.document.close();
+    };
+  }
+})();
+</script>
+
+<script id="lesson-builder-placement-sync">
+
+/* =====================================================
+   PLACEMENT BUILDER ENGINE IMPORT
+===================================================== */
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+const db=firebase.firestore();
+const canvas=document.getElementById("canvas");
+const titleInput=document.getElementById("testTitle");
+const saveTick=document.getElementById("saveTick");
+let currentId=new URLSearchParams(location.search).get("edit")||"";
+let selectedCard=null,allSelected=false,undoStack=[],draggedCard=null;
+
+function tick(){saveTick.classList.add("show");setTimeout(()=>saveTick.classList.remove("show"),1300)}
+function clearEmpty(){const e=canvas.querySelector(".empty-state");if(e)e.remove()}
+function allCards(){return Array.from(canvas.querySelectorAll(".lesson-card"))}
+function targetCards(){return allSelected?allCards():(selectedCard?[selectedCard]:[])}
+function selectCard(card){allSelected=false;canvas.classList.remove("all-selected");selectedCard=card;allCards().forEach(c=>c.classList.remove("active"));card.classList.add("active")}
+function selectAll(){if(!allCards().length)return;allSelected=true;selectedCard=null;canvas.classList.add("all-selected");allCards().forEach(c=>c.classList.add("active"))}
+function pushUndo(){undoStack.push(canvas.innerHTML);if(undoStack.length>30)undoStack.shift()}
+
+function bindCard(card){
+card.setAttribute("draggable","true");
+card.onclick=e=>{e.stopPropagation();selectCard(card)};
+card.oninput=()=>{};
+const del=card.querySelector(".delete-card");
+if(del){del.onclick=e=>{e.preventDefault();e.stopPropagation();pushUndo();card.remove();if(!allCards().length)canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>'}};
+
+card.ondragstart=e=>{draggedCard=card;card.classList.add("dragging");e.dataTransfer.effectAllowed="move"};
+card.ondragend=()=>{card.classList.remove("dragging");allCards().forEach(c=>c.classList.remove("drag-over"));draggedCard=null};
+card.ondragover=e=>{e.preventDefault();if(draggedCard&&draggedCard!==card)card.classList.add("drag-over")};
+card.ondragleave=()=>card.classList.remove("drag-over");
+card.ondrop=e=>{e.preventDefault();card.classList.remove("drag-over");if(!draggedCard||draggedCard===card)return;pushUndo();const r=card.getBoundingClientRect();if(e.clientY>r.top+r.height/2)card.after(draggedCard);else card.before(draggedCard)};
+}
+
+function createCard(html,isGap){
+const card=document.createElement("article");
+card.className="lesson-card"+(isGap?" gap-card":"");
+card.contentEditable=isGap?"false":"true";
+card.innerHTML='<button class="delete-card" contenteditable="false" type="button">×</button>'+html;
+bindCard(card);
+return card;
+}
+
+function addCard(html,isGap=false){
+pushUndo();clearEmpty();
+const card=createCard(html,isGap);
+if(isGap&&selectedCard&&canvas.contains(selectedCard))selectedCard.after(card);else canvas.appendChild(card);
+selectCard(card);
+}
+
+function template(type){
+if(type==="header")return '<h1>PLACEMENT TEST</h1>';
+if(type==="subheader")return '<h2>A.</h2>';
+if(type==="text")return '<p>Write test content here...</p>';
+if(type==="gap")return '<div style="height:70px"></div>';
+if(type==="image"){imageInput.click();return ""}
+if(type==="audio"){audioInput.click();return ""}
+if(type==="video"){videoInput.click();return ""}
+return "";
+}
+
+document.querySelectorAll(".block-btn").forEach(btn=>btn.onclick=()=>{const type=btn.dataset.block;const html=template(type);if(html)addCard(html,type==="gap")});
+canvas.onclick=e=>{if(e.target===canvas||e.target.classList.contains("empty-state"))selectAll()};
+
+function read(file,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file)}
+imageInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<div class="media-resizer"><img src="'+src+'"></div>'));e.target.value=""};
+audioInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<audio src="'+src+'" controls style="width:100%"></audio>'));e.target.value=""};
+videoInput.onchange=e=>{const f=e.target.files[0];if(f)read(f,src=>addCard('<div class="media-resizer"><video src="'+src+'" controls></video></div>'));e.target.value=""};
+
+function apply(prop,val){targetCards().forEach(c=>c.style[prop]=val)}
+fontFamily.onchange=e=>apply("fontFamily",e.target.value);
+fontSize.onchange=e=>apply("fontSize",e.target.value);
+lineSpacing.onchange=e=>apply("lineHeight",e.target.value);
+alignment.onchange=e=>apply("textAlign",e.target.value);
+fontColor.oninput=e=>apply("color",e.target.value);
+backgroundColor.oninput=e=>apply("backgroundColor",e.target.value);
+cardSize.onchange=e=>targetCards().forEach(c=>c.style.width=e.target.value);
+cardAlignLeft.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="0";c.style.marginRight="auto"});
+cardAlignCenter.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="auto";c.style.marginRight="auto"});
+cardAlignRight.onclick=()=>targetCards().forEach(c=>{c.style.marginLeft="auto";c.style.marginRight="0"});
+document.querySelectorAll("[data-toggle]").forEach(btn=>btn.onclick=()=>targetCards().forEach(c=>{if(btn.dataset.toggle==="bold")c.style.fontWeight=c.style.fontWeight==="900"?"700":"900";if(btn.dataset.toggle==="italic")c.style.fontStyle=c.style.fontStyle==="italic"?"normal":"italic";if(btn.dataset.toggle==="underline")c.style.textDecoration=c.style.textDecoration==="underline"?"none":"underline"}));
+
+undoBtn.onclick=()=>{if(!undoStack.length)return;canvas.innerHTML=undoStack.pop();allCards().forEach(bindCard)};
+
+async function saveTest(){
+const payload={title:titleInput.value.trim()||"Untitled Placement Test",content:canvas.innerHTML,updatedAt:new Date().toISOString()};
+if(currentId){await db.collection("placementTests").doc(currentId).set(payload,{merge:true})}
+else{const ref=await db.collection("placementTests").add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/placements/builder.html?edit="+currentId)}
+tick();return currentId;
+}
+
+saveBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();await saveTest()};
+newBtn.onclick=e=>{e.preventDefault();e.stopPropagation();currentId="";titleInput.value="";canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';history.replaceState(null,"","/teacher/placements/builder.html")};
+viewBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();const id=await saveTest();window.open("/teacher/placements/view-test.html?id="+encodeURIComponent(id),"_blank")};
+
+async function load(){
+if(!currentId)return;
+const doc=await db.collection("placementTests").doc(currentId).get();
+if(!doc.exists)return;
+const d=doc.data();
+titleInput.value=d.title||"";
+canvas.innerHTML=d.content||'<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+allCards().forEach(bindCard);
+}
+load();
+});
+</script>
+
+/* =====================================================
+   LESSON BUILDER COMPATIBILITY LAYER
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  console.log("Lesson Builder synced with Placement Builder");
+
+  const canvas =
+    document.querySelector(".builder-canvas") ||
+    document.querySelector(".lesson-canvas") ||
+    document.querySelector(".editor-canvas") ||
+    document.querySelector("#builderCanvas");
+
+  if(!canvas) return;
+
+  /* -------------------------------------------------
+     CARD CLICK SELECTION
+  ------------------------------------------------- */
+
+  function getCards(){
+
+    return Array.from(
+      canvas.querySelectorAll(
+        ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+      )
+    );
+  }
+
+  let selectedCard = null;
+
+  function selectCard(card){
+
+    getCards().forEach(c => {
+      c.classList.remove("selected");
+      c.style.outline = "";
+    });
+
+    selectedCard = card;
+
+    card.classList.add("selected");
+
+    card.style.outline =
+      "2px solid rgba(255,255,255,.35)";
+  }
+
+  canvas.addEventListener("click", e => {
+
+    const card = e.target.closest(
+      ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+    );
+
+    if(card){
+      selectCard(card);
+    }
+  });
+
+  /* -------------------------------------------------
+     DRAG + DROP
+  ------------------------------------------------- */
+
+  getCards().forEach(card => {
+
+    card.draggable = true;
+
+    card.addEventListener("dragstart", () => {
+      card.classList.add("dragging");
+    });
+
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+    });
+  });
+
+  canvas.addEventListener("dragover", e => {
+
+    e.preventDefault();
+
+    const dragging =
+      document.querySelector(".dragging");
+
+    const afterElement =
+      [...getCards()].find(card => {
+
+        const box =
+          card.getBoundingClientRect();
+
+        return e.clientY < box.top + box.height / 2;
+      });
+
+    if(!dragging) return;
+
+    if(afterElement){
+      canvas.insertBefore(dragging, afterElement);
+    }else{
+      canvas.appendChild(dragging);
+    }
+  });
+
+  /* -------------------------------------------------
+     IMAGE + VIDEO RESIZING
+  ------------------------------------------------- */
+
+  function enableResize(media){
+
+    if(media.dataset.resizeReady) return;
+
+    media.dataset.resizeReady = "true";
+
+    const wrap = document.createElement("div");
+
+    wrap.className = "resize-wrap";
+
+    wrap.style.resize = "both";
+    wrap.style.overflow = "auto";
+    wrap.style.maxWidth = "100%";
+    wrap.style.display = "inline-block";
+    wrap.style.minWidth = "120px";
+    wrap.style.minHeight = "120px";
+
+    media.parentNode.insertBefore(wrap, media);
+
+    wrap.appendChild(media);
+
+    media.style.width = "100%";
+    media.style.height = "auto";
+    media.style.display = "block";
+  }
+
+  function scanMedia(){
+
+    document
+      .querySelectorAll("img,video")
+      .forEach(enableResize);
+  }
+
+  scanMedia();
+
+  setInterval(scanMedia, 1500);
+
+  /* -------------------------------------------------
+     ALIGNMENT
+  ------------------------------------------------- */
+
+  document
+    .querySelectorAll("select,button")
+    .forEach(control => {
+
+      control.addEventListener("click", () => {
+
+        if(!selectedCard) return;
+
+        const text =
+          (control.innerText || "").toLowerCase();
+
+        if(text.includes("left")){
+          selectedCard.style.textAlign = "left";
+        }
+
+        if(text.includes("center")){
+          selectedCard.style.textAlign = "center";
+        }
+
+        if(text.includes("right")){
+          selectedCard.style.textAlign = "right";
+        }
+      });
+
+      control.addEventListener("change", () => {
+
+        if(!selectedCard) return;
+
+        const value =
+          (control.value || "").toLowerCase();
+
+        if(value.includes("left")){
+          selectedCard.style.textAlign = "left";
+        }
+
+        if(value.includes("center")){
+          selectedCard.style.textAlign = "center";
+        }
+
+        if(value.includes("right")){
+          selectedCard.style.textAlign = "right";
+        }
+      });
+    });
+
+  /* -------------------------------------------------
+     SAVE RELIABILITY
+  ------------------------------------------------- */
+
+  let autosaveTimer = null;
+
+  function triggerSave(){
+
+    const saveBtn =
+      [...document.querySelectorAll("button")]
+      .find(btn =>
+        btn.innerText.trim().toLowerCase() === "save"
+      );
+
+    if(saveBtn){
+      saveBtn.click();
+    }
+  }
+
+  canvas.addEventListener("input", () => {
+
+    clearTimeout(autosaveTimer);
+
+    autosaveTimer =
+      setTimeout(triggerSave, 2500);
+  });
+
+  /* -------------------------------------------------
+     VIEW PAGE
+  ------------------------------------------------- */
+
+  const viewBtn =
+    [...document.querySelectorAll("button")]
+    .find(btn =>
+      btn.innerText.trim().toLowerCase() === "view"
+    );
+
+  if(viewBtn){
+
+    viewBtn.addEventListener("click", e => {
+
+      e.preventDefault();
+
+      const clean =
+        canvas.cloneNode(true);
+
+      clean.querySelectorAll(
+        ".builder-card,.lesson-card,.content-card,.block,.builder-block"
+      ).forEach(card => {
+
+        card.style.background = "transparent";
+        card.style.border = "none";
+        card.style.boxShadow = "none";
+        card.style.padding = "0";
+        card.style.marginBottom = "22px";
+      });
+
+      const win =
+        window.open("", "_blank");
+
+      if(!win){
+        alert("Allow popups for View.");
+        return;
+      }
+
+      win.document.write(\
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Lesson View</title>
+
+<style>
+
+body{
+  background:#080910;
+  color:white;
+  font-family:Inter,sans-serif;
+  margin:0;
+}
+
+main{
+  width:min(920px,92vw);
+  margin:auto;
+  padding:70px 0 120px;
+  line-height:1.8;
+}
+
+img,
+video{
+  max-width:100%;
+  height:auto;
+  border-radius:18px;
+}
+
+</style>
+</head>
+
+<body>
+<main>\</main>
+<script src="/js/impact-route-guard.js"></script>
+</body>
+</html>
+      \);
+
+      win.document.close();
+    });
+  }
+
+  /* -------------------------------------------------
+     BUTTON REACTIONS
+  ------------------------------------------------- */
+
+  const style =
+    document.createElement("style");
+
+  style.innerHTML = \
+
+button{
+  transition:
+    transform .14s ease,
+    opacity .14s ease,
+    background .14s ease !important;
+}
+
+button:hover{
+  transform:translateY(-2px) scale(1.03);
+}
+
+button:active{
+  transform:scale(.93);
+  opacity:.8;
+}
+
+.selected{
+  outline:
+    2px solid rgba(255,255,255,.35) !important;
+}
+
+.dragging{
+  opacity:.4;
+}
+
+\;
+
+  document.head.appendChild(style);
+
+});
+
+</script>
+
+<script src="/js/impact-route-guard.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -52,7 +52,7 @@
           sessionStorage.setItem("impactAccessRole", "personnel");
           sessionStorage.setItem("impactAccessName", result.ownerName || "Personnel");
           sessionStorage.setItem("impactPersonnelRole", result.role || "Teacher");
-          window.location.href = "/teacher/dashboard.html";
+          sessionStorage.setItem("impactJustSignedIn","1"); window.location.href = "/teacher/dashboard.html";
         }else{
           status.textContent = result.message;
         }
@@ -73,6 +73,7 @@
 <script src="/js/impact-recycle-bin.js"></script>
 </body>
 </html>
+
 
 
 

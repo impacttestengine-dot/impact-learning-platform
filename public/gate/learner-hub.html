@@ -50,7 +50,7 @@ async function login(){
       sessionStorage.setItem("impactAccessRole", "learner");
       sessionStorage.setItem("impactAccessName", result.ownerName || "Learner");
       sessionStorage.setItem("impactLearnerName", result.ownerName || "Learner");
-      window.location.href = "/learner/dashboard.html";
+      sessionStorage.setItem("impactJustSignedIn","1"); window.location.href = "/learner/dashboard.html";
     }else{
       status.textContent = result.message;
     }
@@ -70,6 +70,7 @@ input.addEventListener("keydown", e => {
 <script src="/js/impact-recycle-bin.js"></script>
 </body>
 </html>
+
 
 
 

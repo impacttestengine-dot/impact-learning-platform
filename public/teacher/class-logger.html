@@ -11,16 +11,16 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:#05060b;color:white;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
-.page{position:relative;z-index:2;width:min(1120px,92vw);margin:0 auto;padding:110px 0 90px}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+.page{position:relative;z-index:2;width:min(1120px,92vw);margin:auto;padding:110px 0 90px}
 .nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
-.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
 .hero{text-align:center;margin-bottom:34px}
-.hero h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
 .hero p{color:rgba(255,255,255,.65);font-weight:800}
 .search{width:100%;margin-bottom:22px;border:none;outline:none;border-radius:22px;padding:16px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;font-weight:800}
 .learner-group{margin-bottom:28px}
-.learner-name{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2rem;font-weight:400;margin:0 0 14px}
+.learner-name{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;margin-bottom:14px}
 .log-card{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:start;margin-bottom:14px;padding:20px;border-radius:28px;background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(22px)}
 .session-pill{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);font-weight:900}
 .log-main{font-size:.84rem;font-weight:800;color:rgba(255,255,255,.82);line-height:1.75}
@@ -50,10 +50,7 @@ button:active{transform:scale(.94);opacity:.8}
   </section>
 
   <input id="searchInput" class="search" placeholder="Search learner, teacher, level, room, remark...">
-
-  <section id="logsWrap">
-    <div class="empty">Loading class tracker...</div>
-  </section>
+  <section id="logsWrap"><div class="empty">Loading class tracker...</div></section>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -66,10 +63,18 @@ document.addEventListener("DOMContentLoaded", async function(){
   const wrap = document.getElementById("logsWrap");
   const searchInput = document.getElementById("searchInput");
 
-  const michaelRemark1 = "Michael is very engaged and enthusiastic and sharp.";
-  const michaelRemark2 = "Michael was very enthusiastic and can answer correctly questions 1 to 3 of the video with correct pronunciation and accent.";
+  const michaelSession1Remark = "Michael is very engaged and enthusiastic and sharp.";
+  const michaelSession2Remark = "Michael was very enthusiastic and can answer correctly questions 1 to 3 of the video with correct pronunciation and accent.";
 
-  async function fixMichaelRecords(){
+  function clean(value){
+    return String(value || "").replace(/\s*minute\(s\)\s*$/i,"").trim();
+  }
+
+  function startedMs(item){
+    return new Date(item.startedAt || item.createdAt || item.loggedAt || 0).getTime() || 0;
+  }
+
+  async function repairMichael(){
     await db.collection("classTracker").doc("michael-2026-05-10-session-1").set({
       learner:"Michael",
       level:"A0",
@@ -85,61 +90,76 @@ document.addEventListener("DOMContentLoaded", async function(){
       lessonCompleted:"Yes",
       lessonCanceled:"No",
       studentParticipation:"100%",
-      teacherRemarks:michaelRemark1,
-      manuallyAdded:true
+      teacherRemarks:michaelSession1Remark,
+      manuallyAdded:true,
+      updatedAt:new Date().toISOString()
     }, {merge:true});
 
-    try{
-      await db.collection("classTracker").doc("michael-2026-05-17-session-2").delete();
-    }catch(e){}
+    const snap = await db.collection("classTracker").where("learner","==","Michael").get();
 
-    const snap = await db.collection("classTracker")
-      .where("learner","==","Michael")
-      .where("startedAt","==","2026-05-17T17:23:57")
-      .get();
+    const updates = [];
+    snap.forEach(doc => {
+      const item = doc.data();
+      const isSession2 =
+        item.sessionNumber === "2/4" ||
+        item.meetRoom === "Impact Meet Room 6" ||
+        String(item.startedAt || "").includes("2026-05-17") ||
+        String(item.startedAtText || "").includes("17/05/2026");
 
-    await Promise.all(snap.docs.map(doc =>
-  db.collection("classTracker").doc(doc.id).set({
-    sessionNumber:"2/4",
-    lessonCompleted:"Yes",
-    lessonCanceled:"No",
-    studentParticipation:"100%",
-    teacherRemarks:"Michael was very enthusiastic and can answer correctly questions 1 to 3 of the video with correct pronunciation and accent."
-  }, {merge:true})
-));
+      if(isSession2){
+        updates.push(db.collection("classTracker").doc(doc.id).set({
+          sessionNumber:"2/4",
+          lessonCompleted:"Yes",
+          lessonCanceled:"No",
+          studentParticipation:"100%",
+          teacherRemarks:michaelSession2Remark,
+          updatedAt:new Date().toISOString()
+        }, {merge:true}));
+      }
+    });
+
+    await Promise.all(updates);
   }
 
-  function clean(value){
-    return String(value || "").replace(/\s*minute\(s\)\s*$/i,"").trim();
+  function applyMichaelFallback(item){
+    if(item.learner !== "Michael") return item;
+
+    const isS1 = item.sessionNumber === "1/4" || item.meetRoom === "Impact Meet Room 2";
+    const isS2 = item.sessionNumber === "2/4" || item.meetRoom === "Impact Meet Room 6";
+
+    if(isS1){
+      item.lessonCompleted = "Yes";
+      item.lessonCanceled = "No";
+      item.studentParticipation = "100%";
+      item.teacherRemarks = michaelSession1Remark;
+    }
+
+    if(isS2){
+      item.lessonCompleted = "Yes";
+      item.lessonCanceled = "No";
+      item.studentParticipation = "100%";
+      item.teacherRemarks = michaelSession2Remark;
+    }
+
+    return item;
   }
 
-  function sessionNumber(item, index){
-    if(item.sessionNumber) return item.sessionNumber;
-    return ((index % 4) + 1) + "/4";
-  }
-
-  function dateValue(item){
-    return new Date(item.startedAt || item.createdAt || item.loggedAt || 0).getTime();
-  }
-
-  async function loadLogs(){
-    await fixMichaelRecords();
+  async function load(){
+    await repairMichael();
 
     const snap = await db.collection("classTracker").get();
-
-    let logs = snap.docs.map(doc => ({id:doc.id, ...doc.data()}));
+    let logs = snap.docs.map(doc => applyMichaelFallback({id:doc.id,...doc.data()}));
 
     const seen = new Set();
     logs = logs
-      .sort((a,b)=>dateValue(a)-dateValue(b))
+      .sort((a,b)=>startedMs(a)-startedMs(b))
       .filter(item => {
         const key = [
           item.learner || "",
-          item.startedAt || "",
-          item.endedAt || "",
+          item.startedAt || item.startedAtText || "",
+          item.endedAt || item.endedAtText || "",
           item.meetRoom || ""
         ].join("|");
-
         if(seen.has(key)) return false;
         seen.add(key);
         return true;
@@ -147,10 +167,9 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     render(logs);
 
-    searchInput.oninput = function(){
+    searchInput.oninput = () => {
       const q = searchInput.value.toLowerCase();
-      const filtered = logs.filter(item => JSON.stringify(item).toLowerCase().includes(q));
-      render(filtered);
+      render(logs.filter(item => JSON.stringify(item).toLowerCase().includes(q)));
     };
   }
 
@@ -172,59 +191,52 @@ document.addEventListener("DOMContentLoaded", async function(){
     Object.keys(grouped).sort().forEach(learner => {
       const group = document.createElement("section");
       group.className = "learner-group";
+      group.innerHTML = `<h2 class="learner-name">${learner}</h2>`;
 
-      const title = document.createElement("h2");
-      title.className = "learner-name";
-      title.textContent = learner;
-      group.appendChild(title);
+      grouped[learner].sort((a,b)=>startedMs(a)-startedMs(b)).forEach((item,index) => {
+        item = applyMichaelFallback(item);
 
-      grouped[learner]
-        .sort((a,b)=>dateValue(a)-dateValue(b))
-        .forEach((item,index) => {
-          const card = document.createElement("article");
-          card.className = "log-card";
+        const session = item.sessionNumber || (((index % 4)+1) + "/4");
+        const completed = clean(item.lessonCompleted);
+        const cancelled = clean(item.lessonCanceled);
+        const participation = clean(item.studentParticipation);
+        const remarks = clean(item.teacherRemarks || item.earlyEndRemark);
 
-          const completed = clean(item.lessonCompleted);
-          const canceled = clean(item.lessonCanceled);
-          const participation = clean(item.studentParticipation);
-          const remarks = clean(item.teacherRemarks || item.earlyEndRemark);
+        const card = document.createElement("article");
+        card.className = "log-card";
+        card.innerHTML = `
+          <div class="session-pill">${session}</div>
+          <div class="log-main">
+            <div class="log-top">Level: ${item.level || ""} · Session ${session} · Teacher: ${item.teacher || ""} · Room: ${item.meetRoom || ""}</div>
+            <div>Started: ${item.startedAtText || item.startedAt || ""}</div>
+            <div>Ended: ${item.endedAtText || item.endedAt || "Not ended"}</div>
+            <div>Duration: ${item.minutesSpent || item.durationMinutes || 0} minute(s)</div>
+            ${completed ? `<div>Lesson completed: ${completed}</div>` : ""}
+            ${cancelled ? `<div>Lesson canceled: ${cancelled}</div>` : ""}
+            ${participation ? `<div>Student participation: ${participation}</div>` : ""}
+            ${remarks ? `<div>Remarks: ${remarks}</div>` : ""}
+            <span class="status">${item.status || "Logged"}</span>
+          </div>
+          <button class="delete-btn" type="button">Delete</button>
+        `;
 
-          card.innerHTML = `
-            <div class="session-pill">${sessionNumber(item,index)}</div>
+        card.querySelector(".delete-btn").onclick = async () => {
+          if(!confirm("Delete this class tracker record?")) return;
+          await db.collection("classTracker").doc(item.id).delete();
+          await load();
+        };
 
-            <div class="log-main">
-              <div class="log-top">
-                Level: ${item.level || ""} · Session ${sessionNumber(item,index)} · Teacher: ${item.teacher || ""} · Room: ${item.meetRoom || ""}
-              </div>
-              <div>Started: ${item.startedAtText || item.startedAt || ""}</div>
-              <div>Ended: ${item.endedAtText || item.endedAt || "Not ended"}</div>
-              <div>Duration: ${item.minutesSpent || item.durationMinutes || 0} minute(s)</div>
-              ${completed ? `<div>Lesson completed: ${completed}</div>` : ""}
-              ${canceled ? `<div>Lesson canceled: ${canceled}</div>` : ""}
-              ${participation ? `<div>Student participation: ${participation}</div>` : ""}
-              ${remarks ? `<div>Remarks: ${remarks}</div>` : ""}
-              <span class="status">${item.status || "Logged"}</span>
-            </div>
-
-            <button class="delete-btn" type="button">Delete</button>
-          `;
-
-          card.querySelector(".delete-btn").onclick = async function(){
-            if(!confirm("Delete this class tracker record?")) return;
-            await db.collection("classTracker").doc(item.id).delete();
-            card.remove();
-          };
-
-          group.appendChild(card);
-        });
+        group.appendChild(card);
+      });
 
       wrap.appendChild(group);
     });
   }
 
-  loadLogs();
+  load();
 });
 </script>
+
+<script src="/js/impact-route-guard.js"></script>
 </body>
 </html>
-

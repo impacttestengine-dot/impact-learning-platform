@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Placement Test Builder | Impact</title>
+<title>DELF Mock Builder | Impact</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
@@ -58,7 +58,7 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
 
 <nav class="lp-nav">
   <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></a>
-  <a class="lp-icon-btn" href="/teacher/placements/tests.html" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg></a>
+  <a class="lp-icon-btn" href="/teacher/delf-mocks.html" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg></a>
 </nav>
 
 <main class="page">
@@ -66,12 +66,16 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
 <aside class="panel blocks-panel">
   <div class="block-list">
     <button class="block-btn" data-block="header" type="button">Header</button>
-    <button class="block-btn" data-block="subheader" type="button">Sub Header</button>
-    <button class="block-btn" data-block="text" type="button">Text</button>
-    <button class="block-btn" data-block="gap" type="button">Gap</button>
-    <button class="block-btn" data-block="image" type="button">Image</button>
-    <button class="block-btn" data-block="audio" type="button">Audio</button>
-    <button class="block-btn" data-block="video" type="button">Video</button>
+<button class="block-btn" data-block="instruction" type="button">Instruction</button>
+<button class="block-btn" data-block="listening" type="button">Listening</button>
+<button class="block-btn" data-block="reading" type="button">Reading</button>
+<button class="block-btn" data-block="writing" type="button">Writing</button>
+<button class="block-btn" data-block="speaking" type="button">Speaking</button>
+<button class="block-btn" data-block="text" type="button">Text</button>
+<button class="block-btn" data-block="gap" type="button">Gap</button>
+<button class="block-btn" data-block="image" type="button">Image</button>
+<button class="block-btn" data-block="audio" type="button">Audio</button>
+<button class="block-btn" data-block="video" type="button">Video</button>
   </div>
 </aside>
 
@@ -94,14 +98,14 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overfl
   </div>
 
   <div class="canvas" id="canvas">
-    <div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>
+    <div class="empty-state">Add DELF mock blocks from the left. Click inside the canvas to select all blocks for formatting.</div>
   </div>
 </section>
 
 <aside class="panel settings-panel">
   <div>
-    <label class="settings-label">Test Title</label>
-    <input id="testTitle" type="text" placeholder="Placement Test Title">
+    <label class="settings-label">Mock Title</label>
+    <input id="testTitle" type="text" placeholder="DELF Mock Title">
   </div>
   <div class="settings-actions">
     <button class="control-btn" id="newBtn" type="button">New +</button>
@@ -143,7 +147,7 @@ card.setAttribute("draggable","true");
 card.onclick=e=>{e.stopPropagation();selectCard(card)};
 card.oninput=()=>{};
 const del=card.querySelector(".delete-card");
-if(del){del.onclick=e=>{e.preventDefault();e.stopPropagation();pushUndo();card.remove();if(!allCards().length)canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>'}};
+if(del){del.onclick=e=>{e.preventDefault();e.stopPropagation();pushUndo();card.remove();if(!allCards().length)canvas.innerHTML='<div class="empty-state">Add DELF mock blocks from the left. Click inside the canvas to select all blocks for formatting.</div>'}};
 
 card.ondragstart=e=>{draggedCard=card;card.classList.add("dragging");e.dataTransfer.effectAllowed="move"};
 card.ondragend=()=>{card.classList.remove("dragging");allCards().forEach(c=>c.classList.remove("drag-over"));draggedCard=null};
@@ -169,9 +173,14 @@ selectCard(card);
 }
 
 function template(type){
-if(type==="header")return '<h1>PLACEMENT TEST</h1>';
-if(type==="subheader")return '<h2>A.</h2>';
-if(type==="text")return '<p>Write test content here...</p>';
+if(type==="header")return '<h1>DELF MOCK</h1>';
+if(type==="instruction")return '<h2>Instructions</h2><p>Read the instructions carefully before answering.</p>';
+if(type==="listening")return '<h2>Compréhension de l’oral</h2><p>Audio file name:</p><p>Audio script:</p><p>Questions:</p>';
+if(type==="reading")return '<h2>Compréhension des écrits</h2><p>Reading text:</p><p>Questions:</p>';
+if(type==="writing")return '<h2>Production écrite</h2><p>Writing task:</p>';
+if(type==="speaking")return '<h2>Production orale</h2><p>Speaking task:</p>';
+if(type==="subheader")return '<h2>Section</h2>';
+if(type==="text")return '<p>Write DELF mock content here...</p>';
 if(type==="gap")return '<div style="height:70px"></div>';
 if(type==="image"){imageInput.click();return ""}
 if(type==="audio"){audioInput.click();return ""}
@@ -203,29 +212,29 @@ document.querySelectorAll("[data-toggle]").forEach(btn=>btn.onclick=()=>targetCa
 undoBtn.onclick=()=>{if(!undoStack.length)return;canvas.innerHTML=undoStack.pop();allCards().forEach(bindCard)};
 
 async function saveTest(){
-const payload={title:titleInput.value.trim()||"Untitled Placement Test",content:canvas.innerHTML,updatedAt:new Date().toISOString()};
-if(currentId){await db.collection("placementTests").doc(currentId).set(payload,{merge:true})}
-else{const ref=await db.collection("placementTests").add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/placements/builder.html?edit="+currentId)}
+const payload={title:titleInput.value.trim()||"Untitled DELF MOCK",content:canvas.innerHTML,updatedAt:new Date().toISOString()};
+if(currentId){await db.collection("delfMocks").doc(currentId).set(payload,{merge:true})}
+else{const ref=await db.collection("delfMocks").add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/delf-mock-builder.html?edit="+currentId)}
 tick();return currentId;
 }
 
 saveBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();await saveTest()};
-newBtn.onclick=e=>{e.preventDefault();e.stopPropagation();currentId="";titleInput.value="";canvas.innerHTML='<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';history.replaceState(null,"","/teacher/placements/builder.html")};
-viewBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();const id=await saveTest();window.open("/teacher/placements/view-test.html?id="+encodeURIComponent(id),"_blank")};
+newBtn.onclick=e=>{e.preventDefault();e.stopPropagation();currentId="";titleInput.value="";canvas.innerHTML='<div class="empty-state">Add DELF mock blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';history.replaceState(null,"","/teacher/delf-mock-builder.html")};
+viewBtn.onclick=async e=>{e.preventDefault();e.stopPropagation();const id=await saveTest();window.open("/teacher/delf-mock-view.html?id="+encodeURIComponent(id),"_blank")};
 
 async function load(){
 if(!currentId)return;
-const doc=await db.collection("placementTests").doc(currentId).get();
+const doc=await db.collection("delfMocks").doc(currentId).get();
 if(!doc.exists)return;
 const d=doc.data();
 titleInput.value=d.title||"";
-canvas.innerHTML=d.content||'<div class="empty-state">Add placement test blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
+canvas.innerHTML=d.content||'<div class="empty-state">Add DELF mock blocks from the left. Click inside the canvas to select all blocks for formatting.</div>';
 allCards().forEach(bindCard);
 }
 load();
 });
 </script>
-<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-recycle-bin.js"></script><script src="/js/impact-route-guard.js"></script>
 
 <script id="team-meetings-menu-fix">
 (function(){
@@ -278,6 +287,7 @@ load();
 <script src="/js/impact-route-guard.js"></script>
 </body>
 </html>
+
 
 
 

@@ -854,6 +854,126 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+<script id="lesson-builder-placement-behavior-sync">
+(function(){
+  const canvas =
+    document.querySelector(".lesson-canvas") ||
+    document.querySelector(".builder-canvas") ||
+    document.querySelector("#canvas");
+
+  if(!canvas) return;
+
+  let selectedCard = null;
+  let autosaveTimer = null;
+
+  function cards(){
+    return Array.from(canvas.querySelectorAll(".lesson-card,.builder-card,.card,.block"));
+  }
+
+  function selectCard(card){
+    selectedCard = card;
+    cards().forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+  }
+
+  canvas.addEventListener("click", function(e){
+    const card = e.target.closest(".lesson-card,.builder-card,.card,.block");
+    if(card && canvas.contains(card)) selectCard(card);
+  });
+
+  canvas.addEventListener("input", function(){
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(function(){
+      const saveBtn = Array.from(document.querySelectorAll("button"))
+        .find(b => b.textContent.trim().toLowerCase() === "save");
+      if(saveBtn) saveBtn.click();
+    }, 3000);
+  });
+
+  document.querySelectorAll("img,video").forEach(media=>{
+    if(media.closest(".resize-wrap")) return;
+    const wrap = document.createElement("div");
+    wrap.className = "resize-wrap";
+    wrap.style.resize = "both";
+    wrap.style.overflow = "auto";
+    wrap.style.display = "inline-block";
+    wrap.style.width = "70%";
+    wrap.style.maxWidth = "100%";
+    wrap.style.border = "1px dashed rgba(255,255,255,.2)";
+    wrap.style.borderRadius = "18px";
+    wrap.style.padding = "8px";
+    media.parentNode.insertBefore(wrap, media);
+    wrap.appendChild(media);
+    media.style.width = "100%";
+    media.style.height = "auto";
+    media.style.display = "block";
+  });
+
+  document.querySelectorAll("button,select").forEach(el=>{
+    const text = (el.textContent || el.value || "").toLowerCase();
+
+    el.addEventListener("click", function(){
+      if(!selectedCard) return;
+
+      if(text.includes("align left")) selectedCard.style.textAlign = "left";
+      if(text.includes("align center")) selectedCard.style.textAlign = "center";
+      if(text.includes("align right")) selectedCard.style.textAlign = "right";
+    });
+
+    el.addEventListener("change", function(){
+      if(!selectedCard) return;
+      const value = (el.value || "").toLowerCase();
+      if(value.includes("left")) selectedCard.style.textAlign = "left";
+      if(value.includes("center")) selectedCard.style.textAlign = "center";
+      if(value.includes("right")) selectedCard.style.textAlign = "right";
+    });
+  });
+
+  const viewBtn = Array.from(document.querySelectorAll("button"))
+    .find(b => b.textContent.trim().toLowerCase() === "view");
+
+  if(viewBtn){
+    viewBtn.onclick = function(e){
+      e.preventDefault();
+
+      const clone = canvas.cloneNode(true);
+
+      clone.querySelectorAll(".lesson-card,.builder-card,.card,.block").forEach(card=>{
+        card.style.background = "transparent";
+        card.style.border = "none";
+        card.style.boxShadow = "none";
+        card.style.padding = "0";
+        card.style.margin = "0 0 18px";
+      });
+
+      const win = window.open("", "_blank");
+      if(!win){
+        alert("Allow popups so View can open.");
+        return;
+      }
+
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Lesson View</title>
+          <style>
+            body{background:#090b12;color:white;font-family:Inter,Arial,sans-serif;margin:0;}
+            main{width:min(900px,92vw);margin:auto;padding:60px 0 100px;line-height:1.8;}
+            img,video{max-width:100%;height:auto;border-radius:18px;}
+          </style>
+        </head>
+        <body><main>${clone.innerHTML}</main><script src="/js/impact-route-guard.js"></script>
+</body>
+        </html>
+      `);
+
+      win.document.close();
+    };
+  }
+})();
+</script>
 <script src="/js/impact-route-guard.js"></script>
 </body>
 </html>
@@ -1042,9 +1162,130 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+<script id="lesson-builder-placement-behavior-sync">
+(function(){
+  const canvas =
+    document.querySelector(".lesson-canvas") ||
+    document.querySelector(".builder-canvas") ||
+    document.querySelector("#canvas");
+
+  if(!canvas) return;
+
+  let selectedCard = null;
+  let autosaveTimer = null;
+
+  function cards(){
+    return Array.from(canvas.querySelectorAll(".lesson-card,.builder-card,.card,.block"));
+  }
+
+  function selectCard(card){
+    selectedCard = card;
+    cards().forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+  }
+
+  canvas.addEventListener("click", function(e){
+    const card = e.target.closest(".lesson-card,.builder-card,.card,.block");
+    if(card && canvas.contains(card)) selectCard(card);
+  });
+
+  canvas.addEventListener("input", function(){
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(function(){
+      const saveBtn = Array.from(document.querySelectorAll("button"))
+        .find(b => b.textContent.trim().toLowerCase() === "save");
+      if(saveBtn) saveBtn.click();
+    }, 3000);
+  });
+
+  document.querySelectorAll("img,video").forEach(media=>{
+    if(media.closest(".resize-wrap")) return;
+    const wrap = document.createElement("div");
+    wrap.className = "resize-wrap";
+    wrap.style.resize = "both";
+    wrap.style.overflow = "auto";
+    wrap.style.display = "inline-block";
+    wrap.style.width = "70%";
+    wrap.style.maxWidth = "100%";
+    wrap.style.border = "1px dashed rgba(255,255,255,.2)";
+    wrap.style.borderRadius = "18px";
+    wrap.style.padding = "8px";
+    media.parentNode.insertBefore(wrap, media);
+    wrap.appendChild(media);
+    media.style.width = "100%";
+    media.style.height = "auto";
+    media.style.display = "block";
+  });
+
+  document.querySelectorAll("button,select").forEach(el=>{
+    const text = (el.textContent || el.value || "").toLowerCase();
+
+    el.addEventListener("click", function(){
+      if(!selectedCard) return;
+
+      if(text.includes("align left")) selectedCard.style.textAlign = "left";
+      if(text.includes("align center")) selectedCard.style.textAlign = "center";
+      if(text.includes("align right")) selectedCard.style.textAlign = "right";
+    });
+
+    el.addEventListener("change", function(){
+      if(!selectedCard) return;
+      const value = (el.value || "").toLowerCase();
+      if(value.includes("left")) selectedCard.style.textAlign = "left";
+      if(value.includes("center")) selectedCard.style.textAlign = "center";
+      if(value.includes("right")) selectedCard.style.textAlign = "right";
+    });
+  });
+
+  const viewBtn = Array.from(document.querySelectorAll("button"))
+    .find(b => b.textContent.trim().toLowerCase() === "view");
+
+  if(viewBtn){
+    viewBtn.onclick = function(e){
+      e.preventDefault();
+
+      const clone = canvas.cloneNode(true);
+
+      clone.querySelectorAll(".lesson-card,.builder-card,.card,.block").forEach(card=>{
+        card.style.background = "transparent";
+        card.style.border = "none";
+        card.style.boxShadow = "none";
+        card.style.padding = "0";
+        card.style.margin = "0 0 18px";
+      });
+
+      const win = window.open("", "_blank");
+      if(!win){
+        alert("Allow popups so View can open.");
+        return;
+      }
+
+      win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Lesson View</title>
+          <style>
+            body{background:#090b12;color:white;font-family:Inter,Arial,sans-serif;margin:0;}
+            main{width:min(900px,92vw);margin:auto;padding:60px 0 100px;line-height:1.8;}
+            img,video{max-width:100%;height:auto;border-radius:18px;}
+          </style>
+        </head>
+        <body><main>${clone.innerHTML}</main><script src="/js/impact-route-guard.js"></script>
+</body>
+        </html>
+      `);
+
+      win.document.close();
+    };
+  }
+})();
+</script>
 <script src="/js/impact-route-guard.js"></script>
 </body>
 </html>
+
 
 
 
