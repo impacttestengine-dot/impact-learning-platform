@@ -32,10 +32,32 @@ button{transition:transform .15s ease,background .18s ease,opacity .15s ease}
 button:hover{transform:translateY(-2px) scale(1.03);background:rgba(255,255,255,.18)}
 button:active{transform:scale(.94);opacity:.8}
 @media(max-width:700px){.log-card{grid-template-columns:1fr}.session-pill{width:auto;border-radius:999px}}
+.pdf-download-btn{
+  position:fixed;
+  right:28px;
+  top:24px;
+  z-index:99999;
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  font-size:1.35rem;
+  font-weight:900;
+  cursor:pointer;
+  backdrop-filter:blur(18px);
+  box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.pdf-download-btn:hover{transform:translateY(-2px) scale(1.04);background:rgba(255,255,255,.18)}
+.pdf-download-btn:active{transform:scale(.94)}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 
 <body>
+<button id="downloadTrackerPdf" class="pdf-download-btn" title="Download Billing Tracker PDF">📄</button>
 <script src="/js/impact-global-bg.js"></script>
 
 <nav class="nav">
@@ -238,6 +260,139 @@ document.addEventListener("DOMContentLoaded", async function(){
 </script>
 
 <script src="/js/impact-route-guard.js?v=inactivity-001"></script>
+<script id="class-tracker-pdf-download">
+document.addEventListener("DOMContentLoaded", function(){
+  const btn = document.getElementById("downloadTrackerPdf");
+  if(!btn) return;
+
+  function fmtDate(value){
+    if(!value) return "";
+    const d = new Date(value);
+    if(isNaN(d)) return String(value).split(",")[0].trim();
+    return String(d.getDate()).padStart(2,"0") + "/" +
+           String(d.getMonth()+1).padStart(2,"0") + "/" +
+           d.getFullYear();
+  }
+
+  function chunkDates(dates){
+    const chunks = [];
+    for(let i=0;i<dates.length;i+=4){
+      chunks.push(dates.slice(i,i+4).join("\n"));
+    }
+    return chunks;
+  }
+
+  btn.onclick = async function(){
+    btn.textContent = "…";
+
+    try{
+      const db = firebase.firestore();
+      const snap = await db.collection("classTracker").get();
+
+      const grouped = {};
+
+      snap.forEach(doc => {
+        const item = doc.data();
+        const learner = item.learner || "Unnamed Learner";
+        const date = fmtDate(item.startedAt || item.startedAtText || item.createdAt);
+
+        if(!date) return;
+
+        if(!grouped[learner]) grouped[learner] = [];
+        if(!grouped[learner].includes(date)) grouped[learner].push(date);
+      });
+
+      const rows = [];
+      let no = 1;
+
+      Object.keys(grouped).sort().forEach(name => {
+        const dates = grouped[name].sort((a,b)=>{
+          const pa = a.split("/").reverse().join("-");
+          const pb = b.split("/").reverse().join("-");
+          return new Date(pa) - new Date(pb);
+        });
+
+        const boxes = chunkDates(dates);
+        const row = [String(no++), name, "", ...boxes];
+
+        while(row.length < 11) row.push("");
+        rows.push(row);
+      });
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation:"landscape",
+        unit:"pt",
+        format:"a4"
+      });
+
+      pdf.setFont("helvetica","bold");
+      pdf.setFontSize(12);
+      pdf.text("Billing Tracker", 110, 70);
+
+      pdf.autoTable({
+        startY:95,
+        head:[
+          [
+            "No.",
+            "Student",
+            "Updated\ndates from\nold tracker",
+            {content:"Class Dates", colSpan:8, styles:{halign:"center"}}
+          ]
+        ],
+        body:rows,
+        theme:"grid",
+        styles:{
+          font:"helvetica",
+          fontSize:8,
+          cellPadding:7,
+          valign:"top",
+          lineColor:[80,45,35],
+          lineWidth:0.7,
+          textColor:[20,25,35]
+        },
+        headStyles:{
+          fillColor:[214,226,232],
+          textColor:[20,25,35],
+          fontStyle:"bold",
+          halign:"center",
+          lineColor:[80,45,35],
+          lineWidth:0.8
+        },
+        columnStyles:{
+          0:{cellWidth:35,halign:"center"},
+          1:{cellWidth:72,fontStyle:"bold"},
+          2:{cellWidth:92},
+          3:{cellWidth:92},
+          4:{cellWidth:92},
+          5:{cellWidth:92},
+          6:{cellWidth:92},
+          7:{cellWidth:92},
+          8:{cellWidth:92},
+          9:{cellWidth:92},
+          10:{cellWidth:92}
+        },
+        didParseCell:function(data){
+          if(data.section === "body"){
+            data.cell.styles.fillColor = [214,226,232];
+            data.cell.styles.minCellHeight = 78;
+          }
+        }
+      });
+
+      const today = new Date().toISOString().slice(0,10);
+      pdf.save("Impact_Billing_Tracker_" + today + ".pdf");
+
+    }catch(err){
+      console.error(err);
+      alert("PDF download failed. Check console.");
+    }finally{
+      btn.textContent = "📄";
+    }
+  };
+});
+</script>
 </body>
 </html>
+
 
