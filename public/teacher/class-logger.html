@@ -98,15 +98,15 @@ document.addEventListener("DOMContentLoaded", async function(){
       .where("startedAt","==","2026-05-17T17:23:57")
       .get();
 
-    snap.forEach(doc => {
-      db.collection("classTracker").doc(doc.id).set({
-        sessionNumber:"2/4",
-        lessonCompleted:"Yes",
-        lessonCanceled:"No",
-        studentParticipation:"100%",
-        teacherRemarks:michaelRemark2
-      }, {merge:true});
-    });
+    await Promise.all(snap.docs.map(doc =>
+  db.collection("classTracker").doc(doc.id).set({
+    sessionNumber:"2/4",
+    lessonCompleted:"Yes",
+    lessonCanceled:"No",
+    studentParticipation:"100%",
+    teacherRemarks:"Michael was very enthusiastic and can answer correctly questions 1 to 3 of the video with correct pronunciation and accent."
+  }, {merge:true})
+));
   }
 
   function clean(value){
@@ -227,3 +227,4 @@ document.addEventListener("DOMContentLoaded", async function(){
 </script>
 </body>
 </html>
+
