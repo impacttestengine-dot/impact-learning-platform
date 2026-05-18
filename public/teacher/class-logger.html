@@ -34,9 +34,9 @@ button:active{transform:scale(.94);opacity:.8}
 @media(max-width:700px){.log-card{grid-template-columns:1fr}.session-pill{width:auto;border-radius:999px}}
 .pdf-download-btn{
   position:fixed;
-  right:28px;
   top:24px;
-  z-index:99999;
+  right:28px;
+  z-index:999999;
   width:54px;
   height:54px;
   border-radius:18px;
@@ -56,8 +56,8 @@ button:active{transform:scale(.94);opacity:.8}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 
-<body>
-<button id="downloadTrackerPdf" class="pdf-download-btn" title="Download Billing Tracker PDF">📄</button>
+<body><button id="downloadTrackerPdf" class="pdf-download-btn" title="Download Billing Tracker PDF">📄</button>
+
 <script src="/js/impact-global-bg.js"></script>
 
 <nav class="nav">
@@ -259,72 +259,65 @@ document.addEventListener("DOMContentLoaded", async function(){
 });
 </script>
 
-<script src="/js/impact-route-guard.js?v=inactivity-001"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+
 <script id="class-tracker-pdf-download">
 document.addEventListener("DOMContentLoaded", function(){
   const btn = document.getElementById("downloadTrackerPdf");
   if(!btn) return;
 
-  function fmtDate(value){
+  function dateOnly(value){
     if(!value) return "";
     const d = new Date(value);
-    if(isNaN(d)) return String(value).split(",")[0].trim();
-    return String(d.getDate()).padStart(2,"0") + "/" +
-           String(d.getMonth()+1).padStart(2,"0") + "/" +
-           d.getFullYear();
+    if(!isNaN(d)){
+      return String(d.getDate()).padStart(2,"0") + "/" +
+             String(d.getMonth()+1).padStart(2,"0") + "/" +
+             d.getFullYear();
+    }
+    return String(value).split(",")[0].trim();
   }
 
-  function chunkDates(dates){
-    const chunks = [];
-    for(let i=0;i<dates.length;i+=4){
-      chunks.push(dates.slice(i,i+4).join("\n"));
+  function chunks(arr){
+    const out = [];
+    for(let i=0;i<arr.length;i+=4){
+      out.push(arr.slice(i,i+4).join("\n"));
     }
-    return chunks;
+    return out;
   }
 
   btn.onclick = async function(){
     btn.textContent = "…";
 
     try{
-      const db = firebase.firestore();
-      const snap = await db.collection("classTracker").get();
-
+      const snap = await firebase.firestore().collection("classTracker").get();
       const grouped = {};
 
-      snap.forEach(doc => {
+      snap.forEach(doc=>{
         const item = doc.data();
         const learner = item.learner || "Unnamed Learner";
-        const date = fmtDate(item.startedAt || item.startedAtText || item.createdAt);
-
+        const date = dateOnly(item.startedAt || item.startedAtText || item.createdAt);
         if(!date) return;
-
         if(!grouped[learner]) grouped[learner] = [];
         if(!grouped[learner].includes(date)) grouped[learner].push(date);
       });
 
-      const rows = [];
-      let no = 1;
+      const body = [];
+      let n = 1;
 
-      Object.keys(grouped).sort().forEach(name => {
+      Object.keys(grouped).sort().forEach(name=>{
         const dates = grouped[name].sort((a,b)=>{
-          const pa = a.split("/").reverse().join("-");
-          const pb = b.split("/").reverse().join("-");
-          return new Date(pa) - new Date(pb);
+          const aa = a.split("/").reverse().join("-");
+          const bb = b.split("/").reverse().join("-");
+          return new Date(aa) - new Date(bb);
         });
 
-        const boxes = chunkDates(dates);
-        const row = [String(no++), name, "", ...boxes];
-
+        const row = [String(n++), name, "", ...chunks(dates)];
         while(row.length < 11) row.push("");
-        rows.push(row);
+        body.push(row);
       });
 
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({
-        orientation:"landscape",
-        unit:"pt",
-        format:"a4"
-      });
+      const pdf = new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
 
       pdf.setFont("helvetica","bold");
       pdf.setFontSize(12);
@@ -332,15 +325,13 @@ document.addEventListener("DOMContentLoaded", function(){
 
       pdf.autoTable({
         startY:95,
-        head:[
-          [
-            "No.",
-            "Student",
-            "Updated\ndates from\nold tracker",
-            {content:"Class Dates", colSpan:8, styles:{halign:"center"}}
-          ]
-        ],
-        body:rows,
+        head:[[
+          "No.",
+          "Student",
+          "Updated\ndates from\nold tracker",
+          {content:"Class Dates", colSpan:8, styles:{halign:"center"}}
+        ]],
+        body,
         theme:"grid",
         styles:{
           font:"helvetica",
@@ -348,8 +339,9 @@ document.addEventListener("DOMContentLoaded", function(){
           cellPadding:7,
           valign:"top",
           lineColor:[80,45,35],
-          lineWidth:0.7,
-          textColor:[20,25,35]
+          lineWidth:.7,
+          textColor:[20,25,35],
+          minCellHeight:76
         },
         headStyles:{
           fillColor:[214,226,232],
@@ -357,7 +349,10 @@ document.addEventListener("DOMContentLoaded", function(){
           fontStyle:"bold",
           halign:"center",
           lineColor:[80,45,35],
-          lineWidth:0.8
+          lineWidth:.8
+        },
+        bodyStyles:{
+          fillColor:[214,226,232]
         },
         columnStyles:{
           0:{cellWidth:35,halign:"center"},
@@ -371,21 +366,13 @@ document.addEventListener("DOMContentLoaded", function(){
           8:{cellWidth:92},
           9:{cellWidth:92},
           10:{cellWidth:92}
-        },
-        didParseCell:function(data){
-          if(data.section === "body"){
-            data.cell.styles.fillColor = [214,226,232];
-            data.cell.styles.minCellHeight = 78;
-          }
         }
       });
 
-      const today = new Date().toISOString().slice(0,10);
-      pdf.save("Impact_Billing_Tracker_" + today + ".pdf");
-
+      pdf.save("Impact_Billing_Tracker_" + new Date().toISOString().slice(0,10) + ".pdf");
     }catch(err){
       console.error(err);
-      alert("PDF download failed. Check console.");
+      alert("PDF download failed.");
     }finally{
       btn.textContent = "📄";
     }
@@ -394,5 +381,7 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 </body>
 </html>
+
+
 
 

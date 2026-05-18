@@ -1,6 +1,5 @@
 ﻿(function(){
-  const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30 minutes
-  const now = Date.now();
+  const INACTIVITY_LIMIT = 60 * 60 * 1000;
   const path = location.pathname.toLowerCase();
 
   const isProtected =
@@ -24,42 +23,31 @@
     );
   }
 
-  function updateActivity(){
+  function touch(){
     sessionStorage.setItem("impactLastActivity", String(Date.now()));
   }
 
   function expired(){
     const last = Number(sessionStorage.getItem("impactLastActivity") || "0");
-    if(!last) return false;
-    return Date.now() - last > INACTIVITY_LIMIT;
+    return last && Date.now() - last > INACTIVITY_LIMIT;
   }
 
-  if(!authed()){
+  if(!authed() || expired()){
     goHome();
     return;
   }
 
-  if(expired()){
-    goHome();
-    return;
-  }
+  touch();
 
-  updateActivity();
-
-  ["click","keydown","mousemove","touchstart","scroll"].forEach(evt => {
-    document.addEventListener(evt, updateActivity, { passive:true });
+  ["click","keydown","mousemove","touchstart","scroll"].forEach(evt=>{
+    document.addEventListener(evt, touch, {passive:true});
   });
 
-  window.addEventListener("pageshow", function(e){
-    if(e.persisted || expired()){
-      goHome();
-    }
+  window.addEventListener("pageshow", e=>{
+    if(e.persisted || expired()) goHome();
   });
 
-  document.addEventListener("visibilitychange", function(){
-    if(document.visibilityState === "visible" && expired()){
-      goHome();
-    }
+  document.addEventListener("visibilitychange", ()=>{
+    if(document.visibilityState === "visible" && expired()) goHome();
   });
-
 })();

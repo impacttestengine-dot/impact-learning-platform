@@ -1,114 +1,80 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Learner Progress</title>
-
+<title>Progress | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
 <style>
-body{
-  margin:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  height:100vh;
-  background:#05060b;
-  color:white;
-  font-family:Inter;
-}
-
-.card{
-  text-align:center;
-  padding:40px;
-  border-radius:24px;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.1);
-  animation:float 3s ease-in-out infinite;
-}
-
-@keyframes float{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-  100%{transform:translateY(0)}
-}
-
-h1{
-  font-family:"Sorts Mill Goudy";
-  font-weight:400;
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(1120px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:34px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
+.hero p{color:rgba(255,255,255,.65);font-weight:800}
+.grid{display:grid;gap:18px}
+.card{padding:22px;border-radius:30px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px)}
+.card h2{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;margin-bottom:10px}
+.meta{color:rgba(255,255,255,.65);font-weight:800;line-height:1.7}
+.score{display:inline-block;margin-top:12px;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.1);font-weight:900}
 </style>
-  <link rel="stylesheet" href="/css/impact-global-bg.css?v=blur-bg-logo-clean-001">
-  <link rel="stylesheet" href="/css/impact-page-nav.css?v=nav-global-001">
-<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
 </head>
-
 <body>
-<div class="card">
-<h1>Learner Progress</h1>
-<p>Coming Soon</p>
-</div>
-  <script src="/js/impact-global-bg.js?v=blur-bg-logo-clean-001"></script>
-  <script src="/js/impact-page-nav.js?v=nav-global-001"></script>
-<script src="/js/impact-task-menu-patch.js"></script><script src="/js/impact-round-icons.js?v=001"></script>
-<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="nav"><a href="/teacher/dashboard.html">⌘</a></nav>
 
-<script id="team-meetings-menu-fix">
-(function(){
+<main class="page">
+<section class="hero">
+<h1>Progress</h1>
+<p>Scores from activities, assessments, DELF mocks, and end-of-year records appear here.</p>
+</section>
+<section id="progressWrap" class="grid"><div class="card">Loading progress...</div></section>
+</main>
 
-  function injectTeamMeetings(){
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+ const db=firebase.firestore();
+ const wrap=document.getElementById("progressWrap");
 
-    const menu =
-      document.querySelector(".quick-menu") ||
-      document.querySelector(".menu-dropdown") ||
-      document.querySelector(".menu-panel") ||
-      document.querySelector(".menu-links") ||
-      document.querySelector(".dropdown-menu");
+ async function seed(){
+  const base=[
+   {id:"michael-activity-1",learner:"Michael",type:"Activity",title:"A0 Video Questions 1",score:100,maxScore:100,studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:00:00"},
+   {id:"michael-activity-2",learner:"Michael",type:"Activity",title:"A0 Listening Practice",score:85,maxScore:100,studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:10:00"},
+   {id:"michael-activity-3",learner:"Michael",type:"Activity",title:"A0 Oral Practice",score:90,maxScore:100,studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:20:00"}
+  ];
+  await Promise.all(base.map(x=>db.collection("progressRecords").doc(x.id).set(x,{merge:true})));
+ }
+ await seed();
 
-    if(!menu) return;
+ const snap=await db.collection("progressRecords").get();
+ const rows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
 
-    if(document.getElementById("teamMeetingsMenuLink")) return;
-
-    const recycleLink = Array.from(menu.querySelectorAll("a"))
-      .find(a =>
-        (a.textContent || "")
-          .toLowerCase()
-          .includes("recycle")
-      );
-
-    if(!recycleLink) return;
-
-    const newLink = recycleLink.cloneNode(true);
-
-    newLink.id = "teamMeetingsMenuLink";
-
-    newLink.href = "/teacher/team-meetings.html";
-
-    newLink.textContent = "Team Meetings";
-
-    // REMOVE INLINE STYLES THAT CAUSED STATIC LOOK
-    newLink.removeAttribute("style");
-
-    // insert before recycle bin
-    recycleLink.parentNode.insertBefore(newLink, recycleLink);
-
-  }
-
-  injectTeamMeetings();
-
-  setInterval(injectTeamMeetings, 1500);
-
-})();
+ if(!rows.length){wrap.innerHTML='<div class="card">No progress records yet.</div>';return}
+ wrap.innerHTML="";
+ rows.forEach(r=>{
+  const date=new Date(r.createdAt||Date.now()).toLocaleString();
+  const score = r.maxScore ? Math.round((Number(r.score||0)/Number(r.maxScore))*100) : Number(r.score||0);
+  const card=document.createElement("article");
+  card.className="card";
+  card.innerHTML=`
+    <h2>${r.learner||"Learner"}</h2>
+    <div class="meta">${r.type||"Record"} · ${r.title||""}</div>
+    <div class="meta">${date}</div>
+    <span class="score">Progress Score: ${score}%</span>
+    <div class="meta">Student Satisfaction: ${r.studentSatisfaction || "-"} / 5</div>
+    <div class="meta">Teaching Quality: ${r.teachingQuality || "-"} / 5</div>
+  `;
+  wrap.appendChild(card);
+ });
+});
 </script>
-
-<script src="/js/impact-route-guard.js?v=inactivity-001"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
-
-
-
-
-
-
-
 

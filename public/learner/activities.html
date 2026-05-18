@@ -3,40 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Activities | Impact Learner Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<title>Activities | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
-<link rel="stylesheet" href="/css/impact-page-nav.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif}
-.page{position:relative;z-index:2;width:min(920px,92vw);margin:0 auto;padding:118px 0 80px}
-.card{padding:34px;border-radius:34px;background:rgba(8,12,24,.72);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(24px);box-shadow:0 30px 90px rgba(0,0,0,.42)}
-.eyebrow{text-transform:uppercase;letter-spacing:.3em;color:rgba(232,216,166,.82);font-size:.68rem;font-weight:900;margin-bottom:14px}
-h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);font-weight:400;margin-bottom:16px}
-p{color:rgba(255,255,255,.72);font-weight:700;line-height:1.65}
-.actions{margin-top:24px}
-.actions a{min-height:48px;padding:0 18px;border-radius:16px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.10);color:#fff;font-weight:900;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(1120px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:20}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14)}
+.hero{text-align:center;margin-bottom:34px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{padding:22px;border-radius:30px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px)}
+.card h2{font-family:"Sorts Mill Goudy",serif;font-size:1.8rem;font-weight:400}
+.card p{color:rgba(255,255,255,.68);font-weight:800;line-height:1.6;margin-top:8px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
 </style>
-<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
 </head>
 <body>
-<main class="page">
-  <section class="card">
-    <p class="eyebrow">Learner Hub</p>
-    <h1>Activities</h1>
-    <p>Assigned learner activities and exercises will appear here.</p>
-    <div class="actions"><a href="/learner/dashboard.html">Learner Dashboard</a></div>
-  </section>
-</main>
 <script src="/js/impact-global-bg.js"></script>
-<script src="/js/impact-page-nav.js"></script>
-<script src="/js/impact-route-guard.js?v=inactivity-001"></script>
-<script src="/js/impact-round-icons.js?v=001"></script>
-<script src="/js/impact-recycle-bin.js"></script>
+<nav class="nav"><a href="/teacher/dashboard.html">⌘</a></nav>
+<main class="page">
+<section class="hero"><h1>Activities</h1><p>Michael’s three activity templates are seeded for KPI testing.</p></section>
+<section id="activityGrid" class="grid"></section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+ const db=firebase.firestore();
+ const grid=document.getElementById("activityGrid");
+
+ const templates=[
+  {id:"michael-template-1",learner:"Michael",title:"A0 Video Questions 1",questions:["What is the first answer in the video?","Repeat sentence 1 with correct pronunciation."],studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:00:00"},
+  {id:"michael-template-2",learner:"Michael",title:"A0 Listening Practice",questions:["What word did you hear?","Say the word again clearly."],studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:10:00"},
+  {id:"michael-template-3",learner:"Michael",title:"A0 Oral Practice",questions:["Answer question 1 orally.","Answer question 2 orally."],studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:20:00"}
+ ];
+
+ await Promise.all(templates.map(t=>db.collection("activityTemplates").doc(t.id).set(t,{merge:true})));
+
+ grid.innerHTML="";
+ templates.forEach(t=>{
+  const card=document.createElement("article");
+  card.className="card";
+  card.innerHTML=`<h2>${t.title}</h2><p>Learner: ${t.learner}</p><p>2 questions · Satisfaction ${t.studentSatisfaction}/5 · Teaching Quality ${t.teachingQuality}/5</p>`;
+  grid.appendChild(card);
+ });
+});
+</script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
-
-
-
 
