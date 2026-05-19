@@ -14,7 +14,7 @@ body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-seri
 .page{position:relative;z-index:2;width:min(1120px,92vw);margin:auto;padding:110px 0 90px}
 .nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
 .nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
-.pdf-btn{position:fixed;top:24px;right:28px;z-index:30;width:54px;height:54px;border-radius:18px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.10);color:white;font-size:22px;cursor:pointer;backdrop-filter:blur(18px)}
+.pdf-btn{position:fixed;top:24px;right:28px;left:auto;z-index:999999;width:54px;height:54px;border-radius:18px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.10);color:white;font-size:22px;cursor:pointer;backdrop-filter:blur(18px)}
 .hero{text-align:center;margin-bottom:34px}
 .hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
 .hero p{font-weight:800;color:rgba(255,255,255,.65)}
@@ -182,21 +182,21 @@ document.getElementById("pdfBtn").onclick=()=>{
   Object.keys(grouped).sort().forEach(name=>{
     const boxes=[];
     for(let i=0;i<grouped[name].length;i+=4){
-      boxes.push(grouped[name].slice(i,i+4).join("\\n"));
+      boxes.push(grouped[name].slice(i,i+4).join("\n"));
     }
-    while(boxes.length<8)boxes.push("");
+    while(boxes.length<10)boxes.push("");
     rows.push([n++,name,...boxes]);
   });
 
   pdf.autoTable({
     startY:80,
-    head:[["NO.","STUDENT",{content:"CLASS DATES",colSpan:8,styles:{halign:"center"}}]],
+    head:[["NO.","STUDENT",{content:"CLASS DATES",colSpan:10,styles:{halign:"center"}}]],
     body:rows,
     theme:"grid",
-    styles:{fontSize:10,cellPadding:10,minCellHeight:75,valign:"top",lineColor:[80,45,35],textColor:[20,25,35]},
-    headStyles:{fillColor:[213,226,232],textColor:[15,22,33],fontStyle:"bold",fontSize:12,halign:"center"},
+    styles:{fontSize:9,cellPadding:6,minCellHeight:86,valign:"top",overflow:"linebreak",lineColor:[80,45,35],textColor:[20,25,35]},
+    headStyles:{fillColor:[213,226,232],textColor:[15,22,33],fontStyle:"bold",fontSize:11,halign:"center",valign:"middle"},
     bodyStyles:{fillColor:[235,242,245]},
-    columnStyles:{0:{cellWidth:45,halign:"center"},1:{cellWidth:130,fontStyle:"bold"}}
+    columnStyles:{0:{cellWidth:42,halign:"center"},1:{cellWidth:115,fontStyle:"bold"},2:{cellWidth:62},3:{cellWidth:62},4:{cellWidth:62},5:{cellWidth:62},6:{cellWidth:62},7:{cellWidth:62},8:{cellWidth:62},9:{cellWidth:62},10:{cellWidth:62},11:{cellWidth:62}}
   });
 
   pdf.save("Impact_Billing_Tracker.pdf");
@@ -209,3 +209,4 @@ load();
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
+
