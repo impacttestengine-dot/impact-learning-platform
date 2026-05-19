@@ -1,1 +1,211 @@
-﻿
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Class Tracker | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(1120px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.pdf-btn{position:fixed;top:24px;right:28px;z-index:30;width:54px;height:54px;border-radius:18px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.10);color:white;font-size:22px;cursor:pointer;backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:34px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
+.hero p{font-weight:800;color:rgba(255,255,255,.65)}
+.search{width:100%;padding:16px 18px;border-radius:22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;font-weight:800;margin-bottom:24px}
+.learner{margin-bottom:30px}
+.learner h2{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;margin-bottom:14px}
+.card{display:grid;grid-template-columns:64px 1fr auto;gap:16px;margin-bottom:14px;padding:20px;border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)}
+.pill{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);font-weight:900}
+.info{font-size:.84rem;font-weight:800;line-height:1.75;color:rgba(255,255,255,.82)}
+.top{font-weight:900;color:white}
+.status{display:inline-block;margin-top:10px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.delete{border:none;border-radius:14px;padding:10px 13px;background:rgba(255,80,80,.14);color:white;font-weight:900;cursor:pointer}
+.empty{padding:24px;border-radius:24px;background:rgba(255,255,255,.06);text-align:center;font-weight:800;color:rgba(255,255,255,.6)}
+button{transition:.15s ease}
+button:hover{transform:translateY(-2px) scale(1.03)}
+button:active{transform:scale(.94);opacity:.8}
+</style>
+</head>
+
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="nav">
+  <a href="/teacher/dashboard.html">⌘</a>
+  <a href="/teacher/classes.html">←</a>
+</nav>
+
+<button id="pdfBtn" class="pdf-btn">📄</button>
+
+<main class="page">
+  <section class="hero">
+    <h1>Class Tracker</h1>
+    <p>Started classes, ended classes, duration, participation, and teacher remarks are logged here.</p>
+  </section>
+
+  <input id="search" class="search" placeholder="Search learner, teacher, level, room, remark...">
+  <section id="wrap"><div class="empty">Loading class tracker...</div></section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+const db=firebase.firestore();
+const wrap=document.getElementById("wrap");
+const search=document.getElementById("search");
+let allLogs=[];
+
+function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
+function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
+
+async function repairMichael(){
+  await db.collection("classTracker").doc("michael-2026-05-10-session-1").set({
+    learner:"Michael",level:"A0",teacher:"Adelaide",meetRoom:"Impact Meet Room 2",
+    sessionNumber:"1/4",startedAt:"2026-05-10T17:50:00",startedAtText:"10/05/2026, 5:50 PM",
+    endedAt:"2026-05-10T18:50:00",endedAtText:"10/05/2026, 6:50 PM",
+    minutesSpent:60,status:"Ended",lessonCompleted:"Yes",lessonCanceled:"No",
+    studentParticipation:"100%",teacherRemarks:"Michael is very engaged and enthusiastic and sharp."
+  },{merge:true});
+}
+
+function applyFallback(x){
+  if(x.learner==="Michael" && (x.sessionNumber==="2/4" || x.meetRoom==="Impact Meet Room 6")){
+    x.sessionNumber="2/4";
+    x.lessonCompleted="Yes";
+    x.lessonCanceled="No";
+    x.studentParticipation="100%";
+    x.teacherRemarks="Michael was very enthusiastic and can answer correctly questions 1 to 3 of the video with correct pronunciation and accent.";
+  }
+  return x;
+}
+
+async function load(){
+  await repairMichael();
+  const snap=await db.collection("classTracker").get();
+  const seen=new Set();
+
+  allLogs=snap.docs.map(d=>applyFallback({id:d.id,...d.data()}))
+    .sort((a,b)=>ms(a)-ms(b))
+    .filter(x=>{
+      const key=[x.learner,x.startedAt||x.startedAtText,x.endedAt||x.endedAtText,x.meetRoom].join("|");
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+  render(allLogs);
+}
+
+function render(logs){
+  if(!logs.length){wrap.innerHTML='<div class="empty">No tracker records found.</div>';return}
+
+  const groups={};
+  logs.forEach(x=>{
+    const name=x.learner||"Unnamed Learner";
+    if(!groups[name]) groups[name]=[];
+    groups[name].push(x);
+  });
+
+  wrap.innerHTML="";
+
+  Object.keys(groups).sort().forEach(name=>{
+    const sec=document.createElement("section");
+    sec.className="learner";
+    sec.innerHTML=`<h2>${name}</h2>`;
+
+    groups[name].sort((a,b)=>ms(a)-ms(b)).forEach((x,i)=>{
+      x=applyFallback(x);
+      const session=x.sessionNumber||(((i%4)+1)+"/4");
+      const card=document.createElement("article");
+      card.className="card";
+      card.innerHTML=`
+        <div class="pill">${session}</div>
+        <div class="info">
+          <div class="top">Level: ${x.level||""} · Session ${session} · Teacher: ${x.teacher||""} · Room: ${x.meetRoom||""}</div>
+          <div>Started: ${x.startedAtText||x.startedAt||""}</div>
+          <div>Ended: ${x.endedAtText||x.endedAt||"Not ended"}</div>
+          <div>Duration: ${x.minutesSpent||x.durationMinutes||0} minute(s)</div>
+          ${x.lessonCompleted?`<div>Lesson completed: ${clean(x.lessonCompleted)}</div>`:""}
+          ${x.lessonCanceled?`<div>Lesson canceled: ${clean(x.lessonCanceled)}</div>`:""}
+          ${x.studentParticipation?`<div>Student participation: ${clean(x.studentParticipation)}</div>`:""}
+          ${x.teacherRemarks?`<div>Remarks: ${clean(x.teacherRemarks)}</div>`:""}
+          <span class="status">${x.status||"Logged"}</span>
+        </div>
+        <button class="delete">Delete</button>
+      `;
+      card.querySelector(".delete").onclick=async()=>{
+        if(confirm("Delete this tracker record?")){
+          await db.collection("classTracker").doc(x.id).delete();
+          await load();
+        }
+      };
+      sec.appendChild(card);
+    });
+
+    wrap.appendChild(sec);
+  });
+}
+
+search.oninput=()=>render(allLogs.filter(x=>JSON.stringify(x).toLowerCase().includes(search.value.toLowerCase())));
+
+document.getElementById("pdfBtn").onclick=()=>{
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
+  pdf.setFont("helvetica","bold");
+  pdf.setFontSize(20);
+  pdf.text("Billing Tracker",45,55);
+
+  const grouped={};
+  allLogs.forEach(x=>{
+    const name=x.learner||"Student";
+    const raw=x.startedAtText||x.startedAt||"";
+    const date=String(raw).split(",")[0].trim();
+    if(!date)return;
+    if(!grouped[name])grouped[name]=[];
+    if(!grouped[name].includes(date))grouped[name].push(date);
+  });
+
+  const rows=[];
+  let n=1;
+  Object.keys(grouped).sort().forEach(name=>{
+    const boxes=[];
+    for(let i=0;i<grouped[name].length;i+=4){
+      boxes.push(grouped[name].slice(i,i+4).join("\\n"));
+    }
+    while(boxes.length<8)boxes.push("");
+    rows.push([n++,name,...boxes]);
+  });
+
+  pdf.autoTable({
+    startY:80,
+    head:[["NO.","STUDENT",{content:"CLASS DATES",colSpan:8,styles:{halign:"center"}}]],
+    body:rows,
+    theme:"grid",
+    styles:{fontSize:10,cellPadding:10,minCellHeight:75,valign:"top",lineColor:[80,45,35],textColor:[20,25,35]},
+    headStyles:{fillColor:[213,226,232],textColor:[15,22,33],fontStyle:"bold",fontSize:12,halign:"center"},
+    bodyStyles:{fillColor:[235,242,245]},
+    columnStyles:{0:{cellWidth:45,halign:"center"},1:{cellWidth:130,fontStyle:"bold"}}
+  });
+
+  pdf.save("Impact_Billing_Tracker.pdf");
+};
+
+load();
+});
+</script>
+
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
