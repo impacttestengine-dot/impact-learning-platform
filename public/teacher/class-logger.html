@@ -10,18 +10,18 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif}
-.page{position:relative;z-index:2;width:min(1120px,92vw);margin:auto;padding:110px 0 90px}
+html,body{width:100%;max-width:100%;overflow-x:hidden} body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(980px,88vw);max-width:980px;margin:0 auto;padding:110px 0 90px;overflow:hidden}
 .nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
 .nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
-.pdf-btn{position:fixed;top:24px;right:28px;left:auto;z-index:999999;width:54px;height:54px;border-radius:18px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.10);color:white;font-size:22px;cursor:pointer;backdrop-filter:blur(18px)}
-.hero{text-align:center;margin-bottom:34px}
+.pdf-btn{position:fixed!important;top:24px!important;right:28px!important;left:auto!important;z-index:999999!important;width:54px!important;height:54px!important;border-radius:18px!important;border:1px solid rgba(255,255,255,.18)!important;background:rgba(255,255,255,.10)!important;color:white!important;font-size:22px!important;cursor:pointer!important;backdrop-filter:blur(18px)!important}
+.hero{text-align:center;margin-bottom:34px;width:100%;overflow:hidden}
 .hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
 .hero p{font-weight:800;color:rgba(255,255,255,.65)}
 .search{width:100%;padding:16px 18px;border-radius:22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;font-weight:800;margin-bottom:24px}
 .learner{margin-bottom:30px}
 .learner h2{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;margin-bottom:14px}
-.card{display:grid;grid-template-columns:64px 1fr auto;gap:16px;margin-bottom:14px;padding:20px;border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)}
+.card{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:16px;margin-bottom:14px;padding:20px;border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);width:100%;max-width:100%;overflow:hidden}
 .pill{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);font-weight:900}
 .info{font-size:.84rem;font-weight:800;line-height:1.75;color:rgba(255,255,255,.82)}
 .top{font-weight:900;color:white}
@@ -209,4 +209,5 @@ load();
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
+
 
