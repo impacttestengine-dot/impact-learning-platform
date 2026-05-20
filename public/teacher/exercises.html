@@ -462,72 +462,7 @@ textarea{resize:vertical}
 
 
 <main class="page">
-  <section class="hero">
-    <p>Teacher Workspace</p>
-    <h1>Activities & Exercises</h1>
-    <p class="sub">Create media-rich activities with video, audio, image, text, and flexible learner response modes.</p>
-  </section>
-
-  <section class="actions">
-    <button id="openFolderBtn" type="button">Create Folder</button>
-    <button id="openBuilderBtn" type="button">Create Activity</button>
-    <button id="openTrackerBtn" type="button">Activity Tracker</button>
-<button id="openPreviewBtn" type="button">Preview Exercises</button>
-  </section>
-
-  <section class="shell">
-    <aside class="panel">
-      <p class="panel-label">Folders</p>
-      <h2>Library</h2>
-      <div id="folderList" class="folder-list"></div>
-    </aside>
-
-    <section class="panel">
-      <p class="panel-label">Selected Folder</p>
-      <h2 id="selectedFolderTitle">All Activities</h2>
-      <div id="activityList" class="activity-list"></div>
-    </section>
-  </section>
-</main>
-
-<section id="folderModal" class="modal hidden">
-  <div class="modal-card small">
-    <button class="close-btn" data-close="folderModal" type="button">×</button>
-    <p class="panel-label">New Folder</p>
-    <h2>Create Folder</h2>
-    <label>Folder Name<input id="folderName" type="text"></label>
-    <button id="saveFolderBtn" type="button">Save Folder</button>
-  </div>
-</section>
-
-<section id="builderModal" class="modal hidden">
-  <div class="modal-card">
-    <button class="close-btn" data-close="builderModal" type="button">×</button>
-
-    <div class="builder-head">
-      <p class="panel-label">Activity Engine</p>
-      <h2>Create Media Activity</h2>
-    </div>
-
-    <div class="builder-layout">
-      <aside class="builder-panel">
-        <h3>Question Blocks</h3>
-        <div class="block-list">
-          <button data-add="Text Question" type="button">Text Question</button>
-          <button data-add="Image Question" type="button">Image Question</button>
-          <button data-add="Audio Question" type="button">Audio Question</button>
-          <button data-add="Video Question" type="button">Video Question</button>
-          <button data-add="Multiple Choice" type="button">Multiple Choice</button>
-          <button data-add="Dropdown" type="button">Dropdown</button>
-          <button data-add="Instruction Block" type="button">Instruction Block</button>
-          <button data-add="File Upload Prompt" type="button">File Upload Prompt</button>
-        </div>
-      </aside>
-
-      <section class="builder-panel">
-        <h3>Activity Canvas</h3>
-        <div id="questionList" class="question-list"></div>
-      </section>
+  
 
       <aside class="builder-panel">
         <h3>Settings</h3>
@@ -665,6 +600,7 @@ document.querySelectorAll("[data-route]").forEach(btn=>{
 });
 
 </script>
+
 
 
 
