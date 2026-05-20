@@ -202,9 +202,53 @@ search.oninput=()=>render(allLogs.filter(x=>JSON.stringify(x).toLowerCase().incl
 document.getElementById("pdfBtn").onclick=()=>{
   const {jsPDF}=window.jspdf;
   const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
+
+  const margin=45;
+  const top=80;
+  const noW=42;
+  const studentW=120;
+  const dateW=62;
+  const dateCols=10;
+  const headerH=54;
+  const rowH=82;
+
+  const xNo=margin;
+  const xStudent=xNo+noW;
+  const xDates=xStudent+studentW;
+  const tableW=noW+studentW+(dateW*dateCols);
+
   pdf.setFont("helvetica","bold");
   pdf.setFontSize(20);
-  pdf.text("Billing Tracker",45,55);
+  pdf.text("Billing Tracker", margin, 55);
+
+  function cell(x,y,w,h,fill){
+    pdf.setFillColor(fill[0],fill[1],fill[2]);
+    pdf.setDrawColor(80,45,35);
+    pdf.setLineWidth(.6);
+    pdf.rect(x,y,w,h,"FD");
+  }
+
+  function centerText(txt,x,y,w,h,size){
+    pdf.setFont("helvetica","bold");
+    pdf.setFontSize(size);
+    pdf.setTextColor(15,22,33);
+    const lines=pdf.splitTextToSize(String(txt),w-8);
+    const lineH=size+2;
+    const total=lines.length*lineH;
+    let yy=y+(h-total)/2+size;
+    lines.forEach(line=>{
+      pdf.text(line,x+w/2,yy,{align:"center"});
+      yy+=lineH;
+    });
+  }
+
+  cell(xNo,top,noW,headerH,[213,226,232]);
+  cell(xStudent,top,studentW,headerH,[213,226,232]);
+  cell(xDates,top,dateW*dateCols,headerH,[213,226,232]);
+
+  centerText("NO.",xNo,top,noW,headerH,10);
+  centerText("STUDENT",xStudent,top,studentW,headerH,10);
+  centerText("CLASS DATES",xDates,top,dateW*dateCols,headerH,11);
 
   const grouped={};
   allLogs.forEach(x=>{
@@ -216,31 +260,55 @@ document.getElementById("pdfBtn").onclick=()=>{
     if(!grouped[name].includes(date))grouped[name].push(date);
   });
 
-  const rows=[];
+  let y=top+headerH;
   let n=1;
+
   Object.keys(grouped).sort().forEach(name=>{
+    if(y+rowH>540){
+      pdf.addPage("a4","landscape");
+      y=60;
+      cell(xNo,y,noW,headerH,[213,226,232]);
+      cell(xStudent,y,studentW,headerH,[213,226,232]);
+      cell(xDates,y,dateW*dateCols,headerH,[213,226,232]);
+      centerText("NO.",xNo,y,noW,headerH,10);
+      centerText("STUDENT",xStudent,y,studentW,headerH,10);
+      centerText("CLASS DATES",xDates,y,dateW*dateCols,headerH,11);
+      y+=headerH;
+    }
+
     const boxes=[];
     for(let i=0;i<grouped[name].length;i+=4){
-      boxes.push(grouped[name].slice(i,i+4).join("\n"));
+      boxes.push(grouped[name].slice(i,i+4));
     }
-    while(boxes.length<10)boxes.push("");
-    rows.push([n++,name,...boxes]);
-  });
+    while(boxes.length<dateCols)boxes.push([]);
 
-  pdf.autoTable({
-    startY:80,
-    head:[["NO.","STUDENT",{content:"CLASS DATES",colSpan:10,styles:{halign:"center"}}]],
-    body:rows,
-    theme:"grid",
-    styles:{fontSize:9,cellPadding:6,minCellHeight:86,valign:"top",overflow:"linebreak",lineColor:[80,45,35],textColor:[20,25,35]},
-    headStyles:{fillColor:[213,226,232],textColor:[15,22,33],fontStyle:"bold",fontSize:11,halign:"center",valign:"middle"},
-    bodyStyles:{fillColor:[235,242,245]},
-    columnStyles:{0:{cellWidth:42,halign:"center"},1:{cellWidth:115,fontStyle:"bold"},2:{cellWidth:62},3:{cellWidth:62},4:{cellWidth:62},5:{cellWidth:62},6:{cellWidth:62},7:{cellWidth:62},8:{cellWidth:62},9:{cellWidth:62},10:{cellWidth:62},11:{cellWidth:62}}
+    cell(xNo,y,noW,rowH,[235,242,245]);
+    cell(xStudent,y,studentW,rowH,[235,242,245]);
+
+    pdf.setTextColor(20,25,35);
+    pdf.setFont("helvetica","bold");
+    pdf.setFontSize(9);
+    pdf.text(String(n++),xNo+noW/2,y+18,{align:"center"});
+    pdf.text(name,xStudent+10,y+18);
+
+    boxes.slice(0,dateCols).forEach((dates,i)=>{
+      const x=xDates+(i*dateW);
+      cell(x,y,dateW,rowH,[235,242,245]);
+      pdf.setFont("helvetica","normal");
+      pdf.setFontSize(8);
+      pdf.setTextColor(20,25,35);
+      let yy=y+16;
+      dates.forEach(d=>{
+        pdf.text(d,x+6,yy);
+        yy+=12;
+      });
+    });
+
+    y+=rowH;
   });
 
   pdf.save("Impact_Billing_Tracker.pdf");
 };
-
 load();
 });
 </script>
@@ -248,6 +316,7 @@ load();
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
+
 
 
 
