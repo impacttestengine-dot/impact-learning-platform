@@ -32,6 +32,45 @@ button{transition:.15s ease}
 button:hover{transform:translateY(-2px) scale(1.03)}
 button:active{transform:scale(.94);opacity:.8}
 </style>
+<style id="class-tracker-delete-layout-fix">
+.card{
+  grid-template-columns:64px minmax(0,1fr) 110px !important;
+  align-items:start !important;
+  overflow:hidden !important;
+}
+
+.info{
+  min-width:0 !important;
+  word-break:break-word !important;
+  overflow-wrap:anywhere !important;
+}
+
+.delete{
+  width:92px !important;
+  height:42px !important;
+  min-width:92px !important;
+  padding:0 14px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  justify-self:end !important;
+  align-self:start !important;
+  border-radius:14px !important;
+  line-height:1 !important;
+}
+
+@media(max-width:700px){
+  .card{
+    grid-template-columns:48px 1fr !important;
+  }
+
+  .delete{
+    grid-column:2 !important;
+    justify-self:start !important;
+    margin-top:10px !important;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -209,6 +248,7 @@ load();
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
+
 
 
 
