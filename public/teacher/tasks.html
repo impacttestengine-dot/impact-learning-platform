@@ -1,80 +1,208 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Tasks</title>
-<script type="module" src="../js/tasks.js"></script>
-<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tasks | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif;overflow-x:hidden}
+.page{position:relative;z-index:2;width:min(1080px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:50;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:34px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.7rem);font-weight:400}
+.hero p{font-weight:800;color:rgba(255,255,255,.65)}
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:24px;margin-bottom:22px}
+.form{display:grid;grid-template-columns:1.2fr 1fr 180px auto;gap:12px}
+input,select,button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:white;border-radius:18px;padding:14px 15px;font-weight:800;font-family:Inter,sans-serif}
+input::placeholder{color:rgba(255,255,255,.42)}
+input[type="date"]{color-scheme:dark}
+button{cursor:pointer;transition:.15s ease}
+button:hover{transform:translateY(-2px) scale(1.02);background:rgba(255,255,255,.15)}
+button:active{transform:scale(.95);opacity:.8}
+.add{background:rgba(255,255,255,.14)}
+.list{display:grid;gap:14px}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:start;padding:18px;border-radius:24px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.check{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-weight:900}
+.check.done{background:rgba(132,204,22,.22);border-color:rgba(132,204,22,.45)}
+.title{font-weight:900;font-size:1rem;margin-bottom:6px}
+.meta{font-size:.78rem;color:rgba(255,255,255,.62);font-weight:800;line-height:1.7}
+.badge{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.actions{display:flex;gap:8px}
+.small{padding:10px 12px;border-radius:14px;font-size:.76rem}
+.delete{background:rgba(255,80,80,.14)}
+.empty{text-align:center;color:rgba(255,255,255,.55);font-weight:800;padding:24px}
+@media(max-width:850px){
+  .form{grid-template-columns:1fr}
+  .task{grid-template-columns:1fr}
+  .actions{justify-content:flex-start}
+}
+</style>
 </head>
 
 <body>
-<h1>Teacher Tasks</h1>
+<script src="/js/impact-global-bg.js"></script>
 
-<input id="taskTitle" placeholder="Task title">
-<input id="teacher" placeholder="Assign to teacher">
-<input id="date" type="date">
+<nav class="nav">
+  <a href="/teacher/dashboard.html">⌘</a>
+</nav>
 
-<button onclick="addTask()">Add Task</button>
+<main class="page">
+  <section class="hero">
+    <h1>Teacher Tasks</h1>
+    <p>Create, assign, track, and complete teacher tasks.</p>
+  </section>
 
-<div id="tasksList"></div>
+  <section class="panel">
+    <form id="taskForm" class="form">
+      <input id="taskTitle" placeholder="Task title" required>
+      <input id="assignedTo" placeholder="Assign to teacher" required>
+      <input id="dueDate" type="date" required>
+      <button class="add" type="submit">Add Task</button>
+    </form>
+  </section>
 
-<script src="/js/impact-round-icons.js?v=001"></script>
-<script src="/js/impact-recycle-bin.js"></script>
+  <section class="panel">
+    <div id="taskList" class="list">
+      <div class="empty">Loading tasks...</div>
+    </div>
+  </section>
+</main>
 
-<script id="team-meetings-menu-fix">
-(function(){
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
 
-  function injectTeamMeetings(){
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+  const db=firebase.firestore();
 
-    const menu =
-      document.querySelector(".quick-menu") ||
-      document.querySelector(".menu-dropdown") ||
-      document.querySelector(".menu-panel") ||
-      document.querySelector(".menu-links") ||
-      document.querySelector(".dropdown-menu");
+  const form=document.getElementById("taskForm");
+  const taskTitle=document.getElementById("taskTitle");
+  const assignedTo=document.getElementById("assignedTo");
+  const dueDate=document.getElementById("dueDate");
+  const list=document.getElementById("taskList");
 
-    if(!menu) return;
+  let tasks=[];
 
-    if(document.getElementById("teamMeetingsMenuLink")) return;
-
-    const recycleLink = Array.from(menu.querySelectorAll("a"))
-      .find(a =>
-        (a.textContent || "")
-          .toLowerCase()
-          .includes("recycle")
-      );
-
-    if(!recycleLink) return;
-
-    const newLink = recycleLink.cloneNode(true);
-
-    newLink.id = "teamMeetingsMenuLink";
-
-    newLink.href = "/teacher/team-meetings.html";
-
-    newLink.textContent = "Team Meetings";
-
-    // REMOVE INLINE STYLES THAT CAUSED STATIC LOOK
-    newLink.removeAttribute("style");
-
-    // insert before recycle bin
-    recycleLink.parentNode.insertBefore(newLink, recycleLink);
-
+  function fmtDate(v){
+    if(!v) return "";
+    const d=new Date(v);
+    if(isNaN(d)) return v;
+    return d.toLocaleDateString();
   }
 
-  injectTeamMeetings();
+  async function load(){
+    list.innerHTML='<div class="empty">Loading tasks...</div>';
 
-  setInterval(injectTeamMeetings, 1500);
+    const snap=await db.collection("tasks").get();
 
-})();
+    tasks=snap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>new Date(a.dueDate||0)-new Date(b.dueDate||0));
+
+    render();
+  }
+
+  function render(){
+    if(!tasks.length){
+      list.innerHTML='<div class="empty">No tasks yet.</div>';
+      return;
+    }
+
+    list.innerHTML="";
+
+    tasks.forEach(t=>{
+      const done=!!t.completed;
+      const card=document.createElement("article");
+      card.className="task";
+
+      card.innerHTML=`
+        <button class="check ${done?'done':''}" title="Mark complete">${done?'✓':''}</button>
+
+        <div>
+          <div class="title">${t.title||"Untitled Task"}</div>
+          <div class="meta">Assigned to: ${t.assignedTo||"Unassigned"}</div>
+          <div class="meta">Due: ${fmtDate(t.dueDate)}</div>
+          ${t.completedAtText?`<div class="meta">Completed: ${t.completedAtText}</div>`:""}
+          <span class="badge">${done?'Completed':'Pending'}</span>
+        </div>
+
+        <div class="actions">
+          <button class="small edit">Edit</button>
+          <button class="small delete">Delete</button>
+        </div>
+      `;
+
+      card.querySelector(".check").onclick=async()=>{
+        const now=new Date();
+        await db.collection("tasks").doc(t.id).set({
+          completed:!done,
+          completedAt:!done ? now.toISOString() : "",
+          completedAtText:!done ? now.toLocaleString() : "",
+          updatedAt:now.toISOString()
+        },{merge:true});
+        await load();
+      };
+
+      card.querySelector(".edit").onclick=()=>{
+        taskTitle.value=t.title||"";
+        assignedTo.value=t.assignedTo||"";
+        dueDate.value=t.dueDate||"";
+        form.dataset.editing=t.id;
+        taskTitle.focus();
+      };
+
+      card.querySelector(".delete").onclick=async()=>{
+        if(confirm("Delete this task?")){
+          await db.collection("tasks").doc(t.id).delete();
+          await load();
+        }
+      };
+
+      list.appendChild(card);
+    });
+  }
+
+  form.onsubmit=async(e)=>{
+    e.preventDefault();
+
+    const now=new Date();
+
+    const data={
+      title:taskTitle.value.trim(),
+      assignedTo:assignedTo.value.trim(),
+      dueDate:dueDate.value,
+      completed:false,
+      updatedAt:now.toISOString(),
+      updatedAtText:now.toLocaleString()
+    };
+
+    const editing=form.dataset.editing;
+
+    if(editing){
+      await db.collection("tasks").doc(editing).set(data,{merge:true});
+      delete form.dataset.editing;
+    }else{
+      await db.collection("tasks").add({
+        ...data,
+        createdAt:now.toISOString(),
+        createdAtText:now.toLocaleString()
+      });
+    }
+
+    form.reset();
+    await load();
+  };
+
+  await load();
+});
 </script>
 
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
-
-
-
-
-
-
