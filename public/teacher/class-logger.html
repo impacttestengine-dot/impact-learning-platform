@@ -26,6 +26,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden} body{min-height:100vh;bac
 .info{font-size:.84rem;font-weight:800;line-height:1.75;color:rgba(255,255,255,.82)}
 .top{font-weight:900;color:white}
 .status{display:inline-block;margin-top:10px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.badge{display:inline-block;margin-top:10px;margin-left:8px;padding:7px 12px;border-radius:999px;font-size:.72rem;font-weight:900}
+.badge-type{background:rgba(120,170,255,.18);color:#bcd4ff}
+.badge-billable{background:rgba(80,220,140,.16);color:#9ef0bf}
+.badge-nonbillable{background:rgba(255,120,120,.16);color:#ffb3b3}
 .delete{border:none;border-radius:14px;padding:10px 16px;background:rgba(255,80,80,.14);color:white;font-weight:900;cursor:pointer;align-self:start;justify-self:end;width:auto;min-width:92px;height:44px;line-height:1;display:flex;align-items:center;justify-content:center}
 .empty{padding:24px;border-radius:24px;background:rgba(255,255,255,.06);text-align:center;font-weight:800;color:rgba(255,255,255,.6)}
 button{transition:.15s ease}
@@ -104,6 +108,10 @@ let allLogs=[];
 
 function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
 function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
+function isBillable(x){
+  if(typeof x.billable==="boolean") return x.billable;
+  return x.status==="Completed";
+}
 
 async function load(){
   const snap=await db.collection("classTracker").get();
@@ -138,8 +146,17 @@ function render(logs){
     sec.className="learner";
     sec.innerHTML=`<h2>${name}</h2>`;
 
-    groups[name].sort((a,b)=>ms(a)-ms(b)).forEach((x,i)=>{
-      const session=x.sessionNumber||(((i%4)+1)+"/4");
+    let billableCount=0;
+    groups[name].sort((a,b)=>ms(a)-ms(b)).forEach((x)=>{
+      const billable=isBillable(x);
+      let session;
+      if(billable){
+        billableCount++;
+        session=billableCount+"/4";
+      }else{
+        session="-/4";
+      }
+      const entryType=(x.entryType||"auto").toUpperCase();
       const card=document.createElement("article");
       card.className="card";
       card.innerHTML=`
@@ -154,6 +171,8 @@ function render(logs){
           ${x.studentParticipation?`<div>Student participation: ${clean(x.studentParticipation)}</div>`:""}
           ${x.teacherRemarks?`<div>Remarks: ${clean(x.teacherRemarks)}</div>`:""}
           <span class="status">${x.status||"Logged"}</span>
+          <span class="badge badge-type">${entryType}</span>
+          <span class="badge ${billable?"badge-billable":"badge-nonbillable"}">${billable?"BILLABLE":"NON-BILLABLE"}</span>
         </div>
         <button class="delete">Delete</button>
       `;
