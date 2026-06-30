@@ -79,11 +79,14 @@ button:active{transform:scale(.94);opacity:.8}
   inset:0;
   background:rgba(0,0,0,.6);
   backdrop-filter:blur(6px);
-  z-index:99999;
-  display:flex;
+  z-index:999999;
+  display:none;
   align-items:center;
   justify-content:center;
   padding:24px;
+}
+.modal-overlay.open{
+  display:flex;
 }
 .modal-box{
   width:min(560px,100%);
@@ -178,15 +181,15 @@ button:active{transform:scale(.94);opacity:.8}
 
   <div class="search-row">
     <input id="search" class="search" placeholder="Search learner, teacher, level, room, remark...">
-    <button id="addManualBtn" class="add-manual-btn">+ Add Manual Class</button>
+    <button id="addManualBtn" type="button" class="add-manual-btn">+ Add Class</button>
   </div>
 
   <section id="wrap"><div class="empty">Loading class tracker...</div></section>
 </main>
 
-<div id="manualModalOverlay" class="modal-overlay" style="display:none">
+<div id="manualModalOverlay" class="modal-overlay">
   <div class="modal-box">
-    <h3>Add Manual Class</h3>
+    <h3>Add Class</h3>
 
     <div class="field-group">
       <label>Learner</label>
@@ -239,8 +242,8 @@ button:active{transform:scale(.94);opacity:.8}
     <div class="field-error" id="m_error">Please fill in Learner, Teacher, Date, Start Time, and End Time.</div>
 
     <div class="modal-actions">
-      <button class="modal-cancel" id="m_cancel">Cancel</button>
-      <button class="modal-save" id="m_save">Save Class</button>
+      <button type="button" class="modal-cancel" id="m_cancel">Cancel</button>
+      <button type="button" class="modal-save" id="m_save">Save Class</button>
     </div>
   </div>
 </div>
@@ -250,6 +253,55 @@ button:active{transform:scale(.94);opacity:.8}
 <script src="/__/firebase/init.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+// ===== Manual Class Modal (bound immediately, independent of Firestore load) =====
+(function(){
+  const manualOverlay=document.getElementById("manualModalOverlay");
+  const addManualBtn=document.getElementById("addManualBtn");
+  const mCancel=document.getElementById("m_cancel");
+
+  function openManualModal(){
+    document.getElementById("m_learner").value="";
+    document.getElementById("m_teacher").value="";
+    document.getElementById("m_level").value="";
+    document.getElementById("m_date").value="";
+    document.getElementById("m_start").value="";
+    document.getElementById("m_end").value="";
+    document.getElementById("m_participation").value="";
+    document.getElementById("m_platform").value="";
+    document.getElementById("m_remarks").value="";
+    document.getElementById("m_error").style.display="none";
+    manualOverlay.classList.add("open");
+  }
+
+  function closeManualModal(){
+    manualOverlay.classList.remove("open");
+  }
+
+  if(addManualBtn){
+    addManualBtn.addEventListener("click",function(e){
+      e.preventDefault();
+      openManualModal();
+    });
+  }else{
+    console.error("Add Class button not found in DOM");
+  }
+
+  if(mCancel){
+    mCancel.addEventListener("click",function(e){
+      e.preventDefault();
+      closeManualModal();
+    });
+  }
+
+  manualOverlay.addEventListener("click",function(e){
+    if(e.target===manualOverlay) closeManualModal();
+  });
+
+  window.__closeManualModal=closeManualModal;
+})();
+</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", async()=>{
@@ -468,34 +520,8 @@ document.getElementById("pdfBtn").onclick=()=>{
   pdf.save("Impact_Billing_Tracker.pdf");
 };
 
-// ===== Manual Class Modal =====
-const manualOverlay=document.getElementById("manualModalOverlay");
-const addManualBtn=document.getElementById("addManualBtn");
-const mCancel=document.getElementById("m_cancel");
 const mSave=document.getElementById("m_save");
 const mError=document.getElementById("m_error");
-
-function openManualModal(){
-  document.getElementById("m_learner").value="";
-  document.getElementById("m_teacher").value="";
-  document.getElementById("m_level").value="";
-  document.getElementById("m_date").value="";
-  document.getElementById("m_start").value="";
-  document.getElementById("m_end").value="";
-  document.getElementById("m_participation").value="";
-  document.getElementById("m_platform").value="";
-  document.getElementById("m_remarks").value="";
-  mError.style.display="none";
-  manualOverlay.style.display="flex";
-}
-
-function closeManualModal(){
-  manualOverlay.style.display="none";
-}
-
-addManualBtn.onclick=openManualModal;
-mCancel.onclick=closeManualModal;
-manualOverlay.onclick=(e)=>{ if(e.target===manualOverlay) closeManualModal(); };
 
 mSave.onclick=async()=>{
   const learner=document.getElementById("m_learner").value.trim();
@@ -543,7 +569,7 @@ mSave.onclick=async()=>{
       status:"Completed"
     });
 
-    closeManualModal();
+    if(window.__closeManualModal) window.__closeManualModal();
     await load();
   }catch(err){
     console.error(err);
