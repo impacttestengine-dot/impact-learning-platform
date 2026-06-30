@@ -110,7 +110,12 @@ function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
 function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
 function isBillable(x){
   if(typeof x.billable==="boolean") return x.billable;
-  return x.status==="Completed";
+  if(x.status==="Completed") return true;
+  if(x.status==="Ended"){
+    const mins=Number(x.minutesSpent||x.durationMinutes||0);
+    return mins>=40;
+  }
+  return false;
 }
 
 async function load(){
