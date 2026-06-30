@@ -74,19 +74,30 @@ button:active{transform:scale(.94);opacity:.8}
 }
 </style>
 <style id="manual-class-modal-styles">
+body.modal-locked{
+  overflow:hidden !important;
+  height:100vh !important;
+}
 .modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  backdrop-filter:blur(6px);
-  z-index:999999;
   display:none;
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  background:rgba(2,3,8,.92) !important;
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+  z-index:2147483647 !important;
   align-items:center;
   justify-content:center;
   padding:24px;
+  overflow-y:auto;
 }
 .modal-overlay.open{
-  display:flex;
+  display:flex !important;
 }
 .modal-box{
   width:min(560px,100%);
@@ -96,6 +107,7 @@ button:active{transform:scale(.94);opacity:.8}
   border:1px solid rgba(255,255,255,.14);
   border-radius:28px;
   padding:30px;
+  box-shadow:0 30px 90px rgba(0,0,0,.6);
 }
 .modal-box h3{
   font-family:"Sorts Mill Goudy",serif;
@@ -272,11 +284,16 @@ button:active{transform:scale(.94);opacity:.8}
     document.getElementById("m_platform").value="";
     document.getElementById("m_remarks").value="";
     document.getElementById("m_error").style.display="none";
+
+    document.body.appendChild(manualOverlay);
     manualOverlay.classList.add("open");
+    document.body.classList.add("modal-locked");
+    window.scrollTo(0,0);
   }
 
   function closeManualModal(){
     manualOverlay.classList.remove("open");
+    document.body.classList.remove("modal-locked");
   }
 
   if(addManualBtn){
