@@ -38,13 +38,11 @@ button:active{transform:scale(.94);opacity:.8}
   align-items:start !important;
   overflow:hidden !important;
 }
-
 .info{
   min-width:0 !important;
   word-break:break-word !important;
   overflow-wrap:anywhere !important;
 }
-
 .delete{
   width:92px !important;
   height:42px !important;
@@ -58,12 +56,10 @@ button:active{transform:scale(.94);opacity:.8}
   border-radius:14px !important;
   line-height:1 !important;
 }
-
 @media(max-width:700px){
   .card{
     grid-template-columns:48px 1fr !important;
   }
-
   .delete{
     grid-column:2 !important;
     justify-self:start !important;
@@ -109,33 +105,11 @@ let allLogs=[];
 function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
 function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
 
-async function repairMichael(){
-  await db.collection("classTracker").doc("michael-2026-05-10-session-1").set({
-    learner:"Michael",level:"A0",teacher:"Adelaide",meetRoom:"Impact Meet Room 2",
-    sessionNumber:"1/4",startedAt:"2026-05-10T17:50:00",startedAtText:"10/05/2026, 5:50 PM",
-    endedAt:"2026-05-10T18:50:00",endedAtText:"10/05/2026, 6:50 PM",
-    minutesSpent:60,status:"Ended",lessonCompleted:"Yes",lessonCanceled:"No",
-    studentParticipation:"100%",teacherRemarks:"Michael is very engaged and enthusiastic and sharp."
-  },{merge:true});
-}
-
-function applyFallback(x){
-  if(x.learner==="Michael" && (x.sessionNumber==="2/4" || x.meetRoom==="Impact Meet Room 6")){
-    x.sessionNumber="2/4";
-    x.lessonCompleted="Yes";
-    x.lessonCanceled="No";
-    x.studentParticipation="100%";
-    x.teacherRemarks="Michael was very enthusiastic and can answer correctly questions 1 to 3 of the video with correct pronunciation and accent.";
-  }
-  return x;
-}
-
 async function load(){
-  await repairMichael();
   const snap=await db.collection("classTracker").get();
   const seen=new Set();
 
-  allLogs=snap.docs.map(d=>applyFallback({id:d.id,...d.data()}))
+  allLogs=snap.docs.map(d=>({id:d.id,...d.data()}))
     .sort((a,b)=>ms(a)-ms(b))
     .filter(x=>{
       const key=[x.learner,x.startedAt||x.startedAtText,x.endedAt||x.endedAtText,x.meetRoom].join("|");
@@ -165,7 +139,6 @@ function render(logs){
     sec.innerHTML=`<h2>${name}</h2>`;
 
     groups[name].sort((a,b)=>ms(a)-ms(b)).forEach((x,i)=>{
-      x=applyFallback(x);
       const session=x.sessionNumber||(((i%4)+1)+"/4");
       const card=document.createElement("article");
       card.className="card";
@@ -215,7 +188,6 @@ document.getElementById("pdfBtn").onclick=()=>{
   const xNo=margin;
   const xStudent=xNo+noW;
   const xDates=xStudent+studentW;
-  const tableW=noW+studentW+(dateW*dateCols);
 
   pdf.setFont("helvetica","bold");
   pdf.setFontSize(20);
@@ -316,8 +288,4 @@ load();
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
-
-
-
-
 

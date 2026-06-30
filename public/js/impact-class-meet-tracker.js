@@ -88,6 +88,8 @@
         earlyEnd:false,
         earlyEndReason:"",
         earlyEndRemark:"",
+        entryType:"auto",
+        billable:false,
         status:"Started"
       });
 
@@ -101,15 +103,17 @@
 
       const endedAt = new Date();
       const minutesSpent = Math.round((endedAt - startedAt) / 60000);
+      const completed = minutesSpent >= MINUTES_LIMIT;
 
       await db.collection("classTracker").doc(logId).set({
         endedAt:endedAt.toISOString(),
         endedAtText:endedAt.toLocaleString(),
         minutesSpent,
-        earlyEnd:minutesSpent < MINUTES_LIMIT,
+        earlyEnd:!completed,
         earlyEndReason:reason,
         earlyEndRemark:remark,
-        status:"Ended"
+        billable:completed,
+        status:completed ? "Completed" : "Ended Early"
       }, { merge:true });
 
       await db.collection("classes").doc(item.id).set({
@@ -117,7 +121,7 @@
         lastEndedAt:endedAt.toISOString(),
         lastEarlyEndReason:reason,
         lastEarlyEndRemark:remark,
-        lastStatus:minutesSpent < MINUTES_LIMIT ? "Ended Early" : "Completed"
+        lastStatus:completed ? "Completed" : "Ended Early"
       }, { merge:true });
     }
 
@@ -309,3 +313,4 @@
   }
 
 })();
+
