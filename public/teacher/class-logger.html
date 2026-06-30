@@ -172,6 +172,13 @@ body.modal-locked{
   margin-top:10px;
   display:none;
 }
+.field-hint{
+  color:rgba(120,200,255,.85);
+  font-size:.76rem;
+  font-weight:700;
+  margin-top:6px;
+  display:none;
+}
 </style>
 </head>
 
@@ -205,7 +212,9 @@ body.modal-locked{
 
     <div class="field-group">
       <label>Learner</label>
-      <input id="m_learner" type="text" placeholder="Learner name">
+      <input id="m_learner" type="text" placeholder="Learner name" list="m_learner_list" autocomplete="off">
+      <datalist id="m_learner_list"></datalist>
+      <div class="field-hint" id="m_learner_hint">Matched to existing learner — will join their tracker.</div>
     </div>
 
     <div class="field-group">
@@ -284,6 +293,7 @@ body.modal-locked{
     document.getElementById("m_platform").value="";
     document.getElementById("m_remarks").value="";
     document.getElementById("m_error").style.display="none";
+    document.getElementById("m_learner_hint").style.display="none";
 
     document.body.appendChild(manualOverlay);
     manualOverlay.classList.add("open");
@@ -317,6 +327,7 @@ body.modal-locked{
   });
 
   window.__closeManualModal=closeManualModal;
+  window.__openManualModal=openManualModal;
 })();
 </script>
 
@@ -326,6 +337,7 @@ const db=firebase.firestore();
 const wrap=document.getElementById("wrap");
 const search=document.getElementById("search");
 let allLogs=[];
+let knownLearners=[];
 
 function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
 function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
@@ -349,6 +361,18 @@ function isBillable(x){
   return false;
 }
 
+// Matches a typed learner name to an existing learner name, case/whitespace
+// insensitive, so manual entries merge into the same group instead of
+// creating a duplicate "Michael " / "michael" section.
+function resolveLearnerName(typedName){
+  const typedNorm=typedName.trim().toLowerCase().replace(/\s+/g," ");
+  for(const known of knownLearners){
+    const knownNorm=known.trim().toLowerCase().replace(/\s+/g," ");
+    if(knownNorm===typedNorm) return known;
+  }
+  return typedName.trim();
+}
+
 async function load(){
   const snap=await db.collection("classTracker").get();
   const seen=new Set();
@@ -361,6 +385,15 @@ async function load(){
       seen.add(key);
       return true;
     });
+
+  const nameSet=new Set();
+  allLogs.forEach(x=>{ if(x.learner) nameSet.add(x.learner); });
+  knownLearners=Array.from(nameSet).sort();
+
+  const datalist=document.getElementById("m_learner_list");
+  if(datalist){
+    datalist.innerHTML=knownLearners.map(n=>`<option value="${n.replace(/"/g,"&quot;")}">`).join("");
+  }
 
   render(allLogs);
 }
@@ -477,8 +510,11 @@ document.getElementById("pdfBtn").onclick=()=>{
   centerText("STUDENT",xStudent,top,studentW,headerH,10);
   centerText("CLASS DATES",xDates,top,dateW*dateCols,headerH,11);
 
+  // Only billable classes appear on the Billing Tracker PDF.
+  const billableLogs=allLogs.filter(x=>isBillable(x));
+
   const grouped={};
-  allLogs.forEach(x=>{
+  billableLogs.forEach(x=>{
     const name=x.learner||"Student";
     const raw=x.startedAtText||x.startedAt||"";
     const date=String(raw).split(",")[0].trim();
@@ -537,11 +573,22 @@ document.getElementById("pdfBtn").onclick=()=>{
   pdf.save("Impact_Billing_Tracker.pdf");
 };
 
+const mLearnerInput=document.getElementById("m_learner");
+const mLearnerHint=document.getElementById("m_learner_hint");
+mLearnerInput.addEventListener("input",()=>{
+  const typed=mLearnerInput.value.trim();
+  if(!typed){ mLearnerHint.style.display="none"; return; }
+  const matched=resolveLearnerName(typed);
+  const typedNorm=typed.toLowerCase().replace(/\s+/g," ");
+  const matchedNorm=matched.toLowerCase().replace(/\s+/g," ");
+  mLearnerHint.style.display=(typedNorm===matchedNorm && knownLearners.includes(matched))?"block":"none";
+});
+
 const mSave=document.getElementById("m_save");
 const mError=document.getElementById("m_error");
 
 mSave.onclick=async()=>{
-  const learner=document.getElementById("m_learner").value.trim();
+  const learnerTyped=document.getElementById("m_learner").value.trim();
   const teacher=document.getElementById("m_teacher").value.trim();
   const level=document.getElementById("m_level").value.trim();
   const date=document.getElementById("m_date").value;
@@ -551,11 +598,13 @@ mSave.onclick=async()=>{
   const platform=document.getElementById("m_platform").value.trim();
   const remarks=document.getElementById("m_remarks").value.trim();
 
-  if(!learner||!teacher||!date||!startTime||!endTime){
+  if(!learnerTyped||!teacher||!date||!startTime||!endTime){
     mError.style.display="block";
     return;
   }
   mError.style.display="none";
+
+  const learner=resolveLearnerName(learnerTyped);
 
   const startedAt=new Date(`${date}T${startTime}`);
   const endedAt=new Date(`${date}T${endTime}`);
