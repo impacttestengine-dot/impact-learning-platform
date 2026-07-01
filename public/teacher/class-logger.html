@@ -339,11 +339,12 @@ const search=document.getElementById("search");
 let allLogs=[];
 let knownLearners=[];
 
-// Billing threshold: a class needs at least this many minutes to count.
 const BILLABLE_MINUTES_THRESHOLD=20;
 
-// First-ever PDF export always starts from this fixed date.
-const FIRST_BILLING_START=new Date(2026,5,4); // 04 June 2026 (month is 0-indexed)
+// TESTING MODE: start date is frozen at 04 June 2026.
+// When testing is confirmed good, remove the line below and
+// restore the if/else block that reads lastExportEndDate from Firestore.
+const FIRST_BILLING_START=new Date(2026,5,4); // 04 June 2026
 
 function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
 function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
@@ -367,9 +368,6 @@ function isBillable(x){
   return false;
 }
 
-// Matches a typed learner name to an existing learner name, case/whitespace
-// insensitive, so manual entries merge into the same group instead of
-// creating a duplicate "Michael " / "michael" section.
 function resolveLearnerName(typedName){
   const typedNorm=typedName.trim().toLowerCase().replace(/\s+/g," ");
   for(const known of knownLearners){
@@ -381,7 +379,7 @@ function resolveLearnerName(typedName){
 
 function formatDateLong(d){
   const day=String(d.getDate()).padStart(2,"0");
-  const month=d.toLocaleString("en-US",{month:"long"});
+  const month=d.toLocaleString("en-GB",{month:"long"});
   const year=d.getFullYear();
   return `${day} ${month} ${year}`;
 }
@@ -479,18 +477,25 @@ document.getElementById("pdfBtn").onclick=async()=>{
 
   try{
     const historyRef=db.collection("billingExportHistory").doc("lastExport");
-    const historySnap=await historyRef.get();
 
     const today=new Date();
-    let rangeStart;
 
-    if(historySnap.exists && historySnap.data().lastExportEndDate){
-      const lastEnd=new Date(historySnap.data().lastExportEndDate);
-      rangeStart=new Date(lastEnd);
-      rangeStart.setDate(rangeStart.getDate()+1);
-    }else{
-      rangeStart=FIRST_BILLING_START;
-    }
+    // TESTING MODE: start date always frozen at 04 June 2026.
+    // Remove this line and restore the if/else block below when
+    // testing is confirmed and rolling dates should activate.
+    const rangeStart=FIRST_BILLING_START;
+
+    // ---- PRODUCTION DATE LOGIC (restore when testing is done) ----
+    // const historySnap=await historyRef.get();
+    // let rangeStart;
+    // if(historySnap.exists && historySnap.data().lastExportEndDate){
+    //   const lastEnd=new Date(historySnap.data().lastExportEndDate);
+    //   rangeStart=new Date(lastEnd);
+    //   rangeStart.setDate(rangeStart.getDate()+1);
+    // }else{
+    //   rangeStart=FIRST_BILLING_START;
+    // }
+    // ---------------------------------------------------------------
 
     const rangeStartLabel=formatDateLong(rangeStart);
     const rangeEndLabel=formatDateLong(today);
@@ -513,8 +518,8 @@ document.getElementById("pdfBtn").onclick=async()=>{
     const xDates=xStudent+studentW;
 
     pdf.setFont("helvetica","bold");
-    pdf.setFontSize(20);
-    pdf.text("Billing Tracker", margin, 55);
+    pdf.setFontSize(16);
+    pdf.text(filename.replace(".pdf",""), margin, 55);
 
     function cell(x,y,w,h,fill){
       pdf.setFillColor(fill[0],fill[1],fill[2]);
@@ -545,7 +550,6 @@ document.getElementById("pdfBtn").onclick=async()=>{
     centerText("STUDENT",xStudent,top,studentW,headerH,10);
     centerText("CLASS DATES",xDates,top,dateW*dateCols,headerH,11);
 
-    // Only billable classes appear on the Billing Tracker PDF.
     const billableLogs=allLogs.filter(x=>isBillable(x));
 
     const grouped={};
@@ -586,7 +590,7 @@ document.getElementById("pdfBtn").onclick=async()=>{
       pdf.setTextColor(20,25,35);
       pdf.setFont("helvetica","bold");
       pdf.setFontSize(9);
-      pdf.text(String(n++),xNo+noW/2,y+18,{align:"center"});
+      pdf.text(String(n++),xNo+noW/2,y+18,{align,"center"});
       pdf.text(name,xStudent+10,y+18);
 
       boxes.slice(0,dateCols).forEach((dates,i)=>{
@@ -607,6 +611,8 @@ document.getElementById("pdfBtn").onclick=async()=>{
 
     pdf.save(filename);
 
+    // Still write history to Firestore even in testing mode,
+    // so the log is building up ready for when rolling dates activate.
     await historyRef.set({
       lastExportEndDate:today.toISOString(),
       lastExportEndDateLabel:rangeEndLabel,
