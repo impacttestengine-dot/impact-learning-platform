@@ -276,7 +276,6 @@ body.modal-locked{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 <script>
-// ===== Manual Class Modal (bound immediately, independent of Firestore load) =====
 (function(){
   const manualOverlay=document.getElementById("manualModalOverlay");
   const addManualBtn=document.getElementById("addManualBtn");
@@ -294,7 +293,6 @@ body.modal-locked{
     document.getElementById("m_remarks").value="";
     document.getElementById("m_error").style.display="none";
     document.getElementById("m_learner_hint").style.display="none";
-
     document.body.appendChild(manualOverlay);
     manualOverlay.classList.add("open");
     document.body.classList.add("modal-locked");
@@ -311,8 +309,6 @@ body.modal-locked{
       e.preventDefault();
       openManualModal();
     });
-  }else{
-    console.error("Add Class button not found in DOM");
   }
 
   if(mCancel){
@@ -327,12 +323,11 @@ body.modal-locked{
   });
 
   window.__closeManualModal=closeManualModal;
-  window.__openManualModal=openManualModal;
 })();
 </script>
 
 <script>
-document.addEventListener("DOMContentLoaded", async()=>{
+document.addEventListener("DOMContentLoaded",async()=>{
 const db=firebase.firestore();
 const wrap=document.getElementById("wrap");
 const search=document.getElementById("search");
@@ -340,39 +335,29 @@ let allLogs=[];
 let knownLearners=[];
 
 const BILLABLE_MINUTES_THRESHOLD=20;
-
-// TESTING MODE: start date is frozen at 04 June 2026.
-// When testing is confirmed good, remove the line below and
-// restore the if/else block that reads lastExportEndDate from Firestore.
-const FIRST_BILLING_START=new Date(2026,5,4); // 04 June 2026
+const FIRST_BILLING_START=new Date(2026,5,4); // 04 June 2026 — fixed for testing
 
 function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
 function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
 
 function isBillable(x){
   if(typeof x.billable==="boolean") return x.billable;
-
   const canceled=String(x.lessonCanceled||"").trim().toLowerCase()==="yes";
   if(canceled) return false;
-
   const completedField=String(x.lessonCompleted||"").trim().toLowerCase();
   if(completedField==="no") return false;
-
   if(x.status==="Completed") return true;
-
   if(x.status==="Ended"){
     const mins=Number(x.minutesSpent||x.durationMinutes||0);
     return mins>=BILLABLE_MINUTES_THRESHOLD;
   }
-
   return false;
 }
 
 function resolveLearnerName(typedName){
   const typedNorm=typedName.trim().toLowerCase().replace(/\s+/g," ");
   for(const known of knownLearners){
-    const knownNorm=known.trim().toLowerCase().replace(/\s+/g," ");
-    if(knownNorm===typedNorm) return known;
+    if(known.trim().toLowerCase().replace(/\s+/g," ")===typedNorm) return known;
   }
   return typedName.trim();
 }
@@ -387,7 +372,6 @@ function formatDateLong(d){
 async function load(){
   const snap=await db.collection("classTracker").get();
   const seen=new Set();
-
   allLogs=snap.docs.map(d=>({id:d.id,...d.data()}))
     .sort((a,b)=>ms(a)-ms(b))
     .filter(x=>{
@@ -398,7 +382,7 @@ async function load(){
     });
 
   const nameSet=new Set();
-  allLogs.forEach(x=>{ if(x.learner) nameSet.add(x.learner); });
+  allLogs.forEach(x=>{if(x.learner) nameSet.add(x.learner);});
   knownLearners=Array.from(nameSet).sort();
 
   const datalist=document.getElementById("m_learner_list");
@@ -429,13 +413,8 @@ function render(logs){
     let billableCount=0;
     groups[name].sort((a,b)=>ms(a)-ms(b)).forEach((x)=>{
       const billable=isBillable(x);
-      let session;
-      if(billable){
-        billableCount++;
-        session=billableCount+"/4";
-      }else{
-        session="-/4";
-      }
+      if(billable) billableCount++;
+      const session=billable?(billableCount+"/4"):"-/4";
       const entryType=(x.entryType||"auto").toUpperCase();
       const card=document.createElement("article");
       card.className="card";
@@ -477,15 +456,13 @@ document.getElementById("pdfBtn").onclick=async()=>{
 
   try{
     const historyRef=db.collection("billingExportHistory").doc("lastExport");
-
     const today=new Date();
 
-    // TESTING MODE: start date always frozen at 04 June 2026.
-    // Remove this line and restore the if/else block below when
-    // testing is confirmed and rolling dates should activate.
-    const rangeStart=FIRST_BILLING_START;
+    // TESTING MODE: start date frozen at 04 June 2026.
+    // When confirmed, remove this line and uncomment the if/else block below.
+    const rangeStart=new Date(FIRST_BILLING_START);
 
-    // ---- PRODUCTION DATE LOGIC (restore when testing is done) ----
+    // ---- PRODUCTION (uncomment when testing is done) ----
     // const historySnap=await historyRef.get();
     // let rangeStart;
     // if(historySnap.exists && historySnap.data().lastExportEndDate){
@@ -493,9 +470,9 @@ document.getElementById("pdfBtn").onclick=async()=>{
     //   rangeStart=new Date(lastEnd);
     //   rangeStart.setDate(rangeStart.getDate()+1);
     // }else{
-    //   rangeStart=FIRST_BILLING_START;
+    //   rangeStart=new Date(FIRST_BILLING_START);
     // }
-    // ---------------------------------------------------------------
+    // -----------------------------------------------------
 
     const rangeStartLabel=formatDateLong(rangeStart);
     const rangeEndLabel=formatDateLong(today);
@@ -512,14 +489,13 @@ document.getElementById("pdfBtn").onclick=async()=>{
     const dateCols=10;
     const headerH=54;
     const rowH=82;
-
     const xNo=margin;
     const xStudent=xNo+noW;
     const xDates=xStudent+studentW;
 
     pdf.setFont("helvetica","bold");
     pdf.setFontSize(16);
-    pdf.text(filename.replace(".pdf",""), margin, 55);
+    pdf.text(filename.replace(".pdf",""),margin,55);
 
     function cell(x,y,w,h,fill){
       pdf.setFillColor(fill[0],fill[1],fill[2]);
@@ -545,21 +521,19 @@ document.getElementById("pdfBtn").onclick=async()=>{
     cell(xNo,top,noW,headerH,[213,226,232]);
     cell(xStudent,top,studentW,headerH,[213,226,232]);
     cell(xDates,top,dateW*dateCols,headerH,[213,226,232]);
-
     centerText("NO.",xNo,top,noW,headerH,10);
     centerText("STUDENT",xStudent,top,studentW,headerH,10);
     centerText("CLASS DATES",xDates,top,dateW*dateCols,headerH,11);
 
     const billableLogs=allLogs.filter(x=>isBillable(x));
-
     const grouped={};
     billableLogs.forEach(x=>{
       const name=x.learner||"Student";
       const raw=x.startedAtText||x.startedAt||"";
       const date=String(raw).split(",")[0].trim();
-      if(!date)return;
-      if(!grouped[name])grouped[name]=[];
-      if(!grouped[name].includes(date))grouped[name].push(date);
+      if(!date) return;
+      if(!grouped[name]) grouped[name]=[];
+      if(!grouped[name].includes(date)) grouped[name].push(date);
     });
 
     let y=top+headerH;
@@ -582,7 +556,7 @@ document.getElementById("pdfBtn").onclick=async()=>{
       for(let i=0;i<grouped[name].length;i+=4){
         boxes.push(grouped[name].slice(i,i+4));
       }
-      while(boxes.length<dateCols)boxes.push([]);
+      while(boxes.length<dateCols) boxes.push([]);
 
       cell(xNo,y,noW,rowH,[235,242,245]);
       cell(xStudent,y,studentW,rowH,[235,242,245]);
@@ -590,7 +564,7 @@ document.getElementById("pdfBtn").onclick=async()=>{
       pdf.setTextColor(20,25,35);
       pdf.setFont("helvetica","bold");
       pdf.setFontSize(9);
-      pdf.text(String(n++),xNo+noW/2,y+18,{align,"center"});
+      pdf.text(String(n++),xNo+noW/2,y+18,{align:"center"});
       pdf.text(name,xStudent+10,y+18);
 
       boxes.slice(0,dateCols).forEach((dates,i)=>{
@@ -611,8 +585,6 @@ document.getElementById("pdfBtn").onclick=async()=>{
 
     pdf.save(filename);
 
-    // Still write history to Firestore even in testing mode,
-    // so the log is building up ready for when rolling dates activate.
     await historyRef.set({
       lastExportEndDate:today.toISOString(),
       lastExportEndDateLabel:rangeEndLabel,
@@ -633,11 +605,11 @@ const mLearnerInput=document.getElementById("m_learner");
 const mLearnerHint=document.getElementById("m_learner_hint");
 mLearnerInput.addEventListener("input",()=>{
   const typed=mLearnerInput.value.trim();
-  if(!typed){ mLearnerHint.style.display="none"; return; }
+  if(!typed){mLearnerHint.style.display="none";return;}
   const matched=resolveLearnerName(typed);
   const typedNorm=typed.toLowerCase().replace(/\s+/g," ");
   const matchedNorm=matched.toLowerCase().replace(/\s+/g," ");
-  mLearnerHint.style.display=(typedNorm===matchedNorm && knownLearners.includes(matched))?"block":"none";
+  mLearnerHint.style.display=(typedNorm===matchedNorm&&knownLearners.includes(matched))?"block":"none";
 });
 
 const mSave=document.getElementById("m_save");
@@ -661,7 +633,6 @@ mSave.onclick=async()=>{
   mError.style.display="none";
 
   const learner=resolveLearnerName(learnerTyped);
-
   const startedAt=new Date(`${date}T${startTime}`);
   const endedAt=new Date(`${date}T${endTime}`);
   let minutesSpent=Math.round((endedAt-startedAt)/60000);
