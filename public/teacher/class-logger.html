@@ -339,6 +339,12 @@ const search=document.getElementById("search");
 let allLogs=[];
 let knownLearners=[];
 
+// Billing threshold: a class needs at least this many minutes to count.
+const BILLABLE_MINUTES_THRESHOLD=20;
+
+// First-ever PDF export always starts from this fixed date.
+const FIRST_BILLING_START=new Date(2026,5,4); // 04 June 2026 (month is 0-indexed)
+
 function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
 function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
 
@@ -355,7 +361,7 @@ function isBillable(x){
 
   if(x.status==="Ended"){
     const mins=Number(x.minutesSpent||x.durationMinutes||0);
-    return mins>=40;
+    return mins>=BILLABLE_MINUTES_THRESHOLD;
   }
 
   return false;
@@ -371,6 +377,13 @@ function resolveLearnerName(typedName){
     if(knownNorm===typedNorm) return known;
   }
   return typedName.trim();
+}
+
+function formatDateLong(d){
+  const day=String(d.getDate()).padStart(2,"0");
+  const month=d.toLocaleString("en-US",{month:"long"});
+  const year=d.getFullYear();
+  return `${day} ${month} ${year}`;
 }
 
 async function load(){
@@ -460,117 +473,154 @@ function render(logs){
 
 search.oninput=()=>render(allLogs.filter(x=>JSON.stringify(x).toLowerCase().includes(search.value.toLowerCase())));
 
-document.getElementById("pdfBtn").onclick=()=>{
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
+document.getElementById("pdfBtn").onclick=async()=>{
+  const pdfBtn=document.getElementById("pdfBtn");
+  pdfBtn.disabled=true;
 
-  const margin=45;
-  const top=80;
-  const noW=42;
-  const studentW=120;
-  const dateW=62;
-  const dateCols=10;
-  const headerH=54;
-  const rowH=82;
+  try{
+    const historyRef=db.collection("billingExportHistory").doc("lastExport");
+    const historySnap=await historyRef.get();
 
-  const xNo=margin;
-  const xStudent=xNo+noW;
-  const xDates=xStudent+studentW;
+    const today=new Date();
+    let rangeStart;
 
-  pdf.setFont("helvetica","bold");
-  pdf.setFontSize(20);
-  pdf.text("Billing Tracker", margin, 55);
-
-  function cell(x,y,w,h,fill){
-    pdf.setFillColor(fill[0],fill[1],fill[2]);
-    pdf.setDrawColor(80,45,35);
-    pdf.setLineWidth(.6);
-    pdf.rect(x,y,w,h,"FD");
-  }
-
-  function centerText(txt,x,y,w,h,size){
-    pdf.setFont("helvetica","bold");
-    pdf.setFontSize(size);
-    pdf.setTextColor(15,22,33);
-    const lines=pdf.splitTextToSize(String(txt),w-8);
-    const lineH=size+2;
-    const total=lines.length*lineH;
-    let yy=y+(h-total)/2+size;
-    lines.forEach(line=>{
-      pdf.text(line,x+w/2,yy,{align:"center"});
-      yy+=lineH;
-    });
-  }
-
-  cell(xNo,top,noW,headerH,[213,226,232]);
-  cell(xStudent,top,studentW,headerH,[213,226,232]);
-  cell(xDates,top,dateW*dateCols,headerH,[213,226,232]);
-
-  centerText("NO.",xNo,top,noW,headerH,10);
-  centerText("STUDENT",xStudent,top,studentW,headerH,10);
-  centerText("CLASS DATES",xDates,top,dateW*dateCols,headerH,11);
-
-  // Only billable classes appear on the Billing Tracker PDF.
-  const billableLogs=allLogs.filter(x=>isBillable(x));
-
-  const grouped={};
-  billableLogs.forEach(x=>{
-    const name=x.learner||"Student";
-    const raw=x.startedAtText||x.startedAt||"";
-    const date=String(raw).split(",")[0].trim();
-    if(!date)return;
-    if(!grouped[name])grouped[name]=[];
-    if(!grouped[name].includes(date))grouped[name].push(date);
-  });
-
-  let y=top+headerH;
-  let n=1;
-
-  Object.keys(grouped).sort().forEach(name=>{
-    if(y+rowH>540){
-      pdf.addPage("a4","landscape");
-      y=60;
-      cell(xNo,y,noW,headerH,[213,226,232]);
-      cell(xStudent,y,studentW,headerH,[213,226,232]);
-      cell(xDates,y,dateW*dateCols,headerH,[213,226,232]);
-      centerText("NO.",xNo,y,noW,headerH,10);
-      centerText("STUDENT",xStudent,y,studentW,headerH,10);
-      centerText("CLASS DATES",xDates,y,dateW*dateCols,headerH,11);
-      y+=headerH;
+    if(historySnap.exists && historySnap.data().lastExportEndDate){
+      const lastEnd=new Date(historySnap.data().lastExportEndDate);
+      rangeStart=new Date(lastEnd);
+      rangeStart.setDate(rangeStart.getDate()+1);
+    }else{
+      rangeStart=FIRST_BILLING_START;
     }
 
-    const boxes=[];
-    for(let i=0;i<grouped[name].length;i+=4){
-      boxes.push(grouped[name].slice(i,i+4));
-    }
-    while(boxes.length<dateCols)boxes.push([]);
+    const rangeStartLabel=formatDateLong(rangeStart);
+    const rangeEndLabel=formatDateLong(today);
+    const filename=`Billing Tracker from ${rangeStartLabel} to ${rangeEndLabel}.pdf`;
 
-    cell(xNo,y,noW,rowH,[235,242,245]);
-    cell(xStudent,y,studentW,rowH,[235,242,245]);
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
 
-    pdf.setTextColor(20,25,35);
+    const margin=45;
+    const top=80;
+    const noW=42;
+    const studentW=120;
+    const dateW=62;
+    const dateCols=10;
+    const headerH=54;
+    const rowH=82;
+
+    const xNo=margin;
+    const xStudent=xNo+noW;
+    const xDates=xStudent+studentW;
+
     pdf.setFont("helvetica","bold");
-    pdf.setFontSize(9);
-    pdf.text(String(n++),xNo+noW/2,y+18,{align:"center"});
-    pdf.text(name,xStudent+10,y+18);
+    pdf.setFontSize(20);
+    pdf.text("Billing Tracker", margin, 55);
 
-    boxes.slice(0,dateCols).forEach((dates,i)=>{
-      const x=xDates+(i*dateW);
-      cell(x,y,dateW,rowH,[235,242,245]);
-      pdf.setFont("helvetica","normal");
-      pdf.setFontSize(8);
-      pdf.setTextColor(20,25,35);
-      let yy=y+16;
-      dates.forEach(d=>{
-        pdf.text(d,x+6,yy);
-        yy+=12;
+    function cell(x,y,w,h,fill){
+      pdf.setFillColor(fill[0],fill[1],fill[2]);
+      pdf.setDrawColor(80,45,35);
+      pdf.setLineWidth(.6);
+      pdf.rect(x,y,w,h,"FD");
+    }
+
+    function centerText(txt,x,y,w,h,size){
+      pdf.setFont("helvetica","bold");
+      pdf.setFontSize(size);
+      pdf.setTextColor(15,22,33);
+      const lines=pdf.splitTextToSize(String(txt),w-8);
+      const lineH=size+2;
+      const total=lines.length*lineH;
+      let yy=y+(h-total)/2+size;
+      lines.forEach(line=>{
+        pdf.text(line,x+w/2,yy,{align:"center"});
+        yy+=lineH;
       });
+    }
+
+    cell(xNo,top,noW,headerH,[213,226,232]);
+    cell(xStudent,top,studentW,headerH,[213,226,232]);
+    cell(xDates,top,dateW*dateCols,headerH,[213,226,232]);
+
+    centerText("NO.",xNo,top,noW,headerH,10);
+    centerText("STUDENT",xStudent,top,studentW,headerH,10);
+    centerText("CLASS DATES",xDates,top,dateW*dateCols,headerH,11);
+
+    // Only billable classes appear on the Billing Tracker PDF.
+    const billableLogs=allLogs.filter(x=>isBillable(x));
+
+    const grouped={};
+    billableLogs.forEach(x=>{
+      const name=x.learner||"Student";
+      const raw=x.startedAtText||x.startedAt||"";
+      const date=String(raw).split(",")[0].trim();
+      if(!date)return;
+      if(!grouped[name])grouped[name]=[];
+      if(!grouped[name].includes(date))grouped[name].push(date);
     });
 
-    y+=rowH;
-  });
+    let y=top+headerH;
+    let n=1;
 
-  pdf.save("Impact_Billing_Tracker.pdf");
+    Object.keys(grouped).sort().forEach(name=>{
+      if(y+rowH>540){
+        pdf.addPage("a4","landscape");
+        y=60;
+        cell(xNo,y,noW,headerH,[213,226,232]);
+        cell(xStudent,y,studentW,headerH,[213,226,232]);
+        cell(xDates,y,dateW*dateCols,headerH,[213,226,232]);
+        centerText("NO.",xNo,y,noW,headerH,10);
+        centerText("STUDENT",xStudent,y,studentW,headerH,10);
+        centerText("CLASS DATES",xDates,y,dateW*dateCols,headerH,11);
+        y+=headerH;
+      }
+
+      const boxes=[];
+      for(let i=0;i<grouped[name].length;i+=4){
+        boxes.push(grouped[name].slice(i,i+4));
+      }
+      while(boxes.length<dateCols)boxes.push([]);
+
+      cell(xNo,y,noW,rowH,[235,242,245]);
+      cell(xStudent,y,studentW,rowH,[235,242,245]);
+
+      pdf.setTextColor(20,25,35);
+      pdf.setFont("helvetica","bold");
+      pdf.setFontSize(9);
+      pdf.text(String(n++),xNo+noW/2,y+18,{align:"center"});
+      pdf.text(name,xStudent+10,y+18);
+
+      boxes.slice(0,dateCols).forEach((dates,i)=>{
+        const x=xDates+(i*dateW);
+        cell(x,y,dateW,rowH,[235,242,245]);
+        pdf.setFont("helvetica","normal");
+        pdf.setFontSize(8);
+        pdf.setTextColor(20,25,35);
+        let yy=y+16;
+        dates.forEach(d=>{
+          pdf.text(d,x+6,yy);
+          yy+=12;
+        });
+      });
+
+      y+=rowH;
+    });
+
+    pdf.save(filename);
+
+    await historyRef.set({
+      lastExportEndDate:today.toISOString(),
+      lastExportEndDateLabel:rangeEndLabel,
+      lastExportStartDateLabel:rangeStartLabel,
+      lastExportFilename:filename,
+      updatedAt:today.toISOString()
+    });
+
+  }catch(err){
+    console.error(err);
+    alert("Could not generate the Billing Tracker PDF. Please try again.");
+  }finally{
+    pdfBtn.disabled=false;
+  }
 };
 
 const mLearnerInput=document.getElementById("m_learner");
