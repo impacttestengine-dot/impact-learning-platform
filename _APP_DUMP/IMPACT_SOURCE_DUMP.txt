@@ -1,9 +1,45 @@
-﻿
+﻿IMPACT PLATFORM - COMPLETE SOURCE DUMP
+Generated: 2026-07-27 19:44:36
+Root: C:\impact-test-platform
+==================================================
 
-============================================================
+==================================================
+FILE: .firebaserc
+==================================================
+{
+  "projects": {
+    "default": "impact--platform-v2",
+    "live": "impact--platform-v2",
+    "old": "impact-test-engine"
+  },
+  "targets": {},
+  "etags": {}
+}
+
+==================================================
+FILE: .gitignore
+==================================================
+node_modules/
+.firebase/
+dist/
+build/
+.env
+*.env
+backend/.env
+backend/firebase-adminsdk.json
+backend/*firebase-adminsdk*.json
+serviceAccountKey.json
+_organized-dump*/
+safe-backups/
+*.zip
+*.log
+*.pem
+*.key
+
+
+==================================================
 FILE: clean-academic-calendar.js
-============================================================
-
+==================================================
 const admin = require("firebase-admin");
 
 admin.initializeApp({
@@ -50,13 +86,9 @@ cleanCalendarDocs()
   });
 
 
-
-
-
-============================================================
+==================================================
 FILE: firebase.json
-============================================================
-
+==================================================
 {
   "hosting": {
     "public": "public",
@@ -75,13 +107,9 @@ FILE: firebase.json
 }
 
 
-
-
-
-============================================================
+==================================================
 FILE: firestore.indexes.json
-============================================================
-
+==================================================
 {
   // Example (Standard Edition):
   //
@@ -134,13 +162,9 @@ FILE: firestore.indexes.json
   "fieldOverrides": []
 }
 
-
-
-
-============================================================
+==================================================
 FILE: migrate-firestore.js
-============================================================
-
+==================================================
 const admin = require("firebase-admin");
 
 const OLD_PROJECT_ID = "impact-test-engine";
@@ -214,13 +238,9 @@ migrate()
   });
 
 
-
-
-
-============================================================
+==================================================
 FILE: package.json
-============================================================
-
+==================================================
 {
   "name": "impact-test-platform",
   "version": "1.0.0",
@@ -240,13 +260,9 @@ FILE: package.json
 }
 
 
-
-
-
-============================================================
+==================================================
 FILE: package-lock.json
-============================================================
-
+==================================================
 {
   "name": "impact-test-platform",
   "version": "1.0.0",
@@ -2944,13 +2960,9 @@ FILE: package-lock.json
 }
 
 
-
-
-
-============================================================
-FILE: public\admin\create.html
-============================================================
-
+==================================================
+FILE: public/admin/create.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -3019,13 +3031,9 @@ window.save = async function(){
 
 
 
-
-
-
-============================================================
-FILE: public\css\activities.css
-============================================================
-
+==================================================
+FILE: public/css/activities.css
+==================================================
 /* =========================================================
    ACTIVITIES FINAL POLISH
    Matches Teacher Dashboard feel:
@@ -3527,13 +3535,9 @@ FILE: public\css\activities.css
 
 
 
-
-
-
-============================================================
-FILE: public\css\activities-final.css
-============================================================
-
+==================================================
+FILE: public/css/activities-final.css
+==================================================
 /* ACTIVITIES PAGE FINAL OVERRIDE — LOADS LAST */
 
 .activities-page {
@@ -3627,13 +3631,9 @@ FILE: public\css\activities-final.css
 
 
 
-
-
-
-============================================================
-FILE: public\css\classes.css
-============================================================
-
+==================================================
+FILE: public/css/classes.css
+==================================================
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{min-height:100%}
 
@@ -4001,13 +4001,9 @@ input::placeholder,textarea::placeholder{color:rgba(255,255,255,.45)}
 
 
 
-
-
-
-============================================================
-FILE: public\css\configuration.css
-============================================================
-
+==================================================
+FILE: public/css/configuration.css
+==================================================
 *{
   margin:0;
   padding:0;
@@ -4470,13 +4466,9 @@ input::placeholder{
 
 
 
-
-
-
-============================================================
-FILE: public\css\homepage.css
-============================================================
-
+==================================================
+FILE: public/css/homepage.css
+==================================================
 :root{
   --white:#ffffff;
   --glass:rgba(255,255,255,.12);
@@ -5168,13 +5160,9 @@ body{
 
 
 
-
-
-
-============================================================
-FILE: public\css\impact-app-shell.css
-============================================================
-
+==================================================
+FILE: public/css/impact-app-shell.css
+==================================================
 html,
 body{
   min-height:100% !important;
@@ -5234,13 +5222,9 @@ body > *:not(.impact-photo-bg):not(.impact-nav-btn){
 }
 
 
-
-
-
-============================================================
-FILE: public\css\impact-global-bg.css
-============================================================
-
+==================================================
+FILE: public/css/impact-global-bg.css
+==================================================
 html,
 body{
   min-height:100%;
@@ -5282,13 +5266,9 @@ body > *:not(.impact-global-blur-bg){
 }
 
 
-
-
-
-============================================================
-FILE: public\css\impact-icon-nav.css
-============================================================
-
+==================================================
+FILE: public/css/impact-icon-nav.css
+==================================================
 .impact-icon-nav{
   width:46px !important;
   height:46px !important;
@@ -5334,13 +5314,9 @@ FILE: public\css\impact-icon-nav.css
 }
 
 
-
-
-
-============================================================
-FILE: public\css\impact-page-nav.css
-============================================================
-
+==================================================
+FILE: public/css/impact-page-nav.css
+==================================================
 .impact-dashboard-btn,
 .impact-back-btn{
   position:fixed !important;
@@ -5364,13 +5340,9 @@ FILE: public\css\impact-page-nav.css
 .impact-back-btn{right:28px !important;}
 
 
-
-
-
-============================================================
-FILE: public\css\impact-round-icons.css
-============================================================
-
+==================================================
+FILE: public/css/impact-round-icons.css
+==================================================
 .impact-round-icon{
   width:46px!important;
   height:46px!important;
@@ -5401,13 +5373,9 @@ FILE: public\css\impact-round-icons.css
 }
 
 
-
-
-
-============================================================
-FILE: public\css\learner-dashboard.css
-============================================================
-
+==================================================
+FILE: public/css/learner-dashboard.css
+==================================================
 *{
   margin:0;
   padding:0;
@@ -5723,13 +5691,9 @@ body{
 
 
 
-
-
-
-============================================================
-FILE: public\css\passkey-luxury.css
-============================================================
-
+==================================================
+FILE: public/css/passkey-luxury.css
+==================================================
 *{
   margin:0;
   padding:0;
@@ -6008,13 +5972,9 @@ body{
 
 
 
-
-
-
-============================================================
-FILE: public\css\passkey-simple.css
-============================================================
-
+==================================================
+FILE: public/css/passkey-simple.css
+==================================================
 *{
   margin:0;
   padding:0;
@@ -6121,13 +6081,9 @@ body{
 
 
 
-
-
-
-============================================================
-FILE: public\css\platform.css
-============================================================
-
+==================================================
+FILE: public/css/platform.css
+==================================================
 :root{
   --bg1:#120f0d;
   --bg2:#241914;
@@ -6537,13 +6493,9 @@ h1{
 
 
 
-
-
-
-============================================================
-FILE: public\css\platform-v2.css
-============================================================
-
+==================================================
+FILE: public/css/platform-v2.css
+==================================================
 :root{
   --bg1:#120f0d;
   --bg2:#241914;
@@ -6691,13 +6643,9 @@ h1{
 
 
 
-
-
-
-============================================================
-FILE: public\css\records.css
-============================================================
-
+==================================================
+FILE: public/css/records.css
+==================================================
 *{
   margin:0;
   padding:0;
@@ -7253,13 +7201,9 @@ textarea::placeholder{
 
 
 
-
-
-
-============================================================
-FILE: public\css\style.css
-============================================================
-
+==================================================
+FILE: public/css/style.css
+==================================================
 :root{
   --bg-top:#d96f60;
   --bg-bottom:#63a9c6;
@@ -7696,13 +7640,9 @@ body{
 
 
 
-
-
-
-============================================================
-FILE: public\css\teacher-dashboard.css
-============================================================
-
+==================================================
+FILE: public/css/teacher-dashboard.css
+==================================================
 *{
   margin:0;
   padding:0;
@@ -8964,13 +8904,9 @@ body button[class*="dashboard"]:not(.dashboard-toggle-btn){
 }
 
 
-
-
-
-============================================================
-FILE: public\css\teacher-gate.css
-============================================================
-
+==================================================
+FILE: public/css/teacher-gate.css
+==================================================
 * {
   box-sizing: border-box;
 }
@@ -9121,13 +9057,9 @@ body {
 
 
 
-
-
-
-============================================================
-FILE: public\css\teacher-system.css
-============================================================
-
+==================================================
+FILE: public/css/teacher-system.css
+==================================================
 :root{
   --bg-dark: #0b0c10;
   --glass: rgba(255,255,255,0.06);
@@ -9255,13 +9187,9 @@ body{
 
 
 
-
-
-
-============================================================
-FILE: public\delf-mock.html
-============================================================
-
+==================================================
+FILE: public/delf-mock.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -9319,13 +9247,9 @@ FILE: public\delf-mock.html
 
 
 
-
-
-
-============================================================
-FILE: public\engine\exam.html
-============================================================
-
+==================================================
+FILE: public/engine/exam.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -9395,13 +9319,9 @@ loadExam();
 
 
 
-
-
-
-============================================================
-FILE: public\gate\LearnerHub.html
-============================================================
-
+==================================================
+FILE: public/gate/LearnerHub.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta http-equiv="refresh" content="0; url=/gate/learner-hub.html"><title>Redirecting...</title><link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
@@ -9417,13 +9337,9 @@ FILE: public\gate\LearnerHub.html
 
 
 
-
-
-
-============================================================
-FILE: public\gate\learner-hub.html
-============================================================
-
+==================================================
+FILE: public/gate/learner-hub.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9503,13 +9419,9 @@ input.addEventListener("keydown", e => {
 
 
 
-
-
-
-============================================================
-FILE: public\gate\learners.html
-============================================================
-
+==================================================
+FILE: public/gate/learners.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta http-equiv="refresh" content="0; url=/gate/learner-hub.html"><title>Redirecting...</title><link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
@@ -9525,13 +9437,9 @@ FILE: public\gate\learners.html
 
 
 
-
-
-
-============================================================
-FILE: public\gate\personnel.html
-============================================================
-
+==================================================
+FILE: public/gate/personnel.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9614,13 +9522,9 @@ FILE: public\gate\personnel.html
 
 
 
-
-
-
-============================================================
-FILE: public\gate\Personnels.html
-============================================================
-
+==================================================
+FILE: public/gate/Personnels.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9650,13 +9554,9 @@ FILE: public\gate\Personnels.html
 
 
 
-
-
-
-============================================================
-FILE: public\gate\teachers.html
-============================================================
-
+==================================================
+FILE: public/gate/teachers.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -9684,13 +9584,9 @@ FILE: public\gate\teachers.html
 
 
 
-
-
-
-============================================================
-FILE: public\gate\team-lead.html
-============================================================
-
+==================================================
+FILE: public/gate/team-lead.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9824,13 +9720,9 @@ button{
 
 
 
-
-
-
-============================================================
-FILE: public\index.html
-============================================================
-
+==================================================
+FILE: public/index.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9917,13 +9809,9 @@ FILE: public\index.html
 
 
 
-
-
-
-============================================================
-FILE: public\js\activities.js
-============================================================
-
+==================================================
+FILE: public/js/activities.js
+==================================================
 import {
   collection,
   addDoc,
@@ -10449,13 +10337,9 @@ init();
 
 
 
-
-
-
-============================================================
-FILE: public\js\api-config.js
-============================================================
-
+==================================================
+FILE: public/js/api-config.js
+==================================================
 export const API_BASE_URL = "https://impact-backend-nu2v.onrender.com";
 
 
@@ -10465,13 +10349,9 @@ export const API_BASE_URL = "https://impact-backend-nu2v.onrender.com";
 
 
 
-
-
-
-============================================================
-FILE: public\js\app.js
-============================================================
-
+==================================================
+FILE: public/js/app.js
+==================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { firebaseConfig } from "./firebase-config.js";
 
@@ -10495,13 +10375,9 @@ window.startExam = function () {
 
 
 
-
-
-
-============================================================
-FILE: public\js\classes.js
-============================================================
-
+==================================================
+FILE: public/js/classes.js
+==================================================
 import {
   collection,
   addDoc,
@@ -10846,13 +10722,9 @@ loadClasses();
 
 
 
-
-
-
-============================================================
-FILE: public\js\class-logger.js
-============================================================
-
+==================================================
+FILE: public/js/class-logger.js
+==================================================
 import { API_BASE_URL } from "/js/api-config.js";
 
 const loggerList = document.getElementById("loggerList");
@@ -10933,13 +10805,9 @@ loadLogs();
 
 
 
-
-
-
-============================================================
-FILE: public\js\classTracker.js
-============================================================
-
+==================================================
+FILE: public/js/classTracker.js
+==================================================
 import { db } from './firebase.js'
 import { addDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
 
@@ -10984,13 +10852,9 @@ function calculatePunctuality(start){
 }
 
 
-
-
-
-============================================================
-FILE: public\js\config.js
-============================================================
-
+==================================================
+FILE: public/js/config.js
+==================================================
 const roles = ["teachers", "academic", "operations", "learners"];
 
 function populateRoles() {
@@ -11006,13 +10870,9 @@ function populateRoles() {
 }
 
 
-
-
-
-============================================================
-FILE: public\js\configuration.js
-============================================================
-
+==================================================
+FILE: public/js/configuration.js
+==================================================
 import {
   collection,
   addDoc,
@@ -11129,13 +10989,9 @@ copyBtn?.addEventListener("click", async () => {
 
 
 
-
-
-
-============================================================
-FILE: public\js\firebase-app.js
-============================================================
-
+==================================================
+FILE: public/js/firebase-app.js
+==================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore
@@ -11157,13 +11013,9 @@ export const storage = getStorage(app);
 
 
 
-
-
-
-============================================================
-FILE: public\js\firebase-config.js
-============================================================
-
+==================================================
+FILE: public/js/firebase-config.js
+==================================================
 export const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -11174,13 +11026,9 @@ export const firebaseConfig = {
 };
 
 
-
-
-
-============================================================
-FILE: public\js\gate.js
-============================================================
-
+==================================================
+FILE: public/js/gate.js
+==================================================
 function validatePasskey(inputKey) {
   const keys = JSON.parse(localStorage.getItem("passkeys") || "[]");
 
@@ -11198,13 +11046,9 @@ function validatePasskey(inputKey) {
 }
 
 
-
-
-
-============================================================
-FILE: public\js\home-ornament.js
-============================================================
-
+==================================================
+FILE: public/js/home-ornament.js
+==================================================
 document.addEventListener("DOMContentLoaded", () => {
   const bodyText = document.body.innerText || "";
   if (!bodyText.toUpperCase().includes("IMPACT") || !bodyText.toUpperCase().includes("PLATFORM")) return;
@@ -11236,13 +11080,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
-
-============================================================
-FILE: public\js\impact-app-shell.js
-============================================================
-
+==================================================
+FILE: public/js/impact-app-shell.js
+==================================================
 (function(){
   const path = window.location.pathname.toLowerCase();
 
@@ -11265,13 +11105,9 @@ FILE: public\js\impact-app-shell.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-classes-scheduler-fix.js
-============================================================
-
+==================================================
+FILE: public/js/impact-classes-scheduler-fix.js
+==================================================
 (function(){
   function fieldByLabel(labelText){
     const labels = Array.from(document.querySelectorAll("label"));
@@ -11437,13 +11273,9 @@ FILE: public\js\impact-classes-scheduler-fix.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-class-meet-tracker.js
-============================================================
-
+==================================================
+FILE: public/js/impact-class-meet-tracker.js
+==================================================
 (function () {
 
   function injectButtonEffects() {
@@ -11534,6 +11366,8 @@ FILE: public\js\impact-class-meet-tracker.js
         earlyEnd:false,
         earlyEndReason:"",
         earlyEndRemark:"",
+        entryType:"auto",
+        billable:false,
         status:"Started"
       });
 
@@ -11547,15 +11381,17 @@ FILE: public\js\impact-class-meet-tracker.js
 
       const endedAt = new Date();
       const minutesSpent = Math.round((endedAt - startedAt) / 60000);
+      const completed = minutesSpent >= MINUTES_LIMIT;
 
       await db.collection("classTracker").doc(logId).set({
         endedAt:endedAt.toISOString(),
         endedAtText:endedAt.toLocaleString(),
         minutesSpent,
-        earlyEnd:minutesSpent < MINUTES_LIMIT,
+        earlyEnd:!completed,
         earlyEndReason:reason,
         earlyEndRemark:remark,
-        status:"Ended"
+        billable:completed,
+        status:completed ? "Completed" : "Ended Early"
       }, { merge:true });
 
       await db.collection("classes").doc(item.id).set({
@@ -11563,7 +11399,7 @@ FILE: public\js\impact-class-meet-tracker.js
         lastEndedAt:endedAt.toISOString(),
         lastEarlyEndReason:reason,
         lastEarlyEndRemark:remark,
-        lastStatus:minutesSpent < MINUTES_LIMIT ? "Ended Early" : "Completed"
+        lastStatus:completed ? "Completed" : "Ended Early"
       }, { merge:true });
     }
 
@@ -11758,12 +11594,9 @@ FILE: public\js\impact-class-meet-tracker.js
 
 
 
-
-
-============================================================
-FILE: public\js\impact-dashboard-storage-map.js
-============================================================
-
+==================================================
+FILE: public/js/impact-dashboard-storage-map.js
+==================================================
 (function(){
   window.ImpactDashboardStorageMap = {
     "Learner Records": {
@@ -11805,13 +11638,9 @@ FILE: public\js\impact-dashboard-storage-map.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-firebase-store.js
-============================================================
-
+==================================================
+FILE: public/js/impact-firebase-store.js
+==================================================
 (function(){
   function load(src){
     return new Promise((resolve,reject)=>{
@@ -12023,13 +11852,9 @@ FILE: public\js\impact-firebase-store.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-global-bg.js
-============================================================
-
+==================================================
+FILE: public/js/impact-global-bg.js
+==================================================
 (function(){
   if (document.querySelector(".impact-global-blur-bg")) return;
 
@@ -12039,13 +11864,9 @@ FILE: public\js\impact-global-bg.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-icon-nav-normalizer.js
-============================================================
-
+==================================================
+FILE: public/js/impact-icon-nav-normalizer.js
+==================================================
 (function(){
   const icons = {
     home: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.2 11.4 12 4l8.8 7.4"/><path d="M5.8 10.6V20h4.2v-5.6h4V20h4.2v-9.4"/></svg>`,
@@ -12111,13 +11932,9 @@ FILE: public\js\impact-icon-nav-normalizer.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-page-nav.js
-============================================================
-
+==================================================
+FILE: public/js/impact-page-nav.js
+==================================================
 (function(){
   const path = window.location.pathname.toLowerCase();
 
@@ -12162,13 +11979,9 @@ FILE: public\js\impact-page-nav.js
 
 
 
-
-
-
-============================================================
-FILE: public\js\impact-placement-builder-stability-fix.js
-============================================================
-
+==================================================
+FILE: public/js/impact-placement-builder-stability-fix.js
+==================================================
 (function(){
   const SAVE_DELAY = 2500;
   let saveTimer = null;
@@ -12401,13 +12214,9 @@ ${clean}
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-recycle-bin.js
-============================================================
-
+==================================================
+FILE: public/js/impact-recycle-bin.js
+==================================================
 (function(){
   window.ImpactRecycleBin = {
     async send(item){
@@ -12487,13 +12296,9 @@ FILE: public\js\impact-recycle-bin.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-round-icons.js
-============================================================
-
+==================================================
+FILE: public/js/impact-round-icons.js
+==================================================
 (function(){
   const icons = {
     home:'<svg viewBox="0 0 24 24"><path d="M3.5 11.2 12 4l8.5 7.2"/><path d="M6 10.6V20h4.2v-5.4h3.6V20H18v-9.4"/></svg>',
@@ -12537,13 +12342,9 @@ FILE: public\js\impact-round-icons.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-route-guard.js
-============================================================
-
+==================================================
+FILE: public/js/impact-route-guard.js
+==================================================
 (function(){
   const INACTIVITY_LIMIT = 60 * 60 * 1000;
   const path = location.pathname.toLowerCase();
@@ -12599,13 +12400,9 @@ FILE: public\js\impact-route-guard.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-task-badge.js
-============================================================
-
+==================================================
+FILE: public/js/impact-task-badge.js
+==================================================
 (function(){
   function findNameArea(){
     const all = Array.from(document.querySelectorAll("h1,h2,.hero h1,.welcome-title,[class*='welcome'],[class*='hero'] h1"));
@@ -12713,13 +12510,9 @@ FILE: public\js\impact-task-badge.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\impact-task-menu-patch.js
-============================================================
-
+==================================================
+FILE: public/js/impact-task-menu-patch.js
+==================================================
 (function(){
   function makeMenuLink(label, href, likeEl){
     const el = document.createElement("a");
@@ -12796,13 +12589,9 @@ FILE: public\js\impact-task-menu-patch.js
 })();
 
 
-
-
-
-============================================================
-FILE: public\js\kpis.js
-============================================================
-
+==================================================
+FILE: public/js/kpis.js
+==================================================
 import { db } from './firebase.js';
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -12835,26 +12624,18 @@ async function loadKPIs() {
 loadKPIs();
 
 
-
-
-
-============================================================
-FILE: public\js\lesson.js
-============================================================
-
+==================================================
+FILE: public/js/lesson.js
+==================================================
 function toggleFolder(el){
     const drop = el.querySelector('.dropdown');
     drop.style.display = drop.style.display === 'block' ? 'none' : 'block';
 }
 
 
-
-
-
-============================================================
-FILE: public\js\lesson-builder.js
-============================================================
-
+==================================================
+FILE: public/js/lesson-builder.js
+==================================================
 const canvas = document.getElementById('canvas');
 
 let lessonData = JSON.parse(localStorage.getItem('lessonDraft') || '[]');
@@ -12901,13 +12682,9 @@ setInterval(() => {
 renderCanvas();
 
 
-
-
-
-============================================================
-FILE: public\js\lessons.js
-============================================================
-
+==================================================
+FILE: public/js/lessons.js
+==================================================
 import {
   collection,
   addDoc,
@@ -12982,13 +12759,9 @@ load();
 
 
 
-
-
-
-============================================================
-FILE: public\js\lesson-template-builder-loader.html
-============================================================
-
+==================================================
+FILE: public/js/lesson-template-builder-loader.html
+==================================================
 <script id="lesson-template-builder-loader">
 document.addEventListener("DOMContentLoaded",function(){
   try{
@@ -13027,13 +12800,9 @@ document.addEventListener("DOMContentLoaded",function(){
 
 
 
-
-
-
-============================================================
-FILE: public\js\passkey-auth.js
-============================================================
-
+==================================================
+FILE: public/js/passkey-auth.js
+==================================================
 import "/js/impact-firebase-store.js?v=firebase-final-001";
 
 export async function validatePasskey(passkeyValue, gate){
@@ -13041,13 +12810,9 @@ export async function validatePasskey(passkeyValue, gate){
 }
 
 
-
-
-
-============================================================
-FILE: public\js\recordings.js
-============================================================
-
+==================================================
+FILE: public/js/recordings.js
+==================================================
 import {
   collection,
   addDoc,
@@ -13387,13 +13152,9 @@ async function init(){
 init();
 
 
-
-
-
-============================================================
-FILE: public\js\records.js
-============================================================
-
+==================================================
+FILE: public/js/records.js
+==================================================
 import {
   collection,
   addDoc,
@@ -13617,13 +13378,9 @@ loadRecords();
 
 
 
-
-
-
-============================================================
-FILE: public\js\taskBadge.js
-============================================================
-
+==================================================
+FILE: public/js/taskBadge.js
+==================================================
 import { db } from './firebase.js'
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
 
@@ -13643,13 +13400,9 @@ export async function checkTasks(){
 }
 
 
-
-
-
-============================================================
-FILE: public\js\tasks.js
-============================================================
-
+==================================================
+FILE: public/js/tasks.js
+==================================================
 import { db } from './firebase.js';
 import { collection, addDoc, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -13689,13 +13442,9 @@ window.complete = async (id) => {
 loadTasks();
 
 
-
-
-
-============================================================
-FILE: public\learner\activities.html
-============================================================
-
+==================================================
+FILE: public/learner/activities.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13758,13 +13507,9 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
 
 
-
-
-
-============================================================
-FILE: public\learner\dashboard.html
-============================================================
-
+==================================================
+FILE: public/learner/dashboard.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13852,13 +13597,9 @@ if(name){
 
 
 
-
-
-
-============================================================
-FILE: public\learner\exams.html
-============================================================
-
+==================================================
+FILE: public/learner/exams.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13904,13 +13645,9 @@ p{color:rgba(255,255,255,.72);font-weight:700;line-height:1.65}
 
 
 
-
-
-
-============================================================
-FILE: public\learner\lessons.html
-============================================================
-
+==================================================
+FILE: public/learner/lessons.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13956,13 +13693,9 @@ p{color:rgba(255,255,255,.72);font-weight:700;line-height:1.65}
 
 
 
-
-
-
-============================================================
-FILE: public\learner\progress.html
-============================================================
-
+==================================================
+FILE: public/learner/progress.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14008,13 +13741,9 @@ p{color:rgba(255,255,255,.72);font-weight:700;line-height:1.65}
 
 
 
-
-
-
-============================================================
-FILE: public\learner-hub.html
-============================================================
-
+==================================================
+FILE: public/learner-hub.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -14041,13 +13770,9 @@ FILE: public\learner-hub.html
 
 
 
-
-
-
-============================================================
-FILE: public\migrate.html
-============================================================
-
+==================================================
+FILE: public/migrate.html
+==================================================
 <script src="/js/impact-firebase-store.js"></script>
 
 <script>
@@ -14072,13 +13797,9 @@ FILE: public\migrate.html
 
 
 
-
-
-
-============================================================
-FILE: public\personnel\dashboard.html
-============================================================
-
+==================================================
+FILE: public/personnel/dashboard.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -14109,13 +13830,9 @@ FILE: public\personnel\dashboard.html
 
 
 
-
-
-
-============================================================
-FILE: public\placeholder.html
-============================================================
-
+==================================================
+FILE: public/placeholder.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14231,13 +13948,9 @@ button,a{
 
 
 
-
-
-
-============================================================
-FILE: public\progress.html
-============================================================
-
+==================================================
+FILE: public/progress.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -14264,13 +13977,9 @@ FILE: public\progress.html
 
 
 
-
-
-
-============================================================
-FILE: public\seed-passkeys.html
-============================================================
-
+==================================================
+FILE: public/seed-passkeys.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14380,13 +14089,9 @@ document.getElementById("seedBtn").onclick = async function(){
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\_workspace-template.html
-============================================================
-
+==================================================
+FILE: public/teacher/_workspace-template.html
+==================================================
 <div class="personnel-bg"></div>
 <div class="personnel-overlay"></div>
 
@@ -14421,13 +14126,9 @@ FILE: public\teacher\_workspace-template.html
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\academic-calendar.html
-============================================================
-
+==================================================
+FILE: public/teacher/academic-calendar.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15233,13 +14934,9 @@ load();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\activities.html
-============================================================
-
+==================================================
+FILE: public/teacher/activities.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15302,13 +14999,9 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\activity-builder.html
-============================================================
-
+==================================================
+FILE: public/teacher/activity-builder.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15408,13 +15101,9 @@ p{color:rgba(255,255,255,.72);font-weight:700;line-height:1.65}
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\activity-tracker.html
-============================================================
-
+==================================================
+FILE: public/teacher/activity-tracker.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15514,13 +15203,9 @@ p{color:rgba(255,255,255,.72);font-weight:700;line-height:1.65}
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\admin.html
-============================================================
-
+==================================================
+FILE: public/teacher/admin.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -15720,13 +15405,9 @@ loadUsage();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\admin-dashboard.html
-============================================================
-
+==================================================
+FILE: public/teacher/admin-dashboard.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -15870,21 +15551,14 @@ render();
 
 
 
+==================================================
+FILE: public/teacher/backups/class-logger-20260519-093654.html
+==================================================
 
 
-
-============================================================
-FILE: public\teacher\backups\class-logger-20260519-093654.html
-============================================================
-
-
-
-
-
-============================================================
-FILE: public\teacher\classes.html
-============================================================
-
+==================================================
+FILE: public/teacher/classes.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16493,21 +16167,14 @@ document.addEventListener("click", function(e){
 
 
 
+==================================================
+FILE: public/teacher/class-logger.before-pdf-fix.backup.html
+==================================================
 
 
-
-============================================================
-FILE: public\teacher\class-logger.before-pdf-fix.backup.html
-============================================================
-
-
-
-
-
-============================================================
-FILE: public\teacher\class-logger.html
-============================================================
-
+==================================================
+FILE: public/teacher/class-logger.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16528,7 +16195,9 @@ html,body{width:100%;max-width:100%;overflow-x:hidden} body{min-height:100vh;bac
 .hero{text-align:center;margin-bottom:34px;width:100%;overflow:hidden}
 .hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
 .hero p{font-weight:800;color:rgba(255,255,255,.65)}
-.search{width:100%;padding:16px 18px;border-radius:22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;font-weight:800;margin-bottom:24px}
+.search-row{display:flex;gap:12px;margin-bottom:24px;align-items:stretch}
+.search{flex:1;padding:16px 18px;border-radius:22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;font-weight:800}
+.add-manual-btn{flex-shrink:0;padding:0 22px;border-radius:22px;background:rgba(120,170,255,.16);border:1px solid rgba(120,170,255,.3);color:#bcd4ff;font-weight:900;cursor:pointer;white-space:nowrap}
 .learner{margin-bottom:30px}
 .learner h2{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;margin-bottom:14px}
 .card{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:16px;margin-bottom:14px;padding:20px;border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);width:100%;max-width:100%;overflow:hidden;align-items:start}
@@ -16536,6 +16205,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden} body{min-height:100vh;bac
 .info{font-size:.84rem;font-weight:800;line-height:1.75;color:rgba(255,255,255,.82)}
 .top{font-weight:900;color:white}
 .status{display:inline-block;margin-top:10px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.badge{display:inline-block;margin-top:10px;margin-left:8px;padding:7px 12px;border-radius:999px;font-size:.72rem;font-weight:900}
+.badge-type{background:rgba(120,170,255,.18);color:#bcd4ff}
+.badge-billable{background:rgba(80,220,140,.16);color:#9ef0bf}
+.badge-nonbillable{background:rgba(255,120,120,.16);color:#ffb3b3}
 .delete{border:none;border-radius:14px;padding:10px 16px;background:rgba(255,80,80,.14);color:white;font-weight:900;cursor:pointer;align-self:start;justify-self:end;width:auto;min-width:92px;height:44px;line-height:1;display:flex;align-items:center;justify-content:center}
 .empty{padding:24px;border-radius:24px;background:rgba(255,255,255,.06);text-align:center;font-weight:800;color:rgba(255,255,255,.6)}
 button{transition:.15s ease}
@@ -16548,13 +16221,11 @@ button:active{transform:scale(.94);opacity:.8}
   align-items:start !important;
   overflow:hidden !important;
 }
-
 .info{
   min-width:0 !important;
   word-break:break-word !important;
   overflow-wrap:anywhere !important;
 }
-
 .delete{
   width:92px !important;
   height:42px !important;
@@ -16568,17 +16239,122 @@ button:active{transform:scale(.94);opacity:.8}
   border-radius:14px !important;
   line-height:1 !important;
 }
-
 @media(max-width:700px){
   .card{
     grid-template-columns:48px 1fr !important;
   }
-
   .delete{
     grid-column:2 !important;
     justify-self:start !important;
     margin-top:10px !important;
   }
+}
+</style>
+<style id="manual-class-modal-styles">
+body.modal-locked{
+  overflow:hidden !important;
+  height:100vh !important;
+}
+.modal-overlay{
+  display:none;
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  background:rgba(2,3,8,.92) !important;
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+  z-index:2147483647 !important;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  overflow-y:auto;
+}
+.modal-overlay.open{
+  display:flex !important;
+}
+.modal-box{
+  width:min(560px,100%);
+  max-height:88vh;
+  overflow-y:auto;
+  background:#0d0f17;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:28px;
+  padding:30px;
+  box-shadow:0 30px 90px rgba(0,0,0,.6);
+}
+.modal-box h3{
+  font-family:"Sorts Mill Goudy",serif;
+  font-size:1.8rem;
+  font-weight:400;
+  margin-bottom:20px;
+}
+.field-group{margin-bottom:16px}
+.field-group label{
+  display:block;
+  font-size:.78rem;
+  font-weight:900;
+  color:rgba(255,255,255,.6);
+  margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.field-group input,
+.field-group select,
+.field-group textarea{
+  width:100%;
+  padding:13px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+  color:white;
+  font-weight:700;
+  font-family:Inter,sans-serif;
+  font-size:.92rem;
+}
+.field-group textarea{min-height:80px;resize:vertical}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.modal-actions{
+  display:flex;
+  gap:12px;
+  margin-top:22px;
+}
+.modal-save{
+  flex:1;
+  padding:14px;
+  border-radius:16px;
+  border:none;
+  background:rgba(120,170,255,.22);
+  color:#bcd4ff;
+  font-weight:900;
+  cursor:pointer;
+}
+.modal-cancel{
+  flex:1;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.14);
+  background:transparent;
+  color:white;
+  font-weight:900;
+  cursor:pointer;
+}
+.field-error{
+  color:#ffb3b3;
+  font-size:.78rem;
+  font-weight:800;
+  margin-top:10px;
+  display:none;
+}
+.field-hint{
+  color:rgba(120,200,255,.85);
+  font-size:.76rem;
+  font-weight:700;
+  margin-top:6px;
+  display:none;
 }
 </style>
 </head>
@@ -16599,9 +16375,76 @@ button:active{transform:scale(.94);opacity:.8}
     <p>Started classes, ended classes, duration, participation, and teacher remarks are logged here.</p>
   </section>
 
-  <input id="search" class="search" placeholder="Search learner, teacher, level, room, remark...">
+  <div class="search-row">
+    <input id="search" class="search" placeholder="Search learner, teacher, level, room, remark...">
+    <button id="addManualBtn" type="button" class="add-manual-btn">+ Add Class</button>
+  </div>
+
   <section id="wrap"><div class="empty">Loading class tracker...</div></section>
 </main>
+
+<div id="manualModalOverlay" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Add Class</h3>
+
+    <div class="field-group">
+      <label>Learner</label>
+      <input id="m_learner" type="text" placeholder="Learner name" list="m_learner_list" autocomplete="off">
+      <datalist id="m_learner_list"></datalist>
+      <div class="field-hint" id="m_learner_hint">Matched to existing learner — will join their tracker.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Teacher</label>
+      <input id="m_teacher" type="text" placeholder="Teacher name">
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label>Level</label>
+        <input id="m_level" type="text" placeholder="e.g. A1.1, B1">
+      </div>
+      <div class="field-group">
+        <label>Date</label>
+        <input id="m_date" type="date">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label>Start Time</label>
+        <input id="m_start" type="time">
+      </div>
+      <div class="field-group">
+        <label>End Time</label>
+        <input id="m_end" type="time">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label>Participation (%)</label>
+        <input id="m_participation" type="number" min="0" max="100" placeholder="e.g. 80">
+      </div>
+      <div class="field-group">
+        <label>Platform Used</label>
+        <input id="m_platform" type="text" placeholder="e.g. Zoom, WhatsApp Call">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Remarks</label>
+      <textarea id="m_remarks" placeholder="Notes about the class..."></textarea>
+    </div>
+
+    <div class="field-error" id="m_error">Please fill in Learner, Teacher, Date, Start Time, and End Time.</div>
+
+    <div class="modal-actions">
+      <button type="button" class="modal-cancel" id="m_cancel">Cancel</button>
+      <button type="button" class="modal-save" id="m_save">Save Class</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
@@ -16610,42 +16453,103 @@ button:active{transform:scale(.94);opacity:.8}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", async()=>{
+(function(){
+  const manualOverlay=document.getElementById("manualModalOverlay");
+  const addManualBtn=document.getElementById("addManualBtn");
+  const mCancel=document.getElementById("m_cancel");
+
+  function openManualModal(){
+    document.getElementById("m_learner").value="";
+    document.getElementById("m_teacher").value="";
+    document.getElementById("m_level").value="";
+    document.getElementById("m_date").value="";
+    document.getElementById("m_start").value="";
+    document.getElementById("m_end").value="";
+    document.getElementById("m_participation").value="";
+    document.getElementById("m_platform").value="";
+    document.getElementById("m_remarks").value="";
+    document.getElementById("m_error").style.display="none";
+    document.getElementById("m_learner_hint").style.display="none";
+    document.body.appendChild(manualOverlay);
+    manualOverlay.classList.add("open");
+    document.body.classList.add("modal-locked");
+    window.scrollTo(0,0);
+  }
+
+  function closeManualModal(){
+    manualOverlay.classList.remove("open");
+    document.body.classList.remove("modal-locked");
+  }
+
+  if(addManualBtn){
+    addManualBtn.addEventListener("click",function(e){
+      e.preventDefault();
+      openManualModal();
+    });
+  }
+
+  if(mCancel){
+    mCancel.addEventListener("click",function(e){
+      e.preventDefault();
+      closeManualModal();
+    });
+  }
+
+  manualOverlay.addEventListener("click",function(e){
+    if(e.target===manualOverlay) closeManualModal();
+  });
+
+  window.__closeManualModal=closeManualModal;
+})();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded",async()=>{
 const db=firebase.firestore();
 const wrap=document.getElementById("wrap");
 const search=document.getElementById("search");
 let allLogs=[];
+let knownLearners=[];
+
+const BILLABLE_MINUTES_THRESHOLD=20;
+const FIRST_BILLING_START=new Date(2026,5,4); // 04 June 2026 — fixed for testing
 
 function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
 function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
 
-async function repairMichael(){
-  await db.collection("classTracker").doc("michael-2026-05-10-session-1").set({
-    learner:"Michael",level:"A0",teacher:"Adelaide",meetRoom:"Impact Meet Room 2",
-    sessionNumber:"1/4",startedAt:"2026-05-10T17:50:00",startedAtText:"10/05/2026, 5:50 PM",
-    endedAt:"2026-05-10T18:50:00",endedAtText:"10/05/2026, 6:50 PM",
-    minutesSpent:60,status:"Ended",lessonCompleted:"Yes",lessonCanceled:"No",
-    studentParticipation:"100%",teacherRemarks:"Michael is very engaged and enthusiastic and sharp."
-  },{merge:true});
+function isBillable(x){
+  if(typeof x.billable==="boolean") return x.billable;
+  const canceled=String(x.lessonCanceled||"").trim().toLowerCase()==="yes";
+  if(canceled) return false;
+  const completedField=String(x.lessonCompleted||"").trim().toLowerCase();
+  if(completedField==="no") return false;
+  if(x.status==="Completed") return true;
+  if(x.status==="Ended"){
+    const mins=Number(x.minutesSpent||x.durationMinutes||0);
+    return mins>=BILLABLE_MINUTES_THRESHOLD;
+  }
+  return false;
 }
 
-function applyFallback(x){
-  if(x.learner==="Michael" && (x.sessionNumber==="2/4" || x.meetRoom==="Impact Meet Room 6")){
-    x.sessionNumber="2/4";
-    x.lessonCompleted="Yes";
-    x.lessonCanceled="No";
-    x.studentParticipation="100%";
-    x.teacherRemarks="Michael was very enthusiastic and can answer correctly questions 1 to 3 of the video with correct pronunciation and accent.";
+function resolveLearnerName(typedName){
+  const typedNorm=typedName.trim().toLowerCase().replace(/\s+/g," ");
+  for(const known of knownLearners){
+    if(known.trim().toLowerCase().replace(/\s+/g," ")===typedNorm) return known;
   }
-  return x;
+  return typedName.trim();
+}
+
+function formatDateLong(d){
+  const day=String(d.getDate()).padStart(2,"0");
+  const month=d.toLocaleString("en-GB",{month:"long"});
+  const year=d.getFullYear();
+  return `${day} ${month} ${year}`;
 }
 
 async function load(){
-  await repairMichael();
   const snap=await db.collection("classTracker").get();
   const seen=new Set();
-
-  allLogs=snap.docs.map(d=>applyFallback({id:d.id,...d.data()}))
+  allLogs=snap.docs.map(d=>({id:d.id,...d.data()}))
     .sort((a,b)=>ms(a)-ms(b))
     .filter(x=>{
       const key=[x.learner,x.startedAt||x.startedAtText,x.endedAt||x.endedAtText,x.meetRoom].join("|");
@@ -16653,6 +16557,15 @@ async function load(){
       seen.add(key);
       return true;
     });
+
+  const nameSet=new Set();
+  allLogs.forEach(x=>{if(x.learner) nameSet.add(x.learner);});
+  knownLearners=Array.from(nameSet).sort();
+
+  const datalist=document.getElementById("m_learner_list");
+  if(datalist){
+    datalist.innerHTML=knownLearners.map(n=>`<option value="${n.replace(/"/g,"&quot;")}">`).join("");
+  }
 
   render(allLogs);
 }
@@ -16674,15 +16587,18 @@ function render(logs){
     sec.className="learner";
     sec.innerHTML=`<h2>${name}</h2>`;
 
-    groups[name].sort((a,b)=>ms(a)-ms(b)).forEach((x,i)=>{
-      x=applyFallback(x);
-      const session=x.sessionNumber||(((i%4)+1)+"/4");
+    let billableCount=0;
+    groups[name].sort((a,b)=>ms(a)-ms(b)).forEach((x)=>{
+      const billable=isBillable(x);
+      if(billable) billableCount++;
+      const session=billable?(billableCount+"/4"):"-/4";
+      const entryType=(x.entryType||"auto").toUpperCase();
       const card=document.createElement("article");
       card.className="card";
       card.innerHTML=`
         <div class="pill">${session}</div>
         <div class="info">
-          <div class="top">Level: ${x.level||""} · Session ${session} · Teacher: ${x.teacher||""} · Room: ${x.meetRoom||""}</div>
+          <div class="top">Level: ${x.level||""} · Session ${session} · Teacher: ${x.teacher||""} · Room: ${x.meetRoom||x.platform||""}</div>
           <div>Started: ${x.startedAtText||x.startedAt||""}</div>
           <div>Ended: ${x.endedAtText||x.endedAt||"Not ended"}</div>
           <div>Duration: ${x.minutesSpent||x.durationMinutes||0} minute(s)</div>
@@ -16691,6 +16607,8 @@ function render(logs){
           ${x.studentParticipation?`<div>Student participation: ${clean(x.studentParticipation)}</div>`:""}
           ${x.teacherRemarks?`<div>Remarks: ${clean(x.teacherRemarks)}</div>`:""}
           <span class="status">${x.status||"Logged"}</span>
+          <span class="badge badge-type">${entryType}</span>
+          <span class="badge ${billable?"badge-billable":"badge-nonbillable"}">${billable?"BILLABLE":"NON-BILLABLE"}</span>
         </div>
         <button class="delete">Delete</button>
       `;
@@ -16709,116 +16627,229 @@ function render(logs){
 
 search.oninput=()=>render(allLogs.filter(x=>JSON.stringify(x).toLowerCase().includes(search.value.toLowerCase())));
 
-document.getElementById("pdfBtn").onclick=()=>{
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
+document.getElementById("pdfBtn").onclick=async()=>{
+  const pdfBtn=document.getElementById("pdfBtn");
+  pdfBtn.disabled=true;
 
-  const margin=45;
-  const top=80;
-  const noW=42;
-  const studentW=120;
-  const dateW=62;
-  const dateCols=10;
-  const headerH=54;
-  const rowH=82;
+  try{
+    const historyRef=db.collection("billingExportHistory").doc("lastExport");
+    const today=new Date();
 
-  const xNo=margin;
-  const xStudent=xNo+noW;
-  const xDates=xStudent+studentW;
-  const tableW=noW+studentW+(dateW*dateCols);
+    // TESTING MODE: start date frozen at 04 June 2026.
+    // When confirmed, remove this line and uncomment the if/else block below.
+    const rangeStart=new Date(FIRST_BILLING_START);
 
-  pdf.setFont("helvetica","bold");
-  pdf.setFontSize(20);
-  pdf.text("Billing Tracker", margin, 55);
+    // ---- PRODUCTION (uncomment when testing is done) ----
+    // const historySnap=await historyRef.get();
+    // let rangeStart;
+    // if(historySnap.exists && historySnap.data().lastExportEndDate){
+    //   const lastEnd=new Date(historySnap.data().lastExportEndDate);
+    //   rangeStart=new Date(lastEnd);
+    //   rangeStart.setDate(rangeStart.getDate()+1);
+    // }else{
+    //   rangeStart=new Date(FIRST_BILLING_START);
+    // }
+    // -----------------------------------------------------
 
-  function cell(x,y,w,h,fill){
-    pdf.setFillColor(fill[0],fill[1],fill[2]);
-    pdf.setDrawColor(80,45,35);
-    pdf.setLineWidth(.6);
-    pdf.rect(x,y,w,h,"FD");
-  }
+    const rangeStartLabel=formatDateLong(rangeStart);
+    const rangeEndLabel=formatDateLong(today);
+    const filename=`Billing Tracker from ${rangeStartLabel} to ${rangeEndLabel}.pdf`;
 
-  function centerText(txt,x,y,w,h,size){
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
+
+    const margin=45;
+    const top=80;
+    const noW=42;
+    const studentW=120;
+    const dateW=62;
+    const dateCols=10;
+    const headerH=54;
+    const rowH=82;
+    const xNo=margin;
+    const xStudent=xNo+noW;
+    const xDates=xStudent+studentW;
+
     pdf.setFont("helvetica","bold");
-    pdf.setFontSize(size);
-    pdf.setTextColor(15,22,33);
-    const lines=pdf.splitTextToSize(String(txt),w-8);
-    const lineH=size+2;
-    const total=lines.length*lineH;
-    let yy=y+(h-total)/2+size;
-    lines.forEach(line=>{
-      pdf.text(line,x+w/2,yy,{align:"center"});
-      yy+=lineH;
-    });
-  }
+    pdf.setFontSize(16);
+    pdf.text(filename.replace(".pdf",""),margin,55);
 
-  cell(xNo,top,noW,headerH,[213,226,232]);
-  cell(xStudent,top,studentW,headerH,[213,226,232]);
-  cell(xDates,top,dateW*dateCols,headerH,[213,226,232]);
-
-  centerText("NO.",xNo,top,noW,headerH,10);
-  centerText("STUDENT",xStudent,top,studentW,headerH,10);
-  centerText("CLASS DATES",xDates,top,dateW*dateCols,headerH,11);
-
-  const grouped={};
-  allLogs.forEach(x=>{
-    const name=x.learner||"Student";
-    const raw=x.startedAtText||x.startedAt||"";
-    const date=String(raw).split(",")[0].trim();
-    if(!date)return;
-    if(!grouped[name])grouped[name]=[];
-    if(!grouped[name].includes(date))grouped[name].push(date);
-  });
-
-  let y=top+headerH;
-  let n=1;
-
-  Object.keys(grouped).sort().forEach(name=>{
-    if(y+rowH>540){
-      pdf.addPage("a4","landscape");
-      y=60;
-      cell(xNo,y,noW,headerH,[213,226,232]);
-      cell(xStudent,y,studentW,headerH,[213,226,232]);
-      cell(xDates,y,dateW*dateCols,headerH,[213,226,232]);
-      centerText("NO.",xNo,y,noW,headerH,10);
-      centerText("STUDENT",xStudent,y,studentW,headerH,10);
-      centerText("CLASS DATES",xDates,y,dateW*dateCols,headerH,11);
-      y+=headerH;
+    function cell(x,y,w,h,fill){
+      pdf.setFillColor(fill[0],fill[1],fill[2]);
+      pdf.setDrawColor(80,45,35);
+      pdf.setLineWidth(.6);
+      pdf.rect(x,y,w,h,"FD");
     }
 
-    const boxes=[];
-    for(let i=0;i<grouped[name].length;i+=4){
-      boxes.push(grouped[name].slice(i,i+4));
-    }
-    while(boxes.length<dateCols)boxes.push([]);
-
-    cell(xNo,y,noW,rowH,[235,242,245]);
-    cell(xStudent,y,studentW,rowH,[235,242,245]);
-
-    pdf.setTextColor(20,25,35);
-    pdf.setFont("helvetica","bold");
-    pdf.setFontSize(9);
-    pdf.text(String(n++),xNo+noW/2,y+18,{align:"center"});
-    pdf.text(name,xStudent+10,y+18);
-
-    boxes.slice(0,dateCols).forEach((dates,i)=>{
-      const x=xDates+(i*dateW);
-      cell(x,y,dateW,rowH,[235,242,245]);
-      pdf.setFont("helvetica","normal");
-      pdf.setFontSize(8);
-      pdf.setTextColor(20,25,35);
-      let yy=y+16;
-      dates.forEach(d=>{
-        pdf.text(d,x+6,yy);
-        yy+=12;
+    function centerText(txt,x,y,w,h,size){
+      pdf.setFont("helvetica","bold");
+      pdf.setFontSize(size);
+      pdf.setTextColor(15,22,33);
+      const lines=pdf.splitTextToSize(String(txt),w-8);
+      const lineH=size+2;
+      const total=lines.length*lineH;
+      let yy=y+(h-total)/2+size;
+      lines.forEach(line=>{
+        pdf.text(line,x+w/2,yy,{align:"center"});
+        yy+=lineH;
       });
+    }
+
+    cell(xNo,top,noW,headerH,[213,226,232]);
+    cell(xStudent,top,studentW,headerH,[213,226,232]);
+    cell(xDates,top,dateW*dateCols,headerH,[213,226,232]);
+    centerText("NO.",xNo,top,noW,headerH,10);
+    centerText("STUDENT",xStudent,top,studentW,headerH,10);
+    centerText("CLASS DATES",xDates,top,dateW*dateCols,headerH,11);
+
+    const billableLogs=allLogs.filter(x=>isBillable(x));
+    const grouped={};
+    billableLogs.forEach(x=>{
+      const name=x.learner||"Student";
+      const raw=x.startedAtText||x.startedAt||"";
+      const date=String(raw).split(",")[0].trim();
+      if(!date) return;
+      if(!grouped[name]) grouped[name]=[];
+      if(!grouped[name].includes(date)) grouped[name].push(date);
     });
 
-    y+=rowH;
-  });
+    let y=top+headerH;
+    let n=1;
 
-  pdf.save("Impact_Billing_Tracker.pdf");
+    Object.keys(grouped).sort().forEach(name=>{
+      if(y+rowH>540){
+        pdf.addPage("a4","landscape");
+        y=60;
+        cell(xNo,y,noW,headerH,[213,226,232]);
+        cell(xStudent,y,studentW,headerH,[213,226,232]);
+        cell(xDates,y,dateW*dateCols,headerH,[213,226,232]);
+        centerText("NO.",xNo,y,noW,headerH,10);
+        centerText("STUDENT",xStudent,y,studentW,headerH,10);
+        centerText("CLASS DATES",xDates,y,dateW*dateCols,headerH,11);
+        y+=headerH;
+      }
+
+      const boxes=[];
+      for(let i=0;i<grouped[name].length;i+=4){
+        boxes.push(grouped[name].slice(i,i+4));
+      }
+      while(boxes.length<dateCols) boxes.push([]);
+
+      cell(xNo,y,noW,rowH,[235,242,245]);
+      cell(xStudent,y,studentW,rowH,[235,242,245]);
+
+      pdf.setTextColor(20,25,35);
+      pdf.setFont("helvetica","bold");
+      pdf.setFontSize(9);
+      pdf.text(String(n++),xNo+noW/2,y+18,{align:"center"});
+      pdf.text(name,xStudent+10,y+18);
+
+      boxes.slice(0,dateCols).forEach((dates,i)=>{
+        const x=xDates+(i*dateW);
+        cell(x,y,dateW,rowH,[235,242,245]);
+        pdf.setFont("helvetica","normal");
+        pdf.setFontSize(8);
+        pdf.setTextColor(20,25,35);
+        let yy=y+16;
+        dates.forEach(d=>{
+          pdf.text(d,x+6,yy);
+          yy+=12;
+        });
+      });
+
+      y+=rowH;
+    });
+
+    pdf.save(filename);
+
+    await historyRef.set({
+      lastExportEndDate:today.toISOString(),
+      lastExportEndDateLabel:rangeEndLabel,
+      lastExportStartDateLabel:rangeStartLabel,
+      lastExportFilename:filename,
+      updatedAt:today.toISOString()
+    });
+
+  }catch(err){
+    console.error(err);
+    alert("Could not generate the Billing Tracker PDF. Please try again.");
+  }finally{
+    pdfBtn.disabled=false;
+  }
 };
+
+const mLearnerInput=document.getElementById("m_learner");
+const mLearnerHint=document.getElementById("m_learner_hint");
+mLearnerInput.addEventListener("input",()=>{
+  const typed=mLearnerInput.value.trim();
+  if(!typed){mLearnerHint.style.display="none";return;}
+  const matched=resolveLearnerName(typed);
+  const typedNorm=typed.toLowerCase().replace(/\s+/g," ");
+  const matchedNorm=matched.toLowerCase().replace(/\s+/g," ");
+  mLearnerHint.style.display=(typedNorm===matchedNorm&&knownLearners.includes(matched))?"block":"none";
+});
+
+const mSave=document.getElementById("m_save");
+const mError=document.getElementById("m_error");
+
+mSave.onclick=async()=>{
+  const learnerTyped=document.getElementById("m_learner").value.trim();
+  const teacher=document.getElementById("m_teacher").value.trim();
+  const level=document.getElementById("m_level").value.trim();
+  const date=document.getElementById("m_date").value;
+  const startTime=document.getElementById("m_start").value;
+  const endTime=document.getElementById("m_end").value;
+  const participation=document.getElementById("m_participation").value.trim();
+  const platform=document.getElementById("m_platform").value.trim();
+  const remarks=document.getElementById("m_remarks").value.trim();
+
+  if(!learnerTyped||!teacher||!date||!startTime||!endTime){
+    mError.style.display="block";
+    return;
+  }
+  mError.style.display="none";
+
+  const learner=resolveLearnerName(learnerTyped);
+  const startedAt=new Date(`${date}T${startTime}`);
+  const endedAt=new Date(`${date}T${endTime}`);
+  let minutesSpent=Math.round((endedAt-startedAt)/60000);
+  if(minutesSpent<0) minutesSpent=0;
+
+  mSave.disabled=true;
+  mSave.innerText="Saving...";
+
+  try{
+    await db.collection("classTracker").add({
+      learner,
+      teacher,
+      level,
+      meetRoom:"",
+      platform:platform||"",
+      startedAt:startedAt.toISOString(),
+      startedAtText:startedAt.toLocaleString(),
+      endedAt:endedAt.toISOString(),
+      endedAtText:endedAt.toLocaleString(),
+      minutesSpent,
+      lessonCompleted:"Yes",
+      lessonCanceled:"No",
+      studentParticipation:participation?`${participation}%`:"",
+      teacherRemarks:remarks,
+      entryType:"manual",
+      billable:true,
+      status:"Completed"
+    });
+
+    if(window.__closeManualModal) window.__closeManualModal();
+    await load();
+  }catch(err){
+    console.error(err);
+    alert("Could not save manual class. Please try again.");
+  }finally{
+    mSave.disabled=false;
+    mSave.innerText="Save Class";
+  }
+};
+
 load();
 });
 </script>
@@ -16829,17 +16860,9 @@ load();
 
 
 
-
-
-
-
-
-
-
-============================================================
-FILE: public\teacher\configuration.html
-============================================================
-
+==================================================
+FILE: public/teacher/configuration.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17276,13 +17299,9 @@ button{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\dashboard.html
-============================================================
-
+==================================================
+FILE: public/teacher/dashboard.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17524,13 +17543,9 @@ document.addEventListener("DOMContentLoaded",function(){
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\delf.html
-============================================================
-
+==================================================
+FILE: public/teacher/delf.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17619,13 +17634,9 @@ h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.8rem);font-we
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\delf-mock-builder.html
-============================================================
-
+==================================================
+FILE: public/teacher/delf-mock-builder.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17923,13 +17934,9 @@ load();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\delf-mocks.html
-============================================================
-
+==================================================
+FILE: public/teacher/delf-mocks.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18019,13 +18026,9 @@ h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.8rem);font-we
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\delf-mock-view.html
-============================================================
-
+==================================================
+FILE: public/teacher/delf-mock-view.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18088,13 +18091,9 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\exercises.html
-============================================================
-
+==================================================
+FILE: public/teacher/exercises.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18709,13 +18708,9 @@ document.querySelectorAll("[data-route]").forEach(btn=>{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\kpis.html
-============================================================
-
+==================================================
+FILE: public/teacher/kpis.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18840,13 +18835,9 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\lesson-builder.backup-before-sync.html
-============================================================
-
+==================================================
+FILE: public/teacher/lesson-builder.backup-before-sync.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19911,13 +19902,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\lesson-builder.before-placement-sync.backup.html
-============================================================
-
+==================================================
+FILE: public/teacher/lesson-builder.before-placement-sync.backup.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21223,13 +21210,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\lesson-builder.BROKEN-BACKUP.html
-============================================================
-
+==================================================
+FILE: public/teacher/lesson-builder.BROKEN-BACKUP.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24108,13 +24091,9 @@ button:active{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\lesson-builder.html
-============================================================
-
+==================================================
+FILE: public/teacher/lesson-builder.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24414,13 +24393,9 @@ load();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\lesson-builder-broken-backup.html
-============================================================
-
+==================================================
+FILE: public/teacher/lesson-builder-broken-backup.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28283,13 +28258,9 @@ document.addEventListener("DOMContentLoaded",function(){
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\lesson-editor.html
-============================================================
-
+==================================================
+FILE: public/teacher/lesson-editor.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28535,13 +28506,9 @@ function viewDoc(){
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\lesson-folder.html
-============================================================
-
+==================================================
+FILE: public/teacher/lesson-folder.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28641,13 +28608,9 @@ document.getElementById("folderTitle").textContent = level;
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\lesson-plans.html
-============================================================
-
+==================================================
+FILE: public/teacher/lesson-plans.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29072,13 +29035,9 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\lessons.html
-============================================================
-
+==================================================
+FILE: public/teacher/lessons.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29261,13 +29220,9 @@ button{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\lesson-view.html
-============================================================
-
+==================================================
+FILE: public/teacher/lesson-view.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29379,13 +29334,9 @@ audio{width:100%;margin:14px 0}
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\master-gate.html
-============================================================
-
+==================================================
+FILE: public/teacher/master-gate.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -29508,13 +29459,9 @@ function enter(){
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\operations.html
-============================================================
-
+==================================================
+FILE: public/teacher/operations.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -29632,13 +29579,9 @@ h1{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\placements\builder.html
-============================================================
-
+==================================================
+FILE: public/teacher/placements/builder.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29926,13 +29869,9 @@ load();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\placements\index.html
-============================================================
-
+==================================================
+FILE: public/teacher/placements/index.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30036,13 +29975,9 @@ FILE: public\teacher\placements\index.html
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\placements\placements.css
-============================================================
-
+==================================================
+FILE: public/teacher/placements/placements.css
+==================================================
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100%}
 body{
@@ -30268,13 +30203,9 @@ option{color:#111827}
 }
 
 
-
-
-
-============================================================
-FILE: public\teacher\placements\recordings.html
-============================================================
-
+==================================================
+FILE: public/teacher/placements/recordings.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30441,13 +30372,9 @@ load();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\placements\reports.html
-============================================================
-
+==================================================
+FILE: public/teacher/placements/reports.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30583,13 +30510,9 @@ load();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\placements\tests.html
-============================================================
-
+==================================================
+FILE: public/teacher/placements/tests.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30726,13 +30649,9 @@ load();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\placements\view-test.html
-============================================================
-
+==================================================
+FILE: public/teacher/placements/view-test.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30962,13 +30881,9 @@ load();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\preview-exercises.html
-============================================================
-
+==================================================
+FILE: public/teacher/preview-exercises.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31067,13 +30982,9 @@ p{color:rgba(255,255,255,.72);font-weight:700;line-height:1.65}
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\progress.html
-============================================================
-
+==================================================
+FILE: public/teacher/progress.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31156,13 +31067,9 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\recordings.html
-============================================================
-
+==================================================
+FILE: public/teacher/recordings.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31747,13 +31654,9 @@ button:active{transform:scale(.985)}
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\records.html
-============================================================
-
+==================================================
+FILE: public/teacher/records.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31975,13 +31878,9 @@ FILE: public\teacher\records.html
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\recycle-bin.html
-============================================================
-
+==================================================
+FILE: public/teacher/recycle-bin.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32232,13 +32131,9 @@ document.addEventListener("DOMContentLoaded",function(){
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\reports.html
-============================================================
-
+==================================================
+FILE: public/teacher/reports.html
+==================================================
 <!DOCTYPE html>
 <html>
 <head>
@@ -32357,13 +32252,9 @@ h1{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\settings.html
-============================================================
-
+==================================================
+FILE: public/teacher/settings.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32555,13 +32446,9 @@ a,button{
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\tasks.html
-============================================================
-
+==================================================
+FILE: public/teacher/tasks.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32772,13 +32659,9 @@ document.addEventListener("DOMContentLoaded", async()=>{
 </html>
 
 
-
-
-
-============================================================
-FILE: public\teacher\team-docs.html
-============================================================
-
+==================================================
+FILE: public/teacher/team-docs.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33251,13 +33134,9 @@ loadDocs();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\team-lead-dashboard.html
-============================================================
-
+==================================================
+FILE: public/teacher/team-lead-dashboard.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33801,13 +33680,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\team-meetings.html
-============================================================
-
+==================================================
+FILE: public/teacher/team-meetings.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34030,13 +33905,9 @@ load();
 
 
 
-
-
-
-============================================================
-FILE: public\teacher\tests.html
-============================================================
-
+==================================================
+FILE: public/teacher/tests.html
+==================================================
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34228,13 +34099,9 @@ a,button{
 
 
 
-
-
-
-============================================================
+==================================================
 FILE: seed-passkeys.js
-============================================================
-
+==================================================
 const admin = require("firebase-admin");
 
 const projectId = process.env.NEW_PROJECT_ID;
@@ -34287,18 +34154,12 @@ seed()
   });
 
 
-
-
-
-===========================================
-PROJECT SUMMARY
-===========================================
-
-Total Files Dumped : 135
-HTML Files         : 72
-JS Files           : 38
-CSS Files          : 21
-JSON Files         : 4
-Markdown Files     : 0
-
-Dump Created: 06/29/2026 10:18:25
+==================================================
+DUMP SUMMARY
+==================================================
+Total files : 137
+HTML        : 72
+JS          : 38
+CSS         : 21
+JSON        : 4
+Other       : 2
