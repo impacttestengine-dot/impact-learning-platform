@@ -615,31 +615,6 @@ document.getElementById("viewBtn").addEventListener("click", async function(e){
   window.open("/teacher/lesson-view.html?id="+encodeURIComponent(id),"_blank");
 });
 
-// ── AUTO-SAVE ────────────────────────────────────────────
-// Auto-save fires when title or level changes, but ONLY when:
-// 1. A level has been selected (not the blank default)
-// 2. A title has been entered
-// 3. At least one block exists on the canvas
-let autoSaveTimer = null;
-function scheduleAutoSave(){
-  const hasTitle = titleInput.value.trim().length > 0;
-  const hasBlocks = allBlocks().length > 0;
-  const hasLevel = levelSelect.value.length > 0;
-  if(!hasTitle || !hasBlocks || !hasLevel) return;
-  clearTimeout(autoSaveTimer);
-  autoSaveTimer = setTimeout(async function(){
-    await save();
-  }, 1200);
-}
-titleInput.addEventListener("input", scheduleAutoSave);
-levelSelect.addEventListener("change", scheduleAutoSave);
-
-// Also trigger auto-save when blocks are added/removed
-const canvasObserver = new MutationObserver(function(){
-  scheduleAutoSave();
-});
-canvasObserver.observe(canvas, { childList: true, subtree: false });
-
 // ── LOAD ─────────────────────────────────────────────────
 async function load(){
   if(!currentId) return;
