@@ -46,55 +46,15 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 .plan-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
 .plan-btn.del:hover{background:rgba(255,60,60,.2);border-color:rgba(255,100,100,.3)}
 .loading{text-align:center;padding:48px;color:rgba(255,255,255,.4);font-weight:700}
-
+.confirm-backdrop{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(14px)}
+.confirm-backdrop.show{display:flex}
+.confirm-card{width:min(400px,90vw);border-radius:26px;padding:28px;background:rgba(12,16,30,.95);border:1px solid rgba(255,255,255,.15);box-shadow:0 28px 80px rgba(0,0,0,.55);text-align:center}
+.confirm-card h3{font-family:"Sorts Mill Goudy",serif;font-size:1.8rem;font-weight:400;margin-bottom:10px}
+.confirm-card p{color:rgba(255,255,255,.65);font-weight:600;line-height:1.55;margin-bottom:22px;font-size:.9rem}
+.confirm-actions{display:flex;gap:12px;justify-content:center}
+.confirm-actions button{min-width:100px;border-radius:14px;padding:11px 16px;cursor:pointer;font-weight:800;color:#fff;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);font-family:Inter,sans-serif}
+.confirm-actions .danger{border-color:rgba(255,100,100,.3);background:rgba(255,60,60,.16)}
 @media(max-width:700px){.folders-grid{grid-template-columns:1fr}}
-.del-popover{
-  margin-top:6px;
-  margin-bottom:2px;
-  padding:12px 14px;
-  border-radius:14px;
-  background:rgba(30,10,10,.92);
-  border:1px solid rgba(255,100,100,.35);
-  backdrop-filter:blur(12px);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  animation:popIn .15s ease;
-}
-@keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.del-popover-msg{
-  font-size:.8rem;
-  font-weight:800;
-  color:rgba(255,255,255,.85);
-  flex:1;
-  line-height:1.35;
-}
-.del-popover-actions{display:flex;gap:8px;flex-shrink:0}
-.del-popover-cancel{
-  padding:7px 14px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.16);
-  background:rgba(255,255,255,.09);
-  color:#fff;
-  font-size:.78rem;
-  font-weight:800;
-  cursor:pointer;
-  font-family:Inter,sans-serif;
-}
-.del-popover-ok{
-  padding:7px 14px;
-  border-radius:10px;
-  border:1px solid rgba(255,100,100,.4);
-  background:rgba(200,40,40,.28);
-  color:#fca5a5;
-  font-size:.78rem;
-  font-weight:900;
-  cursor:pointer;
-  font-family:Inter,sans-serif;
-}
-.del-popover-cancel:hover{background:rgba(255,255,255,.16)}
-.del-popover-ok:hover{background:rgba(200,40,40,.45)}
 </style>
 </head>
 
@@ -121,7 +81,16 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
   <div id="foldersWrap"><div class="loading">Loading folders...</div></div>
 </main>
 
-
+<div class="confirm-backdrop" id="confirmModal">
+  <div class="confirm-card">
+    <h3>Delete lesson?</h3>
+    <p id="confirmMsg">This cannot be undone.</p>
+    <div class="confirm-actions">
+      <button type="button" id="confirmCancel">Cancel</button>
+      <button type="button" class="danger" id="confirmOk">Delete</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
@@ -135,38 +104,15 @@ document.addEventListener("DOMContentLoaded", async function(){
   let allPlans = [];
   let openFolder = null;
 
-  function showDeletePopover(anchorRow, msg){
-    // Remove any existing popover first
-    document.querySelectorAll(".del-popover").forEach(p=>p.remove());
-
+  function showConfirm(msg){
     return new Promise(resolve=>{
-      const pop = document.createElement("div");
-      pop.className = "del-popover";
-      pop.innerHTML = `
-        <span class="del-popover-msg">${msg}</span>
-        <div class="del-popover-actions">
-          <button class="del-popover-cancel" type="button">Cancel</button>
-          <button class="del-popover-ok" type="button">Delete</button>
-        </div>`;
-
-      // Insert after the row that was clicked
-      anchorRow.after(pop);
-      pop.scrollIntoView({behavior:"smooth", block:"nearest"});
-
-      const close = r=>{
-        pop.remove();
-        document.removeEventListener("click", outside);
-        resolve(r);
-      };
-
-      pop.querySelector(".del-popover-ok").onclick     = e=>{ e.stopPropagation(); close(true); };
-      pop.querySelector(".del-popover-cancel").onclick = e=>{ e.stopPropagation(); close(false); };
-
-      // Click outside dismisses
-      const outside = e=>{
-        if(!pop.contains(e.target)) close(false);
-      };
-      setTimeout(()=>document.addEventListener("click", outside), 50);
+      const modal = document.getElementById("confirmModal");
+      document.getElementById("confirmMsg").textContent = msg;
+      modal.classList.add("show");
+      const close = r=>{ modal.classList.remove("show"); resolve(r); };
+      document.getElementById("confirmOk").onclick  = ()=>close(true);
+      document.getElementById("confirmCancel").onclick = ()=>close(false);
+      modal.onclick = e=>{ if(e.target===modal) close(false); };
     });
   }
 
@@ -247,8 +193,7 @@ document.addEventListener("DOMContentLoaded", async function(){
       const delBtn = e.target.closest(".del-btn");
       if(delBtn){
         e.stopPropagation();
-        const anchorRow = delBtn.closest(".plan-row");
-        const ok = await showDeletePopover(anchorRow, `Delete &ldquo;${delBtn.dataset.title}&rdquo;?`);
+        const ok = await showConfirm(`Delete "${delBtn.dataset.title}"?`);
         if(!ok) return;
         await db.collection("lessonPlans").doc(delBtn.dataset.id).delete();
         allPlans = allPlans.filter(p=>p.id!==delBtn.dataset.id);
