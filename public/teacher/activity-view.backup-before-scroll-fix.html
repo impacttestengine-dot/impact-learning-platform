@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="/css/impact-global-bg.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+html,body{height:100%;overflow:hidden}
 body{font-family:Inter,system-ui,sans-serif;background:#05060b;color:#fff}
 .top-bar{position:fixed;top:0;left:0;right:0;height:58px;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(5,6,11,.85);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px)}
 .top-left{display:flex;align-items:center;gap:12px}
@@ -19,8 +19,8 @@ body{font-family:Inter,system-ui,sans-serif;background:#05060b;color:#fff}
 .slide-counter{font-size:.8rem;font-weight:800;color:rgba(255,255,255,.45)}
 .progress-bar{position:fixed;top:58px;left:0;right:0;height:3px;z-index:999;background:rgba(255,255,255,.08)}
 .progress-fill{height:100%;background:#8b5cf6;transition:width .35s ease}
-.slide-viewport{position:fixed;top:61px;left:0;right:0;bottom:72px;display:flex;align-items:flex-start;justify-content:center;padding:20px 24px;overflow-y:auto}
-.slide-card{width:min(680px,100%);max-height:none;background:#fff;border-radius:24px;padding:40px 44px;box-shadow:0 24px 80px rgba(0,0,0,.4);animation:slideIn .28s ease}
+.slide-viewport{position:fixed;top:61px;left:0;right:0;bottom:72px;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden}
+.slide-card{width:min(680px,100%);max-height:100%;overflow-y:auto;background:#fff;border-radius:24px;padding:40px 44px;box-shadow:0 24px 80px rgba(0,0,0,.4);animation:slideIn .28s ease}
 @keyframes slideIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 .sv-header{font-family:"Sorts Mill Goudy",serif;font-size:2.2rem;font-weight:400;color:#0f172a;line-height:1.2;margin-bottom:8px}
 .sv-subheader{font-size:1.2rem;font-weight:700;color:#1e293b;margin-bottom:8px}
