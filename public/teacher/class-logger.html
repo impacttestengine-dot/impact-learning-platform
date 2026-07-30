@@ -584,8 +584,8 @@ if(historySnap.exists && historySnap.data().lastExportEndDate){
     pdf.save(filename);
 
     await historyRef.set({
-      lastExportEndDate:today.toISOString(),
-      lastExportEndDateLabel:rangeEndLabel,
+      lastExportEndDate:"2026-07-06T00:00:00.000Z",
+      lastExportEndDateLabel:"06 July 2026",
       lastExportStartDateLabel:rangeStartLabel,
       lastExportFilename:filename,
       updatedAt:today.toISOString()
@@ -678,5 +678,6 @@ load();
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
+
 
 
