@@ -68,53 +68,6 @@ body{font-family:Inter,system-ui,sans-serif;background:#05060b;color:#fff}
 .final-submit:hover{background:#7c3aed;transform:translateY(-1px)}
 @media(max-width:600px){.slide-card{padding:28px 22px}.mc-grid{grid-template-columns:1fr}.pc-grid{grid-template-columns:1fr 1fr}}
 </style>
-<style id="preview-scroll-fix">
-/* Override impact-global-bg.css which forces position:relative
-   on all direct body children — we need these to stay fixed */
-.slide-viewport{
-  position:fixed !important;
-  top:61px !important;
-  left:0 !important;
-  right:0 !important;
-  bottom:72px !important;
-  overflow-y:auto !important;
-  overflow-x:hidden !important;
-  display:flex !important;
-  align-items:flex-start !important;
-  justify-content:center !important;
-  padding:20px 24px !important;
-  z-index:10 !important;
-}
-.slide-card{
-  width:min(680px,100%) !important;
-  max-height:none !important;
-  height:auto !important;
-  overflow:visible !important;
-  flex-shrink:0 !important;
-  margin-bottom:20px !important;
-}
-.bottom-nav{
-  position:fixed !important;
-  bottom:0 !important;
-  left:0 !important;
-  right:0 !important;
-  z-index:1000 !important;
-}
-.top-bar{
-  position:fixed !important;
-  top:0 !important;
-  left:0 !important;
-  right:0 !important;
-  z-index:1000 !important;
-}
-.progress-bar{
-  position:fixed !important;
-  top:58px !important;
-  left:0 !important;
-  right:0 !important;
-  z-index:999 !important;
-}
-</style>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
