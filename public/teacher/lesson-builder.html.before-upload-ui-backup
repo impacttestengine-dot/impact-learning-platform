@@ -83,100 +83,7 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 
 .cb-date,.cb-number,.cb-url{width:100%;padding:10px 14px;border-radius:9px;border:1.5px solid #e0e3e8;font-family:Inter,sans-serif;font-size:.9rem;color:#9ca3af;background:#fff;pointer-events:none}
 
-.impact-upload{
-margin-top:10px;
-}
-
-.impact-upload-title{
-font-size:14px;
-font-weight:700;
-color:#334155;
-margin-bottom:10px;
-}
-
-.impact-drop-zone{
-
-border:2px dashed #8ec5ff;
-border-radius:14px;
-
-padding:34px;
-
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-
-gap:10px;
-
-background:#f8fbff;
-
-transition:.25s;
-
-cursor:pointer;
-
-}
-
-.impact-drop-zone:hover{
-
-background:#eef7ff;
-
-border-color:#2196f3;
-
-}
-
-.impact-upload-icon{
-
-font-size:34px;
-
-}
-
-.impact-upload-text{
-
-font-weight:700;
-
-color:#374151;
-
-}
-
-.impact-upload-or{
-
-font-size:13px;
-
-color:#94a3b8;
-
-}
-
-.impact-upload-btn{
-
-padding:10px 24px;
-
-border:none;
-
-border-radius:999px;
-
-background:#06b6d4;
-
-color:white;
-
-font-weight:700;
-
-cursor:pointer;
-
-transition:.2s;
-
-}
-
-.impact-upload-btn:hover{
-
-background:#0891b2;
-
-}
-
-.impact-hidden-upload{
-
-display:none;
-
-}
+.file-zone{border:2px dashed #d1d5db;border-radius:10px;padding:28px;text-align:center;color:#9ca3af;font-size:.82rem;font-weight:600;margin-top:4px}
 .sig-pad{border:1.5px solid #e0e3e8;border-radius:9px;height:90px;margin-top:4px;background:#fafbfc;display:flex;align-items:center;justify-content:center;color:#d1d5db;font-size:.8rem}
 
 .page-break-wrap{padding:16px 0}
@@ -411,46 +318,7 @@ const TEMPLATES = {
   },
   fileupload: {
     label: "File Upload",
-    render: ()=>`
-        ${makeQuestionHeader("Upload your file here.")}
-
-        <div class="impact-upload">
-
-            <div class="impact-upload-title">
-                Upload your files
-            </div>
-
-            <div class="impact-drop-zone">
-
-                <div class="impact-upload-icon">
-                    📎
-                </div>
-
-                <div class="impact-upload-text">
-                    Drag & Drop files here
-                </div>
-
-                <div class="impact-upload-or">
-                    or
-                </div>
-
-                <button
-                    class="impact-upload-btn"
-                    type="button">
-
-                    Browse Files
-
-                </button>
-
-                <input
-                    class="impact-hidden-upload"
-                    type="file"
-                    multiple>
-
-            </div>
-
-        </div>
-    `
+    render: ()=>`${makeQuestionHeader("Upload your file here.")}<div class="file-zone">📎 Click or drag file here to upload</div>`
   },
   signature: {
     label: "Signature",
