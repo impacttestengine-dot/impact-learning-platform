@@ -206,7 +206,70 @@ display:none;
 </head>
 
 <body>
-<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-global-bg.js">
+/* ============================================================
+   FILE BROWSER (UI ONLY)
+============================================================ */
+
+document.addEventListener("click", function(e){
+
+    const browseBtn = e.target.closest(".impact-upload-btn");
+
+    if(!browseBtn) return;
+
+    const upload = browseBtn
+        .closest(".impact-upload")
+        .querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("click", function(e){
+
+    const zone = e.target.closest(".impact-drop-zone");
+
+    if(!zone) return;
+
+    if(e.target.closest(".impact-upload-btn")) return;
+
+    const upload = zone.querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("change", function(e){
+
+    if(!e.target.classList.contains("impact-hidden-upload")) return;
+
+    const zone = e.target.closest(".impact-upload")
+        .querySelector(".impact-upload-text");
+
+    if(!zone) return;
+
+    if(e.target.files.length===1){
+
+        zone.textContent = e.target.files[0].name;
+
+    }else if(e.target.files.length>1){
+
+        zone.textContent =
+            e.target.files.length + " files selected";
+
+    }
+
+});
+
+</script>
 
 <nav class="lp-nav">
   <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard">
@@ -297,9 +360,198 @@ display:none;
 
 <input id="pcImageInput" type="file" accept="image/*" style="display:none" multiple>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
-<script src="/__/firebase/init.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js">
+/* ============================================================
+   FILE BROWSER (UI ONLY)
+============================================================ */
+
+document.addEventListener("click", function(e){
+
+    const browseBtn = e.target.closest(".impact-upload-btn");
+
+    if(!browseBtn) return;
+
+    const upload = browseBtn
+        .closest(".impact-upload")
+        .querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("click", function(e){
+
+    const zone = e.target.closest(".impact-drop-zone");
+
+    if(!zone) return;
+
+    if(e.target.closest(".impact-upload-btn")) return;
+
+    const upload = zone.querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("change", function(e){
+
+    if(!e.target.classList.contains("impact-hidden-upload")) return;
+
+    const zone = e.target.closest(".impact-upload")
+        .querySelector(".impact-upload-text");
+
+    if(!zone) return;
+
+    if(e.target.files.length===1){
+
+        zone.textContent = e.target.files[0].name;
+
+    }else if(e.target.files.length>1){
+
+        zone.textContent =
+            e.target.files.length + " files selected";
+
+    }
+
+});
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js">
+/* ============================================================
+   FILE BROWSER (UI ONLY)
+============================================================ */
+
+document.addEventListener("click", function(e){
+
+    const browseBtn = e.target.closest(".impact-upload-btn");
+
+    if(!browseBtn) return;
+
+    const upload = browseBtn
+        .closest(".impact-upload")
+        .querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("click", function(e){
+
+    const zone = e.target.closest(".impact-drop-zone");
+
+    if(!zone) return;
+
+    if(e.target.closest(".impact-upload-btn")) return;
+
+    const upload = zone.querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("change", function(e){
+
+    if(!e.target.classList.contains("impact-hidden-upload")) return;
+
+    const zone = e.target.closest(".impact-upload")
+        .querySelector(".impact-upload-text");
+
+    if(!zone) return;
+
+    if(e.target.files.length===1){
+
+        zone.textContent = e.target.files[0].name;
+
+    }else if(e.target.files.length>1){
+
+        zone.textContent =
+            e.target.files.length + " files selected";
+
+    }
+
+});
+
+</script>
+<script src="/__/firebase/init.js">
+/* ============================================================
+   FILE BROWSER (UI ONLY)
+============================================================ */
+
+document.addEventListener("click", function(e){
+
+    const browseBtn = e.target.closest(".impact-upload-btn");
+
+    if(!browseBtn) return;
+
+    const upload = browseBtn
+        .closest(".impact-upload")
+        .querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("click", function(e){
+
+    const zone = e.target.closest(".impact-drop-zone");
+
+    if(!zone) return;
+
+    if(e.target.closest(".impact-upload-btn")) return;
+
+    const upload = zone.querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("change", function(e){
+
+    if(!e.target.classList.contains("impact-hidden-upload")) return;
+
+    const zone = e.target.closest(".impact-upload")
+        .querySelector(".impact-upload-text");
+
+    if(!zone) return;
+
+    if(e.target.files.length===1){
+
+        zone.textContent = e.target.files[0].name;
+
+    }else if(e.target.files.length>1){
+
+        zone.textContent =
+            e.target.files.length + " files selected";
+
+    }
+
+});
+
+</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
@@ -868,81 +1120,134 @@ document.addEventListener("change", function(e){
 
 </script>
 
-<script src="/js/impact-recycle-bin.js"></script>
-<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+<script src="/js/impact-recycle-bin.js">
+/* ============================================================
+   FILE BROWSER (UI ONLY)
+============================================================ */
 
-<!-- IMPACT FILE PICKER START -->
+document.addEventListener("click", function(e){
 
-<script>
+    const browseBtn = e.target.closest(".impact-upload-btn");
 
-document.addEventListener("click",function(e){
+    if(!browseBtn) return;
 
-    const btn=e.target.closest(".impact-upload-btn");
+    const upload = browseBtn
+        .closest(".impact-upload")
+        .querySelector(".impact-hidden-upload");
 
-    if(btn){
+    if(upload){
 
-        e.preventDefault();
-
-        const input=btn
-            .closest(".impact-upload")
-            .querySelector(".impact-hidden-upload");
-
-        if(input){
-
-            input.click();
-
-        }
-
-        return;
-
-    }
-
-    const zone=e.target.closest(".impact-drop-zone");
-
-    if(zone){
-
-        if(e.target.closest(".impact-upload-btn")) return;
-
-        const input=zone.querySelector(".impact-hidden-upload");
-
-        if(input){
-
-            input.click();
-
-        }
+        upload.click();
 
     }
 
 });
 
-document.addEventListener("change",function(e){
+document.addEventListener("click", function(e){
+
+    const zone = e.target.closest(".impact-drop-zone");
+
+    if(!zone) return;
+
+    if(e.target.closest(".impact-upload-btn")) return;
+
+    const upload = zone.querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("change", function(e){
 
     if(!e.target.classList.contains("impact-hidden-upload")) return;
 
-    const text=e.target
-        .closest(".impact-upload")
+    const zone = e.target.closest(".impact-upload")
         .querySelector(".impact-upload-text");
 
-    if(!text) return;
+    if(!zone) return;
 
-    if(e.target.files.length==1){
+    if(e.target.files.length===1){
 
-        text.textContent=e.target.files[0].name;
+        zone.textContent = e.target.files[0].name;
 
-    }
-    else if(e.target.files.length>1){
+    }else if(e.target.files.length>1){
 
-        text.textContent=e.target.files.length + " files selected";
+        zone.textContent =
+            e.target.files.length + " files selected";
 
     }
 
 });
 
 </script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr">
+/* ============================================================
+   FILE BROWSER (UI ONLY)
+============================================================ */
 
-<!-- IMPACT FILE PICKER END -->
+document.addEventListener("click", function(e){
 
+    const browseBtn = e.target.closest(".impact-upload-btn");
+
+    if(!browseBtn) return;
+
+    const upload = browseBtn
+        .closest(".impact-upload")
+        .querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("click", function(e){
+
+    const zone = e.target.closest(".impact-drop-zone");
+
+    if(!zone) return;
+
+    if(e.target.closest(".impact-upload-btn")) return;
+
+    const upload = zone.querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("change", function(e){
+
+    if(!e.target.classList.contains("impact-hidden-upload")) return;
+
+    const zone = e.target.closest(".impact-upload")
+        .querySelector(".impact-upload-text");
+
+    if(!zone) return;
+
+    if(e.target.files.length===1){
+
+        zone.textContent = e.target.files[0].name;
+
+    }else if(e.target.files.length>1){
+
+        zone.textContent =
+            e.target.files.length + " files selected";
+
+    }
+
+});
+
+</script>
 </body>
 </html>
-
 
