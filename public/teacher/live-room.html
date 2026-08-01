@@ -1,0 +1,696 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Live Room | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/live-classroom.css">
+</head>
+<body style="overflow:hidden">
+
+<!-- HEADER -->
+<header class="room-header">
+  <div class="room-title" id="roomTitle">Live Classroom</div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="room-id-badge" id="roomIdBadge" title="Click to copy Meeting ID">Connecting...</span>
+    <div class="room-status">
+      <span class="status-dot connecting" id="statusDot"></span>
+      <span id="statusText">Connecting</span>
+    </div>
+  </div>
+</header>
+
+<!-- VIDEO GRID -->
+<div class="video-grid p1" id="videoGrid"></div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <button class="ctrl-btn ctrl-btn-cam" id="camBtn" type="button" title="Toggle Camera">
+    <svg id="camIcon" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+    <span>Camera</span>
+  </button>
+  <button class="ctrl-btn ctrl-btn-mic" id="micBtn" type="button" title="Toggle Microphone">
+    <svg id="micIcon" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    <span>Mic</span>
+  </button>
+  <div class="ctrl-separator"></div>
+  <button class="ctrl-btn ctrl-btn-screen" id="screenBtn" type="button" title="Share Screen">
+    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    <span>Screen</span>
+  </button>
+  <div class="ctrl-separator" id="recSep"></div>
+  <button class="ctrl-btn ctrl-btn-rec" id="recBtn" type="button" title="Record Meeting" style="display:none">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+    <span id="recLabel">Record</span>
+  </button>
+  <div class="ctrl-separator"></div>
+  <button class="ctrl-btn ctrl-btn-leave" id="leaveBtn" type="button">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    Leave
+  </button>
+</div>
+
+<div class="lc-toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+(async function(){
+"use strict";
+
+const params     = new URLSearchParams(location.search);
+const MEETING_ID = params.get("id")   || "";
+const MY_NAME    = decodeURIComponent(params.get("name") || "Guest");
+const IS_HOST    = params.get("host") === "true";
+const MY_ID      = "p_" + Math.random().toString(36).slice(2,10);
+
+if(!MEETING_ID){ location.href = "/teacher/live-classroom.html"; return; }
+
+const db      = firebase.firestore();
+const storage = firebase.storage();
+
+// ── ICE CONFIG (Google STUN + optional TURN) ─────────────────
+const ICE_CONFIG = {
+  iceServers:[
+    { urls:"stun:stun.l.google.com:19302" },
+    { urls:"stun:stun1.l.google.com:19302" },
+    { urls:"stun:stun2.l.google.com:19302" }
+  ]
+};
+
+// ── STATE ─────────────────────────────────────────────────────
+let localStream     = null;
+let screenStream    = null;
+let camOn           = true;
+let micOn           = true;
+let screenOn        = false;
+let recording       = false;
+let mediaRecorder   = null;
+let recordChunks    = [];
+const peers         = {};  // peerId -> RTCPeerConnection
+const remoteStreams  = {};  // peerId -> MediaStream
+let unsubscribers   = [];
+
+// ── UI REFS ───────────────────────────────────────────────────
+const videoGrid  = document.getElementById("videoGrid");
+const roomTitle  = document.getElementById("roomTitle");
+const roomIdBadge= document.getElementById("roomIdBadge");
+const statusDot  = document.getElementById("statusDot");
+const statusText = document.getElementById("statusText");
+const camBtn     = document.getElementById("camBtn");
+const micBtn     = document.getElementById("micBtn");
+const screenBtn  = document.getElementById("screenBtn");
+const recBtn     = document.getElementById("recBtn");
+const recLabel   = document.getElementById("recLabel");
+const leaveBtn   = document.getElementById("leaveBtn");
+
+function toast(msg, dur=3000){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), dur);
+}
+
+function setStatus(text, connecting=false){
+  statusText.textContent = text;
+  statusDot.className = "status-dot" + (connecting?" connecting":"");
+}
+
+// ── TILE MANAGEMENT ───────────────────────────────────────────
+function updateGrid(){
+  const count = videoGrid.children.length;
+  videoGrid.className = "video-grid p" + Math.min(count,10);
+}
+
+function createTile(id, name, stream, isLocal=false){
+  const existing = document.getElementById("tile-"+id);
+  if(existing) return;
+
+  const tile = document.createElement("div");
+  tile.className = "video-tile";
+  tile.id = "tile-"+id;
+
+  const video = document.createElement("video");
+  video.autoplay = true;
+  video.playsInline = true;
+  video.muted = isLocal;
+  if(stream) video.srcObject = stream;
+
+  const label = document.createElement("div");
+  label.className = "tile-label";
+  label.textContent = isLocal ? MY_NAME + " (You)" : name;
+
+  const mutedBadge = document.createElement("div");
+  mutedBadge.className = "tile-muted";
+  mutedBadge.id = "muted-"+id;
+  mutedBadge.textContent = "🔇";
+
+  const camOff = document.createElement("div");
+  camOff.className = "tile-cam-off";
+  camOff.id = "camoff-"+id;
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = (name||"?")[0].toUpperCase();
+  const camName = document.createElement("div");
+  camName.className = "cam-name";
+  camName.textContent = isLocal ? MY_NAME + " (You)" : name;
+  camOff.appendChild(avatar);
+  camOff.appendChild(camName);
+
+  tile.appendChild(video);
+  tile.appendChild(label);
+  tile.appendChild(mutedBadge);
+  tile.appendChild(camOff);
+  videoGrid.appendChild(tile);
+  updateGrid();
+}
+
+function removeTile(id){
+  const tile = document.getElementById("tile-"+id);
+  if(tile) tile.remove();
+  updateGrid();
+}
+
+function setTileStream(id, stream){
+  const tile = document.getElementById("tile-"+id);
+  if(!tile) return;
+  const video = tile.querySelector("video");
+  if(video) video.srcObject = stream;
+}
+
+function setTileCamOff(id, off){
+  const el = document.getElementById("camoff-"+id);
+  if(el) el.classList.toggle("show", off);
+  const tile = document.getElementById("tile-"+id);
+  if(tile){
+    const video = tile.querySelector("video");
+    if(video) video.style.visibility = off ? "hidden" : "visible";
+  }
+}
+
+// ── LOCAL MEDIA ───────────────────────────────────────────────
+async function getLocalStream(){
+  try{
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video:{ width:{ideal:1280}, height:{ideal:720}, frameRate:{ideal:24} },
+      audio:{ echoCancellation:true, noiseSuppression:true }
+    });
+    createTile(MY_ID, MY_NAME, localStream, true);
+    return true;
+  }catch(e){
+    toast("⚠️ Camera/mic access denied. Check browser permissions.");
+    createTile(MY_ID, MY_NAME, null, true);
+    setTileCamOff(MY_ID, true);
+    return false;
+  }
+}
+
+// ── REGISTER PARTICIPANT ──────────────────────────────────────
+async function registerParticipant(){
+  await db.collection("meetings").doc(MEETING_ID)
+    .collection("participants").doc(MY_ID).set({
+      participantId: MY_ID,
+      displayName:   MY_NAME,
+      isHost:        IS_HOST,
+      cameraEnabled: camOn,
+      micEnabled:    micOn,
+      joinedAt:      new Date().toISOString()
+    });
+
+  // Clean up on leave/close
+  window.addEventListener("beforeunload", cleanup);
+}
+
+// ── WEBRTC — HOST SIDE ────────────────────────────────────────
+// Host listens for participants and creates offers to each
+function hostListenForParticipants(){
+  const unsub = db.collection("meetings").doc(MEETING_ID)
+    .collection("participants")
+    .onSnapshot(snap=>{
+      snap.docChanges().forEach(async change=>{
+        const p = change.doc.data();
+        if(p.participantId === MY_ID) return; // skip self
+
+        if(change.type === "added"){
+          toast(`${p.displayName} joined`);
+          await hostConnectToParticipant(p.participantId, p.displayName);
+        }
+        if(change.type === "removed"){
+          toast(`${p.displayName} left`);
+          closePeer(p.participantId);
+          removeTile(p.participantId);
+        }
+      });
+    });
+  unsubscribers.push(unsub);
+}
+
+async function hostConnectToParticipant(pid, pname){
+  if(peers[pid]) return;
+
+  const pc = new RTCPeerConnection(ICE_CONFIG);
+  peers[pid] = pc;
+
+  // Add local tracks
+  if(localStream) localStream.getTracks().forEach(t=>pc.addTrack(t, localStream));
+
+  // Receive remote stream
+  const remoteStream = new MediaStream();
+  remoteStreams[pid] = remoteStream;
+  createTile(pid, pname, remoteStream);
+
+  pc.ontrack = e=>{
+    e.streams[0].getTracks().forEach(t=>remoteStream.addTrack(t));
+    setTileStream(pid, remoteStream);
+  };
+
+  // ICE candidates — host sends to participant's subcollection
+  pc.onicecandidate = e=>{
+    if(!e.candidate) return;
+    db.collection("meetings").doc(MEETING_ID)
+      .collection("signals").doc(pid)
+      .collection("host-ice").add({ candidate: e.candidate.toJSON(), ts: Date.now() });
+  };
+
+  pc.onconnectionstatechange = ()=>{
+    if(pc.connectionState === "connected") setStatus("Live · " + Object.keys(peers).length + " participant(s)");
+    if(pc.connectionState === "failed") toast("⚠️ Connection to " + pname + " failed.");
+  };
+
+  // Create offer
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  await db.collection("meetings").doc(MEETING_ID)
+    .collection("signals").doc(pid).set({
+      offer:{ type: offer.type, sdp: offer.sdp },
+      answer: null
+    });
+
+  // Listen for answer from participant
+  const unsub = db.collection("meetings").doc(MEETING_ID)
+    .collection("signals").doc(pid)
+    .onSnapshot(async snap=>{
+      const data = snap.data();
+      if(data && data.answer && !pc.currentRemoteDescription){
+        await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+      }
+    });
+  unsubscribers.push(unsub);
+
+  // Listen for participant ICE candidates
+  const unsub2 = db.collection("meetings").doc(MEETING_ID)
+    .collection("signals").doc(pid)
+    .collection("participant-ice")
+    .orderBy("ts")
+    .onSnapshot(snap=>{
+      snap.docChanges().forEach(async change=>{
+        if(change.type === "added"){
+          try{
+            await pc.addIceCandidate(new RTCIceCandidate(change.doc.data().candidate));
+          }catch(e){}
+        }
+      });
+    });
+  unsubscribers.push(unsub2);
+}
+
+// ── WEBRTC — PARTICIPANT SIDE ─────────────────────────────────
+// Participant listens for offer from host, sends answer
+function participantListenForOffer(){
+  const unsub = db.collection("meetings").doc(MEETING_ID)
+    .collection("signals").doc(MY_ID)
+    .onSnapshot(async snap=>{
+      const data = snap.data();
+      if(!data || !data.offer) return;
+      if(peers[MEETING_ID]) return; // already connected
+
+      const pc = new RTCPeerConnection(ICE_CONFIG);
+      peers[MEETING_ID] = pc;
+
+      // Add local tracks
+      if(localStream) localStream.getTracks().forEach(t=>pc.addTrack(t, localStream));
+
+      // Receive host stream
+      const remoteStream = new MediaStream();
+      remoteStreams["host"] = remoteStream;
+
+      pc.ontrack = e=>{
+        e.streams[0].getTracks().forEach(t=>remoteStream.addTrack(t));
+        // Host tile is first tile — update it
+        const hostTileVideo = document.querySelector("#tile-host video");
+        if(hostTileVideo) hostTileVideo.srcObject = remoteStream;
+      };
+
+      pc.onicecandidate = e=>{
+        if(!e.candidate) return;
+        db.collection("meetings").doc(MEETING_ID)
+          .collection("signals").doc(MY_ID)
+          .collection("participant-ice").add({ candidate: e.candidate.toJSON(), ts: Date.now() });
+      };
+
+      pc.onconnectionstatechange = ()=>{
+        if(pc.connectionState === "connected"){
+          setStatus("Live");
+          setTileStream("host", remoteStream);
+        }
+      };
+
+      await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+
+      await db.collection("meetings").doc(MEETING_ID)
+        .collection("signals").doc(MY_ID).update({
+          answer:{ type: answer.type, sdp: answer.sdp }
+        });
+
+      // Listen for host ICE candidates
+      const unsub2 = db.collection("meetings").doc(MEETING_ID)
+        .collection("signals").doc(MY_ID)
+        .collection("host-ice")
+        .orderBy("ts")
+        .onSnapshot(snap=>{
+          snap.docChanges().forEach(async change=>{
+            if(change.type === "added"){
+              try{
+                await pc.addIceCandidate(new RTCIceCandidate(change.doc.data().candidate));
+              }catch(e){}
+            }
+          });
+        });
+      unsubscribers.push(unsub2);
+    });
+  unsubscribers.push(unsub);
+}
+
+// If participant: also listen for who else is in the meeting
+function participantListenForOthers(){
+  const unsub = db.collection("meetings").doc(MEETING_ID)
+    .collection("participants")
+    .onSnapshot(snap=>{
+      snap.docChanges().forEach(change=>{
+        const p = change.doc.data();
+        if(p.participantId === MY_ID) return;
+        if(change.type === "added" && p.isHost){
+          // Create a placeholder tile for the host
+          if(!document.getElementById("tile-host")){
+            createTile("host", p.displayName + " (Host)", null);
+          }
+        }
+        if(change.type === "removed"){
+          if(p.isHost){ toast("Host ended the meeting."); cleanup(); location.href="/teacher/live-classroom.html"; }
+        }
+      });
+    });
+  unsubscribers.push(unsub);
+}
+
+// ── CONTROLS ──────────────────────────────────────────────────
+camBtn.onclick = function(){
+  if(!localStream) return;
+  camOn = !camOn;
+  localStream.getVideoTracks().forEach(t=>{ t.enabled = camOn; });
+  camBtn.classList.toggle("off", !camOn);
+  setTileCamOff(MY_ID, !camOn);
+  camBtn.querySelector("span").textContent = camOn ? "Camera" : "Cam Off";
+  updateParticipantState();
+};
+
+micBtn.onclick = function(){
+  if(!localStream) return;
+  micOn = !micOn;
+  localStream.getAudioTracks().forEach(t=>{ t.enabled = micOn; });
+  micBtn.classList.toggle("off", !micOn);
+  const mutedEl = document.getElementById("muted-"+MY_ID);
+  if(mutedEl) mutedEl.classList.toggle("show", !micOn);
+  micBtn.querySelector("span").textContent = micOn ? "Mic" : "Muted";
+  updateParticipantState();
+};
+
+screenBtn.onclick = async function(){
+  if(!screenOn){
+    try{
+      screenStream = await navigator.mediaDevices.getDisplayMedia({ video:true, audio:true });
+      screenOn = true;
+      screenBtn.classList.add("active");
+      screenBtn.querySelector("span").textContent = "Sharing";
+      toast("Screen sharing started");
+
+      // Replace video track in all peer connections
+      const screenTrack = screenStream.getVideoTracks()[0];
+      Object.values(peers).forEach(pc=>{
+        const sender = pc.getSenders().find(s=>s.track&&s.track.kind==="video");
+        if(sender) sender.replaceTrack(screenTrack);
+      });
+      // Update local tile
+      const localVid = document.querySelector("#tile-"+MY_ID+" video");
+      if(localVid) localVid.srcObject = screenStream;
+
+      screenTrack.onended = ()=>stopScreenShare();
+    }catch(e){
+      toast("Screen sharing cancelled.");
+    }
+  }else{
+    stopScreenShare();
+  }
+};
+
+function stopScreenShare(){
+  if(!screenOn) return;
+  screenOn = false;
+  screenBtn.classList.remove("active");
+  screenBtn.querySelector("span").textContent = "Screen";
+  if(screenStream){ screenStream.getTracks().forEach(t=>t.stop()); screenStream = null; }
+  // Restore camera track
+  if(localStream){
+    const camTrack = localStream.getVideoTracks()[0];
+    Object.values(peers).forEach(pc=>{
+      const sender = pc.getSenders().find(s=>s.track&&s.track.kind==="video");
+      if(sender&&camTrack) sender.replaceTrack(camTrack);
+    });
+    const localVid = document.querySelector("#tile-"+MY_ID+" video");
+    if(localVid) localVid.srcObject = localStream;
+  }
+  toast("Screen sharing stopped");
+}
+
+// ── RECORDING (HOST ONLY) ─────────────────────────────────────
+function setupRecording(){
+  recBtn.style.display = "flex";
+
+  recBtn.onclick = async function(){
+    if(!recording){
+      startRecording();
+    }else{
+      stopRecording();
+    }
+  };
+}
+
+function startRecording(){
+  // Capture the video grid element as a canvas stream
+  // We use a composite approach: record from a canvas that draws all video tiles
+  recordChunks = [];
+
+  // Find the best supported format
+  const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
+    ? "video/webm;codecs=vp9"
+    : MediaRecorder.isTypeSupported("video/webm")
+    ? "video/webm"
+    : "video/mp4";
+
+  // Capture all streams into a single composite canvas
+  const canvas  = document.createElement("canvas");
+  canvas.width  = 1280;
+  canvas.height = 720;
+  const ctx     = canvas.getContext("2d");
+
+  const videos  = Array.from(videoGrid.querySelectorAll("video")).filter(v=>v.srcObject);
+  const total   = videos.length || 1;
+  const cols    = total <= 1 ? 1 : total <= 4 ? 2 : 3;
+  const rows    = Math.ceil(total / cols);
+  const tileW   = canvas.width / cols;
+  const tileH   = canvas.height / rows;
+
+  const drawFrame = ()=>{
+    ctx.fillStyle = "#0a0c14";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    const vids = Array.from(videoGrid.querySelectorAll("video")).filter(v=>v.srcObject);
+    vids.forEach((vid,i)=>{
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      try{ ctx.drawImage(vid, col*tileW+2, row*tileH+2, tileW-4, tileH-4); }catch(e){}
+    });
+  };
+
+  const drawInterval = setInterval(drawFrame, 1000/24); // 24fps
+  const canvasStream = canvas.captureStream(24);
+
+  // Mix in audio from local stream
+  if(localStream){
+    const audioCtx   = new AudioContext();
+    const dest        = audioCtx.createMediaStreamDestination();
+    const localSrc    = audioCtx.createMediaStreamSource(localStream);
+    localSrc.connect(dest);
+    // Add remote audio too
+    Object.values(remoteStreams).forEach(rs=>{
+      try{
+        const remoteSrc = audioCtx.createMediaStreamSource(rs);
+        remoteSrc.connect(dest);
+      }catch(e){}
+    });
+    canvasStream.addTrack(dest.stream.getAudioTracks()[0]);
+  }
+
+  try{
+    mediaRecorder = new MediaRecorder(canvasStream, { mimeType, videoBitsPerSecond:2500000 });
+  }catch(e){
+    mediaRecorder = new MediaRecorder(canvasStream);
+  }
+
+  mediaRecorder.ondataavailable = e=>{ if(e.data.size>0) recordChunks.push(e.data); };
+  mediaRecorder.onstop = async ()=>{
+    clearInterval(drawInterval);
+    await uploadRecording(mimeType);
+  };
+
+  mediaRecorder.start(1000); // chunk every second
+  recording = true;
+  recBtn.classList.add("recording");
+  recLabel.textContent = "Stop Rec";
+  toast("🔴 Recording started");
+}
+
+function stopRecording(){
+  if(mediaRecorder && recording){
+    mediaRecorder.stop();
+    recording = false;
+    recBtn.classList.remove("recording");
+    recLabel.textContent = "Uploading...";
+    recBtn.disabled = true;
+    toast("Recording stopped — uploading...", 5000);
+  }
+}
+
+async function uploadRecording(mimeType){
+  try{
+    const ext  = mimeType.includes("mp4") ? "mp4" : "webm";
+    const blob = new Blob(recordChunks, { type: mimeType });
+    const path = `recordings/${MEETING_ID}/recording_${Date.now()}.${ext}`;
+    const ref  = storage.ref(path);
+
+    const snap = await ref.put(blob);
+    const url  = await snap.ref.getDownloadURL();
+
+    // Save metadata to Firestore
+    const recId = "rec_" + Date.now();
+    await db.collection("recordings").doc(recId).set({
+      recordingId:  recId,
+      meetingId:    MEETING_ID,
+      meetingTitle: roomTitle.textContent,
+      storagePath:  path,
+      downloadURL:  url,
+      duration:     0,
+      mimeType,
+      createdAt:    new Date().toISOString(),
+      recordedBy:   MY_NAME
+    });
+
+    recLabel.textContent = "Record";
+    recBtn.disabled = false;
+    toast("✅ Recording saved!", 4000);
+  }catch(e){
+    console.error("Upload failed:", e);
+    recLabel.textContent = "Record";
+    recBtn.disabled = false;
+    toast("⚠️ Recording upload failed. Check Storage rules.");
+  }
+}
+
+function updateParticipantState(){
+  db.collection("meetings").doc(MEETING_ID)
+    .collection("participants").doc(MY_ID)
+    .update({ cameraEnabled: camOn, micEnabled: micOn })
+    .catch(()=>{});
+}
+
+// ── LEAVE / CLEANUP ───────────────────────────────────────────
+leaveBtn.onclick = function(){
+  if(recording) stopRecording();
+  cleanup();
+  if(IS_HOST){
+    db.collection("meetings").doc(MEETING_ID).update({ status:"ended", endedAt: new Date().toISOString() }).catch(()=>{});
+  }
+  location.href = "/teacher/live-classroom.html";
+};
+
+function cleanup(){
+  unsubscribers.forEach(u=>u&&u());
+  Object.values(peers).forEach(pc=>{ try{ pc.close(); }catch(e){} });
+  if(localStream)  localStream.getTracks().forEach(t=>t.stop());
+  if(screenStream) screenStream.getTracks().forEach(t=>t.stop());
+  db.collection("meetings").doc(MEETING_ID)
+    .collection("participants").doc(MY_ID).delete().catch(()=>{});
+}
+
+function closePeer(id){
+  if(peers[id]){ try{ peers[id].close(); }catch(e){} delete peers[id]; }
+  delete remoteStreams[id];
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+async function init(){
+  setStatus("Connecting", true);
+
+  // Load meeting info
+  const meetSnap = await db.collection("meetings").doc(MEETING_ID).get();
+  if(!meetSnap.exists || meetSnap.data().status === "ended"){
+    toast("This meeting has ended or does not exist.");
+    setTimeout(()=>{ location.href="/teacher/live-classroom.html"; }, 2000);
+    return;
+  }
+  const meetData = meetSnap.data();
+  roomTitle.textContent  = meetData.title || "Live Classroom";
+  document.title         = (meetData.title || "Live Room") + " | Impact";
+  roomIdBadge.textContent = MEETING_ID;
+  roomIdBadge.onclick     = ()=>{
+    navigator.clipboard.writeText(MEETING_ID).catch(()=>{});
+    toast("Meeting ID copied!");
+  };
+
+  // Get camera & mic
+  await getLocalStream();
+
+  // Register in Firestore
+  await registerParticipant();
+
+  // Show recording controls for host
+  if(IS_HOST){
+    setupRecording();
+    hostListenForParticipants();
+    setStatus("Waiting for participants...", true);
+  } else {
+    // Participant: create placeholder for host, listen for offer
+    const participants = await db.collection("meetings").doc(MEETING_ID)
+      .collection("participants").get();
+    const hostDoc = participants.docs.find(d=>d.data().isHost);
+    if(hostDoc){
+      createTile("host", hostDoc.data().displayName + " (Host)", null);
+    }
+    participantListenForOffer();
+    participantListenForOthers();
+    setStatus("Joining...", true);
+  }
+}
+
+init();
+
+})();
+</script>
+</body>
+</html>
