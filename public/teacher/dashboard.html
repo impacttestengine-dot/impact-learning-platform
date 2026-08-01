@@ -62,11 +62,72 @@ body{min-height:100vh;font-family:Inter,system-ui,sans-serif;color:#fff;backgrou
   .dashboard-grid{grid-template-columns:1fr}
   .dashboard-page{width:min(92vw,620px)}
 }
+
+.live-class-btn{
+position:fixed;
+top:24px;
+right:92px;
+width:46px;
+height:46px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:16px;
+background:rgba(255,255,255,.16);
+border:1px solid rgba(255,255,255,.22);
+backdrop-filter:blur(18px);
+color:#fff;
+text-decoration:none;
+z-index:2147483647;
+transition:.22s;
+box-shadow:
+0 12px 30px rgba(0,0,0,.25),
+inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.live-class-btn:hover{
+transform:translateY(-2px) scale(1.05);
+background:rgba(255,255,255,.22);
+}
+
+.live-class-btn svg{
+width:22px;
+height:22px;
+stroke:currentColor;
+stroke-width:2;
+fill:none;
+stroke-linecap:round;
+stroke-linejoin:round;
+}
+
 </style>
 </head>
 
 <body>
 <a class="dashboard-home-btn" href="/">Home</a>
+
+
+<a
+class="live-class-btn"
+href="/live-class/"
+title="Live Classroom"
+aria-label="Live Classroom">
+
+<svg viewBox="0 0 24 24">
+
+<rect
+x="3"
+y="7"
+width="11"
+height="10"
+rx="2"></rect>
+
+<path
+d="M14 10l6-3v10l-6-3z"></path>
+
+</svg>
+
+</a>
 
 <div class="dashboard-menu-wrap" id="dashboardMenuWrap">
   <button class="dashboard-toggle-btn" id="dashboardToggleBtn" type="button" aria-label="Dashboard menu">⋮</button>
@@ -225,6 +286,7 @@ document.addEventListener("DOMContentLoaded",function(){
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
+
 
 
 
