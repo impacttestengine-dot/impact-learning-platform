@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Classroom Data Centre | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/live-classroom.css">
+<style>
+.data-page{position:relative;z-index:2;width:min(1080px,92vw);margin:0 auto;padding:110px 0 80px}
+.data-page h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:400;margin-bottom:6px}
+.data-page .sub{color:rgba(255,255,255,.5);font-weight:700;margin-bottom:40px;font-size:.9rem}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:36px}
+.stat-card{border-radius:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:22px;backdrop-filter:blur(18px)}
+.stat-label{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:10px}
+.stat-value{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2.6rem;font-weight:400;color:#fff;line-height:1}
+.stat-sub{font-size:.76rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:6px}
+.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+.meetings-table{width:100%;border-collapse:collapse;margin-bottom:36px}
+.meetings-table th{text-align:left;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.meetings-table td{padding:12px 14px;font-size:.84rem;font-weight:700;color:rgba(255,255,255,.82);border-bottom:1px solid rgba(255,255,255,.06)}
+.meetings-table tr:hover td{background:rgba(255,255,255,.04)}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.68rem;font-weight:900}
+.badge-active{background:rgba(72,187,120,.2);color:#9ae6b4;border:1px solid rgba(72,187,120,.3)}
+.badge-ended{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.12)}
+.badge-rec{background:rgba(245,101,101,.18);color:#feb2b2;border:1px solid rgba(245,101,101,.25)}
+.usage-table{width:100%;border-collapse:collapse}
+.usage-table th{text-align:left;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.usage-table td{padding:11px 14px;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.75);border-bottom:1px solid rgba(255,255,255,.05)}
+.refresh-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:800;font-size:.82rem;cursor:pointer;transition:.15s;margin-bottom:32px}
+.refresh-btn:hover{background:rgba(255,255,255,.14)}
+.loading-row td{color:rgba(255,255,255,.3);font-style:italic}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="lc-nav">
+  <a class="lc-nav-btn" href="/teacher/live-classroom.html" title="Back to Lobby">
+    <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+  </a>
+  <a class="lc-nav-btn" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+</nav>
+
+<main class="data-page">
+  <h1>Classroom Data Centre</h1>
+  <p class="sub">Usage analytics for the Impact Live Classroom.</p>
+
+  <button class="refresh-btn" id="refreshBtn" type="button">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    Refresh
+  </button>
+
+  <!-- STATS -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-label">Total Meetings</div><div class="stat-value" id="statMeetings">—</div><div class="stat-sub">All time</div></div>
+    <div class="stat-card"><div class="stat-label">Active Now</div><div class="stat-value" id="statActive">—</div><div class="stat-sub">Live rooms</div></div>
+    <div class="stat-card"><div class="stat-label">Total Recordings</div><div class="stat-value" id="statRecs">—</div><div class="stat-sub">Saved to storage</div></div>
+    <div class="stat-card"><div class="stat-label">Total Hours</div><div class="stat-value" id="statHours">—</div><div class="stat-sub">Class time logged</div></div>
+    <div class="stat-card"><div class="stat-label">Total Joins</div><div class="stat-value" id="statJoins">—</div><div class="stat-sub">Participant sessions</div></div>
+  </div>
+
+  <!-- MEETINGS TABLE -->
+  <p class="section-label">All Meetings</p>
+  <table class="meetings-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Meeting ID</th>
+        <th>Host</th>
+        <th>Date</th>
+        <th>Duration</th>
+        <th>Participants</th>
+        <th>Status</th>
+        <th>Recording</th>
+      </tr>
+    </thead>
+    <tbody id="meetingsBody">
+      <tr class="loading-row"><td colspan="8">Loading meetings...</td></tr>
+    </tbody>
+  </table>
+
+  <!-- USAGE LOG -->
+  <p class="section-label">Participant Join Log</p>
+  <table class="usage-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Meeting</th>
+        <th>Date</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody id="usageBody">
+      <tr class="loading-row"><td colspan="5">Loading usage log...</td></tr>
+    </tbody>
+  </table>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+
+  async function loadData(){
+    // ── Meetings ──────────────────────────────────────────────
+    let meetings=[];
+    try{
+      const ms=await db.collection("meetings").orderBy("createdAt","desc").limit(100).get();
+      meetings=ms.docs.map(d=>({id:d.id,...d.data()}));
+    }catch(e){
+      const ms=await db.collection("meetings").get();
+      meetings=ms.docs.map(d=>({id:d.id,...d.data()}));
+    }
+
+    // ── Recordings ────────────────────────────────────────────
+    let recs=[];
+    try{
+      const rs=await db.collection("recordings").get();
+      recs=rs.docs.map(d=>d.data());
+    }catch(e){}
+
+    // ── Usage log ─────────────────────────────────────────────
+    let usage=[];
+    try{
+      const us=await db.collection("classroomUsage").orderBy("joinedAt","desc").limit(200).get();
+      usage=us.docs.map(d=>d.data());
+    }catch(e){
+      const us=await db.collection("classroomUsage").get();
+      usage=us.docs.map(d=>d.data());
+    }
+
+    // ── Stats ─────────────────────────────────────────────────
+    const active  = meetings.filter(m=>m.status==="active").length;
+    const totalSec= meetings.reduce((s,m)=>s+(m.durationSeconds||0),0);
+    const hrs     = (totalSec/3600).toFixed(1);
+
+    document.getElementById("statMeetings").textContent = meetings.length;
+    document.getElementById("statActive").textContent   = active;
+    document.getElementById("statRecs").textContent     = recs.length;
+    document.getElementById("statHours").textContent    = hrs;
+    document.getElementById("statJoins").textContent    = usage.length;
+
+    // ── Meetings table ────────────────────────────────────────
+    const mb = document.getElementById("meetingsBody");
+    if(!meetings.length){
+      mb.innerHTML='<tr class="loading-row"><td colspan="8">No meetings yet.</td></tr>';
+    }else{
+      mb.innerHTML = meetings.map(m=>{
+        const date  = m.createdAt ? new Date(m.createdAt).toLocaleDateString() : "—";
+        const dur   = m.durationSeconds ? Math.round(m.durationSeconds/60)+"m" : "—";
+        const pcount= m.participantCount||"—";
+        const badge = m.status==="active"
+          ? `<span class="badge badge-active">● Live</span>`
+          : `<span class="badge badge-ended">Ended</span>`;
+        const recBadge = m.hasRecording
+          ? `<span class="badge badge-rec">🔴 Yes</span>` : "—";
+        return `<tr>
+          <td>${m.title||"Untitled"}</td>
+          <td style="font-family:monospace;font-size:.78rem;letter-spacing:.06em">${m.meetingId||m.id}</td>
+          <td>${m.hostName||"—"}</td>
+          <td>${date}</td>
+          <td>${dur}</td>
+          <td>${pcount}</td>
+          <td>${badge}</td>
+          <td>${recBadge}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    // ── Usage log ─────────────────────────────────────────────
+    const ub = document.getElementById("usageBody");
+    if(!usage.length){
+      ub.innerHTML='<tr class="loading-row"><td colspan="5">No usage data yet.</td></tr>';
+    }else{
+      ub.innerHTML = usage.map(u=>{
+        const dt  = u.joinedAt ? new Date(u.joinedAt) : null;
+        const date= dt ? dt.toLocaleDateString() : "—";
+        const time= dt ? dt.toLocaleTimeString() : "—";
+        const role= u.isHost ? "Host" : "Participant";
+        return `<tr>
+          <td>${u.participantName||"—"}</td>
+          <td>${role}</td>
+          <td style="font-size:.76rem;opacity:.6">${u.meetingTitle||u.meetingId||"—"}</td>
+          <td>${date}</td>
+          <td>${time}</td>
+        </tr>`;
+      }).join("");
+    }
+  }
+
+  document.getElementById("refreshBtn").onclick = async function(){
+    this.textContent="Refreshing...";
+    await loadData();
+    this.innerHTML=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh`;
+  };
+
+  await loadData();
+});
+</script>
+
+<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
