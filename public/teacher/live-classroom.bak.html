@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function(){
       }
       toast("Joining meeting...");
       setTimeout(()=>{
-        location.href = `/teacher/live-join.html?id=${id}&name=${encodeURIComponent(name)}&host=false`;
+        location.href = `/teacher/live-room.html?id=${id}&name=${encodeURIComponent(name)}&host=false`;
       }, 400);
     }catch(e){
       err.textContent = "Could not reach the meeting. Check your connection.";

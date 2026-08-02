@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Class Ended | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/live-classroom.css">
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<div class="ended-page">
+  <div class="ended-card">
+    <div class="ended-icon" id="endedIcon">👋</div>
+    <h1 id="endedTitle">You left the class</h1>
+    <p id="endedSub">The class session has ended. Thank you for joining.</p>
+    <div class="ended-actions">
+      <a class="lc-btn lc-btn-primary" href="/teacher/live-classroom.html">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Start or Join Another Class
+      </a>
+      <a class="lc-btn lc-btn-ghost" href="/teacher/dashboard.html">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+        Back to Dashboard
+      </a>
+      <a class="lc-btn lc-btn-ghost" href="/teacher/recordings.html" style="opacity:.7">
+        📹 View Recordings
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const reason = params.get("reason") || "left";
+const icon  = document.getElementById("endedIcon");
+const title = document.getElementById("endedTitle");
+const sub   = document.getElementById("endedSub");
+
+if(reason === "ended"){
+  icon.textContent  = "🏁";
+  title.textContent = "Class has ended";
+  sub.textContent   = "The host has ended the session. Thank you for attending.";
+} else if(reason === "notfound"){
+  icon.textContent  = "🔍";
+  title.textContent = "Meeting not found";
+  sub.textContent   = "This meeting doesn't exist or has already ended.";
+} else {
+  icon.textContent  = "👋";
+  title.textContent = "You left the class";
+  sub.textContent   = "The session is still running. Rejoin anytime with your Meeting ID.";
+}
+</script>
+</body>
+</html>

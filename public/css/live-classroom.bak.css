@@ -1,0 +1,106 @@
+﻿/* ── LIVE CLASSROOM SHARED STYLES ── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:#05060b;color:#fff;min-height:100vh}
+
+/* NAV */
+.lc-nav{position:fixed;top:24px;left:28px;z-index:99999;display:flex;gap:12px}
+.lc-nav-btn{width:46px;height:46px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);cursor:pointer;transition:.15s}
+.lc-nav-btn:hover{background:rgba(255,255,255,.15)}
+.lc-nav-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* LOBBY */
+.lobby{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;text-align:center}
+.lobby-eyebrow{text-transform:uppercase;letter-spacing:.3em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.5);margin-bottom:14px}
+.lobby h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.8rem,6vw,4.8rem);font-weight:400;margin-bottom:12px;line-height:1.05}
+.lobby-sub{color:rgba(255,255,255,.55);font-weight:700;margin-bottom:48px;font-size:.95rem}
+.lobby-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:min(700px,90vw);margin-bottom:40px}
+@media(max-width:600px){.lobby-cards{grid-template-columns:1fr}}
+.lc-card{border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);padding:32px;text-align:left;transition:.2s ease}
+.lc-card:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-2px)}
+.lc-card-icon{font-size:2rem;margin-bottom:14px;display:block}
+.lc-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.6rem;font-weight:400;margin-bottom:8px}
+.lc-card p{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:20px}
+.lc-input{width:100%;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.92rem;outline:none;margin-bottom:12px;transition:.15s}
+.lc-input:focus{border-color:rgba(99,179,237,.6);background:rgba(255,255,255,.11)}
+.lc-input::placeholder{color:rgba(255,255,255,.35)}
+.lc-btn{width:100%;padding:13px;border-radius:14px;border:none;font-family:Inter,sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;transition:.18s ease;display:flex;align-items:center;justify-content:center;gap:8px}
+.lc-btn:hover{transform:translateY(-1px)}
+.lc-btn:active{transform:scale(.97)}
+.lc-btn-primary{background:rgba(99,179,237,.22);border:1px solid rgba(99,179,237,.45);color:#90cdf4}
+.lc-btn-primary:hover{background:rgba(99,179,237,.32)}
+.lc-btn-success{background:rgba(72,187,120,.2);border:1px solid rgba(72,187,120,.4);color:#9ae6b4}
+.lc-btn-success:hover{background:rgba(72,187,120,.3)}
+.lc-btn-danger{background:rgba(245,101,101,.18);border:1px solid rgba(245,101,101,.35);color:#feb2b2}
+.lc-btn-danger:hover{background:rgba(245,101,101,.28)}
+.lc-btn-ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff}
+.lc-btn-ghost:hover{background:rgba(255,255,255,.14)}
+.lc-btn-rec{background:rgba(245,101,101,.22);border:1px solid rgba(245,101,101,.4);color:#feb2b2}
+.lc-btn-rec.recording{background:rgba(245,101,101,.45);border-color:rgba(245,101,101,.7);animation:pulse-rec 1.5s infinite}
+@keyframes pulse-rec{0%,100%{opacity:1}50%{opacity:.65}}
+.lobby-recordings-link{color:rgba(255,255,255,.4);font-size:.8rem;font-weight:800;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:2px;transition:.15s}
+.lobby-recordings-link:hover{color:rgba(255,255,255,.7)}
+.error-msg{color:#feb2b2;font-size:.8rem;font-weight:800;margin-top:8px;min-height:20px}
+
+/* ── VIDEO ROOM ── */
+.room{display:grid;grid-template-rows:1fr auto;height:100vh;background:#0a0c14;overflow:hidden}
+.room-header{position:fixed;top:0;left:0;right:0;height:56px;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(10,12,20,.9);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px)}
+.room-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.1rem;font-weight:400;color:rgba(255,255,255,.85)}
+.room-id-badge{font-size:.72rem;font-weight:900;color:rgba(255,255,255,.4);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px 10px;cursor:pointer;transition:.15s;user-select:all}
+.room-id-badge:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
+.room-status{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:800;color:rgba(255,255,255,.5)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#68d391;flex-shrink:0}
+.status-dot.connecting{background:#f6ad55;animation:pulse-rec 1s infinite}
+
+/* VIDEO GRID */
+.video-grid{padding-top:56px;padding-bottom:80px;display:grid;gap:8px;height:100vh;align-content:start;overflow-y:auto;background:#0a0c14;padding-left:8px;padding-right:8px}
+.video-grid.p1{grid-template-columns:1fr}
+.video-grid.p2{grid-template-columns:1fr 1fr}
+.video-grid.p3,.video-grid.p4{grid-template-columns:1fr 1fr}
+.video-grid.p5,.video-grid.p6{grid-template-columns:repeat(3,1fr)}
+.video-grid.p7,.video-grid.p8,.video-grid.p9,.video-grid.p10{grid-template-columns:repeat(3,1fr)}
+
+.video-tile{position:relative;border-radius:16px;overflow:hidden;background:#131722;aspect-ratio:16/9;min-height:120px}
+.video-tile video{width:100%;height:100%;object-fit:cover;display:block;background:#131722}
+.video-tile .tile-label{position:absolute;bottom:10px;left:12px;font-size:.76rem;font-weight:900;color:#fff;background:rgba(0,0,0,.55);padding:4px 10px;border-radius:8px;backdrop-filter:blur(8px);max-width:calc(100% - 24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.video-tile .tile-muted{position:absolute;top:10px;right:10px;background:rgba(245,101,101,.7);border-radius:8px;padding:4px 8px;font-size:.68rem;font-weight:900;color:#fff;display:none}
+.video-tile .tile-muted.show{display:block}
+.video-tile .tile-cam-off{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#1a1f2e;flex-direction:column;gap:8px}
+.video-tile .tile-cam-off.show{display:flex}
+.tile-cam-off .avatar{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#fff}
+.tile-cam-off .cam-name{font-size:.8rem;font-weight:800;color:rgba(255,255,255,.6)}
+
+/* CONTROLS BAR */
+.controls{position:fixed;bottom:0;left:0;right:0;height:76px;z-index:100;display:flex;align-items:center;justify-content:center;gap:12px;background:rgba(10,12,20,.9);border-top:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px);padding:0 20px}
+.ctrl-btn{width:52px;height:52px;border-radius:16px;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:.58rem;font-weight:900;transition:.15s ease;color:#fff}
+.ctrl-btn:hover{transform:translateY(-2px)}
+.ctrl-btn:active{transform:scale(.94)}
+.ctrl-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ctrl-btn-cam{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)}
+.ctrl-btn-cam.off{background:rgba(245,101,101,.2);border-color:rgba(245,101,101,.4);color:#feb2b2}
+.ctrl-btn-mic{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)}
+.ctrl-btn-mic.off{background:rgba(245,101,101,.2);border-color:rgba(245,101,101,.4);color:#feb2b2}
+.ctrl-btn-screen{background:rgba(99,179,237,.12);border:1px solid rgba(99,179,237,.25);color:#90cdf4}
+.ctrl-btn-screen.active{background:rgba(99,179,237,.3);border-color:rgba(99,179,237,.6)}
+.ctrl-btn-rec{background:rgba(245,101,101,.12);border:1px solid rgba(245,101,101,.25);color:#feb2b2}
+.ctrl-btn-rec.recording{background:rgba(245,101,101,.35);border-color:rgba(245,101,101,.7);animation:pulse-rec 1.5s infinite}
+.ctrl-btn-leave{background:rgba(245,101,101,.25);border:1px solid rgba(245,101,101,.5);color:#feb2b2;width:auto;padding:0 20px;font-size:.78rem}
+.ctrl-separator{width:1px;height:36px;background:rgba(255,255,255,.1);flex-shrink:0}
+
+/* TOAST */
+.lc-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:9999;background:rgba(20,24,40,.95);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px);padding:10px 18px;border-radius:14px;font-size:.8rem;font-weight:800;color:#fff;opacity:0;transition:.25s ease;pointer-events:none;white-space:nowrap}
+.lc-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* RECORDINGS PAGE */
+.recordings-page{position:relative;z-index:2;width:min(980px,92vw);margin:0 auto;padding:110px 0 80px}
+.recordings-page h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:400;margin-bottom:8px}
+.recordings-page .sub{color:rgba(255,255,255,.5);font-weight:700;margin-bottom:36px}
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.rec-card{border-radius:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:20px;transition:.18s}
+.rec-card:hover{background:rgba(255,255,255,.1)}
+.rec-card-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.2rem;font-weight:400;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-card-meta{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45);line-height:1.8;margin-bottom:14px}
+.rec-actions{display:flex;gap:10px}
+.rec-btn{flex:1;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:#fff;font-family:Inter,sans-serif;font-weight:800;font-size:.8rem;cursor:pointer;transition:.14s;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px}
+.rec-btn:hover{background:rgba(255,255,255,.14)}
+.empty-state{text-align:center;padding:80px 40px;color:rgba(255,255,255,.3);font-weight:700}
+.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.6rem;font-weight:400;margin-bottom:10px;color:rgba(255,255,255,.4)}

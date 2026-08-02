@@ -1,0 +1,1286 @@
+﻿IMPACT LIVE CLASSROOM — FULL DUMP
+Generated: 2026-08-02 20:52:57
+==================================================
+==================================================
+FILE: public\teacher\live-classroom.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Live Classroom | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/live-classroom.css">
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="lc-nav">
+  <a class="lc-nav-btn" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+</nav>
+
+<main class="lobby">
+  <p class="lobby-eyebrow">Impact Platform</p>
+  <h1>Live Classroom</h1>
+  <p class="lobby-sub">Start or join a live video class. Up to 10 participants.</p>
+
+  <div class="lobby-cards">
+    <!-- CREATE -->
+    <div class="lc-card">
+      <span class="lc-card-icon">🎥</span>
+      <h2>Start a Class</h2>
+      <p>Create a new meeting room. Share the Meeting ID with your learners so they can join.</p>
+      <input class="lc-input" id="createName" type="text" placeholder="Your display name" maxlength="40">
+      <input class="lc-input" id="meetingTitle" type="text" placeholder="Meeting title (optional)" maxlength="60">
+      <button class="lc-btn lc-btn-primary" id="createBtn" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Create Meeting
+      </button>
+      <div class="error-msg" id="createErr"></div>
+    </div>
+
+    <!-- JOIN -->
+    <div class="lc-card">
+      <span class="lc-card-icon">🚪</span>
+      <h2>Join a Class</h2>
+      <p>Enter the Meeting ID shared by your teacher to join an existing live class.</p>
+      <input class="lc-input" id="joinName" type="text" placeholder="Your display name" maxlength="40">
+      <input class="lc-input" id="joinId" type="text" placeholder="Meeting ID" maxlength="20" style="text-transform:uppercase;letter-spacing:.1em">
+      <button class="lc-btn lc-btn-success" id="joinBtn" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Join Meeting
+      </button>
+      <div class="error-msg" id="joinErr"></div>
+    </div>
+  </div>
+
+  <a class="lobby-recordings-link" href="/teacher/recordings.html">📹 View Recordings</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a class="lobby-recordings-link" href="/teacher/live-classroom-data.html">📊 Data Centre</a>
+</main>
+
+<div class="lc-toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const db = firebase.firestore();
+
+  function toast(msg, dur=2800){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), dur);
+  }
+
+  function genId(){
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let id = "";
+    for(let i=0;i<3;i++){
+      for(let j=0;j<3;j++) id += chars[Math.floor(Math.random()*chars.length)];
+      if(i<2) id += "-";
+    }
+    return id;
+  }
+
+  // ── CREATE ──────────────────────────────────────────────────
+  document.getElementById("createBtn").onclick = async function(){
+    const name  = document.getElementById("createName").value.trim();
+    const title = document.getElementById("meetingTitle").value.trim() || "Impact Live Class";
+    const err   = document.getElementById("createErr");
+
+    if(!name){ err.textContent = "Please enter your display name."; return; }
+    err.textContent = "";
+
+    const meetingId = genId();
+
+    await db.collection("meetings").doc(meetingId).set({
+      meetingId,
+      title,
+      createdAt:  new Date().toISOString(),
+      startedAt:  new Date().toISOString(),
+      endedAt:    "",
+      status:     "active",
+      hostName:   name
+    });
+
+    toast("Meeting created! Redirecting...");
+    setTimeout(()=>{
+      location.href = `/teacher/live-room.html?id=${meetingId}&name=${encodeURIComponent(name)}&host=true`;
+    }, 600);
+  };
+
+  // ── JOIN ───────────────────────────────────────────────────
+  document.getElementById("joinBtn").onclick = async function(){
+    const name = document.getElementById("joinName").value.trim();
+    const id   = document.getElementById("joinId").value.trim().toUpperCase().replace(/\s/g,"");
+    const err  = document.getElementById("joinErr");
+
+    if(!name){ err.textContent = "Please enter your display name."; return; }
+    if(!id)  { err.textContent = "Please enter a Meeting ID."; return; }
+    err.textContent = "";
+
+    try{
+      const snap = await db.collection("meetings").doc(id).get();
+      if(!snap.exists || snap.data().status !== "active"){
+        err.textContent = "Meeting not found or has ended."; return;
+      }
+      toast("Joining meeting...");
+      setTimeout(()=>{
+        location.href = `/teacher/live-room.html?id=${id}&name=${encodeURIComponent(name)}&host=false`;
+      }, 400);
+    }catch(e){
+      err.textContent = "Could not reach the meeting. Check your connection.";
+    }
+  };
+
+  // Allow pressing Enter on join ID field
+  document.getElementById("joinId").addEventListener("keydown", function(e){
+    if(e.key === "Enter") document.getElementById("joinBtn").click();
+  });
+
+  // Check for invite link ?join=MEETINGID
+  const params = new URLSearchParams(location.search);
+  if(params.get("join")){
+    document.getElementById("joinId").value = params.get("join");
+    document.getElementById("joinName").focus();
+  }
+});
+</script>
+
+<script src="/js/impact-page-nav.js"></script>
+<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+==================================================
+FILE: public\teacher\live-room.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Live Room | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/live-classroom.css">
+<style>
+/* INVITE PANEL */
+.invite-panel{
+  position:fixed;
+  top:64px;
+  right:16px;
+  width:min(320px,90vw);
+  background:rgba(10,14,28,.96);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:20px;
+  padding:20px;
+  z-index:500;
+  backdrop-filter:blur(20px);
+  box-shadow:0 24px 70px rgba(0,0,0,.5);
+  display:none;
+  animation:slideDown .2s ease;
+}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.invite-panel.show{display:block}
+.invite-panel h3{font-family:"Sorts Mill Goudy",serif;font-size:1.2rem;font-weight:400;margin-bottom:14px;color:#fff}
+.invite-row{display:flex;gap:8px;margin-bottom:12px}
+.invite-field{flex:1;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:800;font-size:.82rem;outline:none;letter-spacing:.06em}
+.invite-copy-btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(99,179,237,.4);background:rgba(99,179,237,.15);color:#90cdf4;font-family:Inter,sans-serif;font-weight:900;font-size:.78rem;cursor:pointer;white-space:nowrap;transition:.15s}
+.invite-copy-btn:hover{background:rgba(99,179,237,.28)}
+.invite-link-row{display:flex;gap:8px;margin-bottom:6px}
+.invite-link-field{flex:1;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-family:Inter,sans-serif;font-size:.74rem;font-weight:700;outline:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.invite-note{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.35);line-height:1.5}
+.invite-close{position:absolute;top:12px;right:14px;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:1.1rem;cursor:pointer;line-height:1;padding:2px 6px}
+.invite-close:hover{color:#fff}
+</style>
+</head>
+<body style="overflow:hidden">
+
+<header class="room-header">
+  <div class="room-title" id="roomTitle">Impact Live Class</div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="room-id-badge" id="roomIdBadge" title="Click to copy Meeting ID">...</span>
+    <div class="room-status">
+      <span class="status-dot connecting" id="statusDot"></span>
+      <span id="statusText">Connecting</span>
+    </div>
+  </div>
+</header>
+
+<div class="video-grid p1" id="videoGrid"></div>
+
+<!-- INVITE PANEL -->
+<div class="invite-panel" id="invitePanel">
+  <button class="invite-close" id="inviteClose" type="button">✕</button>
+  <h3>Invite Participants</h3>
+  <p class="invite-note" style="margin-bottom:12px">Share the Meeting ID or the link below.</p>
+  <div class="invite-row">
+    <input class="invite-field" id="inviteIdField" readonly>
+    <button class="invite-copy-btn" id="copyIdBtn" type="button">Copy ID</button>
+  </div>
+  <div class="invite-link-row">
+    <input class="invite-link-field" id="inviteLinkField" readonly>
+    <button class="invite-copy-btn" id="copyLinkBtn" type="button">Copy Link</button>
+  </div>
+  <p class="invite-note">Participants open the link and enter their name to join.</p>
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn ctrl-btn-cam" id="camBtn" type="button" title="Toggle Camera">
+    <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+    <span>Camera</span>
+  </button>
+  <button class="ctrl-btn ctrl-btn-mic" id="micBtn" type="button" title="Toggle Mic">
+    <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    <span>Mic</span>
+  </button>
+  <div class="ctrl-separator"></div>
+  <button class="ctrl-btn ctrl-btn-screen" id="screenBtn" type="button" title="Share Screen">
+    <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    <span>Screen</span>
+  </button>
+  <button class="ctrl-btn" id="inviteBtn" type="button" title="Invite / Share" style="background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.35);color:#c4b5fd">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+    <span>Invite</span>
+  </button>
+  <div class="ctrl-separator" id="recSep"></div>
+  <button class="ctrl-btn ctrl-btn-rec" id="recBtn" type="button" title="Record" style="display:none">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+    <span id="recLabel">Record</span>
+  </button>
+  <div class="ctrl-separator"></div>
+  <button class="ctrl-btn ctrl-btn-leave" id="leaveBtn" type="button">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    Leave
+  </button>
+</div>
+
+<div class="lc-toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+(async function(){
+"use strict";
+
+const params     = new URLSearchParams(location.search);
+const MEETING_ID = params.get("id")   || "";
+const MY_NAME    = decodeURIComponent(params.get("name") || "Guest");
+const IS_HOST    = params.get("host") === "true";
+const MY_ID      = "p_" + Math.random().toString(36).slice(2,10);
+
+if(!MEETING_ID){ location.href="/teacher/live-classroom.html"; return; }
+
+const db      = firebase.firestore();
+const storage = firebase.storage();
+
+const ICE_CONFIG = {
+  iceServers:[
+    { urls:"stun:stun.l.google.com:19302" },
+    { urls:"stun:stun1.l.google.com:19302" },
+    { urls:"stun:stun2.l.google.com:19302" },
+    { urls:"stun:stun.services.mozilla.com" }
+  ]
+};
+
+let localStream   = null;
+let screenStream  = null;
+let camOn         = true;
+let micOn         = true;
+let screenOn      = false;
+let recording     = false;
+let mediaRecorder = null;
+let recordChunks  = [];
+const peers       = {};
+const remoteStreams= {};
+let unsubscribers = [];
+let meetingTitle  = "Impact Live Class";
+let startTime     = Date.now();
+
+const videoGrid  = document.getElementById("videoGrid");
+const roomTitle  = document.getElementById("roomTitle");
+const roomIdBadge= document.getElementById("roomIdBadge");
+const statusDot  = document.getElementById("statusDot");
+const statusText = document.getElementById("statusText");
+
+function toast(msg, dur=3000){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),dur);
+}
+function setStatus(text,connecting=false){
+  statusText.textContent=text;
+  statusDot.className="status-dot"+(connecting?" connecting":"");
+}
+function updateGrid(){
+  const c=videoGrid.children.length;
+  videoGrid.className="video-grid p"+Math.min(c,10);
+}
+function createTile(id,name,stream,isLocal=false){
+  if(document.getElementById("tile-"+id)) return;
+  const tile=document.createElement("div");
+  tile.className="video-tile";tile.id="tile-"+id;
+  const video=document.createElement("video");
+  video.autoplay=true;video.playsInline=true;video.muted=isLocal;
+  if(stream) video.srcObject=stream;
+  const label=document.createElement("div");
+  label.className="tile-label";
+  label.textContent=isLocal?MY_NAME+" (You)":name;
+  const mutedBadge=document.createElement("div");
+  mutedBadge.className="tile-muted";mutedBadge.id="muted-"+id;mutedBadge.textContent="🔇";
+  const camOff=document.createElement("div");
+  camOff.className="tile-cam-off";camOff.id="camoff-"+id;
+  const avatar=document.createElement("div");avatar.className="avatar";
+  avatar.textContent=(name||"?")[0].toUpperCase();
+  const camName=document.createElement("div");camName.className="cam-name";
+  camName.textContent=isLocal?MY_NAME+" (You)":name;
+  camOff.appendChild(avatar);camOff.appendChild(camName);
+  tile.appendChild(video);tile.appendChild(label);
+  tile.appendChild(mutedBadge);tile.appendChild(camOff);
+  videoGrid.appendChild(tile);updateGrid();
+}
+function removeTile(id){
+  const t=document.getElementById("tile-"+id);if(t)t.remove();updateGrid();
+}
+function setTileStream(id, stream){
+    const tile = document.getElementById("tile-" + id);
+    if (!tile) return;
+
+    const video = tile.querySelector("video");
+    if (!video) return;
+
+    video.srcObject = stream;
+
+    video.onloadedmetadata = () => {
+        video.play().catch(console.error);
+    };
+}
+
+function setTileCamOff(id,off){
+  const el=document.getElementById("camoff-"+id);if(el)el.classList.toggle("show",off);
+  const t=document.getElementById("tile-"+id);
+  if(t){const v=t.querySelector("video");if(v)v.style.visibility=off?"hidden":"visible";}
+}
+
+async function getLocalStream(){
+
+  // First try camera + microphone
+  try{
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video:{
+        width:{ideal:1280},
+        height:{ideal:720},
+        frameRate:{ideal:24}
+      },
+      audio:{
+        echoCancellation:true,
+        noiseSuppression:true
+      }
+    });
+
+    camOn = true;
+    micOn = true;
+
+    createTile(MY_ID, MY_NAME, localStream, true);
+    return true;
+
+  }catch(videoError){
+
+    console.warn("Camera unavailable. Trying microphone only...", videoError);
+
+    // Camera failed. Try microphone only.
+    try{
+
+      localStream = await navigator.mediaDevices.getUserMedia({
+        audio:{
+          echoCancellation:true,
+          noiseSuppression:true
+        }
+      });
+
+      camOn = false;
+      micOn = true;
+
+      createTile(MY_ID, MY_NAME, localStream, true);
+      setTileCamOff(MY_ID, true);
+
+      toast("📷 Camera unavailable. Joined with microphone only.");
+
+      return true;
+
+    }catch(audioError){
+
+      console.error(audioError);
+
+      camOn = false;
+      micOn = false;
+
+      createTile(MY_ID, MY_NAME, null, true);
+      setTileCamOff(MY_ID, true);
+
+      toast("⚠️ Camera and microphone unavailable.");
+
+      return false;
+
+    }
+
+  }
+
+}
+
+
+async function registerParticipant(){
+  await db.collection("meetings").doc(MEETING_ID)
+    .collection("participants").doc(MY_ID).set({
+      participantId:MY_ID,displayName:MY_NAME,isHost:IS_HOST,
+      cameraEnabled:camOn,micEnabled:micOn,joinedAt:new Date().toISOString()
+    });
+  window.addEventListener("beforeunload",cleanup);
+}
+
+// ── HOST: connect to each participant ────────────────────────
+function hostListenForParticipants(){
+  const unsub=db.collection("meetings").doc(MEETING_ID)
+    .collection("participants").onSnapshot(snap=>{
+      snap.docChanges().forEach(async change=>{
+        const p=change.doc.data();
+        if(p.participantId===MY_ID) return;
+        if(change.type==="added"){ toast(p.displayName+" joined"); await hostConnect(p.participantId,p.displayName); }
+        if(change.type==="removed"){ toast(p.displayName+" left"); closePeer(p.participantId); removeTile(p.participantId); }
+      });
+    });
+  unsubscribers.push(unsub);
+}
+
+async function hostConnect(pid,pname){
+  if(peers[pid]) return;
+  const pc=new RTCPeerConnection(ICE_CONFIG);peers[pid]=pc;
+  if(localStream) localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+  const rs=new MediaStream();remoteStreams[pid]=rs;
+  createTile(pid,pname,rs);
+pc.ontrack = (e) => {
+    console.log("Host received remote stream:", e.streams);
+
+    if (e.streams && e.streams[0]) {
+        remoteStreams[pid] = e.streams[0];
+        setTileStream(pid, e.streams[0]);
+    }
+};
+  pc.onicecandidate=e=>{ if(!e.candidate) return;
+    db.collection("meetings").doc(MEETING_ID).collection("signals").doc(pid)
+      .collection("host-ice").add({candidate:e.candidate.toJSON(),ts:Date.now()});
+  };
+  pc.onconnectionstatechange=()=>{
+    if(pc.connectionState==="connected") setStatus("Live · "+Object.keys(peers).length+" participant(s)");
+    if(pc.connectionState==="failed") toast("⚠️ Connection to "+pname+" failed.");
+  };
+  const offer=await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  await db.collection("meetings").doc(MEETING_ID).collection("signals").doc(pid)
+    .set({offer:{type:offer.type,sdp:offer.sdp},answer:null});
+  const u1=db.collection("meetings").doc(MEETING_ID).collection("signals").doc(pid)
+    .onSnapshot(async snap=>{
+      const d=snap.data();
+      if(d&&d.answer&&!pc.currentRemoteDescription)
+        await pc.setRemoteDescription(new RTCSessionDescription(d.answer));
+    });
+  const u2=db.collection("meetings").doc(MEETING_ID).collection("signals").doc(pid)
+    .collection("participant-ice").orderBy("ts").onSnapshot(snap=>{
+      snap.docChanges().forEach(async c=>{
+        if(c.type==="added") try{ await pc.addIceCandidate(new RTCIceCandidate(c.doc.data().candidate)); }catch(e){}
+      });
+    });
+  unsubscribers.push(u1,u2);
+}
+
+// ── PARTICIPANT: receive offer from host ─────────────────────
+function participantListenForOffer(){
+  const u=db.collection("meetings").doc(MEETING_ID).collection("signals").doc(MY_ID)
+    .onSnapshot(async snap=>{
+      const d=snap.data();
+      if(!d||!d.offer||peers[MEETING_ID]) return;
+      const pc=new RTCPeerConnection(ICE_CONFIG);peers[MEETING_ID]=pc;
+      if(localStream) localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+      const rs=new MediaStream();remoteStreams["host"]=rs;
+      pc.ontrack=e=>{ e.streams[0].getTracks().forEach(t=>rs.addTrack(t)); setTileStream("host",rs); };
+      pc.onicecandidate=e=>{ if(!e.candidate) return;
+        db.collection("meetings").doc(MEETING_ID).collection("signals").doc(MY_ID)
+          .collection("participant-ice").add({candidate:e.candidate.toJSON(),ts:Date.now()});
+      };
+      pc.onconnectionstatechange=()=>{
+        if(pc.connectionState==="connected"){ setStatus("Live"); setTileStream("host",rs); }
+      };
+      await pc.setRemoteDescription(new RTCSessionDescription(d.offer));
+      const answer=await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      await db.collection("meetings").doc(MEETING_ID).collection("signals").doc(MY_ID)
+        .update({answer:{type:answer.type,sdp:answer.sdp}});
+      const u2=db.collection("meetings").doc(MEETING_ID).collection("signals").doc(MY_ID)
+        .collection("host-ice").orderBy("ts").onSnapshot(snap=>{
+          snap.docChanges().forEach(async c=>{
+            if(c.type==="added") try{ await pc.addIceCandidate(new RTCIceCandidate(c.doc.data().candidate)); }catch(e){}
+          });
+        });
+      unsubscribers.push(u2);
+    });
+  unsubscribers.push(u);
+}
+
+function participantListenForOthers(){
+  const u=db.collection("meetings").doc(MEETING_ID).collection("participants")
+    .onSnapshot(snap=>{
+      snap.docChanges().forEach(c=>{
+        const p=c.doc.data();if(p.participantId===MY_ID) return;
+        if(c.type==="added"&&p.isHost&&!document.getElementById("tile-host"))
+          createTile("host",p.displayName+" (Host)",null);
+        if(c.type==="removed"&&p.isHost){ toast("Host ended the meeting."); cleanup(); location.href="/teacher/live-classroom.html"; }
+      });
+    });
+  unsubscribers.push(u);
+}
+
+// ── CONTROLS ─────────────────────────────────────────────────
+document.getElementById("camBtn").onclick=function(){
+  if(!localStream) return;
+  camOn=!camOn;
+const videoTracks = localStream.getVideoTracks();
+
+if(videoTracks.length){
+    videoTracks.forEach(t=>t.enabled = camOn);
+}else{
+    toast("No camera available.");
+    return;
+}
+  this.classList.toggle("off",!camOn);
+  setTileCamOff(MY_ID,!camOn);
+  this.querySelector("span").textContent=camOn?"Camera":"Cam Off";
+  updateState();
+};
+
+document.getElementById("micBtn").onclick=function(){
+  if(!localStream) return;
+  micOn=!micOn;
+  localStream.getAudioTracks().forEach(t=>t.enabled=micOn);
+  this.classList.toggle("off",!micOn);
+  const m=document.getElementById("muted-"+MY_ID);if(m)m.classList.toggle("show",!micOn);
+  this.querySelector("span").textContent=micOn?"Mic":"Muted";
+  updateState();
+};
+
+document.getElementById("screenBtn").onclick=async function(){
+  if(!screenOn){
+    try{
+      screenStream=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});
+      screenOn=true;this.classList.add("active");
+      this.querySelector("span").textContent="Sharing";
+      toast("Screen sharing started");
+      const st=screenStream.getVideoTracks()[0];
+      Object.values(peers).forEach(pc=>{
+        const s=pc.getSenders().find(s=>s.track&&s.track.kind==="video");
+        if(s)s.replaceTrack(st);
+      });
+      const lv=document.querySelector("#tile-"+MY_ID+" video");
+      if(lv)lv.srcObject=screenStream;
+      st.onended=()=>stopScreen();
+    }catch(e){ toast("Screen share cancelled."); }
+  }else{ stopScreen(); }
+};
+
+function stopScreen(){
+  if(!screenOn)return;screenOn=false;
+  const sb=document.getElementById("screenBtn");
+  sb.classList.remove("active");sb.querySelector("span").textContent="Screen";
+  if(screenStream){screenStream.getTracks().forEach(t=>t.stop());screenStream=null;}
+  if(localStream){
+    const ct=localStream.getVideoTracks()[0];
+    Object.values(peers).forEach(pc=>{
+      const s=pc.getSenders().find(s=>s.track&&s.track.kind==="video");
+      if(s&&ct)s.replaceTrack(ct);
+    });
+    const lv=document.querySelector("#tile-"+MY_ID+" video");
+    if(lv)lv.srcObject=localStream;
+  }
+  toast("Screen sharing stopped");
+}
+
+// ── INVITE PANEL ─────────────────────────────────────────────
+document.getElementById("inviteBtn").onclick=function(){
+  const panel=document.getElementById("invitePanel");
+  panel.classList.toggle("show");
+};
+document.getElementById("inviteClose").onclick=function(){
+  document.getElementById("invitePanel").classList.remove("show");
+};
+document.getElementById("copyIdBtn").onclick=function(){
+  navigator.clipboard.writeText(MEETING_ID).catch(()=>{});
+  toast("Meeting ID copied!");
+};
+document.getElementById("copyLinkBtn").onclick=function(){
+  const link=`${location.origin}/teacher/live-classroom.html?join=${MEETING_ID}`;
+  navigator.clipboard.writeText(link).catch(()=>{});
+  toast("Invite link copied!");
+};
+
+// ── RECORDING ────────────────────────────────────────────────
+function setupRecording(){
+  const btn=document.getElementById("recBtn");
+  btn.style.display="flex";
+  btn.onclick=function(){ recording?stopRecording():startRecording(); };
+}
+
+function startRecording(){
+  recordChunks=[];
+  const mimeType=
+    MediaRecorder.isTypeSupported("video/webm;codecs=vp9")?"video/webm;codecs=vp9":
+    MediaRecorder.isTypeSupported("video/webm")?"video/webm":"video/mp4";
+
+  const canvas=document.createElement("canvas");
+  canvas.width=1280;canvas.height=720;
+  const ctx=canvas.getContext("2d");
+  const cols=Math.min(Object.keys(peers).length+1,3)||1;
+  const rows=Math.ceil((Object.keys(peers).length+1)/cols);
+  const tw=canvas.width/cols;const th=canvas.height/rows;
+
+  const drawInterval=setInterval(()=>{
+    ctx.fillStyle="#0a0c14";ctx.fillRect(0,0,canvas.width,canvas.height);
+    Array.from(videoGrid.querySelectorAll("video")).filter(v=>v.srcObject).forEach((v,i)=>{
+      const col=i%cols;const row=Math.floor(i/cols);
+      try{ctx.drawImage(v,col*tw+2,row*th+2,tw-4,th-4);}catch(e){}
+    });
+  },1000/24);
+
+  const cs=canvas.captureStream(24);
+
+  if(localStream){
+    try{
+      const ac=new AudioContext();
+      const dest=ac.createMediaStreamDestination();
+      ac.createMediaStreamSource(localStream).connect(dest);
+      Object.values(remoteStreams).forEach(rs=>{
+        try{ac.createMediaStreamSource(rs).connect(dest);}catch(e){}
+      });
+      if(dest.stream.getAudioTracks().length) cs.addTrack(dest.stream.getAudioTracks()[0]);
+    }catch(e){}
+  }
+
+  try{ mediaRecorder=new MediaRecorder(cs,{mimeType,videoBitsPerSecond:2500000}); }
+  catch(e){ mediaRecorder=new MediaRecorder(cs); }
+
+  mediaRecorder.ondataavailable=e=>{if(e.data.size>0)recordChunks.push(e.data);};
+  mediaRecorder.onstop=async()=>{
+    clearInterval(drawInterval);
+    await uploadRecording(mimeType);
+  };
+  mediaRecorder.start(1000);
+  recording=true;
+  document.getElementById("recBtn").classList.add("recording");
+  document.getElementById("recLabel").textContent="Stop Rec";
+  toast("🔴 Recording started");
+}
+
+function stopRecording(){
+  if(mediaRecorder&&recording){
+    mediaRecorder.stop();recording=false;
+    document.getElementById("recBtn").classList.remove("recording");
+    document.getElementById("recLabel").textContent="Uploading...";
+    document.getElementById("recBtn").disabled=true;
+    toast("Recording stopped — uploading...",5000);
+  }
+}
+
+async function uploadRecording(mimeType){
+  try{
+    const ext=mimeType.includes("mp4")?"mp4":"webm";
+    const blob=new Blob(recordChunks,{type:mimeType});
+    const path=`recordings/${MEETING_ID}/recording_${Date.now()}.${ext}`;
+    const ref=storage.ref(path);
+    const snap=await ref.put(blob);
+    const url=await snap.ref.getDownloadURL();
+    const dur=Math.round((Date.now()-startTime)/1000);
+    const recId="rec_"+Date.now();
+    await db.collection("recordings").doc(recId).set({
+      recordingId:recId,meetingId:MEETING_ID,meetingTitle,
+      storagePath:path,downloadURL:url,duration:dur,mimeType,
+      createdAt:new Date().toISOString(),recordedBy:MY_NAME
+    });
+    // Update meeting with recording ref
+    await db.collection("meetings").doc(MEETING_ID).update({
+      hasRecording:true,lastRecordingId:recId
+    }).catch(()=>{});
+    document.getElementById("recLabel").textContent="Record";
+    document.getElementById("recBtn").disabled=false;
+    toast("✅ Recording saved!",4000);
+  }catch(e){
+    console.error("Upload failed:",e);
+    document.getElementById("recLabel").textContent="Record";
+    document.getElementById("recBtn").disabled=false;
+    toast("⚠️ Upload failed: "+e.message,5000);
+  }
+}
+
+function updateState(){
+  db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
+    .update({cameraEnabled:camOn,micEnabled:micOn}).catch(()=>{});
+}
+
+// ── LEAVE ────────────────────────────────────────────────────
+document.getElementById("leaveBtn").onclick=async function(){
+  if(recording) stopRecording();
+  const dur=Math.round((Date.now()-startTime)/1000);
+  // Write usage data
+  await db.collection("meetings").doc(MEETING_ID).update({
+    endedAt:new Date().toISOString(),
+    status: IS_HOST?"ended":"participant-left",
+    durationSeconds:dur,
+    participantCount:Object.keys(peers).length+1
+  }).catch(()=>{});
+  cleanup();
+  location.href="/teacher/live-classroom.html";
+};
+
+function cleanup(){
+  unsubscribers.forEach(u=>u&&u());
+  Object.values(peers).forEach(pc=>{try{pc.close();}catch(e){}});
+  if(localStream) localStream.getTracks().forEach(t=>t.stop());
+  if(screenStream) screenStream.getTracks().forEach(t=>t.stop());
+  db.collection("meetings").doc(MEETING_ID)
+    .collection("participants").doc(MY_ID).delete().catch(()=>{});
+}
+function closePeer(id){
+  if(peers[id]){try{peers[id].close();}catch(e){} delete peers[id];}
+  delete remoteStreams[id];
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+async function init(){
+  setStatus("Connecting",true);
+  const ms=await db.collection("meetings").doc(MEETING_ID).get();
+  if(!ms.exists||ms.data().status==="ended"){
+    toast("Meeting not found or has ended.");
+    setTimeout(()=>location.href="/teacher/live-classroom.html",2000);
+    return;
+  }
+  const md=ms.data();
+  meetingTitle=md.title||"Impact Live Class";
+  roomTitle.textContent=meetingTitle;
+  document.title=meetingTitle+" | Impact";
+  roomIdBadge.textContent=MEETING_ID;
+  roomIdBadge.onclick=()=>{
+    navigator.clipboard.writeText(MEETING_ID).catch(()=>{});
+    toast("Meeting ID copied!");
+  };
+  // Populate invite panel
+  document.getElementById("inviteIdField").value=MEETING_ID;
+  document.getElementById("inviteLinkField").value=
+    `${location.origin}/teacher/live-classroom.html?join=${MEETING_ID}`;
+
+  await getLocalStream();
+  await registerParticipant();
+
+  if(IS_HOST){
+    setupRecording();
+    hostListenForParticipants();
+    setStatus("Waiting for participants...",true);
+  }else{
+    const ps=await db.collection("meetings").doc(MEETING_ID).collection("participants").get();
+    const hd=ps.docs.find(d=>d.data().isHost);
+    if(hd) createTile("host",hd.data().displayName+" (Host)",null);
+    participantListenForOffer();
+    participantListenForOthers();
+    setStatus("Joining...",true);
+  }
+
+  // Log join for data centre
+  await db.collection("classroomUsage").add({
+    meetingId:MEETING_ID,meetingTitle,participantName:MY_NAME,
+    isHost:IS_HOST,joinedAt:new Date().toISOString(),date:new Date().toDateString()
+  }).catch(()=>{});
+}
+
+init();
+})();
+</script>
+</body>
+</html>
+
+==================================================
+FILE: public\teacher\live-classroom-data.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Classroom Data Centre | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/live-classroom.css">
+<style>
+.data-page{position:relative;z-index:2;width:min(1080px,92vw);margin:0 auto;padding:110px 0 80px}
+.data-page h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:400;margin-bottom:6px}
+.data-page .sub{color:rgba(255,255,255,.5);font-weight:700;margin-bottom:40px;font-size:.9rem}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:36px}
+.stat-card{border-radius:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:22px;backdrop-filter:blur(18px)}
+.stat-label{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:10px}
+.stat-value{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2.6rem;font-weight:400;color:#fff;line-height:1}
+.stat-sub{font-size:.76rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:6px}
+.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+.meetings-table{width:100%;border-collapse:collapse;margin-bottom:36px}
+.meetings-table th{text-align:left;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.meetings-table td{padding:12px 14px;font-size:.84rem;font-weight:700;color:rgba(255,255,255,.82);border-bottom:1px solid rgba(255,255,255,.06)}
+.meetings-table tr:hover td{background:rgba(255,255,255,.04)}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.68rem;font-weight:900}
+.badge-active{background:rgba(72,187,120,.2);color:#9ae6b4;border:1px solid rgba(72,187,120,.3)}
+.badge-ended{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.12)}
+.badge-rec{background:rgba(245,101,101,.18);color:#feb2b2;border:1px solid rgba(245,101,101,.25)}
+.usage-table{width:100%;border-collapse:collapse}
+.usage-table th{text-align:left;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.usage-table td{padding:11px 14px;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.75);border-bottom:1px solid rgba(255,255,255,.05)}
+.refresh-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:800;font-size:.82rem;cursor:pointer;transition:.15s;margin-bottom:32px}
+.refresh-btn:hover{background:rgba(255,255,255,.14)}
+.loading-row td{color:rgba(255,255,255,.3);font-style:italic}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="lc-nav">
+  <a class="lc-nav-btn" href="/teacher/live-classroom.html" title="Back to Lobby">
+    <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+  </a>
+  <a class="lc-nav-btn" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+</nav>
+
+<main class="data-page">
+  <h1>Classroom Data Centre</h1>
+  <p class="sub">Usage analytics for the Impact Live Classroom.</p>
+
+  <button class="refresh-btn" id="refreshBtn" type="button">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    Refresh
+  </button>
+
+  <!-- STATS -->
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-label">Total Meetings</div><div class="stat-value" id="statMeetings">—</div><div class="stat-sub">All time</div></div>
+    <div class="stat-card"><div class="stat-label">Active Now</div><div class="stat-value" id="statActive">—</div><div class="stat-sub">Live rooms</div></div>
+    <div class="stat-card"><div class="stat-label">Total Recordings</div><div class="stat-value" id="statRecs">—</div><div class="stat-sub">Saved to storage</div></div>
+    <div class="stat-card"><div class="stat-label">Total Hours</div><div class="stat-value" id="statHours">—</div><div class="stat-sub">Class time logged</div></div>
+    <div class="stat-card"><div class="stat-label">Total Joins</div><div class="stat-value" id="statJoins">—</div><div class="stat-sub">Participant sessions</div></div>
+  </div>
+
+  <!-- MEETINGS TABLE -->
+  <p class="section-label">All Meetings</p>
+  <table class="meetings-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Meeting ID</th>
+        <th>Host</th>
+        <th>Date</th>
+        <th>Duration</th>
+        <th>Participants</th>
+        <th>Status</th>
+        <th>Recording</th>
+      </tr>
+    </thead>
+    <tbody id="meetingsBody">
+      <tr class="loading-row"><td colspan="8">Loading meetings...</td></tr>
+    </tbody>
+  </table>
+
+  <!-- USAGE LOG -->
+  <p class="section-label">Participant Join Log</p>
+  <table class="usage-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Meeting</th>
+        <th>Date</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody id="usageBody">
+      <tr class="loading-row"><td colspan="5">Loading usage log...</td></tr>
+    </tbody>
+  </table>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+
+  async function loadData(){
+    // ── Meetings ──────────────────────────────────────────────
+    let meetings=[];
+    try{
+      const ms=await db.collection("meetings").orderBy("createdAt","desc").limit(100).get();
+      meetings=ms.docs.map(d=>({id:d.id,...d.data()}));
+    }catch(e){
+      const ms=await db.collection("meetings").get();
+      meetings=ms.docs.map(d=>({id:d.id,...d.data()}));
+    }
+
+    // ── Recordings ────────────────────────────────────────────
+    let recs=[];
+    try{
+      const rs=await db.collection("recordings").get();
+      recs=rs.docs.map(d=>d.data());
+    }catch(e){}
+
+    // ── Usage log ─────────────────────────────────────────────
+    let usage=[];
+    try{
+      const us=await db.collection("classroomUsage").orderBy("joinedAt","desc").limit(200).get();
+      usage=us.docs.map(d=>d.data());
+    }catch(e){
+      const us=await db.collection("classroomUsage").get();
+      usage=us.docs.map(d=>d.data());
+    }
+
+    // ── Stats ─────────────────────────────────────────────────
+    const active  = meetings.filter(m=>m.status==="active").length;
+    const totalSec= meetings.reduce((s,m)=>s+(m.durationSeconds||0),0);
+    const hrs     = (totalSec/3600).toFixed(1);
+
+    document.getElementById("statMeetings").textContent = meetings.length;
+    document.getElementById("statActive").textContent   = active;
+    document.getElementById("statRecs").textContent     = recs.length;
+    document.getElementById("statHours").textContent    = hrs;
+    document.getElementById("statJoins").textContent    = usage.length;
+
+    // ── Meetings table ────────────────────────────────────────
+    const mb = document.getElementById("meetingsBody");
+    if(!meetings.length){
+      mb.innerHTML='<tr class="loading-row"><td colspan="8">No meetings yet.</td></tr>';
+    }else{
+      mb.innerHTML = meetings.map(m=>{
+        const date  = m.createdAt ? new Date(m.createdAt).toLocaleDateString() : "—";
+        const dur   = m.durationSeconds ? Math.round(m.durationSeconds/60)+"m" : "—";
+        const pcount= m.participantCount||"—";
+        const badge = m.status==="active"
+          ? `<span class="badge badge-active">● Live</span>`
+          : `<span class="badge badge-ended">Ended</span>`;
+        const recBadge = m.hasRecording
+          ? `<span class="badge badge-rec">🔴 Yes</span>` : "—";
+        return `<tr>
+          <td>${m.title||"Untitled"}</td>
+          <td style="font-family:monospace;font-size:.78rem;letter-spacing:.06em">${m.meetingId||m.id}</td>
+          <td>${m.hostName||"—"}</td>
+          <td>${date}</td>
+          <td>${dur}</td>
+          <td>${pcount}</td>
+          <td>${badge}</td>
+          <td>${recBadge}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    // ── Usage log ─────────────────────────────────────────────
+    const ub = document.getElementById("usageBody");
+    if(!usage.length){
+      ub.innerHTML='<tr class="loading-row"><td colspan="5">No usage data yet.</td></tr>';
+    }else{
+      ub.innerHTML = usage.map(u=>{
+        const dt  = u.joinedAt ? new Date(u.joinedAt) : null;
+        const date= dt ? dt.toLocaleDateString() : "—";
+        const time= dt ? dt.toLocaleTimeString() : "—";
+        const role= u.isHost ? "Host" : "Participant";
+        return `<tr>
+          <td>${u.participantName||"—"}</td>
+          <td>${role}</td>
+          <td style="font-size:.76rem;opacity:.6">${u.meetingTitle||u.meetingId||"—"}</td>
+          <td>${date}</td>
+          <td>${time}</td>
+        </tr>`;
+      }).join("");
+    }
+  }
+
+  document.getElementById("refreshBtn").onclick = async function(){
+    this.textContent="Refreshing...";
+    await loadData();
+    this.innerHTML=`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh`;
+  };
+
+  await loadData();
+});
+</script>
+
+<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+==================================================
+FILE: public\teacher\recordings.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Recordings | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/live-classroom.css">
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="lc-nav">
+  <a class="lc-nav-btn" href="/teacher/live-classroom.html" title="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+  </a>
+  <a class="lc-nav-btn" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+</nav>
+
+<main class="recordings-page">
+  <h1>Recordings</h1>
+  <p class="sub">All class recordings saved from the Live Classroom.</p>
+  <div id="recGrid" class="rec-grid">
+    <div class="empty-state"><h3>Loading...</h3></div>
+  </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db   = firebase.firestore();
+  const grid = document.getElementById("recGrid");
+
+  try{
+    const snap = await db.collection("recordings").orderBy("createdAt","desc").get();
+
+    if(snap.empty){
+      grid.innerHTML = `<div class="empty-state">
+        <h3>No recordings yet</h3>
+        <p>Start a Live Classroom session and record it.<br>Recordings appear here automatically.</p>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = "";
+
+    snap.docs.forEach(doc=>{
+      const r    = doc.data();
+      const date = r.createdAt ? new Date(r.createdAt).toLocaleString() : "Unknown date";
+      const card = document.createElement("div");
+      card.className = "rec-card";
+      card.innerHTML = `
+        <div class="rec-card-title" title="${r.meetingTitle||r.meetingId||"Recording"}">${r.meetingTitle||"Untitled Meeting"}</div>
+        <div class="rec-card-meta">
+          📅 ${date}<br>
+          🆔 ${r.meetingId||""}<br>
+          👤 Recorded by ${r.recordedBy||"Unknown"}
+        </div>
+        <div class="rec-actions">
+          <a class="rec-btn" href="${r.downloadURL}" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Play
+          </a>
+          <a class="rec-btn" href="${r.downloadURL}" download target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download
+          </a>
+          <button class="rec-btn" data-id="${doc.id}" data-path="${r.storagePath||""}" onclick="deleteRec(this)" style="border-color:rgba(255,100,100,.25);color:#feb2b2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            Delete
+          </button>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }catch(e){
+    grid.innerHTML = `<div class="empty-state"><h3>Could not load recordings</h3><p>${e.message}</p></div>`;
+  }
+});
+
+async function deleteRec(btn){
+  if(!confirm("Delete this recording permanently?")) return;
+  const db = firebase.firestore();
+  try{
+    await db.collection("recordings").doc(btn.dataset.id).delete();
+    btn.closest(".rec-card").remove();
+    const grid = document.getElementById("recGrid");
+    if(!grid.querySelector(".rec-card")){
+      grid.innerHTML = `<div class="empty-state"><h3>No recordings yet</h3></div>`;
+    }
+  }catch(e){
+    alert("Could not delete: " + e.message);
+  }
+}
+</script>
+
+<script src="/js/impact-page-nav.js"></script>
+<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+==================================================
+FILE: public\css\live-classroom.css
+==================================================
+/* ── LIVE CLASSROOM SHARED STYLES ── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:#05060b;color:#fff;min-height:100vh}
+
+/* NAV */
+.lc-nav{position:fixed;top:24px;left:28px;z-index:99999;display:flex;gap:12px}
+.lc-nav-btn{width:46px;height:46px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);cursor:pointer;transition:.15s}
+.lc-nav-btn:hover{background:rgba(255,255,255,.15)}
+.lc-nav-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* LOBBY */
+.lobby{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;text-align:center}
+.lobby-eyebrow{text-transform:uppercase;letter-spacing:.3em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.5);margin-bottom:14px}
+.lobby h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.8rem,6vw,4.8rem);font-weight:400;margin-bottom:12px;line-height:1.05}
+.lobby-sub{color:rgba(255,255,255,.55);font-weight:700;margin-bottom:48px;font-size:.95rem}
+.lobby-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:min(700px,90vw);margin-bottom:40px}
+@media(max-width:600px){.lobby-cards{grid-template-columns:1fr}}
+.lc-card{border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);padding:32px;text-align:left;transition:.2s ease}
+.lc-card:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-2px)}
+.lc-card-icon{font-size:2rem;margin-bottom:14px;display:block}
+.lc-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.6rem;font-weight:400;margin-bottom:8px}
+.lc-card p{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:20px}
+.lc-input{width:100%;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.92rem;outline:none;margin-bottom:12px;transition:.15s}
+.lc-input:focus{border-color:rgba(99,179,237,.6);background:rgba(255,255,255,.11)}
+.lc-input::placeholder{color:rgba(255,255,255,.35)}
+.lc-btn{width:100%;padding:13px;border-radius:14px;border:none;font-family:Inter,sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;transition:.18s ease;display:flex;align-items:center;justify-content:center;gap:8px}
+.lc-btn:hover{transform:translateY(-1px)}
+.lc-btn:active{transform:scale(.97)}
+.lc-btn-primary{background:rgba(99,179,237,.22);border:1px solid rgba(99,179,237,.45);color:#90cdf4}
+.lc-btn-primary:hover{background:rgba(99,179,237,.32)}
+.lc-btn-success{background:rgba(72,187,120,.2);border:1px solid rgba(72,187,120,.4);color:#9ae6b4}
+.lc-btn-success:hover{background:rgba(72,187,120,.3)}
+.lc-btn-danger{background:rgba(245,101,101,.18);border:1px solid rgba(245,101,101,.35);color:#feb2b2}
+.lc-btn-danger:hover{background:rgba(245,101,101,.28)}
+.lc-btn-ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff}
+.lc-btn-ghost:hover{background:rgba(255,255,255,.14)}
+.lc-btn-rec{background:rgba(245,101,101,.22);border:1px solid rgba(245,101,101,.4);color:#feb2b2}
+.lc-btn-rec.recording{background:rgba(245,101,101,.45);border-color:rgba(245,101,101,.7);animation:pulse-rec 1.5s infinite}
+@keyframes pulse-rec{0%,100%{opacity:1}50%{opacity:.65}}
+.lobby-recordings-link{color:rgba(255,255,255,.4);font-size:.8rem;font-weight:800;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:2px;transition:.15s}
+.lobby-recordings-link:hover{color:rgba(255,255,255,.7)}
+.error-msg{color:#feb2b2;font-size:.8rem;font-weight:800;margin-top:8px;min-height:20px}
+
+/* ── VIDEO ROOM ── */
+.room{display:grid;grid-template-rows:1fr auto;height:100vh;background:#0a0c14;overflow:hidden}
+.room-header{position:fixed;top:0;left:0;right:0;height:56px;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(10,12,20,.9);border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px)}
+.room-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.1rem;font-weight:400;color:rgba(255,255,255,.85)}
+.room-id-badge{font-size:.72rem;font-weight:900;color:rgba(255,255,255,.4);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px 10px;cursor:pointer;transition:.15s;user-select:all}
+.room-id-badge:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
+.room-status{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:800;color:rgba(255,255,255,.5)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#68d391;flex-shrink:0}
+.status-dot.connecting{background:#f6ad55;animation:pulse-rec 1s infinite}
+
+/* VIDEO GRID */
+.video-grid{padding-top:56px;padding-bottom:80px;display:grid;gap:8px;height:100vh;align-content:start;overflow-y:auto;background:#0a0c14;padding-left:8px;padding-right:8px}
+.video-grid.p1{grid-template-columns:1fr}
+.video-grid.p2{grid-template-columns:1fr 1fr}
+.video-grid.p3,.video-grid.p4{grid-template-columns:1fr 1fr}
+.video-grid.p5,.video-grid.p6{grid-template-columns:repeat(3,1fr)}
+.video-grid.p7,.video-grid.p8,.video-grid.p9,.video-grid.p10{grid-template-columns:repeat(3,1fr)}
+
+.video-tile{position:relative;border-radius:16px;overflow:hidden;background:#131722;aspect-ratio:16/9;min-height:120px}
+.video-tile video{width:100%;height:100%;object-fit:cover;display:block;background:#131722}
+.video-tile .tile-label{position:absolute;bottom:10px;left:12px;font-size:.76rem;font-weight:900;color:#fff;background:rgba(0,0,0,.55);padding:4px 10px;border-radius:8px;backdrop-filter:blur(8px);max-width:calc(100% - 24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.video-tile .tile-muted{position:absolute;top:10px;right:10px;background:rgba(245,101,101,.7);border-radius:8px;padding:4px 8px;font-size:.68rem;font-weight:900;color:#fff;display:none}
+.video-tile .tile-muted.show{display:block}
+.video-tile .tile-cam-off{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#1a1f2e;flex-direction:column;gap:8px}
+.video-tile .tile-cam-off.show{display:flex}
+.tile-cam-off .avatar{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#fff}
+.tile-cam-off .cam-name{font-size:.8rem;font-weight:800;color:rgba(255,255,255,.6)}
+
+/* CONTROLS BAR */
+.controls{position:fixed;bottom:0;left:0;right:0;height:76px;z-index:100;display:flex;align-items:center;justify-content:center;gap:12px;background:rgba(10,12,20,.9);border-top:1px solid rgba(255,255,255,.08);backdrop-filter:blur(18px);padding:0 20px}
+.ctrl-btn{width:52px;height:52px;border-radius:16px;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:.58rem;font-weight:900;transition:.15s ease;color:#fff}
+.ctrl-btn:hover{transform:translateY(-2px)}
+.ctrl-btn:active{transform:scale(.94)}
+.ctrl-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.ctrl-btn-cam{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)}
+.ctrl-btn-cam.off{background:rgba(245,101,101,.2);border-color:rgba(245,101,101,.4);color:#feb2b2}
+.ctrl-btn-mic{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)}
+.ctrl-btn-mic.off{background:rgba(245,101,101,.2);border-color:rgba(245,101,101,.4);color:#feb2b2}
+.ctrl-btn-screen{background:rgba(99,179,237,.12);border:1px solid rgba(99,179,237,.25);color:#90cdf4}
+.ctrl-btn-screen.active{background:rgba(99,179,237,.3);border-color:rgba(99,179,237,.6)}
+.ctrl-btn-rec{background:rgba(245,101,101,.12);border:1px solid rgba(245,101,101,.25);color:#feb2b2}
+.ctrl-btn-rec.recording{background:rgba(245,101,101,.35);border-color:rgba(245,101,101,.7);animation:pulse-rec 1.5s infinite}
+.ctrl-btn-leave{background:rgba(245,101,101,.25);border:1px solid rgba(245,101,101,.5);color:#feb2b2;width:auto;padding:0 20px;font-size:.78rem}
+.ctrl-separator{width:1px;height:36px;background:rgba(255,255,255,.1);flex-shrink:0}
+
+/* TOAST */
+.lc-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:9999;background:rgba(20,24,40,.95);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px);padding:10px 18px;border-radius:14px;font-size:.8rem;font-weight:800;color:#fff;opacity:0;transition:.25s ease;pointer-events:none;white-space:nowrap}
+.lc-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* RECORDINGS PAGE */
+.recordings-page{position:relative;z-index:2;width:min(980px,92vw);margin:0 auto;padding:110px 0 80px}
+.recordings-page h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:400;margin-bottom:8px}
+.recordings-page .sub{color:rgba(255,255,255,.5);font-weight:700;margin-bottom:36px}
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.rec-card{border-radius:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:20px;transition:.18s}
+.rec-card:hover{background:rgba(255,255,255,.1)}
+.rec-card-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.2rem;font-weight:400;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-card-meta{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45);line-height:1.8;margin-bottom:14px}
+.rec-actions{display:flex;gap:10px}
+.rec-btn{flex:1;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:#fff;font-family:Inter,sans-serif;font-weight:800;font-size:.8rem;cursor:pointer;transition:.14s;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px}
+.rec-btn:hover{background:rgba(255,255,255,.14)}
+.empty-state{text-align:center;padding:80px 40px;color:rgba(255,255,255,.3);font-weight:700}
+.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.6rem;font-weight:400;margin-bottom:10px;color:rgba(255,255,255,.4)}
+
+==================================================
+FILE: storage.rules
+==================================================
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /recordings/{allPaths=**} {
+      allow read, write: if true;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+==================================================
+FILE: firestore.rules
+==================================================
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+
+
