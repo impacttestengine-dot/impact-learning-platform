@@ -188,10 +188,20 @@ function createTile(id,name,stream,isLocal=false){
 function removeTile(id){
   const t=document.getElementById("tile-"+id);if(t)t.remove();updateGrid();
 }
-function setTileStream(id,stream){
-  const t=document.getElementById("tile-"+id);if(!t)return;
-  const v=t.querySelector("video");if(v)v.srcObject=stream;
+function setTileStream(id, stream){
+    const tile = document.getElementById("tile-" + id);
+    if (!tile) return;
+
+    const video = tile.querySelector("video");
+    if (!video) return;
+
+    video.srcObject = stream;
+
+    video.onloadedmetadata = () => {
+        video.play().catch(console.error);
+    };
 }
+
 function setTileCamOff(id,off){
   const el=document.getElementById("camoff-"+id);if(el)el.classList.toggle("show",off);
   const t=document.getElementById("tile-"+id);
@@ -294,7 +304,14 @@ async function hostConnect(pid,pname){
   if(localStream) localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
   const rs=new MediaStream();remoteStreams[pid]=rs;
   createTile(pid,pname,rs);
-  pc.ontrack=e=>{ e.streams[0].getTracks().forEach(t=>rs.addTrack(t)); setTileStream(pid,rs); };
+pc.ontrack = (e) => {
+    console.log("Host received remote stream:", e.streams);
+
+    if (e.streams && e.streams[0]) {
+        remoteStreams[pid] = e.streams[0];
+        setTileStream(pid, e.streams[0]);
+    }
+};
   pc.onicecandidate=e=>{ if(!e.candidate) return;
     db.collection("meetings").doc(MEETING_ID).collection("signals").doc(pid)
       .collection("host-ice").add({candidate:e.candidate.toJSON(),ts:Date.now()});
