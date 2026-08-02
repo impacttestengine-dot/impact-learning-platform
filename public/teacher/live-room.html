@@ -199,21 +199,71 @@ function setTileCamOff(id,off){
 }
 
 async function getLocalStream(){
+
+  // First try camera + microphone
   try{
-    localStream=await navigator.mediaDevices.getUserMedia({
-      video:{width:{ideal:1280},height:{ideal:720},frameRate:{ideal:24}},
-      audio:{echoCancellation:true,noiseSuppression:true}
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video:{
+        width:{ideal:1280},
+        height:{ideal:720},
+        frameRate:{ideal:24}
+      },
+      audio:{
+        echoCancellation:true,
+        noiseSuppression:true
+      }
     });
-    createTile(MY_ID,MY_NAME,localStream,true);
+
+    camOn = true;
+    micOn = true;
+
+    createTile(MY_ID, MY_NAME, localStream, true);
     return true;
-  }catch(e){
-    toast("⚠️ Camera/mic access denied.");
-    createTile(MY_ID,MY_NAME,null,true);
-    setTileCamOff(MY_ID,true);
-    camOn=false;micOn=false;
-    return false;
+
+  }catch(videoError){
+
+    console.warn("Camera unavailable. Trying microphone only...", videoError);
+
+    // Camera failed. Try microphone only.
+    try{
+
+      localStream = await navigator.mediaDevices.getUserMedia({
+        audio:{
+          echoCancellation:true,
+          noiseSuppression:true
+        }
+      });
+
+      camOn = false;
+      micOn = true;
+
+      createTile(MY_ID, MY_NAME, localStream, true);
+      setTileCamOff(MY_ID, true);
+
+      toast("📷 Camera unavailable. Joined with microphone only.");
+
+      return true;
+
+    }catch(audioError){
+
+      console.error(audioError);
+
+      camOn = false;
+      micOn = false;
+
+      createTile(MY_ID, MY_NAME, null, true);
+      setTileCamOff(MY_ID, true);
+
+      toast("⚠️ Camera and microphone unavailable.");
+
+      return false;
+
+    }
+
   }
+
 }
+
 
 async function registerParticipant(){
   await db.collection("meetings").doc(MEETING_ID)
@@ -322,7 +372,14 @@ function participantListenForOthers(){
 document.getElementById("camBtn").onclick=function(){
   if(!localStream) return;
   camOn=!camOn;
-  localStream.getVideoTracks().forEach(t=>t.enabled=camOn);
+const videoTracks = localStream.getVideoTracks();
+
+if(videoTracks.length){
+    videoTracks.forEach(t=>t.enabled = camOn);
+}else{
+    toast("No camera available.");
+    return;
+}
   this.classList.toggle("off",!camOn);
   setTileCamOff(MY_ID,!camOn);
   this.querySelector("span").textContent=camOn?"Camera":"Cam Off";
