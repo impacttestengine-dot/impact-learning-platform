@@ -39,7 +39,11 @@ const icon  = document.getElementById("endedIcon");
 const title = document.getElementById("endedTitle");
 const sub   = document.getElementById("endedSub");
 
-if(reason === "ended"){
+if(reason === "removed"){
+  icon.textContent  = "🚪";
+  title.textContent = "You were removed";
+  sub.textContent   = "The host removed you from this meeting.";
+} else if(reason === "ended"){
   icon.textContent  = "🏁";
   title.textContent = "Class has ended";
   sub.textContent   = "The host has ended the session. Thank you for attending.";

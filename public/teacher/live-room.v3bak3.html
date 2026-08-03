@@ -233,88 +233,10 @@ function ensureTile(id, name, isLocal, isHost){
   camoff.appendChild(av); camoff.appendChild(nm);
   tile.appendChild(camoff);
 
-  // Host-only moderation menu (never shown on own tile, never shown to non-hosts)
-  if(IS_HOST && !isLocal){
-    const menuBtn = document.createElement("button");
-    menuBtn.className = "tile-menu-btn show";
-    menuBtn.type = "button";
-    menuBtn.title = "Manage participant";
-    menuBtn.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
-    tile.appendChild(menuBtn);
-
-    const dropdown = document.createElement("div");
-    dropdown.className = "tile-menu-dropdown";
-    dropdown.innerHTML = `
-      <button class="tile-menu-item" data-action="mute" data-id="${id}" data-name="${name}" type="button">
-        <svg viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2"/></svg>
-        Mute microphone
-      </button>
-      <button class="tile-menu-item" data-action="camoff" data-id="${id}" data-name="${name}" type="button">
-        <svg viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 0 1-2-2V8"/><path d="M16 13l7 4V7l-7 4"/></svg>
-        Turn off camera
-      </button>
-      <button class="tile-menu-item danger" data-action="remove" data-id="${id}" data-name="${name}" type="button">
-        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        Remove from meeting
-      </button>
-    `;
-    tile.appendChild(dropdown);
-
-    menuBtn.onclick = (e) => {
-      e.stopPropagation();
-      document.querySelectorAll(".tile-menu-dropdown.show").forEach(d=>{
-        if(d !== dropdown) d.classList.remove("show");
-      });
-      dropdown.classList.toggle("show");
-    };
-  }
-
   videoGrid.appendChild(tile);
   updateGridLayout();
   return tile;
 }
-
-// Close any open tile menu when clicking elsewhere
-document.addEventListener("click", () => {
-  document.querySelectorAll(".tile-menu-dropdown.show").forEach(d=>d.classList.remove("show"));
-});
-
-// Delegated handler for host moderation actions (works for dynamically added tiles)
-videoGrid.addEventListener("click", async (e) => {
-  const btn = e.target.closest(".tile-menu-item");
-  if(!btn) return;
-  e.stopPropagation();
-
-  const action = btn.dataset.action;
-  const targetId = btn.dataset.id;
-  const targetName = btn.dataset.name;
-
-  document.querySelectorAll(".tile-menu-dropdown.show").forEach(d=>d.classList.remove("show"));
-
-  if(action === "mute"){
-    await db.collection("meetings").doc(MEETING_ID).collection("participants").doc(targetId)
-      .update({ forceMuted: true }).catch(()=>{});
-    toast(`Muted ${targetName}'s microphone`);
-  }
-  if(action === "camoff"){
-    await db.collection("meetings").doc(MEETING_ID).collection("participants").doc(targetId)
-      .update({ forceCameraOff: true }).catch(()=>{});
-    toast(`Turned off ${targetName}'s camera`);
-  }
-  if(action === "remove"){
-    if(!confirm(`Remove ${targetName} from the meeting?`)) return;
-    // Set a kicked flag first — the target's own client watches its own
-    // doc and will see this and leave, before the doc is deleted.
-    await db.collection("meetings").doc(MEETING_ID).collection("participants").doc(targetId)
-      .update({ kicked: true }).catch(()=>{});
-    toast(`Removed ${targetName} from the meeting`);
-    // Give their client a moment to react to the kick flag, then clean up
-    setTimeout(async ()=>{
-      await db.collection("meetings").doc(MEETING_ID).collection("participants").doc(targetId)
-        .delete().catch(()=>{});
-    }, 1500);
-  }
-});
 
 function setTileStream(id, stream){
   const tile = document.getElementById("tile-"+id);
@@ -376,14 +298,6 @@ function renderParticipantList(){
         <svg class="${p.camOn?'active':'inactive'}" viewBox="0 0 24 24">${p.camOn
           ? '<path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/>'
           : '<line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 0 1-2-2V8"/><path d="M16 13l7 4V7l-7 4"/>'}</svg>
-        ${(IS_HOST && !p.isLocal) ? `
-          <button class="p-host-action" data-sidebar-action="mute" data-sidebar-id="${p.id}" data-sidebar-name="${p.name}" title="Mute">
-            <svg viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2"/></svg>
-          </button>
-          <button class="p-host-action" data-sidebar-action="remove" data-sidebar-id="${p.id}" data-sidebar-name="${p.name}" title="Remove">
-            <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-          </button>
-        ` : ''}
       </div>
     </div>
   `).join("");
@@ -603,51 +517,10 @@ async function registerSelf(){
   await db.collection("meetings").doc(MEETING_ID)
     .collection("participants").doc(MY_ID).set({
       participantId: MY_ID, displayName: MY_NAME, isHost: IS_HOST,
-      cameraEnabled: camOn, micEnabled: micOn, joinedAt: new Date().toISOString(),
-      forceMuted: false, forceCameraOff: false, kicked: false
+      cameraEnabled: camOn, micEnabled: micOn, joinedAt: new Date().toISOString()
     });
   window.addEventListener("pagehide", cleanup);
   window.addEventListener("beforeunload", cleanup);
-
-  // Watch my own doc for host moderation actions targeting me
-  const unsubSelf = db.collection("meetings").doc(MEETING_ID)
-    .collection("participants").doc(MY_ID)
-    .onSnapshot((snap) => {
-      const data = snap.data();
-      if(!data) return;
-
-      // Host force-muted me
-      if(data.forceMuted && micOn){
-        micOn = false;
-        if(localStream) localStream.getAudioTracks().forEach(t => t.enabled = false);
-        micBtn.classList.add("off");
-        setMicIcon(MY_ID, false);
-        toast("🔇 The host muted your microphone");
-        db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
-          .update({ forceMuted: false }).catch(()=>{});
-      }
-
-      // Host turned off my camera
-      if(data.forceCameraOff && camOn){
-        camOn = false;
-        if(localStream) localStream.getVideoTracks().forEach(t => t.enabled = false);
-        camBtn.classList.add("off");
-        setCamOff(MY_ID, true);
-        toast("📷 The host turned off your camera");
-        db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
-          .update({ forceCameraOff: false }).catch(()=>{});
-      }
-
-      // Host removed me from the meeting
-      if(data.kicked){
-        toast("You have been removed from the meeting by the host.");
-        setTimeout(()=>{
-          cleanup();
-          location.href = "/teacher/live-ended.html?reason=removed";
-        }, 1200);
-      }
-    });
-  unsubs.push(unsubSelf);
 }
 
 function syncSelfState(){
@@ -749,32 +622,6 @@ document.getElementById("sidebarClose").onclick = () => {
   sidebar.classList.remove("show");
   peopleBtn.classList.remove("active");
 };
-
-// Sidebar host action buttons (mute / remove) — same logic as tile menu
-participantList.addEventListener("click", async (e) => {
-  const btn = e.target.closest("[data-sidebar-action]");
-  if(!btn) return;
-
-  const action = btn.dataset.sidebarAction;
-  const targetId = btn.dataset.sidebarId;
-  const targetName = btn.dataset.sidebarName;
-
-  if(action === "mute"){
-    await db.collection("meetings").doc(MEETING_ID).collection("participants").doc(targetId)
-      .update({ forceMuted: true }).catch(()=>{});
-    toast(`Muted ${targetName}'s microphone`);
-  }
-  if(action === "remove"){
-    if(!confirm(`Remove ${targetName} from the meeting?`)) return;
-    await db.collection("meetings").doc(MEETING_ID).collection("participants").doc(targetId)
-      .update({ kicked: true }).catch(()=>{});
-    toast(`Removed ${targetName} from the meeting`);
-    setTimeout(async ()=>{
-      await db.collection("meetings").doc(MEETING_ID).collection("participants").doc(targetId)
-        .delete().catch(()=>{});
-    }, 1500);
-  }
-});
 
 // ── Invite panel ──
 document.getElementById("inviteBtn").onclick = () => document.getElementById("invitePanel").classList.toggle("show");
