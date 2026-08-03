@@ -148,7 +148,7 @@ let micOn            = INIT_MIC;
 let screenOn         = false;
 let recording        = false;
 let mediaRecorder    = null;
-let recordChunks = [];
+let recordChunks     = [];
 let meetingTitle     = "Impact Live Class";
 let startTime        = Date.now();
 let elapsedInterval  = null;
@@ -789,17 +789,9 @@ document.getElementById("copyLinkBtn").onclick = () => {
 // ══════════════════════════════════════════════════════════════
 // RECORDING (host only) — captures composite of all visible tiles
 // ══════════════════════════════════════════════════════════════
-let recordingBusy = false; // true from the moment Stop is clicked until upload fully finishes
-
 function initRecording(){
   recBtn.style.display = "flex";
-  recBtn.onclick = () => {
-    if(recordingBusy){
-      toast("Please wait — saving previous recording…");
-      return;
-    }
-    recording ? stopRecording() : startRecording();
-  };
+  recBtn.onclick = () => recording ? stopRecording() : startRecording();
 }
 
 function startRecording(){
@@ -881,7 +873,6 @@ function startRecording(){
 
 function stopRecording(){
   if(!mediaRecorder||!recording) return;
-  recordingBusy = true;
   mediaRecorder.stop();
   recording = false;
   recBtn.classList.remove("recording");
@@ -890,40 +881,24 @@ function stopRecording(){
 }
 
 async function uploadRecording(mime){
-  // Snapshot the chunks locally BEFORE anything else can touch recordChunks,
-  // in case a new recording starts while this upload is still in flight.
-  const chunksToUpload = recordChunks.slice();
-  recordChunks = [];
-
   try{
-    if(!chunksToUpload.length){
-      throw new Error("No video data was captured — recording was too short or a tab was backgrounded.");
-    }
-
-    const ext = mime.includes("mp4") ? "mp4" : "webm";
-    // Collision-proof unique ID: timestamp + random suffix, guarantees
-    // no two recordings in the same meeting can ever share a Storage path,
-    // even if stopped/started within the same millisecond.
-    const uniqueId = `${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
-    const path = `recordings/${MEETING_ID}/rec_${uniqueId}.${ext}`;
-
-    const blob = new Blob(chunksToUpload, { type: mime });
+    const ext = mime.includes("mp4")?"mp4":"webm";
+    const blob = new Blob(recordChunks,{type:mime});
+    const path = `recordings/${MEETING_ID}/rec_${Date.now()}.${ext}`;
     const snap = await storage.ref(path).put(blob);
     const url  = await snap.ref.getDownloadURL();
     const dur  = Math.round((Date.now()-startTime)/1000);
-
     await db.collection("recordings").add({
       meetingId:MEETING_ID, meetingTitle, storagePath:path, downloadURL:url,
       duration:dur, mimeType:mime, createdAt:new Date().toISOString(), recordedBy:MY_NAME
     });
     await db.collection("meetings").doc(MEETING_ID).update({ hasRecording:true }).catch(()=>{});
+    recBtn.disabled = false;
     toast("✅ Recording saved!", 4000);
   }catch(e){
-    console.error("Recording upload failed:", e);
-    toast("⚠️ Recording failed to save: " + e.message, 6000);
-  }finally{
+    console.error(e);
     recBtn.disabled = false;
-    recordingBusy = false;
+    toast("⚠️ Upload failed: " + e.message, 5000);
   }
 }
 
