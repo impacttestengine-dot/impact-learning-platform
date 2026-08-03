@@ -295,6 +295,55 @@ async function createPeer(remoteId, remoteName, isPolite){
   if(peerConns[remoteId]) return peerConns[remoteId];
 
   const pc = new RTCPeerConnection(ICE_CONFIG);
+  pc.oniceconnectionstatechange = () => {
+    console.log(
+        "[ICE]",
+        remoteId,
+        pc.iceConnectionState
+    );
+};
+
+pc.onicegatheringstatechange = () => {
+    console.log(
+        "[ICE GATHERING]",
+        remoteId,
+        pc.iceGatheringState
+    );
+};
+
+pc.onsignalingstatechange = () => {
+    console.log(
+        "[SIGNAL]",
+        remoteId,
+        pc.signalingState
+    );
+};
+
+pc.onconnectionstatechange = () => {
+
+    console.log(
+        "[CONNECTION STATE]",
+        remoteId,
+        pc.connectionState
+    );
+
+    const s = pc.connectionState;
+
+    if(s === "connected"){
+        ...
+        const count=Object.keys(peerConns).length;
+        setStatus(
+            IS_HOST
+                ? `Live · ${count} participant${count>1?"s":""}`
+                : "Live"
+        );
+    }
+
+    if(s==="failed"){
+        toast("Connection failed.");
+    }
+};
+
   peerConns[remoteId] = pc;
   peerInfo[remoteId]  = { name: remoteName };
   makingOffer[remoteId] = false;
@@ -310,6 +359,11 @@ async function createPeer(remoteId, remoteName, isPolite){
 
   // ── Handle incoming tracks ────────────────────────────────
   pc.ontrack = (event) => {
+  console.log(
+    "[REMOTE TRACK]",
+    remoteId,
+    event.track.kind
+);
     const stream = event.streams[0];
     if(!stream) return;
 
@@ -329,21 +383,50 @@ async function createPeer(remoteId, remoteName, isPolite){
   };
 
   // ── ICE candidates ────────────────────────────────────────
-  pc.onicecandidate = (event) => {
+  pc.onicecandidate = (event)=>{
+
+    if(event.candidate){
+
+        console.log(
+            "[SEND ICE]",
+            remoteId,
+            event.candidate.candidate
+        );
+
+    }else{
+
+        console.log(
+            "[SEND ICE COMPLETE]",
+            remoteId
+        );
+
+    }
+
     if(!event.candidate) return;
+
     iceSub(remoteId).add({
-      candidate: event.candidate.toJSON(),
-      ts: Date.now()
-    }).catch(()=>{});
-  };
+        candidate:event.candidate.toJSON(),
+        ts:Date.now()
+    });
+
+};
+
 
   // ── Perfect negotiation: handle onnegotiationneeded ───────
   pc.onnegotiationneeded = async () => {
     try{
       makingOffer[remoteId] = true;
+      console.log(
+    "[NEGOTIATION START]",
+    remoteId
+);
       const offer = await pc.createOffer();
       if(pc.signalingState !== "stable") return;
       await pc.setLocalDescription(offer);
+      console.log(
+    "[LOCAL OFFER CREATED]",
+    remoteId
+);
       await sigRef(remoteId).set({
         [`offer_${MY_ID}`]: { type: pc.localDescription.type, sdp: pc.localDescription.sdp }
       }, { merge: true });
@@ -387,6 +470,10 @@ async function createPeer(remoteId, remoteName, isPolite){
     // Handle incoming offer
     const remoteOffer = data[offerKey];
     if(remoteOffer && remoteOffer.sdp){
+    console.log(
+    "[REMOTE OFFER]",
+    remoteId
+);
       const offerCollision = makingOffer[remoteId] || pc.signalingState !== "stable";
       ignoreOffer[remoteId] = !isPolite && offerCollision;
       if(ignoreOffer[remoteId]) return;
@@ -406,6 +493,10 @@ async function createPeer(remoteId, remoteName, isPolite){
     // Handle incoming answer
     const remoteAnswer = data[`answer_${remoteId}`];
     if(remoteAnswer && remoteAnswer.sdp && !pc.currentRemoteDescription){
+    console.log(
+    "[REMOTE ANSWER]",
+    remoteId
+);
       try{
         await pc.setRemoteDescription(new RTCSessionDescription(remoteAnswer));
       }catch(e){
@@ -419,7 +510,17 @@ async function createPeer(remoteId, remoteName, isPolite){
   const unsub2 = iceInbound(remoteId).orderBy("ts").onSnapshot((snap) => {
     snap.docChanges().forEach(async (change) => {
       if(change.type === "added"){
+      console.log(
+    "[ICE RECEIVED]",
+    remoteId,
+    change.doc.data().candidate
+);
         try{
+        console.log(
+    "[RECV ICE]",
+    remoteId
+);
+
           await pc.addIceCandidate(new RTCIceCandidate(change.doc.data().candidate));
         }catch(e){
           if(!ignoreOffer[remoteId]) console.error("addIceCandidate error:", e);
