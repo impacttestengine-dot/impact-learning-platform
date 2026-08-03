@@ -14,27 +14,21 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 .lp-icon-btn{width:46px;height:46px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px)}
 .lp-icon-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
 .page{position:relative;z-index:20;width:min(1320px,96vw);margin:0 auto;padding:108px 0 80px}
-.workspace{
-  display:grid;
-  grid-template-columns:260px minmax(0,1fr) 240px;
-  gap:18px;
-  height:calc(100vh - 108px);
-  align-items:stretch;
-}
+.workspace{display:grid;grid-template-columns:260px minmax(0,1fr) 240px;gap:18px;align-items:start}
 .panel{border-radius:28px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.28)}
-.blocks-panel{padding:18px;height:100%;overflow-y:auto;align-self:start}
-.settings-panel{padding:22px;height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:16px;align-self:start}
+.blocks-panel{padding:18px;position:sticky;top:100px;max-height:calc(100vh - 120px);overflow-y:auto}
+.settings-panel{padding:22px;position:sticky;top:100px;max-height:calc(100vh - 120px);overflow-y:auto;display:flex;flex-direction:column;gap:16px}
 .panel-title{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:8px;margin-top:18px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,.08)}
 .panel-title:first-child{margin-top:0}
 .block-group{display:flex;flex-direction:column;gap:5px}
 .block-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.83rem;cursor:pointer;transition:.15s ease;text-align:left}
 .block-btn:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.22);transform:translateX(3px)}
 .block-icon{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:rgba(255,255,255,.1);flex-shrink:0;font-size:.72rem;font-weight:900;color:rgba(255,255,255,.8)}
-.canvas-panel{background:#fff;border-radius:24px;box-shadow:0 8px 40px rgba(0,0,0,.22);height:100%;display:flex;flex-direction:column;overflow:hidden}
+.canvas-panel{background:#fff;border-radius:24px;overflow:hidden;min-height:640px;box-shadow:0 8px 40px rgba(0,0,0,.22)}
 .canvas-toolbar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#f4f6f9;border-bottom:1px solid #e4e7ec;flex-wrap:wrap}
 .tbtn{padding:6px 12px;border-radius:9px;border:1px solid #dde1e8;background:#fff;color:#374151;font-size:.76rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:.12s}
 .tbtn:hover{background:#eef0f4}
-.canvas{padding:28px 32px;flex:1;overflow-y:auto}
+.canvas{padding:28px 32px;min-height:520px}
 .canvas-empty{text-align:center;padding:80px 40px;color:#b0b8c8;font-size:.92rem;font-weight:600;border:2px dashed #e4e7ec;border-radius:16px}
 .canvas-submit{padding:20px 32px 32px;text-align:center}
 .submit-btn-preview{padding:13px 52px;border-radius:999px;background:#8b5cf6;color:#fff;font-size:.95rem;font-weight:800;border:none;font-family:Inter,sans-serif;cursor:default;opacity:.8}
@@ -99,60 +93,6 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 .legacy-notice{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:14px;font-size:.8rem;color:#92400e;font-weight:700;margin-bottom:12px;line-height:1.5}
 @media(max-width:1024px){.workspace{grid-template-columns:220px 1fr 200px}}
 @media(max-width:800px){.workspace{grid-template-columns:1fr}.blocks-panel,.settings-panel{position:relative;top:auto;max-height:none}}
-
-/* BLOCK ALIGN / RESIZE TOOLBAR — appears above selected block */
-.block-toolbar{
-  display:none;
-  position:absolute;
-  top:-42px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#1e293b;
-  border-radius:12px;
-  padding:5px 6px;
-  gap:3px;
-  z-index:150;
-  white-space:nowrap;
-  box-shadow:0 8px 28px rgba(0,0,0,.35);
-  align-items:center;
-}
-.c-block.selected .block-toolbar{display:flex}
-.bt-btn{
-  width:30px;height:30px;border-radius:8px;border:none;background:transparent;
-  color:#cbd5e1;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:.72rem;transition:.12s;
-}
-.bt-btn:hover{background:rgba(255,255,255,.12);color:#fff}
-.bt-btn.active{background:#8b5cf6;color:#fff}
-.bt-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
-.bt-divider{width:1px;height:18px;background:rgba(255,255,255,.15);margin:0 3px;flex-shrink:0}
-.bt-size-label{font-size:.68rem;font-weight:800;color:#cbd5e1;padding:0 4px;min-width:34px;text-align:center}
-
-/* MEDIA FILE BLOCK */
-.cb-media-empty{
-  border:2px dashed #d1d5db;border-radius:12px;padding:40px 20px;text-align:center;
-  color:#9ca3af;font-size:.86rem;font-weight:700;cursor:pointer;transition:.15s;
-}
-.cb-media-empty:hover{border-color:#8b5cf6;color:#8b5cf6}
-.cb-media-empty svg{width:32px;height:32px;margin:0 auto 10px;display:block;stroke:currentColor;fill:none;stroke-width:1.6}
-.cb-media-input{display:none}
-.cb-media-preview{display:none;border-radius:12px;overflow:hidden;background:#f3f4f6}
-.cb-media-preview.show{display:block}
-.cb-media-preview img,.cb-media-preview video{width:100%;display:block;max-height:420px;object-fit:contain;background:#0a0c14}
-.cb-media-replace{margin-top:8px;padding:6px 12px;border-radius:8px;border:1px solid #e0e3e8;background:#fff;color:#6b7280;font-size:.74rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif}
-.cb-media-replace:hover{border-color:#8b5cf6;color:#8b5cf6}
-
-/* Block width presets applied via inline style + these size classes */
-.c-block.bw-small{max-width:340px;margin-left:auto;margin-right:auto}
-.c-block.bw-medium{max-width:560px;margin-left:auto;margin-right:auto}
-.c-block.bw-large{max-width:100%}
-
-/* Block text alignment */
-.c-block.align-left .c-block-inner{text-align:left}
-.c-block.align-center .c-block-inner{text-align:center}
-.c-block.align-right .c-block-inner{text-align:right}
-.c-block.align-center .mc-options,.c-block.align-center .pc-grid{justify-content:center}
-.c-block.align-right .mc-options,.c-block.align-right .pc-grid{justify-content:flex-end}
 </style>
 </head>
 <body>
@@ -170,7 +110,6 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 <aside class="panel blocks-panel">
   <p class="panel-title">Basic</p>
   <div class="block-group">
-    <button class="block-btn" data-block="mediafile" type="button"><span class="block-icon">🖼</span>Media File</button>
     <button class="block-btn" data-block="header" type="button"><span class="block-icon">H1</span>Header</button>
     <button class="block-btn" data-block="subheader" type="button"><span class="block-icon">H2</span>Subheader</button>
     <button class="block-btn" data-block="text" type="button"><span class="block-icon">T</span>Text</button>
@@ -256,22 +195,6 @@ function selectBlock(block){allBlocks().forEach(b=>b.classList.remove("selected"
 canvas.addEventListener("click",function(e){if(e.target===canvas||e.target===canvasEmpty)selectBlock(null);});
 function makeQ(label){return `<div class="q-label-row"><span class="q-icon">?</span><div class="q-label-text" contenteditable="true">${label}</div></div><div class="q-hint" contenteditable="true">Type in a description and fill-out hints</div>`;}
 const TEMPLATES={
-  mediafile:{render:(data)=>{
-    const src=data&&data.src?data.src:"";
-    const kind=data&&data.kind?data.kind:"";
-    const mediaTag=kind==="video"
-      ? `<video src="${src}" controls></video>`
-      : `<img src="${src}" alt="">`;
-    return `
-      <div class="cb-media-empty" style="${src?'display:none':''}">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        Click to upload an image or video
-      </div>
-      <input type="file" class="cb-media-input" accept="image/*,video/*">
-      <div class="cb-media-preview ${src?'show':''}">${src?mediaTag:''}</div>
-      ${src?`<button type="button" class="cb-media-replace">Replace file</button>`:''}
-    `;
-  }},
   header:{render:()=>`<div class="cb-header" contenteditable="true">Activity Title</div>`},
   subheader:{render:()=>`<div class="cb-subheader" contenteditable="true">Section A</div>`},
   text:{render:()=>`<div class="cb-text" contenteditable="true">Write your activity content here...</div>`},
@@ -293,100 +216,10 @@ function createBlock(type,data){
   const block=document.createElement("div");block.className="c-block";block.setAttribute("data-type",type);block.setAttribute("draggable","true");
   const actions=document.createElement("div");actions.className="block-actions";
   actions.innerHTML=`<button class="act-btn" data-act="up">↑</button><button class="act-btn" data-act="down">↓</button><div class="act-divider"></div><button class="act-btn" data-act="dupe">⧉</button><div class="act-divider"></div><button class="act-btn danger" data-act="del">✕</button>`;
-
-  const toolbar=document.createElement("div");
-  toolbar.className="block-toolbar";
-  toolbar.innerHTML=`
-    <button class="bt-btn" data-align="left" title="Align left" type="button"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="15" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="15" y2="18"/></svg></button>
-    <button class="bt-btn active" data-align="center" title="Align center" type="button"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="18" y2="18"/></svg></button>
-    <button class="bt-btn" data-align="right" title="Align right" type="button"><svg viewBox="0 0 24 24"><line x1="9" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="9" y1="18" x2="21" y2="18"/></svg></button>
-    <div class="bt-divider"></div>
-    <button class="bt-btn" data-size="small" title="Small" type="button">S</button>
-    <button class="bt-btn" data-size="medium" title="Medium" type="button">M</button>
-    <button class="bt-btn active" data-size="large" title="Large (full width)" type="button">L</button>
-  `;
   const inner=document.createElement("div");inner.className="c-block-inner";inner.innerHTML=tmpl.render(data);
-  block.appendChild(actions);block.appendChild(toolbar);block.appendChild(inner);bindBlock(block);return block;
+  block.appendChild(actions);block.appendChild(inner);bindBlock(block);return block;
 }
 function bindBlock(block){
-  // ── Align / resize toolbar ──
-  const toolbar = block.querySelector(".block-toolbar");
-  if(toolbar){
-    toolbar.addEventListener("click", function(e){
-      e.stopPropagation();
-      const alignBtn = e.target.closest("[data-align]");
-      if(alignBtn){
-        pushUndo();
-        block.classList.remove("align-left","align-center","align-right");
-        block.classList.add("align-"+alignBtn.dataset.align);
-        toolbar.querySelectorAll("[data-align]").forEach(b=>b.classList.remove("active"));
-        alignBtn.classList.add("active");
-      }
-      const sizeBtn = e.target.closest("[data-size]");
-      if(sizeBtn){
-        pushUndo();
-        block.classList.remove("bw-small","bw-medium","bw-large");
-        block.classList.add("bw-"+sizeBtn.dataset.size);
-        toolbar.querySelectorAll("[data-size]").forEach(b=>b.classList.remove("active"));
-        sizeBtn.classList.add("active");
-      }
-    });
-  }
-
-  // ── Media File block: click to upload, preview immediately ──
-  const mediaEmpty   = block.querySelector(".cb-media-empty");
-  const mediaInput   = block.querySelector(".cb-media-input");
-  const mediaPreview = block.querySelector(".cb-media-preview");
-  const mediaReplace = block.querySelector(".cb-media-replace");
-
-  function handleMediaFile(file){
-    if(!file) return;
-    const isVideo = file.type.startsWith("video/");
-    const reader = new FileReader();
-    reader.onload = function(ev){
-      const src = ev.target.result;
-      block.dataset.mediaSrc  = src;
-      block.dataset.mediaKind = isVideo ? "video" : "image";
-
-      mediaPreview.innerHTML = isVideo
-        ? `<video src="${src}" controls></video>`
-        : `<img src="${src}" alt="">`;
-      mediaPreview.classList.add("show");
-      if(mediaEmpty) mediaEmpty.style.display = "none";
-
-      let replaceBtn = block.querySelector(".cb-media-replace");
-      if(!replaceBtn){
-        replaceBtn = document.createElement("button");
-        replaceBtn.type = "button";
-        replaceBtn.className = "cb-media-replace";
-        replaceBtn.textContent = "Replace file";
-        mediaPreview.after(replaceBtn);
-        replaceBtn.addEventListener("click", function(e){
-          e.stopPropagation();
-          mediaInput.click();
-        });
-      }
-    };
-    if(isVideo){ reader.readAsDataURL(file); } else { reader.readAsDataURL(file); }
-  }
-
-  if(mediaEmpty && mediaInput){
-    mediaEmpty.addEventListener("click", function(e){
-      e.stopPropagation();
-      mediaInput.click();
-    });
-    mediaInput.addEventListener("click", function(e){ e.stopPropagation(); });
-    mediaInput.addEventListener("change", function(e){
-      e.stopPropagation();
-      handleMediaFile(mediaInput.files[0]);
-    });
-  }
-  if(mediaReplace && mediaInput){
-    mediaReplace.addEventListener("click", function(e){
-      e.stopPropagation();
-      mediaInput.click();
-    });
-  }
   block.addEventListener("click",function(e){if(e.target.closest(".block-actions"))return;e.stopPropagation();selectBlock(block);});
   block.querySelector(".block-actions").addEventListener("click",function(e){
     e.stopPropagation();const btn=e.target.closest("[data-act]");if(!btn)return;const act=btn.dataset.act;
@@ -417,15 +250,6 @@ function extractData(block){
   if(type==="multiplechoice"){const lel=block.querySelector(".q-label-text");const hel=block.querySelector(".q-hint");data.label=lel?lel.innerHTML:"";data.hint=hel?hel.innerHTML:"";data.options=Array.from(block.querySelectorAll(".mc-option-label")).map(el=>el.innerHTML);}
   if(type==="picturechoice"){const lel=block.querySelector(".q-label-text");const hel=block.querySelector(".q-hint");data.label=lel?lel.innerHTML:"";data.hint=hel?hel.innerHTML:"";data.images=Array.from(block.querySelectorAll(".pc-img-placeholder img")).map(img=>img.src);}
   if(type==="dropdown"){const lel=block.querySelector(".q-label-text");const hel=block.querySelector(".q-hint");data.label=lel?lel.innerHTML:"";data.hint=hel?hel.innerHTML:"";data.options=Array.from(block.querySelectorAll("select option")).slice(1).map(o=>o.textContent);}
-    // Persist media file data URL + block styling so it survives save/reload
-  if(type==="mediafile"){
-    data.src  = block.dataset.mediaSrc  || "";
-    data.kind = block.dataset.mediaKind || "";
-  }
-  const alignClass = ["align-left","align-center","align-right"].find(c=>block.classList.contains(c));
-  const sizeClass   = ["bw-small","bw-medium","bw-large"].find(c=>block.classList.contains(c));
-  data.align = alignClass ? alignClass.replace("align-","") : "center";
-  data.size  = sizeClass  ? sizeClass.replace("bw-","")     : "large";
   return data;
 }
 function serializeBlocks(){return allBlocks().map(extractData);}
@@ -433,23 +257,7 @@ function rebuildFromBlocks(blocks){
   allBlocks().forEach(b=>b.remove());selectedBlock=null;pageCount=1;
   if(!blocks||!blocks.length){showEmpty();return;}
   hideEmpty();
-  blocks.forEach(data=>{const block=createBlock(data.type,data);if(!block)return;canvas.appendChild(block);if(data.content){const ce=block.querySelector("[contenteditable]");if(ce)ce.innerHTML=data.content;}if(data.label){const lel=block.querySelector(".q-label-text");if(lel)lel.innerHTML=data.label;}if(data.hint){const hel=block.querySelector(".q-hint");if(hel)hel.innerHTML=data.hint;}
-    if(data.align){
-      block.classList.remove("align-left","align-center","align-right");
-      block.classList.add("align-"+data.align);
-      const tb=block.querySelector(".block-toolbar");
-      if(tb){tb.querySelectorAll("[data-align]").forEach(b=>b.classList.toggle("active",b.dataset.align===data.align));}
-    }
-    if(data.size){
-      block.classList.remove("bw-small","bw-medium","bw-large");
-      block.classList.add("bw-"+data.size);
-      const tb=block.querySelector(".block-toolbar");
-      if(tb){tb.querySelectorAll("[data-size]").forEach(b=>b.classList.toggle("active",b.dataset.size===data.size));}
-    }
-    if(data.type==="mediafile" && data.src){
-      block.dataset.mediaSrc = data.src;
-      block.dataset.mediaKind = data.kind || "image";
-    }});
+  blocks.forEach(data=>{const block=createBlock(data.type,data);if(!block)return;canvas.appendChild(block);if(data.content){const ce=block.querySelector("[contenteditable]");if(ce)ce.innerHTML=data.content;}if(data.label){const lel=block.querySelector(".q-label-text");if(lel)lel.innerHTML=data.label;}if(data.hint){const hel=block.querySelector(".q-hint");if(hel)hel.innerHTML=data.hint;}});
 }
 async function save(){
   const blocks=serializeBlocks();

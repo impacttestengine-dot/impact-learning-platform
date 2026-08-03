@@ -264,13 +264,6 @@ document.addEventListener("DOMContentLoaded", async function(){
     if(b.type === "__final__"){
       return `<div class="final-slide"><h2>All done! 🎉</h2><p>You have completed this lesson plan.</p><button class="final-submit" onclick="window.close()">Close Preview</button></div>`;
     }
-    if(b.type==="mediafile"){
-      if(!b.src) return "";
-      const mediaTag = b.kind==="video"
-        ? `<video src="${b.src}" controls style="width:100%;border-radius:12px;max-height:460px"></video>`
-        : `<img src="${b.src}" alt="" style="width:100%;border-radius:12px;max-height:460px;object-fit:contain;background:#0a0c14">`;
-      return `<div>${mediaTag}</div>`;
-    }
     if(b.type==="header") return `<div class="sv-header">${b.content||""}</div>`;
     if(b.type==="subheader") return `<div class="sv-subheader">${b.content||""}</div>`;
     if(b.type==="text") return `<div class="sv-text">${b.content||""}</div>`;
