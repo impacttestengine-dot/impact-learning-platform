@@ -39,7 +39,7 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 .canvas-toolbar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#f4f6f9;border-bottom:1px solid #e4e7ec;flex-wrap:wrap}
 .tbtn{padding:6px 12px;border-radius:9px;border:1px solid #dde1e8;background:#fff;color:#374151;font-size:.76rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:.12s}
 .tbtn:hover{background:#eef0f4}
-.canvas{padding:28px 32px;flex:1;overflow-y:auto;color:#374151}
+.canvas{padding:28px 32px;flex:1;overflow-y:auto}
 .canvas-empty{text-align:center;padding:80px 40px;color:#b0b8c8;font-size:.92rem;font-weight:600;border:2px dashed #e4e7ec;border-radius:16px}
 .canvas-submit{padding:20px 32px 32px;text-align:center}
 .submit-btn-preview{padding:13px 52px;border-radius:999px;background:#06b6d4;color:#fff;font-size:.95rem;font-weight:800;border:none;font-family:Inter,sans-serif;cursor:default;opacity:.8}
@@ -136,7 +136,13 @@ font-size:34px;
 
 }
 
-.impact-upload-text{font-weight:700 !important;color:#374151 !important}
+.impact-upload-text{
+
+font-weight:700;
+
+color:#374151;
+
+}
 
 .impact-upload-or{
 
@@ -397,22 +403,6 @@ function makeQuestionHeader(label){
 }
 
 const TEMPLATES = {
-  mediafile:{render:(data)=>{
-    const src=data&&data.src?data.src:"";
-    const kind=data&&data.kind?data.kind:"";
-    const mediaTag=kind==="video"
-      ? `<video src="${src}" controls></video>`
-      : `<img src="${src}" alt="">`;
-    return `
-      <div class="cb-media-empty" style="${src?'display:none':''}">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        Click to upload an image or video
-      </div>
-      <input type="file" class="cb-media-input" accept="image/*,video/*">
-      <div class="cb-media-preview ${src?'show':''}">${src?mediaTag:''}</div>
-      ${src?`<button type="button" class="cb-media-replace">Replace file</button>`:''}
-    `;
-  }},
   header: {
     label: "Header",
     render: ()=>`<div class="cb-header" contenteditable="true" data-ph="Header text">Lesson Title</div>`
@@ -994,7 +984,63 @@ load();
    FILE BROWSER (UI ONLY)
 ============================================================ */
 
-// [removed: legacy duplicate upload handler that wrote directly into .impact-upload-text — superseded by bindBlock() logic]
+document.addEventListener("click", function(e){
+
+    const browseBtn = e.target.closest(".impact-upload-btn");
+
+    if(!browseBtn) return;
+
+    const upload = browseBtn
+        .closest(".impact-upload")
+        .querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("click", function(e){
+
+    const zone = e.target.closest(".impact-drop-zone");
+
+    if(!zone) return;
+
+    if(e.target.closest(".impact-upload-btn")) return;
+
+    const upload = zone.querySelector(".impact-hidden-upload");
+
+    if(upload){
+
+        upload.click();
+
+    }
+
+});
+
+document.addEventListener("change", function(e){
+
+    if(!e.target.classList.contains("impact-hidden-upload")) return;
+
+    const zone = e.target.closest(".impact-upload")
+        .querySelector(".impact-upload-text");
+
+    if(!zone) return;
+
+    if(e.target.files.length===1){
+
+        zone.textContent = e.target.files[0].name;
+
+    }else if(e.target.files.length>1){
+
+        zone.textContent =
+            e.target.files.length + " files selected";
+
+    }
+
+});
 
 </script>
 
@@ -1005,7 +1051,68 @@ load();
 
 <script>
 
-// [removed: legacy duplicate upload handler that wrote directly into .impact-upload-text — superseded by bindBlock() logic]
+document.addEventListener("click",function(e){
+
+    const btn=e.target.closest(".impact-upload-btn");
+
+    if(btn){
+
+        e.preventDefault();
+
+        const input=btn
+            .closest(".impact-upload")
+            .querySelector(".impact-hidden-upload");
+
+        if(input){
+
+            input.click();
+
+        }
+
+        return;
+
+    }
+
+    const zone=e.target.closest(".impact-drop-zone");
+
+    if(zone){
+
+        if(e.target.closest(".impact-upload-btn")) return;
+
+        const input=zone.querySelector(".impact-hidden-upload");
+
+        if(input){
+
+            input.click();
+
+        }
+
+    }
+
+});
+
+document.addEventListener("change",function(e){
+
+    if(!e.target.classList.contains("impact-hidden-upload")) return;
+
+    const text=e.target
+        .closest(".impact-upload")
+        .querySelector(".impact-upload-text");
+
+    if(!text) return;
+
+    if(e.target.files.length==1){
+
+        text.textContent=e.target.files[0].name;
+
+    }
+    else if(e.target.files.length>1){
+
+        text.textContent=e.target.files.length + " files selected";
+
+    }
+
+});
 
 </script>
 
