@@ -550,20 +550,7 @@ micBtn.onclick = function(){
   syncSelfState();
 };
 
-// Detect if screen sharing is supported (desktop only — iOS/Android
-// browsers do not implement getDisplayMedia at all)
-const SCREEN_SHARE_SUPPORTED = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
-
-if(!SCREEN_SHARE_SUPPORTED){
-  screenBtn.style.opacity = "0.35";
-  screenBtn.title = "Screen sharing is only available on desktop browsers";
-}
-
 screenBtn.onclick = async function(){
-  if(!SCREEN_SHARE_SUPPORTED){
-    toast("📵 Screen sharing isn't supported on this device. Try from a desktop browser.");
-    return;
-  }
   if(screenOn){ stopScreenShare(); return; }
   try{
     screenStream = await navigator.mediaDevices.getDisplayMedia({
@@ -651,34 +638,6 @@ function startRecording(){
   canvas.width = 1280; canvas.height = 720;
   const ctx = canvas.getContext("2d");
 
-  // Draw each tile preserving its native aspect ratio (contain-fit),
-  // centred within its grid cell, instead of stretching to fill it.
-  // This fixes the distorted/cropped recording seen on portrait mobile video.
-  function drawTileContain(video, cellX, cellY, cellW, cellH){
-    const vw = video.videoWidth  || 16;
-    const vh = video.videoHeight || 9;
-    if(!vw || !vh) return;
-
-    const videoAspect = vw / vh;
-    const cellAspect   = cellW / cellH;
-
-    let drawW, drawH;
-    if(videoAspect > cellAspect){
-      // Video is relatively wider than the cell — fit to width
-      drawW = cellW;
-      drawH = cellW / videoAspect;
-    }else{
-      // Video is relatively taller than the cell — fit to height
-      drawH = cellH;
-      drawW = cellH * videoAspect;
-    }
-
-    const offsetX = cellX + (cellW - drawW) / 2;
-    const offsetY = cellY + (cellH - drawH) / 2;
-
-    ctx.drawImage(video, offsetX, offsetY, drawW, drawH);
-  }
-
   const draw = setInterval(()=>{
     const tiles = Array.from(videoGrid.querySelectorAll("video")).filter(v=>v.srcObject && v.readyState>=2);
     const n = tiles.length || 1;
@@ -687,7 +646,7 @@ function startRecording(){
     ctx.fillStyle="#0a0c14"; ctx.fillRect(0,0,canvas.width,canvas.height);
     tiles.forEach((v,i)=>{
       const col=i%cols, row=Math.floor(i/cols);
-      try{ drawTileContain(v, col*tw+2, row*th+2, tw-4, th-4); }catch(e){}
+      try{ ctx.drawImage(v,col*tw+2,row*th+2,tw-4,th-4); }catch(e){}
     });
   }, 1000/24);
 
