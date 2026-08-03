@@ -76,12 +76,6 @@ body{font-family:Inter,system-ui,sans-serif;background:#05060b;color:#fff}
 
 /* File upload */
 .sv-file-zone{border:2px dashed #d1d5db;border-radius:10px;padding:28px;text-align:center;color:#9ca3af;font-size:.84rem;font-weight:600;cursor:pointer;transition:.15s}
-.sv-file-zone-wrap{margin-top:4px}
-.sv-file-input{display:none}
-.sv-file-label{display:block;border:2px dashed #d1d5db;border-radius:10px;padding:24px;text-align:center;color:#9ca3af;font-size:.84rem;font-weight:600;cursor:pointer;transition:.15s}
-.sv-file-label:hover{border-color:#06b6d4;color:#06b6d4}
-.sv-file-label.has-file{border-color:#06b6d4;border-style:solid;background:rgba(6,182,212,.05);color:#374151}
-.sv-file-name{font-weight:800;margin-top:4px;word-break:break-all}
 .sv-file-zone:hover{border-color:#06b6d4;color:#06b6d4}
 
 /* Signature */
@@ -277,20 +271,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     if(b.type==="date") return `${qHtml}<input class="sv-date" type="date">`;
     if(b.type==="number") return `${qHtml}<input class="sv-number" type="number" placeholder="0">`;
     if(b.type==="website") return `${qHtml}<input class="sv-url" type="url" placeholder="https://">`;
-    if(b.type==="fileupload"){
-      const fid = "file_" + Math.random().toString(36).slice(2,9);
-      return `${qHtml}<div class="sv-file-zone-wrap">
-        <input type="file" id="${fid}" class="sv-file-input" onchange="
-          const f=this.files[0];
-          const lbl=this.nextElementSibling;
-          if(f){
-            lbl.classList.add('has-file');
-            lbl.innerHTML='📎 <span class=sv-file-name>'+f.name+'</span><br><span style=font-size:.72rem;opacity:.6>Click to change file</span>';
-          }
-        ">
-        <label for="${fid}" class="sv-file-label">📎 Click to upload a file</label>
-      </div>`;
-    }
+    if(b.type==="fileupload") return `${qHtml}<div class="sv-file-zone">📎 Click to upload a file</div>`;
     if(b.type==="signature") return `${qHtml}<div class="sv-sig">Sign here</div>`;
 
     if(b.type==="multiplechoice"){

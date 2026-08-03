@@ -543,34 +543,6 @@ function bindBlock(block){
     });
   }
 
-  // Wire up File Upload block: Browse Files button triggers hidden input,
-  // selecting a file shows its name in the builder preview (preview only —
-  // this is the builder canvas, not a live form; actual uploads happen
-  // on the live-view.html page where learners fill out the form)
-  const uploadBtn = block.querySelector(".impact-upload-btn");
-  const hiddenFileInput = block.querySelector(".impact-hidden-upload");
-  if(uploadBtn && hiddenFileInput){
-    uploadBtn.addEventListener("click", function(e){
-      e.stopPropagation();
-      hiddenFileInput.click();
-    });
-    hiddenFileInput.addEventListener("click", function(e){ e.stopPropagation(); });
-    hiddenFileInput.addEventListener("change", function(e){
-      e.stopPropagation();
-      const files = Array.from(hiddenFileInput.files);
-      let nameEl = block.querySelector(".impact-upload-filename");
-      if(!nameEl){
-        nameEl = document.createElement("div");
-        nameEl.className = "impact-upload-filename";
-        hiddenFileInput.closest(".impact-drop-zone").appendChild(nameEl);
-      }
-      if(files.length){
-        nameEl.textContent = files.length===1 ? "Selected: "+files[0].name : files.length+" files selected";
-        nameEl.classList.add("show");
-      }
-    });
-  }
-
   // Add image for picture choice
   const pcAdd = block.querySelector(".pc-add-img");
   if(pcAdd){
