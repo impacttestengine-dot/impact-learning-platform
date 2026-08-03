@@ -232,12 +232,10 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 <input id="pcImageInput" type="file" accept="image/*" style="display:none" multiple>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js"></script>
 <script src="/__/firebase/init.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function(){
 const db=firebase.firestore();
-const storage = firebase.storage();
 const COLLECTION="activityPlans";
 const VIEW_PAGE="/teacher/activity-view.html";
 const canvas=document.getElementById("canvas");
@@ -342,37 +340,20 @@ function bindBlock(block){
   const mediaPreview = block.querySelector(".cb-media-preview");
   const mediaReplace = block.querySelector(".cb-media-replace");
 
-  async function handleMediaFile(file){
+  function handleMediaFile(file){
     if(!file) return;
     const isVideo = file.type.startsWith("video/");
-
-    // Show a local preview immediately via a blob URL (instant, no upload wait)
-    const localPreviewUrl = URL.createObjectURL(file);
-    mediaPreview.innerHTML = isVideo
-      ? \<video src="\" controls></video>\
-      : \<img src="\" alt="">\;
-    mediaPreview.classList.add("show");
-    if(mediaEmpty) mediaEmpty.style.display = "none";
-
-    let statusEl = block.querySelector(".cb-media-status");
-    if(!statusEl){
-      statusEl = document.createElement("div");
-      statusEl.className = "cb-media-status";
-      statusEl.style.cssText = "margin-top:8px;font-size:.76rem;font-weight:700;color:#9ca3af";
-      mediaPreview.after(statusEl);
-    }
-    statusEl.textContent = "Uploading...";
-
-    try{
-      const ext = file.name.split(".").pop() || (isVideo ? "mp4" : "jpg");
-      const path = \$Collection/\_\.\\;
-      const snap = await storage.ref(path).put(file);
-      const downloadUrl = await snap.ref.getDownloadURL();
-
-      block.dataset.mediaSrc  = downloadUrl;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const src = ev.target.result;
+      block.dataset.mediaSrc  = src;
       block.dataset.mediaKind = isVideo ? "video" : "image";
-      statusEl.textContent = "";
-      statusEl.remove();
+
+      mediaPreview.innerHTML = isVideo
+        ? `<video src="${src}" controls></video>`
+        : `<img src="${src}" alt="">`;
+      mediaPreview.classList.add("show");
+      if(mediaEmpty) mediaEmpty.style.display = "none";
 
       let replaceBtn = block.querySelector(".cb-media-replace");
       if(!replaceBtn){
@@ -386,12 +367,8 @@ function bindBlock(block){
           mediaInput.click();
         });
       }
-    }catch(err){
-      console.error("Media upload failed:", err);
-      statusEl.textContent = "⚠️ Upload failed — try again";
-      statusEl.style.color = "#dc2626";
-      toast("⚠️ Could not upload file: " + err.message);
-    }
+    };
+    if(isVideo){ reader.readAsDataURL(file); } else { reader.readAsDataURL(file); }
   }
 
   if(mediaEmpty && mediaInput){
