@@ -98,28 +98,15 @@ body{min-height:100vh;font-family:Inter,system-ui,sans-serif;color:#fff;backgrou
 }
 
 
-.kpi-snapshot-strip{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:20px auto 6px;max-width:720px}
-.kpi-mini{
-  flex:1;min-width:130px;
-  display:flex;align-items:center;gap:12px;
-  padding:14px 16px;border-radius:20px;
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.1);
-  position:relative;overflow:hidden;
-  transition:.2s ease;
-}
-.kpi-mini:hover{background:rgba(255,255,255,.08);transform:translateY(-1px)}
-.kpi-mini::before{content:"";position:absolute;top:0;left:0;bottom:0;width:3px}
-.kpi-mini.good::before{background:linear-gradient(180deg,#34d399,#10b981)}
-.kpi-mini.warn::before{background:linear-gradient(180deg,#fbbf24,#f59e0b)}
-.kpi-mini.bad::before{background:linear-gradient(180deg,#f87171,#ef4444)}
-.kpi-mini-ring{flex-shrink:0;width:38px;height:38px}
-.kpi-mini-text{min-width:0}
-.kpi-mini-label{font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.42);margin-bottom:2px;white-space:nowrap}
-.kpi-mini-value{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.3rem;font-weight:400;line-height:1;color:#fff}
-.kpi-strip-link{display:flex;align-items:center;justify-content:center;gap:5px;text-align:center;font-size:.72rem;font-weight:800;color:rgba(255,255,255,.4);text-decoration:none;margin:0 auto 34px;transition:.15s;width:fit-content}
-.kpi-strip-link:hover{color:#90cdf4}
-.kpi-strip-link svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5}</style>
+.kpi-snapshot-strip{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px 0 8px;max-width:680px;margin-left:auto;margin-right:auto}
+.kpi-mini{flex:1;min-width:96px;text-align:center;padding:10px 8px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.kpi-mini-label{font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.4);margin-bottom:4px}
+.kpi-mini-value{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.5rem;font-weight:400}
+.kpi-mini-value.good{color:#6ee7b7}
+.kpi-mini-value.warn{color:#fbbf24}
+.kpi-mini-value.bad{color:#fca5a5}
+.kpi-strip-link{display:block;text-align:center;font-size:.72rem;font-weight:800;color:rgba(255,255,255,.35);text-decoration:none;margin-bottom:30px;transition:.15s}
+.kpi-strip-link:hover{color:rgba(255,255,255,.6)}</style>
 </head>
 
 <body>
@@ -167,7 +154,7 @@ d="M14 10l6-3v10l-6-3z"></path>
   </header>
 
   <div class="kpi-snapshot-strip" id="kpiSnapshotStrip"></div>
-  <a class="kpi-strip-link" href="/teacher/kpis.html">View full KPI breakdown <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+  <a class="kpi-strip-link" href="/teacher/kpis.html">View full KPI breakdown →</a>
 
   <section class="dashboard-grid">
     <a class="dashboard-card" href="/teacher/records.html">
@@ -311,23 +298,11 @@ document.addEventListener("DOMContentLoaded", function(){
       const doneTasks = personTasks.filter(t=>t.completed).length;
       const taskCompletion = personTasks.length ? Math.round((doneTasks/personTasks.length)*100) : 100;
 
-      function miniRing(pct){
-        const r=15, c=2*Math.PI*r;
-        const offset=c-(Math.min(pct,100)/100)*c;
-        const color = pct>=80?"#10b981":pct>=50?"#f59e0b":"#ef4444";
-        return `<svg class="kpi-mini-ring" viewBox="0 0 38 38">
-          <circle cx="19" cy="19" r="${r}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="4"/>
-          <circle cx="19" cy="19" r="${r}" fill="none" stroke="${color}" stroke-width="4"
-            stroke-dasharray="${c}" stroke-dashoffset="${offset}" stroke-linecap="round"
-            transform="rotate(-90 19 19)"/>
-        </svg>`;
-      }
-
       strip.innerHTML = `
-        <div class="kpi-mini ${tone(participation)}">${miniRing(participation)}<div class="kpi-mini-text"><div class="kpi-mini-label">Participation</div><div class="kpi-mini-value">${participation}%</div></div></div>
-        <div class="kpi-mini ${tone(progressRate)}">${miniRing(progressRate)}<div class="kpi-mini-text"><div class="kpi-mini-label">Progress</div><div class="kpi-mini-value">${progressRate}%</div></div></div>
-        <div class="kpi-mini ${tone(punctualityResult.pct)}">${miniRing(punctualityResult.pct)}<div class="kpi-mini-text"><div class="kpi-mini-label">Punctuality</div><div class="kpi-mini-value">${punctualityResult.pct}%</div></div></div>
-        <div class="kpi-mini ${tone(taskCompletion)}">${miniRing(taskCompletion)}<div class="kpi-mini-text"><div class="kpi-mini-label">Tasks Done</div><div class="kpi-mini-value">${taskCompletion}%</div></div></div>
+        <div class="kpi-mini"><div class="kpi-mini-label">Participation</div><div class="kpi-mini-value ${tone(participation)}">${participation}%</div></div>
+        <div class="kpi-mini"><div class="kpi-mini-label">Progress Rate</div><div class="kpi-mini-value ${tone(progressRate)}">${progressRate}%</div></div>
+        <div class="kpi-mini"><div class="kpi-mini-label">Punctuality</div><div class="kpi-mini-value ${tone(punctualityResult.pct)}">${punctualityResult.pct}%</div></div>
+        <div class="kpi-mini"><div class="kpi-mini-label">Tasks Done</div><div class="kpi-mini-value ${tone(taskCompletion)}">${taskCompletion}%</div></div>
       `;
     }catch(e){ console.warn("KPI snapshot failed:", e); }
   });
