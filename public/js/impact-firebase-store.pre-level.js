@@ -147,8 +147,7 @@
     return {
       ok:true,
       ownerName: foundData.name || "Personnel",
-      role: foundData.role || "Teacher",
-      level: foundData.level || ""
+      role: foundData.role || "Teacher"
     };
   }
 
@@ -163,7 +162,6 @@
     const data = {
       name:item.name || "Unnamed",
       role:item.role || "Teacher",
-      level:item.level || "",
       passkey:item.passkey,
       status:item.status || "active",
       createdAt:item.createdAt || new Date().toISOString(),

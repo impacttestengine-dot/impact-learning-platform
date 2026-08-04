@@ -279,18 +279,7 @@ button{
   <option value="Operations">Operations</option>
   <option value="Academic Team lead">Academic Team lead</option>
   <option value="Impact Team lead">Impact Team lead</option>
-  <option value="Learner">Learner</option>
 </select>
-    </div>
-
-    <div class="field" id="levelField" style="display:none">
-      <label>Learner Level</label>
-      <select id="learnerLevel">
-        <option>A1</option>
-        <option>A2</option>
-        <option>B1</option>
-        <option>B2</option>
-      </select>
     </div>
 
     <div class="field">
@@ -320,25 +309,16 @@ button{
     return "IMP-" + a + "-" + b;
   }
 
-  const roleSelect = document.getElementById("role");
-  const levelField = document.getElementById("levelField");
-
-  roleSelect.addEventListener("change", function(){
-    levelField.style.display = roleSelect.value === "Learner" ? "block" : "none";
-  });
-
   document.getElementById("generateBtn").onclick = async function(){
     const name = document.getElementById("memberName").value.trim();
     const role = document.getElementById("role").value;
     const status = document.getElementById("status").value;
-    const level = role === "Learner" ? document.getElementById("learnerLevel").value : "";
     const passkey = makeKey();
 
     const item = {
       id:"PK-" + Date.now(),
       name:name || "Unnamed",
       role,
-      level,
       passkey,
       status,
       createdAt:new Date().toISOString()
@@ -361,7 +341,6 @@ button{
           await db.collection("impactPasskeys").add({
             name:item.name,
             role:item.role,
-            level:item.level,
             passkey:item.passkey,
             status:item.status,
             createdAt:item.createdAt
@@ -373,9 +352,7 @@ button{
     }
 
     result.style.display = "block";
-    result.textContent = role === "Learner"
-      ? "Passkey created for " + item.name + " (Level " + level + "): " + passkey
-      : "Passkey created for " + item.name + ": " + passkey;
+    result.textContent = "Passkey created for " + item.name + ": " + passkey;
   };
 
   document.getElementById("teamLeadSettingsBtn").onclick = function(){
@@ -440,6 +417,7 @@ button{
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
+
 
 
 
