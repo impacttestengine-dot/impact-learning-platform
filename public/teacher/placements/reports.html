@@ -9,29 +9,48 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
-.page{position:relative;z-index:2;width:min(920px,92vw);margin:auto;padding:110px 0 90px}
+.page{position:relative;z-index:2;width:min(1280px,95vw);margin:auto;padding:110px 0 90px}
 .nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
 .nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
 .hero{text-align:center;margin-bottom:32px}
-.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(2.6rem,6vw,4.4rem);font-weight:400}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(2.6rem,6vw,4.6rem);font-weight:400}
 .hero p{color:rgba(255,255,255,.65);font-weight:800}
-.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);padding:24px;margin-bottom:22px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-input,select,textarea,button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:white;border-radius:16px;padding:13px 14px;font-family:Inter,sans-serif;font-weight:800}
-select option{color:#111}
-textarea{width:100%;resize:vertical;font-weight:600}
-button{cursor:pointer}
-.save-btn{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4;margin-top:10px;width:100%}
-.search-box{width:100%;margin-bottom:16px}
-.report-card{padding:18px 20px;border-radius:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);margin-bottom:12px}
-.report-name{font-weight:900;font-size:1rem;margin-bottom:6px}
-.level-pill{display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(99,179,237,.18);color:#90cdf4;font-size:.72rem;font-weight:900;margin-left:8px}
-.report-meta{font-size:.78rem;color:rgba(255,255,255,.55);font-weight:700;line-height:1.7;margin-top:6px;white-space:pre-wrap}
-.report-actions{margin-top:10px;display:flex;gap:8px}
-.small{padding:8px 12px;font-size:.76rem;border-radius:12px}
-.delete{background:rgba(255,80,80,.14)}
+
+.layout{display:grid;grid-template-columns:1fr 420px;gap:22px;align-items:start}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}}
+
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);padding:26px}
+.write-panel{}
+.list-panel{position:sticky;top:110px;max-height:calc(100vh - 130px);overflow-y:auto}
+
+.panel h2{font-family:"Sorts Mill Goudy",serif;font-size:1.6rem;font-weight:400;margin-bottom:16px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:11px 13px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.86rem;outline:none}
+.field select option{color:#111}
+.field textarea{resize:vertical;font-weight:500;line-height:1.6}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.field-row,.field-row3{grid-template-columns:1fr}}
+
+.save-btn{width:100%;padding:13px;border-radius:14px;border:1px solid rgba(99,179,237,.4);background:rgba(99,179,237,.2);color:#90cdf4;font-weight:900;font-size:.88rem;cursor:pointer;font-family:Inter,sans-serif;margin-top:6px;transition:.15s}
+.save-btn:hover{background:rgba(99,179,237,.3)}
+.form-status{margin-top:10px;font-size:.8rem;font-weight:800;min-height:18px}
+.form-status.ok{color:#6ee7b7}
+.form-status.err{color:#fca5a5}
+
+.search-box{width:100%;margin-bottom:14px;padding:11px 13px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:#fff;font-family:Inter,sans-serif;font-weight:700}
+.report-row{padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);margin-bottom:10px}
+.report-name{font-weight:900;font-size:.95rem;margin-bottom:4px}
+.level-pill{display:inline-block;padding:3px 9px;border-radius:999px;background:rgba(99,179,237,.18);color:#90cdf4;font-size:.68rem;font-weight:900;margin-left:6px}
+.report-meta{font-size:.76rem;color:rgba(255,255,255,.5);font-weight:700;line-height:1.6;margin-top:5px}
+.report-actions{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.small{padding:8px 11px;font-size:.74rem;border-radius:11px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;font-family:Inter,sans-serif;font-weight:800}
+.small:hover{background:rgba(255,255,255,.15)}
+.small.pdf{background:rgba(52,211,153,.15);border-color:rgba(52,211,153,.35);color:#6ee7b7}
+.small.pdf:hover{background:rgba(52,211,153,.25)}
+.small.delete{background:rgba(255,80,80,.14)}
 .empty{text-align:center;color:rgba(255,255,255,.4);font-weight:700;padding:30px}
-@media(max-width:700px){.form-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -46,28 +65,68 @@ button{cursor:pointer}
 </nav>
 
 <main class="page">
-<section class="hero"><h1>Placement Reports</h1><p>Write up results, comments, and level recommendations.</p></section>
+<section class="hero"><h1>Placement Reports</h1><p>Write, review, and export learner placement reports.</p></section>
 
-<section class="panel">
-  <div class="form-row">
-    <input id="learnerName" placeholder="Learner name">
-    <select id="recommendedLevel">
-      <option value="">Recommended level</option>
-      <option>Absolute Beginner</option>
-      <option>A0</option><option>A1</option><option>A1.1</option>
-      <option>A2</option><option>B1</option><option>B2</option>
-    </select>
-  </div>
-  <textarea id="reportNotes" rows="4" placeholder="Assessment notes, strengths, areas to focus on..."></textarea>
-  <button class="save-btn" id="saveBtn" type="button">Save Report</button>
-</section>
+<div class="layout">
+  <section class="panel write-panel">
+    <h2 id="formTitle">New Report</h2>
+    <form id="reportForm">
+      <div class="field-row">
+        <div class="field"><label>Learner Name</label><input id="learnerName" required></div>
+        <div class="field"><label>Occupation</label><input id="occupation" placeholder="e.g. Student"></div>
+      </div>
+      <div class="field-row3">
+        <div class="field"><label>Date of Test</label><input id="testDate" type="date"></div>
+        <div class="field"><label>Start Time</label><input id="startTime" type="time"></div>
+        <div class="field"><label>End Time</label><input id="endTime" type="time"></div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Type of Test</label>
+          <select id="testType">
+            <option>Individual</option>
+            <option>Group</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Competency Assessed</label>
+          <select id="competency">
+            <option>Speaking</option>
+            <option>Listening</option>
+            <option>Reading</option>
+            <option>Writing</option>
+            <option>Overall</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Level Placed</label>
+        <select id="recommendedLevel">
+          <option value="">Select level</option>
+          <option>Absolute Beginner</option>
+          <option>A0</option><option>A1</option><option>A1.1</option>
+          <option>A2</option><option>B1</option><option>B2</option>
+        </select>
+      </div>
+      <div class="field"><label>Observation</label><textarea id="observation" rows="4" placeholder="What happened during the test..."></textarea></div>
+      <div class="field"><label>Commentary</label><textarea id="commentary" rows="3" placeholder="Your professional commentary..."></textarea></div>
+      <div class="field"><label>Summary of Assessment</label><textarea id="summary" rows="2" placeholder="Why this level fits..."></textarea></div>
+      <div class="field"><label>Conclusion / Recommendation</label><textarea id="recommendation" rows="2" placeholder="Final recommendation..."></textarea></div>
 
-<section class="panel">
-  <input class="search-box" id="searchInput" type="search" placeholder="Search by learner name or level...">
-  <div id="reportsList"><div class="empty">Loading reports...</div></div>
-</section>
+      <button class="save-btn" type="submit">Save Report</button>
+      <p class="form-status" id="formStatus"></p>
+    </form>
+  </section>
+
+  <section class="panel list-panel">
+    <h2>All Reports</h2>
+    <input class="search-box" id="searchInput" type="search" placeholder="Search learner, level, or teacher...">
+    <div id="reportsList"><div class="empty">Loading reports...</div></div>
+  </section>
+</div>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
 <script src="/__/firebase/init.js"></script>
@@ -76,7 +135,49 @@ document.addEventListener("DOMContentLoaded", async()=>{
   const db=firebase.firestore();
   const myName = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "";
   const list=document.getElementById("reportsList");
+  const form=document.getElementById("reportForm");
+  const formTitle=document.getElementById("formTitle");
+  const formStatus=document.getElementById("formStatus");
+
+  const fields = ["learnerName","occupation","testDate","startTime","endTime","testType","competency","recommendedLevel","observation","commentary","summary","recommendation"];
   let allReports=[];
+  let editingId=null;
+
+  function getFormData(){
+    const d={};
+    fields.forEach(f=>d[f]=document.getElementById(f).value.trim());
+    return d;
+  }
+  function clearForm(){
+    fields.forEach(f=>document.getElementById(f).value="");
+    editingId=null;
+    formTitle.textContent="New Report";
+    formStatus.textContent="";
+  }
+
+  form.onsubmit=async(e)=>{
+    e.preventDefault();
+    const data=getFormData();
+    if(!data.learnerName){ formStatus.textContent="Learner name is required."; formStatus.className="form-status err"; return; }
+    const now=new Date();
+    const payload={ ...data, updatedAt:now.toISOString(), updatedBy:myName };
+    try{
+      if(editingId){
+        await db.collection("placementReports").doc(editingId).set(payload,{merge:true});
+      }else{
+        payload.createdAt=now.toISOString();
+        payload.createdBy=myName;
+        await db.collection("placementReports").add(payload);
+      }
+      formStatus.textContent="✓ Saved";
+      formStatus.className="form-status ok";
+      clearForm();
+      await load();
+    }catch(err){
+      formStatus.textContent="⚠️ Save failed: "+err.message;
+      formStatus.className="form-status err";
+    }
+  };
 
   async function load(){
     list.innerHTML='<div class="empty">Loading reports...</div>';
@@ -89,42 +190,119 @@ document.addEventListener("DOMContentLoaded", async()=>{
     if(!items.length){ list.innerHTML='<div class="empty">No reports yet.</div>'; return; }
     list.innerHTML="";
     items.forEach(r=>{
-      const card=document.createElement("div");
-      card.className="report-card";
-      card.innerHTML=`
+      const row=document.createElement("div");
+      row.className="report-row";
+      row.innerHTML=`
         <div class="report-name">${r.learnerName||"Unknown"}<span class="level-pill">${r.recommendedLevel||"—"}</span></div>
-        <div class="report-meta">${r.notes||""}</div>
         <div class="report-meta">By ${r.createdBy||"Unknown"} · ${r.createdAt?new Date(r.createdAt).toLocaleDateString():""}</div>
-        <div class="report-actions"><button class="small delete" data-id="${r.id}">Delete</button></div>
+        <div class="report-actions">
+          <button class="small edit">Edit</button>
+          <button class="small pdf">Download PDF</button>
+          <button class="small delete">Delete</button>
+        </div>
       `;
-      card.querySelector(".delete").onclick=async()=>{
+      row.querySelector(".edit").onclick=()=>{
+        fields.forEach(f=>document.getElementById(f).value=r[f]||"");
+        editingId=r.id;
+        formTitle.textContent="Edit Report";
+        window.scrollTo({top:0,behavior:"smooth"});
+      };
+      row.querySelector(".pdf").onclick=()=>generatePdf(r);
+      row.querySelector(".delete").onclick=async()=>{
         if(confirm("Delete this report?")){ await db.collection("placementReports").doc(r.id).delete(); await load(); }
       };
-      list.appendChild(card);
+      list.appendChild(row);
     });
   }
 
-  document.getElementById("saveBtn").onclick=async()=>{
-    const learnerName=document.getElementById("learnerName").value.trim();
-    const recommendedLevel=document.getElementById("recommendedLevel").value;
-    const notes=document.getElementById("reportNotes").value.trim();
-    if(!learnerName){ alert("Please enter a learner name."); return; }
-    const now=new Date();
-    await db.collection("placementReports").add({
-      learnerName, recommendedLevel, notes,
-      createdBy:myName, createdAt:now.toISOString()
-    });
-    document.getElementById("learnerName").value="";
-    document.getElementById("recommendedLevel").value="";
-    document.getElementById("reportNotes").value="";
-    await load();
+  searchInput.oninput=()=>{
+    const q=searchInput.value.trim().toLowerCase();
+    if(!q){ render(allReports); return; }
+    render(allReports.filter(r=>[r.learnerName,r.recommendedLevel,r.createdBy].join(" ").toLowerCase().includes(q)));
   };
 
-  document.getElementById("searchInput").oninput=(e)=>{
-    const q=e.target.value.trim().toLowerCase();
-    if(!q){ render(allReports); return; }
-    render(allReports.filter(r=>[r.learnerName,r.recommendedLevel].join(" ").toLowerCase().includes(q)));
-  };
+  // ── PDF EXPORT — letterheaded document ──────────────────────
+  function generatePdf(r){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit:"pt", format:"a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 50;
+    let y = 60;
+
+    // Letterhead
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(22);
+    doc.setTextColor(20,20,25);
+    doc.text("IMPACT", margin, y);
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(9);
+    doc.setTextColor(120,120,130);
+    doc.text("LANGUAGE LEARNING PLATFORM", margin, y+14);
+
+    doc.setDrawColor(210,210,215);
+    doc.setLineWidth(1);
+    doc.line(margin, y+28, pageWidth-margin, y+28);
+    y += 55;
+
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(15);
+    doc.setTextColor(20,20,25);
+    doc.text("STUDENT PROFILE AND PLACEMENT TEST REPORT", margin, y);
+    y += 30;
+
+    function field(label, value){
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(10.5);
+      doc.setTextColor(40,40,45);
+      doc.text(label+":", margin, y);
+      doc.setFont("helvetica","normal");
+      doc.setTextColor(60,60,65);
+      const labelWidth = doc.getTextWidth(label+": ")+4;
+      const lines = doc.splitTextToSize(value||"—", pageWidth-margin*2-labelWidth);
+      doc.text(lines, margin+labelWidth, y);
+      y += Math.max(16, lines.length*13);
+    }
+
+    function section(title, value){
+      y += 6;
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(10.5);
+      doc.setTextColor(40,40,45);
+      doc.text(title+":", margin, y);
+      y += 14;
+      doc.setFont("helvetica","normal");
+      doc.setFontSize(10);
+      doc.setTextColor(60,60,65);
+      const lines = doc.splitTextToSize(value||"—", pageWidth-margin*2);
+      doc.text(lines, margin, y);
+      y += lines.length*13 + 8;
+    }
+
+    field("Name", r.learnerName);
+    field("Occupation", r.occupation);
+    field("Level placed", r.recommendedLevel);
+    field("Date of placement test", r.testDate ? new Date(r.testDate).toLocaleDateString() : "—");
+    field("Time", (r.startTime||"—") + " - " + (r.endTime||"—"));
+    field("Type of test", r.testType);
+    field("Competency assessed", r.competency);
+
+    section("Observation", r.observation);
+    section("Commentary", r.commentary);
+    section("Summary of Assessment", r.summary);
+    section("Conclusion/Recommendation", r.recommendation);
+
+    y += 20;
+    doc.setDrawColor(210,210,215);
+    doc.line(margin, y, pageWidth-margin, y);
+    y += 16;
+    doc.setFont("helvetica","italic");
+    doc.setFontSize(8.5);
+    doc.setTextColor(140,140,150);
+    doc.text("Prepared by "+(r.createdBy||"Impact Team")+" · "+new Date().toLocaleDateString(), margin, y);
+
+    const safeName = (r.learnerName||"learner").replace(/[^\w]+/g,"_");
+    doc.save("Placement_Report_"+safeName+".pdf");
+  }
 
   await load();
 });
