@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Placement Test | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(820px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:20}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.doc{border-radius:28px;background:#fff;color:#374151;padding:36px}
+.sv-header{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;color:#0f172a;margin-bottom:8px}
+.sv-subheader{font-size:1.2rem;font-weight:700;color:#334155;margin-bottom:10px}
+.sv-text{font-size:.93rem;color:#4b5563;line-height:1.7;margin-bottom:14px}
+.q-block{margin-bottom:18px}
+.q-header{font-weight:700;color:#0f172a;margin-bottom:8px}
+.mc-opt{display:flex;gap:8px;padding:10px 12px;border-radius:9px;border:1.5px solid #e0e3e8;margin-bottom:6px}
+.answer-box{border:1.5px solid #e0e3e8;border-radius:10px;padding:12px;min-height:40px;color:#9ca3af}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="nav"><a href="/teacher/placements/tests.html">←</a></nav>
+<main class="page"><div class="doc" id="doc">Loading...</div></main>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+  const db=firebase.firestore();
+  const id=new URLSearchParams(location.search).get("id");
+  const doc=document.getElementById("doc");
+  if(!id){ doc.innerHTML="No test ID provided."; return; }
+  const snap=await db.collection("placementTests").doc(id).get();
+  if(!snap.exists){ doc.innerHTML="Test not found."; return; }
+  const t=snap.data();
+  document.title=(t.title||"Placement Test")+" | Impact";
+  let html="";
+  (t.blocks||[]).forEach(b=>{
+    if(b.type==="header") html+=`<div class="sv-header">${b.content||""}</div>`;
+    if(b.type==="subheader") html+=`<div class="sv-subheader">${b.content||""}</div>`;
+    if(b.type==="text") html+=`<div class="sv-text">${b.content||""}</div>`;
+    if(b.type==="mc"){
+      html+=`<div class="q-block"><div class="q-header">${b.question||""}</div>`;
+      (b.options||[]).forEach(o=>{ html+=`<label class="mc-opt"><input type="radio">${o}</label>`; });
+      html+=`</div>`;
+    }
+    if(b.type==="short"||b.type==="long"){
+      html+=`<div class="q-block"><div class="q-header">${b.question||""}</div><div class="answer-box">${b.type==="short"?"Short answer":"Long answer"}</div></div>`;
+    }
+  });
+  doc.innerHTML=html || "No content in this test yet.";
+});
+</script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>

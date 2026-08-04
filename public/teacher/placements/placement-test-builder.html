@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Placement Test Builder | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;overflow-x:hidden}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
+.lp-nav{position:fixed;top:24px;left:28px;z-index:99999;display:flex;gap:12px}
+.lp-icon-btn{width:46px;height:46px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px)}
+.lp-icon-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.page{position:relative;z-index:20;width:min(1320px,96vw);margin:0 auto;padding:108px 0 80px}
+.workspace{display:grid;grid-template-columns:260px minmax(0,1fr) 250px;gap:18px;height:calc(100vh - 108px)}
+.panel{border-radius:28px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.28)}
+.blocks-panel{padding:18px;height:100%;overflow-y:auto;align-self:start}
+.settings-panel{padding:22px;height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:16px;align-self:start}
+.panel-title{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:8px;margin-top:18px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,.08)}
+.panel-title:first-child{margin-top:0}
+.block-group{display:flex;flex-direction:column;gap:5px}
+.block-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;transition:.15s;text-align:left}
+.block-btn:hover{background:rgba(255,255,255,.13);transform:translateX(3px)}
+.block-icon{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:rgba(99,179,237,.18);flex-shrink:0;font-size:.68rem;font-weight:900;color:#90cdf4}
+.canvas-panel{background:#fff;border-radius:24px;box-shadow:0 8px 40px rgba(0,0,0,.22);height:100%;display:flex;flex-direction:column;overflow:hidden}
+.canvas-toolbar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#f4f6f9;border-bottom:1px solid #e4e7ec}
+.tbtn{padding:6px 12px;border-radius:9px;border:1px solid #dde1e8;background:#fff;color:#374151;font-size:.76rem;font-weight:700;cursor:pointer}
+.canvas{padding:28px 32px;flex:1;overflow-y:auto;color:#374151}
+.canvas-empty{text-align:center;padding:80px 40px;color:#b0b8c8;font-size:.92rem;font-weight:600;border:2px dashed #e4e7ec;border-radius:16px}
+.c-block{position:relative;margin-bottom:14px;border-radius:12px;border:2px solid transparent;transition:.15s;cursor:pointer}
+.c-block:hover{border-color:#e8ebf0}
+.c-block.selected{border-color:#3b82f6 !important;background:#eff6ff !important}
+.c-block-inner{padding:18px 20px}
+.block-actions{display:none;position:absolute;top:-16px;left:50%;transform:translateX(-50%);background:#1e293b;border-radius:10px;padding:4px 6px;gap:2px;z-index:200;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.c-block.selected .block-actions{display:flex}
+.act-btn{width:26px;height:26px;border-radius:7px;border:none;background:transparent;color:#cbd5e1;cursor:pointer;font-size:.72rem}
+.act-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.act-btn.danger:hover{background:rgba(239,68,68,.3);color:#fca5a5}
+.act-divider{width:1px;background:rgba(255,255,255,.12);height:16px;margin:0 3px}
+.cb-header{font-size:2rem;font-weight:800;color:#0f172a;outline:none}
+.cb-subheader{font-size:1.2rem;font-weight:700;color:#334155;outline:none}
+.cb-text{font-size:.93rem;color:#4b5563;line-height:1.7;outline:none}
+.q-header{font-size:.92rem;font-weight:700;color:#0f172a;outline:none;margin-bottom:10px}
+.mc-options{display:grid;gap:8px}
+.mc-opt{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:9px;border:1.5px solid #e0e3e8;font-size:.86rem}
+.mc-opt input{accent-color:#3b82f6}
+.mc-opt span{outline:none;flex:1}
+.short-answer-box,.long-answer-box{border:1.5px solid #e0e3e8;border-radius:10px;padding:12px;color:#9ca3af;font-size:.86rem}
+.settings-label{font-size:.72rem;font-weight:900;color:rgba(255,255,255,.55);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.05em}
+.settings-input,.settings-select{width:100%;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.88rem;outline:none}
+.settings-select option{color:#111}
+.settings-divider{height:1px;background:rgba(255,255,255,.09);margin:4px 0}
+.ctrl-btn{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.86rem;cursor:pointer}
+.ctrl-btn.primary{background:rgba(99,179,237,.22);border-color:rgba(99,179,237,.45);color:#90cdf4}
+.save-tick{text-align:center;color:#86efac;font-weight:900;height:22px;opacity:0;transition:.2s;font-size:1rem}
+.save-tick.show{opacity:1}
+.panel-heading{font-family:"Sorts Mill Goudy",serif;font-size:1.05rem;font-weight:400;color:rgba(255,255,255,.88);margin-bottom:2px}
+@media(max-width:1024px){.workspace{grid-template-columns:230px 1fr 210px}}
+@media(max-width:800px){.workspace{grid-template-columns:1fr;height:auto}.blocks-panel,.settings-panel{height:auto;max-height:400px}}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="lp-nav">
+  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></a>
+  <a class="lp-icon-btn" href="/teacher/placements/tests.html" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg></a>
+</nav>
+<main class="page">
+<section class="workspace">
+<aside class="panel blocks-panel">
+  <p class="panel-title">Basic</p>
+  <div class="block-group">
+    <button class="block-btn" data-block="header" type="button"><span class="block-icon">H1</span>Header</button>
+    <button class="block-btn" data-block="subheader" type="button"><span class="block-icon">H2</span>Subheader</button>
+    <button class="block-btn" data-block="text" type="button"><span class="block-icon">T</span>Text / Instructions</button>
+  </div>
+  <p class="panel-title">Questions</p>
+  <div class="block-group">
+    <button class="block-btn" data-block="mc" type="button"><span class="block-icon">MC</span>Multiple Choice</button>
+    <button class="block-btn" data-block="short" type="button"><span class="block-icon">S</span>Short Answer</button>
+    <button class="block-btn" data-block="long" type="button"><span class="block-icon">L</span>Long Answer</button>
+  </div>
+</aside>
+
+<section class="canvas-panel">
+  <div class="canvas-toolbar">
+    <button class="tbtn" id="undoBtn" type="button">↶ Undo</button>
+    <button class="tbtn" id="clearBtn" type="button">Clear Canvas</button>
+  </div>
+  <div class="canvas" id="canvas">
+    <div class="canvas-empty" id="canvasEmpty">Build the placement test by adding blocks from the left.</div>
+  </div>
+</section>
+
+<aside class="panel settings-panel">
+  <p class="panel-heading">Placement Test Builder</p>
+  <div class="settings-divider"></div>
+  <div><label class="settings-label">Test Title</label><input class="settings-input" id="testTitle" type="text" placeholder="e.g. Adult Placement Test A0-A1"></div>
+  <div>
+    <label class="settings-label">Level</label>
+    <select class="settings-select" id="testLevel">
+      <option>Absolute Beginner</option><option>A0</option><option>A1</option>
+      <option>A1.1</option><option>A2</option><option>B1</option><option>B2</option>
+    </select>
+  </div>
+  <div class="settings-divider"></div>
+  <button class="ctrl-btn primary" id="saveBtn" type="button">💾 Save</button>
+  <button class="ctrl-btn" id="newBtn" type="button">＋ New Test</button>
+  <button class="ctrl-btn" id="viewBtn" type="button">👁 Preview</button>
+  <span class="save-tick" id="saveTick">✓ Saved</span>
+</aside>
+</section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+const db = firebase.firestore();
+const canvas = document.getElementById("canvas");
+const canvasEmpty = document.getElementById("canvasEmpty");
+const titleInput = document.getElementById("testTitle");
+const levelSelect = document.getElementById("testLevel");
+const saveTick = document.getElementById("saveTick");
+
+const params = new URLSearchParams(location.search);
+let currentId = params.get("edit") || "";
+let selectedBlock = null;
+let undoStack = [];
+
+function showEmpty(){ if(!canvas.querySelector(".c-block")) canvasEmpty.style.display=""; }
+function hideEmpty(){ canvasEmpty.style.display="none"; }
+function allBlocks(){ return Array.from(canvas.querySelectorAll(".c-block")); }
+function tick(){ saveTick.classList.add("show"); setTimeout(()=>saveTick.classList.remove("show"),1600); }
+function pushUndo(){ undoStack.push(serializeBlocks()); if(undoStack.length>40) undoStack.shift(); }
+function selectBlock(block){
+  allBlocks().forEach(b=>b.classList.remove("selected"));
+  if(block){ block.classList.add("selected"); selectedBlock=block; } else selectedBlock=null;
+}
+canvas.addEventListener("click", e=>{ if(e.target===canvas||e.target===canvasEmpty) selectBlock(null); });
+
+const TEMPLATES = {
+  header:{render:()=>`<div class="cb-header" contenteditable="true">Test Title</div>`},
+  subheader:{render:()=>`<div class="cb-subheader" contenteditable="true">Section</div>`},
+  text:{render:()=>`<div class="cb-text" contenteditable="true">Instructions...</div>`},
+  mc:{render:(data)=>{
+    const q = data&&data.question?data.question:"";
+    const opts = (data&&data.options)?data.options:["Option A","Option B","Option C","Option D"];
+    return `<div class="q-header" contenteditable="true" data-ph="Type the question...">${q}</div>
+      <div class="mc-options">${opts.map(o=>`<label class="mc-opt"><input type="radio" disabled><span contenteditable="true">${o}</span></label>`).join("")}</div>`;
+  }},
+  short:{render:(data)=>{
+    const q=data&&data.question?data.question:"";
+    return `<div class="q-header" contenteditable="true" data-ph="Type the question...">${q}</div><div class="short-answer-box">Short answer field</div>`;
+  }},
+  long:{render:(data)=>{
+    const q=data&&data.question?data.question:"";
+    return `<div class="q-header" contenteditable="true" data-ph="Type the question...">${q}</div><div class="long-answer-box">Long answer field</div>`;
+  }}
+};
+
+function createBlock(type,data){
+  const tmpl=TEMPLATES[type]; if(!tmpl) return null;
+  const block=document.createElement("div");
+  block.className="c-block"; block.setAttribute("data-type",type);
+  const actions=document.createElement("div");
+  actions.className="block-actions";
+  actions.innerHTML=`<button class="act-btn" data-act="up">↑</button><button class="act-btn" data-act="down">↓</button><div class="act-divider"></div><button class="act-btn" data-act="dupe">⧉</button><div class="act-divider"></div><button class="act-btn danger" data-act="del">✕</button>`;
+  const inner=document.createElement("div");
+  inner.className="c-block-inner";
+  inner.innerHTML=tmpl.render(data);
+  block.appendChild(actions); block.appendChild(inner);
+  bindBlock(block);
+  return block;
+}
+
+function bindBlock(block){
+  block.addEventListener("click", e=>{
+    if(e.target.closest(".block-actions")) return;
+    e.stopPropagation(); selectBlock(block);
+  });
+  block.querySelector(".block-actions").addEventListener("click", e=>{
+    e.stopPropagation();
+    const btn=e.target.closest("[data-act]"); if(!btn) return;
+    const act=btn.dataset.act;
+    if(act==="del"){ pushUndo(); block.remove(); selectedBlock=null; showEmpty(); }
+    if(act==="up"){ pushUndo(); const p=block.previousElementSibling; if(p&&p.classList.contains("c-block")) canvas.insertBefore(block,p); }
+    if(act==="down"){ pushUndo(); const n=block.nextElementSibling; if(n&&n.classList.contains("c-block")) canvas.insertBefore(n,block); }
+    if(act==="dupe"){ pushUndo(); const d=createBlock(block.dataset.type, extractData(block)); block.after(d); selectBlock(d); }
+  });
+}
+
+document.querySelectorAll(".block-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    pushUndo(); hideEmpty();
+    const block=createBlock(btn.dataset.block);
+    if(!block) return;
+    if(selectedBlock && canvas.contains(selectedBlock)) selectedBlock.after(block);
+    else canvas.appendChild(block);
+    selectBlock(block);
+    block.scrollIntoView({behavior:"smooth",block:"nearest"});
+  });
+});
+
+document.getElementById("undoBtn").addEventListener("click", ()=>{
+  if(!undoStack.length) return;
+  rebuildFromBlocks(undoStack.pop());
+});
+document.getElementById("clearBtn").addEventListener("click", ()=>{
+  if(!confirm("Clear the entire canvas?")) return;
+  pushUndo(); allBlocks().forEach(b=>b.remove()); selectedBlock=null; showEmpty();
+});
+
+function extractData(block){
+  const type=block.dataset.type; const data={type};
+  if(type==="header"||type==="subheader"||type==="text"){
+    data.content=block.querySelector("[contenteditable]").innerHTML;
+  }
+  if(type==="mc"||type==="short"||type==="long"){
+    data.question=block.querySelector(".q-header").innerHTML;
+  }
+  if(type==="mc"){
+    data.options=Array.from(block.querySelectorAll(".mc-opt span")).map(s=>s.innerHTML);
+  }
+  return data;
+}
+function serializeBlocks(){ return allBlocks().map(extractData); }
+function rebuildFromBlocks(blocks){
+  allBlocks().forEach(b=>b.remove()); selectedBlock=null;
+  if(!blocks||!blocks.length){ showEmpty(); return; }
+  hideEmpty();
+  blocks.forEach(data=>{
+    const block=createBlock(data.type,data);
+    if(!block) return;
+    canvas.appendChild(block);
+    if((data.type==="header"||data.type==="subheader"||data.type==="text") && data.content){
+      block.querySelector("[contenteditable]").innerHTML=data.content;
+    }
+  });
+}
+
+async function save(){
+  try{
+    const blocks=serializeBlocks();
+    const payload={
+      title: titleInput.value.trim()||"Untitled Placement Test",
+      level: levelSelect.value,
+      blocks, version:1,
+      createdBy: (sessionStorage.getItem("impactAccessName")||sessionStorage.getItem("impactPersonnelName")||""),
+      updatedAt: new Date().toISOString()
+    };
+    if(currentId){
+      await db.collection("placementTests").doc(currentId).set(payload,{merge:true});
+    }else{
+      const ref=await db.collection("placementTests").add(payload);
+      currentId=ref.id;
+      history.replaceState(null,"","/teacher/placements/placement-test-builder.html?edit="+currentId);
+    }
+    tick();
+    return currentId;
+  }catch(err){
+    alert("⚠️ Save failed: "+err.message);
+    return null;
+  }
+}
+
+document.getElementById("saveBtn").addEventListener("click", async e=>{ e.preventDefault(); await save(); });
+document.getElementById("newBtn").addEventListener("click", e=>{
+  e.preventDefault(); currentId=""; titleInput.value=""; levelSelect.value="Absolute Beginner";
+  allBlocks().forEach(b=>b.remove()); selectedBlock=null; showEmpty();
+  history.replaceState(null,"","/teacher/placements/placement-test-builder.html");
+});
+document.getElementById("viewBtn").addEventListener("click", async e=>{
+  e.preventDefault();
+  if(!titleInput.value.trim()){ titleInput.focus(); return; }
+  const id=await save();
+  if(id) window.open("/teacher/placements/placement-test-view.html?id="+encodeURIComponent(id),"_blank");
+});
+
+let autoSaveTimer=null;
+function scheduleAutoSave(){
+  if(!titleInput.value.trim() || !allBlocks().length) return;
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer=setTimeout(async()=>{ await save(); }, 1500);
+}
+titleInput.addEventListener("input", scheduleAutoSave);
+levelSelect.addEventListener("change", scheduleAutoSave);
+new MutationObserver(()=>scheduleAutoSave()).observe(canvas,{childList:true});
+
+async function load(){
+  if(!currentId) return;
+  const doc=await db.collection("placementTests").doc(currentId).get();
+  if(!doc.exists) return;
+  const d=doc.data();
+  titleInput.value=d.title||"";
+  if(d.level) levelSelect.value=d.level;
+  if(Array.isArray(d.blocks)) rebuildFromBlocks(d.blocks);
+}
+load();
+});
+</script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>

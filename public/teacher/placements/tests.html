@@ -9,29 +9,39 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
-.page{position:relative;z-index:2;width:min(920px,92vw);margin:auto;padding:110px 0 90px}
+.page{position:relative;z-index:2;width:min(1080px,92vw);margin:auto;padding:110px 0 90px}
 .nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
 .nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
 .hero{text-align:center;margin-bottom:32px}
-.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(2.6rem,6vw,4.4rem);font-weight:400}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(2.6rem,6vw,4.6rem);font-weight:400}
 .hero p{color:rgba(255,255,255,.65);font-weight:800}
-.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);padding:24px;margin-bottom:22px}
-.form-row{display:grid;grid-template-columns:1fr 1fr auto;gap:12px}
-input,select,textarea,button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:white;border-radius:16px;padding:13px 14px;font-family:Inter,sans-serif;font-weight:800}
-select option{color:#111}
-textarea{width:100%;resize:vertical;font-weight:600}
-button{cursor:pointer;transition:.15s}
-button:hover{transform:translateY(-1px)}
-.add{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4}
-.list{display:grid;gap:12px}
-.test-card{padding:18px 20px;border-radius:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
-.test-title{font-weight:900;font-size:1rem;margin-bottom:6px}
-.test-meta{font-size:.78rem;color:rgba(255,255,255,.55);font-weight:700;line-height:1.6;white-space:pre-wrap}
-.test-actions{margin-top:10px;display:flex;gap:8px}
-.small{padding:8px 12px;font-size:.76rem;border-radius:12px}
-.delete{background:rgba(255,80,80,.14)}
-.empty{text-align:center;color:rgba(255,255,255,.4);font-weight:700;padding:30px}
-@media(max-width:700px){.form-row{grid-template-columns:1fr}}
+
+.action-bar{display:flex;align-items:center;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.new-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:18px;background:rgba(99,179,237,.18);border:1px solid rgba(99,179,237,.4);color:#90cdf4;font-weight:900;font-size:.9rem;cursor:pointer;text-decoration:none;transition:.18s}
+.new-btn:hover{background:rgba(99,179,237,.3);transform:translateY(-2px)}
+.new-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2}
+
+.folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.folder-card{border-radius:24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);overflow:hidden;transition:.22s ease;cursor:pointer}
+.folder-card.open{border-color:rgba(99,179,237,.35)}
+.folder-head{display:flex;align-items:center;gap:14px;padding:20px}
+.folder-card:hover .folder-head{background:rgba(255,255,255,.06)}
+.folder-icon{font-size:2rem}
+.folder-meta{flex:1;min-width:0}
+.folder-name{font-family:"Sorts Mill Goudy",serif;font-size:1.4rem;font-weight:400}
+.folder-sub{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45);margin-top:3px}
+.folder-chevron{color:rgba(255,255,255,.3);transition:transform .22s ease}
+.folder-card.open .folder-chevron{transform:rotate(90deg)}
+.folder-body{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .25s ease;padding:0 14px}
+.folder-card.open .folder-body{max-height:600px;padding:0 14px 14px}
+.test-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px}
+.test-row:last-child{margin-bottom:0}
+.test-name{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.test-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:.82rem}
+.test-btn:hover{background:rgba(255,255,255,.16)}
+.test-btn.del:hover{background:rgba(255,60,60,.2);border-color:rgba(255,100,100,.3)}
+.empty-state{text-align:center;padding:60px 40px;border:2px dashed rgba(255,255,255,.1);border-radius:28px;color:rgba(255,255,255,.35)}
+.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.4rem;font-weight:400;margin-bottom:8px;color:rgba(255,255,255,.5)}
 </style>
 </head>
 <body>
@@ -46,78 +56,104 @@ button:hover{transform:translateY(-1px)}
 </nav>
 
 <main class="page">
-<section class="hero"><h1>Placement Tests</h1><p>Create and manage placement assessment templates.</p></section>
+<section class="hero"><h1>Placement Tests</h1><p>Build and manage placement assessment templates, organized by target level.</p></section>
 
-<section class="panel">
-  <div class="form-row" style="margin-bottom:12px">
-    <input id="testName" placeholder="Test name (e.g. Adult Placement — French A0-B2)">
-    <select id="testLevel">
-      <option value="">Target level range</option>
-      <option>Absolute Beginner – A1</option>
-      <option>A1 – A2</option>
-      <option>A2 – B1</option>
-      <option>B1 – B2</option>
-      <option>All levels</option>
-    </select>
-    <button class="add" id="addBtn" type="button">Add Test</button>
-  </div>
-  <textarea id="testDesc" rows="3" placeholder="Description / instructions for administering this test..."></textarea>
-</section>
+<div class="action-bar">
+  <a class="new-btn" href="/teacher/placements/placement-test-builder.html">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    New Placement Test
+  </a>
+</div>
 
-<section class="panel">
-  <div class="list" id="testList"><div class="empty">Loading tests...</div></div>
-</section>
+<div id="foldersWrap"><div class="empty-state"><h3>Loading...</h3></div></div>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
 <script src="/__/firebase/init.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", async()=>{
-  const db=firebase.firestore();
-  const list=document.getElementById("testList");
-  const myName = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "";
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+  const wrap = document.getElementById("foldersWrap");
+  let openFolder = null;
+  const LEVELS = ["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
 
   async function load(){
-    list.innerHTML='<div class="empty">Loading tests...</div>';
-    const snap = await db.collection("placementTests").orderBy("createdAt","desc").get().catch(async()=>{
-      return await db.collection("placementTests").get();
-    });
-    const items = snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!items.length){ list.innerHTML='<div class="empty">No placement tests yet.</div>'; return; }
-    list.innerHTML="";
-    items.forEach(t=>{
-      const card=document.createElement("div");
-      card.className="test-card";
-      card.innerHTML=`
-        <div class="test-title">${t.name||"Untitled Test"}</div>
-        <div class="test-meta">${t.level?"Level range: "+t.level+"\n":""}${t.description||""}</div>
-        <div class="test-meta">Created by ${t.createdBy||"Unknown"}</div>
-        <div class="test-actions"><button class="small delete" data-id="${t.id}">Delete</button></div>
-      `;
-      card.querySelector(".delete").onclick=async()=>{
-        if(confirm("Delete this test?")){ await db.collection("placementTests").doc(t.id).delete(); await load(); }
-      };
-      list.appendChild(card);
-    });
+    const snap = await db.collection("placementTests").get();
+    const tests = snap.docs.map(d=>({id:d.id,...d.data()}));
+    render(tests);
   }
 
-  document.getElementById("addBtn").onclick=async()=>{
-    const name=document.getElementById("testName").value.trim();
-    if(!name){ alert("Please enter a test name."); return; }
-    const now=new Date();
-    await db.collection("placementTests").add({
-      name,
-      level: document.getElementById("testLevel").value,
-      description: document.getElementById("testDesc").value.trim(),
-      createdBy: myName,
-      createdAt: now.toISOString()
+  function render(tests){
+    const map = {};
+    tests.forEach(t=>{
+      const lvl = (t.level||"Unspecified").trim();
+      if(!map[lvl]) map[lvl]=[];
+      map[lvl].push(t);
     });
-    document.getElementById("testName").value="";
-    document.getElementById("testDesc").value="";
-    document.getElementById("testLevel").value="";
-    await load();
-  };
+
+    const levelsPresent = LEVELS.filter(l=>map[l]&&map[l].length);
+    Object.keys(map).forEach(l=>{ if(!levelsPresent.includes(l)) levelsPresent.push(l); });
+
+    if(!levelsPresent.length){
+      wrap.innerHTML = `<div class="empty-state"><h3>No placement tests yet</h3><p>Create one to get started.</p></div>`;
+      return;
+    }
+
+    wrap.innerHTML = `<div class="folders-grid" id="grid"></div>`;
+    const grid = document.getElementById("grid");
+
+    levelsPresent.forEach(level=>{
+      const items = map[level];
+      if(!items||!items.length) return;
+      const card = document.createElement("div");
+      card.className = "folder-card" + (openFolder===level?" open":"");
+      card.dataset.level = level;
+
+      const rows = items.map(t=>`
+        <div class="test-row">
+          <span class="test-name">${t.title||"Untitled Test"}</span>
+          <button class="test-btn view-btn" data-id="${t.id}" title="Preview">👁</button>
+          <button class="test-btn edit-btn" data-id="${t.id}" title="Edit">✏️</button>
+          <button class="test-btn del del-btn" data-id="${t.id}" title="Delete">✕</button>
+        </div>`).join("");
+
+      card.innerHTML = `
+        <div class="folder-head">
+          <span class="folder-icon">${openFolder===level?"📂":"📁"}</span>
+          <div class="folder-meta"><div class="folder-name">${level}</div><div class="folder-sub">${items.length} test${items.length===1?"":"s"}</div></div>
+          <span class="folder-chevron">›</span>
+        </div>
+        <div class="folder-body">${rows}</div>`;
+      grid.appendChild(card);
+    });
+
+    grid.addEventListener("click", async function(e){
+      const delBtn = e.target.closest(".del-btn");
+      if(delBtn){
+        e.stopPropagation();
+        if(confirm("Delete this placement test?")){
+          await db.collection("placementTests").doc(delBtn.dataset.id).delete();
+          await load();
+        }
+        return;
+      }
+      const viewBtn = e.target.closest(".view-btn");
+      if(viewBtn){ e.stopPropagation(); location.href="/teacher/placements/placement-test-view.html?id="+encodeURIComponent(viewBtn.dataset.id); return; }
+      const editBtn = e.target.closest(".edit-btn");
+      if(editBtn){ e.stopPropagation(); location.href="/teacher/placements/placement-test-builder.html?edit="+encodeURIComponent(editBtn.dataset.id); return; }
+      const card = e.target.closest(".folder-card");
+      if(card){
+        const level = card.dataset.level;
+        if(openFolder===level){ openFolder=null; card.classList.remove("open"); }
+        else{
+          document.querySelectorAll(".folder-card.open").forEach(c=>c.classList.remove("open"));
+          openFolder=level; card.classList.add("open");
+        }
+        await load();
+      }
+    });
+  }
 
   await load();
 });
