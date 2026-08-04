@@ -13,6 +13,9 @@ service firebase.storage {
     match /delfAudio/{allPaths=**} {
       allow read, write: if true;
     }
+    match /placementRecordings/{allPaths=**} {
+      allow read, write: if true;
+    }
     match /{allPaths=**} {
       allow read, write: if false;
     }

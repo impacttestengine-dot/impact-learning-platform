@@ -4,40 +4,70 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Placement Recordings | Impact</title>
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
-<link rel="stylesheet" href="/teacher/placements/placements.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(980px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(2.6rem,6vw,4.4rem);font-weight:400}
+.hero p{color:rgba(255,255,255,.65);font-weight:800}
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);padding:24px;margin-bottom:22px}
+.upload-row{display:grid;grid-template-columns:1fr 160px auto;gap:12px}
+input,select,button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:white;border-radius:16px;padding:13px 14px;font-family:Inter,sans-serif;font-weight:800}
+select option{color:#111}
+button{cursor:pointer}
+.upload-btn{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4}
+.upload-status{margin-top:10px;font-size:.8rem;font-weight:800;color:rgba(255,255,255,.5)}
+.folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.folder-card{border-radius:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);overflow:hidden}
+.folder-card.open{border-color:rgba(99,179,237,.3)}
+.folder-head{display:flex;align-items:center;gap:12px;padding:18px;cursor:pointer}
+.folder-icon{font-size:1.6rem}
+.folder-name{font-weight:800}
+.folder-sub{font-size:.72rem;color:rgba(255,255,255,.4);font-weight:700}
+.folder-body{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .2s ease;padding:0 14px}
+.folder-card.open .folder-body{max-height:400px;padding:0 14px 14px}
+.rec-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.05);margin-bottom:6px;font-size:.8rem;font-weight:700}
+.rec-item a{color:#90cdf4;text-decoration:none}
+.empty{text-align:center;color:rgba(255,255,255,.4);font-weight:700;padding:30px}
+</style>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
-
-<nav class="lp-nav">
-  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></a>
-  <a class="lp-icon-btn" href="/teacher/placements/index.html" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg></a>
+<nav class="nav">
+  <a href="/teacher/placements/index.html" title="Back">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+  </a>
+  <a href="/teacher/dashboard.html" title="Dashboard">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
 </nav>
 
 <main class="page">
-  <section class="hero">
-    <p class="eyebrow">Placement Audio Library</p>
-    <h1>Placement Recordings</h1>
-    <p>Upload learner placement recordings and organize them by level.</p>
-  </section>
+<section class="hero"><h1>Placement Recordings</h1><p>Upload learner placement recordings, organized by level.</p></section>
 
-  <section class="two-col">
-    <aside class="panel" style="padding:22px">
-      <h2 style="margin-bottom:16px">Level Folders</h2>
-      <div class="level-list" id="levels"></div>
-    </aside>
+<section class="panel">
+  <div class="upload-row">
+    <input id="learnerName" placeholder="Learner name">
+    <select id="recLevel">
+      <option value="">Level</option>
+      <option>Absolute Beginner</option>
+      <option>A0</option><option>A1</option><option>A1.1</option>
+      <option>A2</option><option>B1</option><option>B2</option>
+    </select>
+    <button class="upload-btn" id="chooseFileBtn" type="button">Choose File</button>
+  </div>
+  <input type="file" id="fileInput" accept="audio/*,video/*" style="display:none">
+  <p class="upload-status" id="uploadStatus"></p>
+</section>
 
-    <section class="panel" style="padding:22px">
-      <div class="upload-bar">
-        <input id="file" type="file" accept="audio/*,video/*">
-        <select id="folder"></select>
-        <button id="uploadBtn">Upload</button>
-      </div>
-      <div id="recordingList"><div class="empty">Loading...</div></div>
-    </section>
-  </section>
+<section class="panel">
+  <div class="folders-grid" id="foldersWrap"><div class="empty">Loading recordings...</div></div>
+</section>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -45,120 +75,77 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js"></script>
 <script src="/__/firebase/init.js"></script>
 <script>
-const db=firebase.firestore();
-const storage=firebase.storage();
-const levels=["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
-let current=levels[0];
+document.addEventListener("DOMContentLoaded", async()=>{
+  const db=firebase.firestore();
+  const storage=firebase.storage();
+  const myName = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "";
+  const foldersWrap=document.getElementById("foldersWrap");
+  const uploadStatus=document.getElementById("uploadStatus");
+  const fileInput=document.getElementById("fileInput");
 
-levels.forEach(level=>{
-  const b=document.createElement("button");
-  b.className="level-btn";
-  b.textContent=level;
-  b.onclick=()=>{current=level;paint();load();};
-  document.getElementById("levels").appendChild(b);
+  document.getElementById("chooseFileBtn").onclick=()=>{
+    const learner=document.getElementById("learnerName").value.trim();
+    const level=document.getElementById("recLevel").value;
+    if(!learner || !level){ alert("Please enter learner name and level first."); return; }
+    fileInput.click();
+  };
 
-  const o=document.createElement("option");
-  o.textContent=level;
-  document.getElementById("folder").appendChild(o);
-});
+  fileInput.onchange=async()=>{
+    const file=fileInput.files[0];
+    if(!file) return;
+    const learner=document.getElementById("learnerName").value.trim();
+    const level=document.getElementById("recLevel").value;
 
-function paint(){
-  document.querySelectorAll(".level-btn").forEach(b=>b.classList.toggle("active",b.textContent===current));
-  document.getElementById("folder").value=current;
-}
+    uploadStatus.textContent="Uploading "+file.name+"...";
+    try{
+      const path=`placementRecordings/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${file.name.split(".").pop()||"mp3"}`;
+      const snap=await storage.ref(path).put(file);
+      const url=await snap.ref.getDownloadURL();
+      const now=new Date();
+      await db.collection("placementRecordings").add({
+        learnerName:learner, level, fileName:file.name, url, storagePath:path,
+        uploadedBy:myName, uploadedAt:now.toISOString()
+      });
+      uploadStatus.textContent="✓ Uploaded";
+      document.getElementById("learnerName").value="";
+      fileInput.value="";
+      await load();
+    }catch(e){
+      uploadStatus.textContent="⚠️ Upload failed: "+e.message;
+    }
+  };
 
-async function upload(){
-  const file=document.getElementById("file").files[0];
-  if(!file)return;
-  const level=document.getElementById("folder").value;
-  const path=`placement-recordings/${level}/${Date.now()}-${file.name}`;
-  const ref=storage.ref(path);
-  await ref.put(file);
-  const url=await ref.getDownloadURL();
-  await db.collection("placementRecordings").add({name:file.name,level,url,type:file.type,path,createdAt:new Date().toISOString()});
-  document.getElementById("file").value="";
-  current=level;
-  paint();
-  load();
-}
+  async function load(){
+    foldersWrap.innerHTML='<div class="empty">Loading recordings...</div>';
+    const snap=await db.collection("placementRecordings").get();
+    const items=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!items.length){ foldersWrap.innerHTML='<div class="empty">No recordings yet.</div>'; return; }
 
-async function load(){
-  const box=document.getElementById("recordingList");
-  box.innerHTML='<div class="empty">Loading recordings...</div>';
-  const snap=await db.collection("placementRecordings").where("level","==",current).get();
-  box.innerHTML="";
-  if(snap.empty){
-    box.innerHTML='<div class="empty">No recordings in this folder yet.</div>';
-    return;
+    const byLevel={};
+    items.forEach(r=>{ const l=r.level||"Unspecified"; if(!byLevel[l]) byLevel[l]=[]; byLevel[l].push(r); });
+
+    foldersWrap.innerHTML="";
+    Object.keys(byLevel).sort().forEach(level=>{
+      const recs=byLevel[level];
+      const card=document.createElement("div");
+      card.className="folder-card";
+      const rows=recs.map(r=>`<div class="rec-item"><span>${r.learnerName||"Unknown"}</span><a href="${r.url}" target="_blank">Play</a></div>`).join("");
+      card.innerHTML=`
+        <div class="folder-head">
+          <span class="folder-icon">📁</span>
+          <div><div class="folder-name">${level}</div><div class="folder-sub">${recs.length} recording${recs.length===1?"":"s"}</div></div>
+        </div>
+        <div class="folder-body">${rows}</div>
+      `;
+      card.querySelector(".folder-head").onclick=()=>card.classList.toggle("open");
+      foldersWrap.appendChild(card);
+    });
   }
-  snap.forEach(doc=>{
-    const r=doc.data();
-    const item=document.createElement("div");
-    item.className="recording-item";
-    item.innerHTML=`<strong>${r.name}</strong>${(r.type||"").startsWith("video")?`<video src="${r.url}" controls></video>`:`<audio src="${r.url}" controls></audio>`}`;
-    box.appendChild(item);
-  });
-}
 
-document.getElementById("uploadBtn").onclick=upload;
-paint();
-load();
+  await load();
+});
 </script>
 <script src="/js/impact-recycle-bin.js"></script>
-
-<script id="team-meetings-menu-fix">
-(function(){
-
-  function injectTeamMeetings(){
-
-    const menu =
-      document.querySelector(".quick-menu") ||
-      document.querySelector(".menu-dropdown") ||
-      document.querySelector(".menu-panel") ||
-      document.querySelector(".menu-links") ||
-      document.querySelector(".dropdown-menu");
-
-    if(!menu) return;
-
-    if(document.getElementById("teamMeetingsMenuLink")) return;
-
-    const recycleLink = Array.from(menu.querySelectorAll("a"))
-      .find(a =>
-        (a.textContent || "")
-          .toLowerCase()
-          .includes("recycle")
-      );
-
-    if(!recycleLink) return;
-
-    const newLink = recycleLink.cloneNode(true);
-
-    newLink.id = "teamMeetingsMenuLink";
-
-    newLink.href = "/teacher/team-meetings.html";
-
-    newLink.textContent = "Team Meetings";
-
-    // REMOVE INLINE STYLES THAT CAUSED STATIC LOOK
-    newLink.removeAttribute("style");
-
-    // insert before recycle bin
-    recycleLink.parentNode.insertBefore(newLink, recycleLink);
-
-  }
-
-  injectTeamMeetings();
-
-  setInterval(injectTeamMeetings, 1500);
-
-})();
-</script>
-
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
-
-
-
-
-
