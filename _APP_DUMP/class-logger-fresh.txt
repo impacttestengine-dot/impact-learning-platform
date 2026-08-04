@@ -1,0 +1,692 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Class Tracker | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;max-width:100%;overflow-x:hidden} body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(980px,88vw);max-width:980px;margin:0 auto;padding:110px 0 90px;overflow:hidden}
+.nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.pdf-btn{position:fixed!important;top:24px!important;right:28px!important;left:auto!important;z-index:999999!important;width:54px!important;height:54px!important;border-radius:18px!important;border:1px solid rgba(255,255,255,.18)!important;background:rgba(255,255,255,.10)!important;color:white!important;font-size:22px!important;cursor:pointer!important;backdrop-filter:blur(18px)!important}
+.hero{text-align:center;margin-bottom:34px;width:100%;overflow:hidden}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
+.hero p{font-weight:800;color:rgba(255,255,255,.65)}
+.search-row{display:flex;gap:12px;margin-bottom:24px;align-items:stretch}
+.search{flex:1;padding:16px 18px;border-radius:22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;font-weight:800}
+.add-manual-btn{flex-shrink:0;padding:0 22px;border-radius:22px;background:rgba(120,170,255,.16);border:1px solid rgba(120,170,255,.3);color:#bcd4ff;font-weight:900;cursor:pointer;white-space:nowrap}
+.learner{margin-bottom:30px}
+.learner h2{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;margin-bottom:14px}
+.card{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:16px;margin-bottom:14px;padding:20px;border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);width:100%;max-width:100%;overflow:hidden;align-items:start}
+.pill{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);font-weight:900}
+.info{font-size:.84rem;font-weight:800;line-height:1.75;color:rgba(255,255,255,.82)}
+.top{font-weight:900;color:white}
+.status{display:inline-block;margin-top:10px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.badge{display:inline-block;margin-top:10px;margin-left:8px;padding:7px 12px;border-radius:999px;font-size:.72rem;font-weight:900}
+.badge-type{background:rgba(120,170,255,.18);color:#bcd4ff}
+.badge-billable{background:rgba(80,220,140,.16);color:#9ef0bf}
+.badge-nonbillable{background:rgba(255,120,120,.16);color:#ffb3b3}
+.delete{border:none;border-radius:14px;padding:10px 16px;background:rgba(255,80,80,.14);color:white;font-weight:900;cursor:pointer;align-self:start;justify-self:end;width:auto;min-width:92px;height:44px;line-height:1;display:flex;align-items:center;justify-content:center}
+.empty{padding:24px;border-radius:24px;background:rgba(255,255,255,.06);text-align:center;font-weight:800;color:rgba(255,255,255,.6)}
+button{transition:.15s ease}
+button:hover{transform:translateY(-2px) scale(1.03)}
+button:active{transform:scale(.94);opacity:.8}
+</style>
+<style id="class-tracker-delete-layout-fix">
+.card{
+  grid-template-columns:64px minmax(0,1fr) 110px !important;
+  align-items:start !important;
+  overflow:hidden !important;
+}
+.info{
+  min-width:0 !important;
+  word-break:break-word !important;
+  overflow-wrap:anywhere !important;
+}
+.delete{
+  width:92px !important;
+  height:42px !important;
+  min-width:92px !important;
+  padding:0 14px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  justify-self:end !important;
+  align-self:start !important;
+  border-radius:14px !important;
+  line-height:1 !important;
+}
+@media(max-width:700px){
+  .card{
+    grid-template-columns:48px 1fr !important;
+  }
+  .delete{
+    grid-column:2 !important;
+    justify-self:start !important;
+    margin-top:10px !important;
+  }
+}
+</style>
+<style id="manual-class-modal-styles">
+body.modal-locked{
+  overflow:hidden !important;
+  height:100vh !important;
+}
+.modal-overlay{
+  display:none;
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  background:rgba(2,3,8,.92) !important;
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+  z-index:2147483647 !important;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  overflow-y:auto;
+}
+.modal-overlay.open{
+  display:flex !important;
+}
+.modal-box{
+  width:min(560px,100%);
+  max-height:88vh;
+  overflow-y:auto;
+  background:#0d0f17;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:28px;
+  padding:30px;
+  box-shadow:0 30px 90px rgba(0,0,0,.6);
+}
+.modal-box h3{
+  font-family:"Sorts Mill Goudy",serif;
+  font-size:1.8rem;
+  font-weight:400;
+  margin-bottom:20px;
+}
+.field-group{margin-bottom:16px}
+.field-group label{
+  display:block;
+  font-size:.78rem;
+  font-weight:900;
+  color:rgba(255,255,255,.6);
+  margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.field-group input,
+.field-group select,
+.field-group textarea{
+  width:100%;
+  padding:13px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+  color:white;
+  font-weight:700;
+  font-family:Inter,sans-serif;
+  font-size:.92rem;
+}
+.field-group textarea{min-height:80px;resize:vertical}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.modal-actions{
+  display:flex;
+  gap:12px;
+  margin-top:22px;
+}
+.modal-save{
+  flex:1;
+  padding:14px;
+  border-radius:16px;
+  border:none;
+  background:rgba(120,170,255,.22);
+  color:#bcd4ff;
+  font-weight:900;
+  cursor:pointer;
+}
+.modal-cancel{
+  flex:1;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.14);
+  background:transparent;
+  color:white;
+  font-weight:900;
+  cursor:pointer;
+}
+.field-error{
+  color:#ffb3b3;
+  font-size:.78rem;
+  font-weight:800;
+  margin-top:10px;
+  display:none;
+}
+.field-hint{
+  color:rgba(120,200,255,.85);
+  font-size:.76rem;
+  font-weight:700;
+  margin-top:6px;
+  display:none;
+}
+</style>
+</head>
+
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="nav">
+<a href="/teacher/billing.html" title="Billing" style="background:rgba(99,179,237,.16);border-color:rgba(99,179,237,.3)">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+</a>
+<a href="/teacher/dashboard.html" title="Dashboard">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+</a>
+<a href="javascript:history.back()" title="Back">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+</a>
+</nav>
+
+<button id="pdfBtn" class="pdf-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></button>
+
+<main class="page">
+  <section class="hero">
+    <h1>Class Tracker</h1>
+    <p>Started classes, ended classes, duration, participation, and teacher remarks are logged here.</p>
+  </section>
+
+  <div class="search-row">
+    <input id="search" class="search" placeholder="Search learner, teacher, level, room, remark...">
+    <button id="addManualBtn" type="button" class="add-manual-btn">+ Add Class</button>
+  </div>
+
+  <section id="wrap"><div class="empty">Loading class tracker...</div></section>
+</main>
+
+<div id="manualModalOverlay" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Add Class</h3>
+
+    <div class="field-group">
+      <label>Learner</label>
+      <input id="m_learner" type="text" placeholder="Learner name" list="m_learner_list" autocomplete="off">
+      <datalist id="m_learner_list"></datalist>
+      <div class="field-hint" id="m_learner_hint">Matched to existing learner · will join their tracker.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Teacher</label>
+      <input id="m_teacher" type="text" placeholder="Teacher name">
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label>Level</label>
+        <input id="m_level" type="text" placeholder="e.g. A1.1, B1">
+      </div>
+      <div class="field-group">
+        <label>Date</label>
+        <input id="m_date" type="date">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label>Start Time</label>
+        <input id="m_start" type="time">
+      </div>
+      <div class="field-group">
+        <label>End Time</label>
+        <input id="m_end" type="time">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label>Participation (%)</label>
+        <input id="m_participation" type="number" min="0" max="100" placeholder="e.g. 80">
+      </div>
+      <div class="field-group">
+        <label>Platform Used</label>
+        <input id="m_platform" type="text" placeholder="e.g. Zoom, WhatsApp Call">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Remarks</label>
+      <textarea id="m_remarks" placeholder="Notes about the class..."></textarea>
+    </div>
+
+    <div class="field-error" id="m_error">Please fill in Learner, Teacher, Date, Start Time, and End Time.</div>
+
+    <div class="modal-actions">
+      <button type="button" class="modal-cancel" id="m_cancel">Cancel</button>
+      <button type="button" class="modal-save" id="m_save">Save Class</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+(function(){
+  const manualOverlay=document.getElementById("manualModalOverlay");
+  const addManualBtn=document.getElementById("addManualBtn");
+  const mCancel=document.getElementById("m_cancel");
+
+  function openManualModal(){
+    document.getElementById("m_learner").value="";
+    document.getElementById("m_teacher").value="";
+    document.getElementById("m_level").value="";
+    document.getElementById("m_date").value="";
+    document.getElementById("m_start").value="";
+    document.getElementById("m_end").value="";
+    document.getElementById("m_participation").value="";
+    document.getElementById("m_platform").value="";
+    document.getElementById("m_remarks").value="";
+    document.getElementById("m_error").style.display="none";
+    document.getElementById("m_learner_hint").style.display="none";
+    document.body.appendChild(manualOverlay);
+    manualOverlay.classList.add("open");
+    document.body.classList.add("modal-locked");
+    window.scrollTo(0,0);
+  }
+
+  function closeManualModal(){
+    manualOverlay.classList.remove("open");
+    document.body.classList.remove("modal-locked");
+  }
+
+  if(addManualBtn){
+    addManualBtn.addEventListener("click",function(e){
+      e.preventDefault();
+      openManualModal();
+    });
+  }
+
+  if(mCancel){
+    mCancel.addEventListener("click",function(e){
+      e.preventDefault();
+      closeManualModal();
+    });
+  }
+
+  manualOverlay.addEventListener("click",function(e){
+    if(e.target===manualOverlay) closeManualModal();
+  });
+
+  window.__closeManualModal=closeManualModal;
+})();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded",async()=>{
+const db=firebase.firestore();
+const wrap=document.getElementById("wrap");
+const search=document.getElementById("search");
+let allLogs=[];
+let knownLearners=[];
+
+const BILLABLE_MINUTES_THRESHOLD=20;
+const FIRST_BILLING_START=new Date(2026,5,4); // 04 June 2026 · fixed for testing
+
+function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
+function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
+
+function isBillable(x){
+  if(typeof x.billable==="boolean") return x.billable;
+  const canceled=String(x.lessonCanceled||"").trim().toLowerCase()==="yes";
+  if(canceled) return false;
+  const completedField=String(x.lessonCompleted||"").trim().toLowerCase();
+  if(completedField==="no") return false;
+  if(x.status==="Completed") return true;
+  if(x.status==="Ended"){
+    const mins=Number(x.minutesSpent||x.durationMinutes||0);
+    return mins>=BILLABLE_MINUTES_THRESHOLD;
+  }
+  return false;
+}
+
+function resolveLearnerName(typedName){
+  const typedNorm=typedName.trim().toLowerCase().replace(/\s+/g," ");
+  for(const known of knownLearners){
+    if(known.trim().toLowerCase().replace(/\s+/g," ")===typedNorm) return known;
+  }
+  return typedName.trim();
+}
+
+function formatDateLong(d){
+  const day=String(d.getDate()).padStart(2,"0");
+  const month=d.toLocaleString("en-GB",{month:"long"});
+  const year=d.getFullYear();
+  return `${day} ${month} ${year}`;
+}
+
+async function load(){
+  const snap=await db.collection("classTracker").get();
+  const seen=new Set();
+  allLogs=snap.docs.map(d=>({id:d.id,...d.data()}))
+    .sort((a,b)=>ms(a)-ms(b))
+    .filter(x=>{
+      const key=[x.learner,x.startedAt||x.startedAtText,x.endedAt||x.endedAtText,x.meetRoom].join("|");
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+  const nameSet=new Set();
+  allLogs.forEach(x=>{if(x.learner) nameSet.add(x.learner);});
+  knownLearners=Array.from(nameSet).sort();
+
+  const datalist=document.getElementById("m_learner_list");
+  if(datalist){
+    datalist.innerHTML=knownLearners.map(n=>`<option value="${n.replace(/"/g,"&quot;")}">`).join("");
+  }
+
+  render(allLogs);
+}
+
+function render(logs){
+  if(!logs.length){wrap.innerHTML='<div class="empty">No tracker records found.</div>';return}
+
+  const groups={};
+  logs.forEach(x=>{
+    const name=x.learner||"Unnamed Learner";
+    if(!groups[name]) groups[name]=[];
+    groups[name].push(x);
+  });
+
+  wrap.innerHTML="";
+
+  Object.keys(groups).sort().forEach(name=>{
+    const sec=document.createElement("section");
+    sec.className="learner";
+    sec.innerHTML=`<h2>${name}</h2>`;
+
+    let billableCount=0;
+    groups[name].sort((a,b)=>ms(a)-ms(b)).forEach((x)=>{
+      const billable=isBillable(x);
+      if(billable) billableCount++;
+      const session=billable?(billableCount+"/4"):"-/4";
+      const entryType=(x.entryType||"auto").toUpperCase();
+      const card=document.createElement("article");
+      card.className="card";
+      card.innerHTML=`
+        <div class="pill">${session}</div>
+        <div class="info">
+          <div class="top">Level: ${x.level||""} · Session ${session} · Teacher: ${x.teacher||""} · Room: ${x.meetRoom||x.platform||""}</div>
+          <div>Started: ${x.startedAtText||x.startedAt||""}</div>
+          <div>Ended: ${x.endedAtText||x.endedAt||"Not ended"}</div>
+          <div>Duration: ${x.minutesSpent||x.durationMinutes||0} minute(s)</div>
+          ${x.lessonCompleted?`<div>Lesson completed: ${clean(x.lessonCompleted)}</div>`:""}
+          ${x.lessonCanceled?`<div>Lesson canceled: ${clean(x.lessonCanceled)}</div>`:""}
+          ${x.studentParticipation?`<div>Student participation: ${clean(x.studentParticipation)}</div>`:""}
+          ${x.teacherRemarks?`<div>Remarks: ${clean(x.teacherRemarks)}</div>`:""}
+          <span class="status">${x.status||"Logged"}</span>
+          <span class="badge badge-type">${entryType}</span>
+          <span class="badge ${billable?"badge-billable":"badge-nonbillable"}">${billable?"BILLABLE":"NON-BILLABLE"}</span>
+        </div>
+        <button class="delete">Delete</button>
+      `;
+      card.querySelector(".delete").onclick=async()=>{
+        if(confirm("Delete this tracker record?")){
+          await db.collection("classTracker").doc(x.id).delete();
+          await load();
+        }
+      };
+      sec.appendChild(card);
+    });
+
+    wrap.appendChild(sec);
+  });
+}
+
+search.oninput=()=>render(allLogs.filter(x=>JSON.stringify(x).toLowerCase().includes(search.value.toLowerCase())));
+
+document.getElementById("pdfBtn").onclick=async()=>{
+  const pdfBtn=document.getElementById("pdfBtn");
+  pdfBtn.disabled=true;
+
+  try{
+    const historyRef=db.collection("billingExportHistory").doc("lastExport");
+    const today=new Date();
+
+    // PRODUCTION
+const historySnap = await historyRef.get();
+let rangeStart;
+
+if(historySnap.exists && historySnap.data().lastExportEndDate){
+    const lastEnd = new Date(historySnap.data().lastExportEndDate);
+    rangeStart = new Date(lastEnd);
+    rangeStart.setDate(rangeStart.getDate() + 1);
+}else{
+    rangeStart = new Date(FIRST_BILLING_START);
+}
+
+    
+
+    const rangeStartLabel=formatDateLong(rangeStart);
+    const rangeEndLabel=formatDateLong(today);
+    const filename=`Billing Tracker from ${rangeStartLabel} to ${rangeEndLabel}.pdf`;
+
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
+
+    const margin=45;
+    const top=80;
+    const noW=42;
+    const studentW=120;
+    const dateW=62;
+    const dateCols=10;
+    const headerH=54;
+    const rowH=82;
+    const xNo=margin;
+    const xStudent=xNo+noW;
+    const xDates=xStudent+studentW;
+
+    pdf.setFont("helvetica","bold");
+    pdf.setFontSize(16);
+    pdf.text(filename.replace(".pdf",""),margin,55);
+
+    function cell(x,y,w,h,fill){
+      pdf.setFillColor(fill[0],fill[1],fill[2]);
+      pdf.setDrawColor(80,45,35);
+      pdf.setLineWidth(.6);
+      pdf.rect(x,y,w,h,"FD");
+    }
+
+    function centerText(txt,x,y,w,h,size){
+      pdf.setFont("helvetica","bold");
+      pdf.setFontSize(size);
+      pdf.setTextColor(15,22,33);
+      const lines=pdf.splitTextToSize(String(txt),w-8);
+      const lineH=size+2;
+      const total=lines.length*lineH;
+      let yy=y+(h-total)/2+size;
+      lines.forEach(line=>{
+        pdf.text(line,x+w/2,yy,{align:"center"});
+        yy+=lineH;
+      });
+    }
+
+    cell(xNo,top,noW,headerH,[213,226,232]);
+    cell(xStudent,top,studentW,headerH,[213,226,232]);
+    cell(xDates,top,dateW*dateCols,headerH,[213,226,232]);
+    centerText("NO.",xNo,top,noW,headerH,10);
+    centerText("STUDENT",xStudent,top,studentW,headerH,10);
+    centerText("CLASS DATES",xDates,top,dateW*dateCols,headerH,11);
+
+    const billableLogs=allLogs.filter(x=>isBillable(x));
+    const grouped={};
+    billableLogs.forEach(x=>{
+      const name=x.learner||"Student";
+      const raw=x.startedAtText||x.startedAt||"";
+      const date=String(raw).split(",")[0].trim();
+      if(!date) return;
+      if(!grouped[name]) grouped[name]=[];
+      if(!grouped[name].includes(date)) grouped[name].push(date);
+    });
+
+    let y=top+headerH;
+    let n=1;
+
+    Object.keys(grouped).sort().forEach(name=>{
+      if(y+rowH>540){
+        pdf.addPage("a4","landscape");
+        y=60;
+        cell(xNo,y,noW,headerH,[213,226,232]);
+        cell(xStudent,y,studentW,headerH,[213,226,232]);
+        cell(xDates,y,dateW*dateCols,headerH,[213,226,232]);
+        centerText("NO.",xNo,y,noW,headerH,10);
+        centerText("STUDENT",xStudent,y,studentW,headerH,10);
+        centerText("CLASS DATES",xDates,y,dateW*dateCols,headerH,11);
+        y+=headerH;
+      }
+
+      const boxes=[];
+      for(let i=0;i<grouped[name].length;i+=4){
+        boxes.push(grouped[name].slice(i,i+4));
+      }
+      while(boxes.length<dateCols) boxes.push([]);
+
+      cell(xNo,y,noW,rowH,[235,242,245]);
+      cell(xStudent,y,studentW,rowH,[235,242,245]);
+
+      pdf.setTextColor(20,25,35);
+      pdf.setFont("helvetica","bold");
+      pdf.setFontSize(9);
+      pdf.text(String(n++),xNo+noW/2,y+18,{align:"center"});
+      pdf.text(name,xStudent+10,y+18);
+
+      boxes.slice(0,dateCols).forEach((dates,i)=>{
+        const x=xDates+(i*dateW);
+        cell(x,y,dateW,rowH,[235,242,245]);
+        pdf.setFont("helvetica","normal");
+        pdf.setFontSize(8);
+        pdf.setTextColor(20,25,35);
+        let yy=y+16;
+        dates.forEach(d=>{
+          pdf.text(d,x+6,yy);
+          yy+=12;
+        });
+      });
+
+      y+=rowH;
+    });
+
+    pdf.save(filename);
+
+    await historyRef.set({
+      lastExportEndDate:"2026-07-06T00:00:00.000Z",
+      lastExportEndDateLabel:"06 July 2026",
+      lastExportStartDateLabel:rangeStartLabel,
+      lastExportFilename:filename,
+      updatedAt:today.toISOString()
+    });
+
+  }catch(err){
+    console.error(err);
+    alert("Could not generate the Billing Tracker PDF. Please try again.");
+  }finally{
+    pdfBtn.disabled=false;
+  }
+};
+
+const mLearnerInput=document.getElementById("m_learner");
+const mLearnerHint=document.getElementById("m_learner_hint");
+mLearnerInput.addEventListener("input",()=>{
+  const typed=mLearnerInput.value.trim();
+  if(!typed){mLearnerHint.style.display="none";return;}
+  const matched=resolveLearnerName(typed);
+  const typedNorm=typed.toLowerCase().replace(/\s+/g," ");
+  const matchedNorm=matched.toLowerCase().replace(/\s+/g," ");
+  mLearnerHint.style.display=(typedNorm===matchedNorm&&knownLearners.includes(matched))?"block":"none";
+});
+
+const mSave=document.getElementById("m_save");
+const mError=document.getElementById("m_error");
+
+mSave.onclick=async()=>{
+  const learnerTyped=document.getElementById("m_learner").value.trim();
+  const teacher=document.getElementById("m_teacher").value.trim();
+  const level=document.getElementById("m_level").value.trim();
+  const date=document.getElementById("m_date").value;
+  const startTime=document.getElementById("m_start").value;
+  const endTime=document.getElementById("m_end").value;
+  const participation=document.getElementById("m_participation").value.trim();
+  const platform=document.getElementById("m_platform").value.trim();
+  const remarks=document.getElementById("m_remarks").value.trim();
+
+  if(!learnerTyped||!teacher||!date||!startTime||!endTime){
+    mError.style.display="block";
+    return;
+  }
+  mError.style.display="none";
+
+  const learner=resolveLearnerName(learnerTyped);
+  const startedAt=new Date(`${date}T${startTime}`);
+  const endedAt=new Date(`${date}T${endTime}`);
+  let minutesSpent=Math.round((endedAt-startedAt)/60000);
+  if(minutesSpent<0) minutesSpent=0;
+
+  mSave.disabled=true;
+  mSave.innerText="Saving...";
+
+  try{
+    await db.collection("classTracker").add({
+      learner,
+      teacher,
+      level,
+      meetRoom:"",
+      platform:platform||"",
+      startedAt:startedAt.toISOString(),
+      startedAtText:startedAt.toLocaleString(),
+      endedAt:endedAt.toISOString(),
+      endedAtText:endedAt.toLocaleString(),
+      minutesSpent,
+      lessonCompleted:"Yes",
+      lessonCanceled:"No",
+      studentParticipation:participation?`${participation}%`:"",
+      teacherRemarks:remarks,
+      entryType:"manual",
+      billable:true,
+      status:"Completed"
+    });
+
+    if(window.__closeManualModal) window.__closeManualModal();
+    await load();
+  }catch(err){
+    console.error(err);
+    alert("Could not save manual class. Please try again.");
+  }finally{
+    mSave.disabled=false;
+    mSave.innerText="Save Class";
+  }
+};
+
+load();
+});
+</script>
+
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+
+
+
+

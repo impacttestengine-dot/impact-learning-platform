@@ -12,13 +12,9 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 .page{position:relative;z-index:2;width:min(1080px,92vw);margin:auto;padding:110px 0 90px}
 .nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
 .nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
-.nav a svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2}
 .hero{text-align:center;margin-bottom:32px}
 .hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(2.6rem,6vw,4.6rem);font-weight:400}
 .hero p{color:rgba(255,255,255,.65);font-weight:800}
-
-.error-banner{display:none;border-radius:18px;padding:16px 20px;background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.35);color:#fca5a5;font-size:.84rem;font-weight:700;margin-bottom:20px}
-.error-banner.show{display:block}
 
 .cutoff-banner{border-radius:22px;padding:18px 22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);margin-bottom:26px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
 .cutoff-text{font-size:.84rem;font-weight:800;color:rgba(255,255,255,.7)}
@@ -36,9 +32,9 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 .ready-actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
 .btn{padding:11px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-weight:900;font-size:.82rem;cursor:pointer;font-family:Inter,sans-serif;transition:.15s}
 .btn:hover{background:rgba(255,255,255,.16)}
-.btn:disabled{opacity:.5;cursor:default}
 .btn.primary{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4}
 .btn.primary:hover{background:rgba(99,179,237,.32)}
+.btn.done{background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.35);color:#6ee7b7}
 
 .pending-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px}
 .pending-card{padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
@@ -49,6 +45,7 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 
 .empty-state{text-align:center;padding:50px;color:rgba(255,255,255,.4);font-weight:700;border:2px dashed rgba(255,255,255,.1);border-radius:24px}
 
+/* PREVIEW MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
 .modal-overlay.open{display:flex}
 .invoice-doc{width:min(700px,100%);background:#fff;color:#1a1a1a;border-radius:8px;padding:40px;font-family:Arial,sans-serif;max-height:90vh;overflow-y:auto}
@@ -75,24 +72,22 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 <body>
 <script src="/js/impact-global-bg.js"></script>
 <nav class="nav">
-  <a href="/teacher/class-logger.html" title="Back to Class Tracker">
-    <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
-  </a>
-  <a href="/teacher/dashboard.html" title="Dashboard">
-    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
-  </a>
+<a href="/teacher/class-logger.html" title="Back to Class Tracker">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+</a>
+<a href="/teacher/dashboard.html" title="Dashboard">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+</a>
 </nav>
 
 <main class="page">
 <section class="hero"><h1>Billing</h1><p>Learners ready for invoicing, based on completed groups of 4 billable classes.</p></section>
 
-<div class="error-banner" id="errorBanner"></div>
-
 <div class="cutoff-banner">
-  <span class="cutoff-text">Billing continues from where the manual process left off &middot; cutoff: <b id="cutoffLabel">Loading...</b></span>
+  <span class="cutoff-text">Billing continues from where the manual process left off · cutoff: <b id="cutoffLabel">Loading...</b></span>
 </div>
 
-<p class="section-label">Ready to Invoice</p>
+<p class="section-label">? Ready to Invoice</p>
 <div class="ready-grid" id="readyGrid"><div class="empty-state">Loading...</div></div>
 
 <p class="section-label">In Progress</p>
@@ -106,38 +101,21 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
 <script src="/__/firebase/init.js"></script>
+<script type="module">
+  import * as docxLib from "https://cdn.jsdelivr.net/npm/docx@8.5.0/+esm";
+  window.docx = docxLib;
+  window.__docxReady = true;
+</script>
 <script>
-// ── Global error banner helper — surfaces ANY failure visibly,
-// so this page can never silently hang on "Loading..." again ──
-function showError(msg){
-  const banner = document.getElementById("errorBanner");
-  banner.textContent = "⚠️ " + msg;
-  banner.classList.add("show");
-  console.error(msg);
-}
-
-window.addEventListener("error", function(e){
-  showError("Script error: " + (e.message || "unknown error"));
-});
-window.addEventListener("unhandledrejection", function(e){
-  showError("Unhandled error: " + (e.reason && e.reason.message ? e.reason.message : e.reason));
-});
-
-document.addEventListener("DOMContentLoaded", function(){
-  runBilling().catch(function(err){
-    showError("Failed to load billing data: " + err.message);
-    document.getElementById("readyGrid").innerHTML = '<div class="empty-state">Could not load. See error above.</div>';
-    document.getElementById("pendingGrid").innerHTML = "";
-  });
-});
-
-async function runBilling(){
+document.addEventListener("DOMContentLoaded", async function(){
   const db = firebase.firestore();
   const readyGrid = document.getElementById("readyGrid");
   const pendingGrid = document.getElementById("pendingGrid");
   const cutoffLabel = document.getElementById("cutoffLabel");
   const modalOverlay = document.getElementById("modalOverlay");
   const invoiceDoc = document.getElementById("invoiceDoc");
+
+  const LEVELS_ORDER = ["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
 
   function isBillable(x){
     if(typeof x.billable === "boolean") return x.billable;
@@ -148,121 +126,130 @@ async function runBilling(){
     if(x.status==="Completed") return true;
     return false;
   }
-
+  function ms(x){ return new Date(x.startedAt||x.createdAt||0).getTime()||0; }
   function fmtDate(d){
     const date = new Date(d);
     if(isNaN(date)) return "";
     const day = String(date.getDate()).padStart(2,"0");
     const month = date.toLocaleString("en-GB",{month:"long"});
-    return day + " " + month + " " + date.getFullYear();
+    return `${day} ${month} ${date.getFullYear()}`;
   }
 
   let cutoffDate = null;
-  let allInvoiceGroups = [];
+  let allInvoiceGroups = []; // { learner, level, teacher, classes:[4 classes], readyForInvoice:bool }
 
   async function getNextInvoiceNumber(){
     const ref = db.collection("billingInvoiceCounter").doc("counter");
-    return db.runTransaction(async function(t){
+    return db.runTransaction(async (t)=>{
       const doc = await t.get(ref);
       const year = new Date().getFullYear().toString().slice(-2);
       let seq = 1;
       if(doc.exists && doc.data().year === year){
         seq = (doc.data().lastSeq||0) + 1;
       }
-      t.set(ref, { year: year, lastSeq: seq }, {merge:true});
-      return "2" + year + String(seq).padStart(2,"0");
+      t.set(ref, { year, lastSeq: seq }, {merge:true});
+      return "2" + year + String(seq).padStart(2,"0"); // matches sample pattern e.g. 20262
     });
   }
 
   async function getExistingBilledGroups(){
+    // Track which groups have already had an invoice generated, so we
+    // don't show the same completed group as "ready" twice.
     const snap = await db.collection("billingInvoiceLog").get();
     const billed = new Set();
-    snap.docs.forEach(function(d){
+    snap.docs.forEach(d=>{
       const data = d.data();
       billed.add(data.learner + "|" + data.groupEndDate);
     });
     return billed;
   }
 
-  // 1. Cutoff date
-  const historySnap = await db.collection("billingExportHistory").doc("lastExport").get();
-  cutoffDate = (historySnap.exists && historySnap.data().lastExportEndDate)
-    ? new Date(historySnap.data().lastExportEndDate)
-    : new Date(0);
-  cutoffLabel.textContent = fmtDate(cutoffDate);
+  async function load(){
+    // 1. Get cutoff from existing billingExportHistory
+    const historySnap = await db.collection("billingExportHistory").doc("lastExport").get();
+    cutoffDate = historySnap.exists && historySnap.data().lastExportEndDate
+      ? new Date(historySnap.data().lastExportEndDate)
+      : new Date(0);
+    cutoffLabel.textContent = fmtDate(cutoffDate);
 
-  // 2. Full classTracker history
-  const trackerSnap = await db.collection("classTracker").get();
-  const allLogs = trackerSnap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); })
-    .sort(function(a,b){
-      return new Date(a.startedAt||a.createdAt||0) - new Date(b.startedAt||b.createdAt||0);
+    // 2. Get ALL classTracker records (full history, not just post-cutoff)
+    const trackerSnap = await db.collection("classTracker").get();
+    const allLogs = trackerSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>ms(a)-ms(b));
+
+    // 3. Group by learner, compute running billable count across FULL history
+    const byLearner = {};
+    allLogs.forEach(x=>{
+      const name = x.learner || "Unnamed Learner";
+      if(!byLearner[name]) byLearner[name] = [];
+      if(isBillable(x)) byLearner[name].push(x);
     });
 
-  // 3. Group by learner
-  const byLearner = {};
-  allLogs.forEach(function(x){
-    const name = x.learner || "Unnamed Learner";
-    if(!byLearner[name]) byLearner[name] = [];
-    if(isBillable(x)) byLearner[name].push(x);
-  });
+    const billedGroups = await getExistingBilledGroups();
 
-  const billedGroups = await getExistingBilledGroups();
+    allInvoiceGroups = [];
+    const pendingList = [];
 
-  allInvoiceGroups = [];
-  const pendingList = [];
+    Object.keys(byLearner).sort().forEach(learner=>{
+      const classes = byLearner[learner]; // full billable history, in order
+      const totalGroups = Math.floor(classes.length / 4);
 
-  Object.keys(byLearner).sort().forEach(function(learner){
-    const classes = byLearner[learner];
-    const totalGroups = Math.floor(classes.length / 4);
+      for(let g=0; g<totalGroups; g++){
+        const groupClasses = classes.slice(g*4, g*4+4);
+        const fourthClassDate = new Date(groupClasses[3].startedAt || groupClasses[3].createdAt);
 
-    for(let g=0; g<totalGroups; g++){
-      const groupClasses = classes.slice(g*4, g*4+4);
-      const fourthClassDate = new Date(groupClasses[3].startedAt || groupClasses[3].createdAt);
-
-      if(fourthClassDate > cutoffDate){
-        const groupKey = learner + "|" + fourthClassDate.toISOString();
-        if(!billedGroups.has(groupKey)){
-          allInvoiceGroups.push({
-            learner: learner,
-            level: groupClasses[groupClasses.length-1].level || "",
-            teacher: groupClasses[groupClasses.length-1].teacher || "",
-            classes: groupClasses,
-            groupEndDate: fourthClassDate.toISOString()
-          });
+        // Only groups whose 4th (completing) class happened AFTER the cutoff
+        // are new/unbilled · anything fully before cutoff was handled manually.
+        if(fourthClassDate > cutoffDate){
+          const groupKey = learner + "|" + fourthClassDate.toISOString();
+          if(!billedGroups.has(groupKey)){
+            allInvoiceGroups.push({
+              learner,
+              level: groupClasses[groupClasses.length-1].level || "",
+              teacher: groupClasses[groupClasses.length-1].teacher || "",
+              classes: groupClasses,
+              groupEndDate: fourthClassDate.toISOString()
+            });
+          }
         }
       }
-    }
 
-    const remainder = classes.length % 4;
-    if(remainder > 0){
-      const remainderClasses = classes.slice(classes.length - remainder);
-      const mostRecentDate = new Date(remainderClasses[remainderClasses.length-1].startedAt || 0);
-      if(mostRecentDate > cutoffDate || classes.length > totalGroups*4){
-        pendingList.push({ learner: learner, count: remainder, level: remainderClasses[remainderClasses.length-1].level||"" });
+      // In-progress: remainder classes after the last complete group, if any occurred after cutoff
+      const remainder = classes.length % 4;
+      if(remainder > 0){
+        const remainderClasses = classes.slice(classes.length - remainder);
+        const mostRecentDate = new Date(remainderClasses[remainderClasses.length-1].startedAt || 0);
+        if(mostRecentDate > cutoffDate || classes.length > totalGroups*4){
+          pendingList.push({ learner, count: remainder, level: remainderClasses[remainderClasses.length-1].level||"" });
+        }
       }
-    }
-  });
+    });
 
-  // ── RENDER READY ──
-  if(!allInvoiceGroups.length){
-    readyGrid.innerHTML = '<div class="empty-state">No learners are ready for invoicing right now.</div>';
-  }else{
+    renderReady();
+    renderPending(pendingList);
+  }
+
+  function renderReady(){
+    if(!allInvoiceGroups.length){
+      readyGrid.innerHTML = '<div class="empty-state">No learners are ready for invoicing right now.</div>';
+      return;
+    }
     readyGrid.innerHTML = "";
-    allInvoiceGroups.forEach(function(group, idx){
-      const dates = group.classes.map(function(c){ return fmtDate(c.startedAt||c.createdAt); });
+    allInvoiceGroups.forEach((group, idx)=>{
+      const dates = group.classes.map(c=>fmtDate(c.startedAt||c.createdAt));
       const card = document.createElement("div");
       card.className = "ready-card";
-      card.innerHTML =
-        '<div class="ready-top">' +
-          '<div class="ready-name">' + group.learner + '</div>' +
-          '<span class="ready-badge">4/4 &middot; Invoice Ready</span>' +
-        '</div>' +
-        '<div class="ready-meta">Level: ' + (group.level||"&mdash;") + ' &middot; Teacher: ' + (group.teacher||"&mdash;") + '</div>' +
-        '<div class="ready-dates">' + dates.join(" &middot; ") + '</div>' +
-        '<div class="ready-actions">' +
-          '<button class="btn primary" data-idx="' + idx + '" data-action="preview">Preview Invoice</button>' +
-          '<button class="btn" data-idx="' + idx + '" data-action="download">Download Word Doc</button>' +
-        '</div>';
+      card.innerHTML = `
+        <div class="ready-top">
+          <div class="ready-name">${group.learner}</div>
+          <span class="ready-badge">4/4 · Invoice Ready</span>
+        </div>
+        <div class="ready-meta">Level: ${group.level || "·"} · Teacher: ${group.teacher || "·"}</div>
+        <div class="ready-dates">${dates.join(" · ")}</div>
+        <div class="ready-actions">
+          <button class="btn primary" data-idx="${idx}" data-action="preview">Preview Invoice</button>
+          <button class="btn" data-idx="${idx}" data-action="download">Download Word Doc</button>
+        </div>
+      `;
       readyGrid.appendChild(card);
     });
 
@@ -275,67 +262,90 @@ async function runBilling(){
     });
   }
 
-  // ── RENDER PENDING ──
-  if(!pendingList.length){
-    pendingGrid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Nothing in progress.</div>';
-  }else{
-    pendingGrid.innerHTML = pendingList.map(function(p){
-      return '<div class="pending-card">' +
-        '<div class="pending-name">' + p.learner + '</div>' +
-        '<div class="pending-count">' + p.count + '/4 classes &middot; ' + (p.level||"&mdash;") + '</div>' +
-        '<div class="mini-bar"><div class="mini-bar-fill" style="width:' + ((p.count/4)*100) + '%"></div></div>' +
-      '</div>';
-    }).join("");
+  function renderPending(list){
+    if(!list.length){
+      pendingGrid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Nothing in progress.</div>';
+      return;
+    }
+    pendingGrid.innerHTML = list.map(p=>`
+      <div class="pending-card">
+        <div class="pending-name">${p.learner}</div>
+        <div class="pending-count">${p.count}/4 classes · ${p.level||"·"}</div>
+        <div class="mini-bar"><div class="mini-bar-fill" style="width:${(p.count/4)*100}%"></div></div>
+      </div>
+    `).join("");
   }
 
-  // ── PREVIEW MODAL ──
+  // -- PREVIEW MODAL --
   function showPreview(group){
-    const dates = group.classes.map(function(c){ return fmtDate(c.startedAt||c.createdAt); });
+    const dates = group.classes.map(c=>fmtDate(c.startedAt||c.createdAt));
     const startDate = dates[0];
     const endDate = dates[dates.length-1];
 
-    invoiceDoc.innerHTML =
-      '<div class="inv-header"><div class="inv-logo">IMPACT</div><div class="inv-title">INVOICE</div></div>' +
-      '<div class="inv-meta">Date: ' + fmtDate(new Date()) + '<br>Invoice #<span id="invNumPlaceholder">Generating...</span></div>' +
-      '<div class="inv-billto-bar">Bill To:</div>' +
-      '<div class="inv-billto-body">' +
-        '<input type="text" id="parentNameInput" placeholder="Parent/Guardian name">' +
-        '<input type="text" id="addressInput" placeholder="Address">' +
-        '<input type="text" id="phoneInput" placeholder="Phone number">' +
-        '<input type="text" id="emailInput" placeholder="Email address">' +
-      '</div>' +
-      '<div class="inv-period">PERIOD (' + startDate.toUpperCase() + ' TO ' + endDate.toUpperCase() + ')</div>' +
-      '<table class="inv-table"><thead><tr><th>Level</th><th>Bill Period</th><th>Description</th><th>No of classes held</th><th>Fee</th><th>Amount</th></tr></thead><tbody>' +
-        '<tr><td>' + (group.level||"&mdash;") + '</td><td>1</td><td>4 classes is equivalent to one bill period.</td><td>4</td>' +
-        '<td class="fee-input"><input type="text" id="feeInput" placeholder="0.00"></td><td id="amountDisplay">&mdash;</td></tr>' +
-        '<tr><td colspan="4" style="text-align:right;font-weight:800">Total</td><td colspan="2" id="totalDisplay" style="font-weight:800">&mdash;</td></tr>' +
-      '</tbody></table>' +
-      '<div class="inv-dates"><strong>Dates of classes held:</strong><br>' + dates.join(" &nbsp;&nbsp; ") + '</div>' +
-      '<p style="margin-bottom:8px">We thank you for your business</p>' +
-      '<div class="inv-footer">Kindly make payment to the collecting account<br>' +
-      '<strong>Acc Name:</strong> Emelia Febri Asiedu Attoh<br>' +
-      '<strong>Acc No:</strong> 9040007880175<br>' +
-      '<strong>Bank:</strong> Stanbic Bank<br>' +
-      '<strong>Branch:</strong> Accra Main<br><br>' +
-      'If you have any questions concerning this invoice, contact Admin via WhatsApp on 0535200304 or impact.thelanguagepeople@gmail.com<br>' +
-      'Thank you for your business!</div>' +
-      '<div class="modal-actions"><button class="close-btn" id="closeModalBtn">Close</button><button class="download-btn" id="modalDownloadBtn">Download Word Doc</button></div>';
+    invoiceDoc.innerHTML = `
+      <div class="inv-header">
+        <div class="inv-logo">IMPACT</div>
+        <div class="inv-title">INVOICE</div>
+      </div>
+      <div class="inv-meta">
+        Date: ${fmtDate(new Date())}<br>
+        Invoice #<span id="invNumPlaceholder">Generating...</span>
+      </div>
+      <div class="inv-billto-bar">Bill To:</div>
+      <div class="inv-billto-body">
+        <input type="text" id="parentNameInput" placeholder="Parent/Guardian name" value="">
+        <input type="text" id="addressInput" placeholder="Address" value="">
+        <input type="text" id="phoneInput" placeholder="Phone number" value="">
+        <input type="text" id="emailInput" placeholder="Email address" value="">
+      </div>
+      <div class="inv-period">PERIOD (${startDate.toUpperCase()} TO ${endDate.toUpperCase()})</div>
+      <table class="inv-table">
+        <thead><tr><th>Level</th><th>Bill Period</th><th>Description</th><th>No of classes held</th><th>Fee</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>${group.level||"·"}</td>
+            <td>1</td>
+            <td>4 classes is equivalent to one bill period.</td>
+            <td>4</td>
+            <td class="fee-input"><input type="text" id="feeInput" placeholder="0.00"></td>
+            <td id="amountDisplay">·</td>
+          </tr>
+          <tr><td colspan="4" style="text-align:right;font-weight:800">Total</td><td colspan="2" id="totalDisplay" style="font-weight:800">·</td></tr>
+        </tbody>
+      </table>
+      <div class="inv-dates">
+        <strong>Dates of classes held:</strong><br>
+        ${dates.join(" &nbsp;&nbsp; ")}
+      </div>
+      <p style="margin-bottom:8px">We thank you for your business</p>
+      <div class="inv-footer">
+        Kindly make payment to the collecting account<br>
+        <strong>Acc Name:</strong> Emelia Febri Asiedu Attoh<br>
+        <strong>Acc No:</strong> 9040007880175<br>
+        <strong>Bank:</strong> Stanbic Bank<br>
+        <strong>Branch:</strong> Accra Main<br><br>
+        If you have any questions concerning this invoice, contact Admin via WhatsApp on 0535200304 or impact.thelanguagepeople@gmail.com<br>
+        Thank you for your business!
+      </div>
+      <div class="modal-actions">
+        <button class="close-btn" id="closeModalBtn">Close</button>
+        <button class="download-btn" id="modalDownloadBtn">Download Word Doc</button>
+      </div>
+    `;
 
-    getNextInvoiceNumber().then(function(num){
+    getNextInvoiceNumber().then(num=>{
       document.getElementById("invNumPlaceholder").textContent = num;
       invoiceDoc.dataset.invoiceNumber = num;
-    }).catch(function(err){
-      showError("Could not generate invoice number: " + err.message);
     });
 
-    document.getElementById("feeInput").addEventListener("input", function(e){
+    document.getElementById("feeInput").addEventListener("input", (e)=>{
       const fee = e.target.value.trim();
-      document.getElementById("amountDisplay").textContent = fee ? "GHC " + fee : "\u2014";
-      document.getElementById("totalDisplay").textContent = fee ? "GHC " + fee : "\u2014";
+      document.getElementById("amountDisplay").textContent = fee ? "GHC " + fee : "·";
+      document.getElementById("totalDisplay").textContent = fee ? "GHC " + fee : "·";
     });
 
-    document.getElementById("closeModalBtn").onclick = function(){ modalOverlay.classList.remove("open"); };
-    document.getElementById("modalDownloadBtn").onclick = async function(){
+    document.getElementById("closeModalBtn").onclick = ()=> modalOverlay.classList.remove("open");
+    document.getElementById("modalDownloadBtn").onclick = async ()=>{
       await downloadInvoice(group, document.getElementById("modalDownloadBtn"), {
         parentName: document.getElementById("parentNameInput").value,
         address: document.getElementById("addressInput").value,
@@ -349,34 +359,15 @@ async function runBilling(){
     modalOverlay.classList.add("open");
   }
 
-  // ── DOCX GENERATION — dynamically imported ONLY when needed,
-  // so a failed/slow CDN load can never block the rest of the page ──
-  async function loadDocxLib(){
-    if(window.docx) return window.docx;
-    const mod = await import("https://cdn.jsdelivr.net/npm/docx@8.5.0/+esm");
-    window.docx = mod;
-    return mod;
-  }
+  // -- DOCX GENERATION (docx-js, browser bundle) --
+  
 
-  async function downloadInvoice(group, btn, overrides){
-    btn.disabled = true;
-    const originalText = btn.textContent;
-    btn.textContent = "Generating...";
-
-    try{
-      const docxLib = await loadDocxLib();
-      const Document = docxLib.Document, Packer = docxLib.Packer, Paragraph = docxLib.Paragraph,
-            TextRun = docxLib.TextRun, Table = docxLib.Table, TableRow = docxLib.TableRow,
-            TableCell = docxLib.TableCell, WidthType = docxLib.WidthType, ShadingType = docxLib.ShadingType,
-            AlignmentType = docxLib.AlignmentType, BorderStyle = docxLib.BorderStyle;
-
-      const dates = group.classes.map(function(c){ return fmtDate(c.startedAt||c.createdAt); });
+      const dates = group.classes.map(c=>fmtDate(c.startedAt||c.createdAt));
       const invoiceNumber = (overrides && overrides.invoiceNumber) || await getNextInvoiceNumber();
       const BRAND = "B5654A";
       const LIGHT_BG = "F1E4DC";
 
-      function cell(text, opts){
-        opts = opts || {};
+      function cell(text, opts={}){
         return new TableCell({
           width: { size: opts.width||2000, type: WidthType.DXA },
           shading: opts.fill ? { type: ShadingType.CLEAR, fill: opts.fill } : undefined,
@@ -409,7 +400,7 @@ async function runBilling(){
             new Paragraph({children:[new TextRun({text:(overrides&&overrides.phone)||"[PHONE]",size:20})]}),
             new Paragraph({children:[new TextRun({text:(overrides&&overrides.email)||"[EMAIL]",size:20,color:"1155CC"})]}),
             new Paragraph({text:""}),
-            new Paragraph({alignment:AlignmentType.CENTER, children:[new TextRun({text:"PERIOD ("+dates[0].toUpperCase()+" TO "+dates[dates.length-1].toUpperCase()+")", bold:true, size:20})]}),
+            new Paragraph({alignment:AlignmentType.CENTER, children:[new TextRun({text:`PERIOD (${dates[0].toUpperCase()} TO ${dates[dates.length-1].toUpperCase()})`, bold:true, size:20})]}),
             new Paragraph({text:""}),
             new Table({
               width:{size:10800,type:WidthType.DXA}, columnWidths:[1600,1400,4000,1600,1200,1000],
@@ -423,7 +414,7 @@ async function runBilling(){
                   cell("Amount",{fill:BRAND,bold:true,color:"FFFFFF",align:AlignmentType.CENTER,width:1000})
                 ]}),
                 new TableRow({children:[
-                  cell(group.level||"",{fill:LIGHT_BG,align:AlignmentType.CENTER,width:1600}),
+                  cell(group.level||"·",{fill:LIGHT_BG,align:AlignmentType.CENTER,width:1600}),
                   cell("1",{fill:LIGHT_BG,align:AlignmentType.CENTER,width:1400}),
                   cell("4 classes is equivalent to one bill period.",{width:4000}),
                   cell("4",{align:AlignmentType.CENTER,width:1600}),
@@ -458,16 +449,17 @@ async function runBilling(){
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "Invoice_" + invoiceNumber + "_" + group.learner.replace(/\s+/g,"_") + ".docx";
+      a.download = `Invoice_${invoiceNumber}_${group.learner.replace(/\s+/g,"_")}.docx`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
 
+      // Log this group as billed so it won't show as "ready" again
       await db.collection("billingInvoiceLog").add({
         learner: group.learner,
         groupEndDate: group.groupEndDate,
-        invoiceNumber: invoiceNumber,
+        invoiceNumber,
         level: group.level,
         teacher: group.teacher,
         classDates: dates,
@@ -476,15 +468,18 @@ async function runBilling(){
       });
 
       modalOverlay.classList.remove("open");
-      await runBilling();
+      await load();
     }catch(err){
-      showError("Could not generate invoice: " + err.message);
+      console.error(err);
+      alert("Could not generate invoice: " + err.message);
     }finally{
       btn.disabled = false;
       btn.textContent = originalText;
     }
   }
-}
+
+  await load();
+});
 </script>
 <script src="/js/impact-recycle-bin.js"></script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
