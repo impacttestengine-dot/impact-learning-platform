@@ -91,28 +91,7 @@
   <p class="invite-note">They'll see a camera preview before joining — just like Meet.</p>
 </div>
 
-<div class="lc-toast-wrap"><div class="lc-toast" id="toast"></div>
-
-<div id="recDestModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;">
-  <div style="background:#14171f;border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:28px;width:min(380px,90vw);">
-    <h3 style="font-family:'Sorts Mill Goudy',serif;font-weight:400;font-size:1.3rem;margin-bottom:6px;color:#fff">Save recording as...</h3>
-    <p style="font-size:.8rem;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:18px">Choose where this recording should be saved.</p>
-    <button id="recDestGeneral" style="width:100%;padding:13px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-weight:800;font-size:.86rem;cursor:pointer;margin-bottom:10px;font-family:Inter,sans-serif">📹 General Recording</button>
-    <button id="recDestPlacement" style="width:100%;padding:13px;border-radius:14px;border:1px solid rgba(99,179,237,.4);background:rgba(99,179,237,.18);color:#90cdf4;font-weight:800;font-size:.86rem;cursor:pointer;margin-bottom:14px;font-family:Inter,sans-serif">🎙 Placement Recording</button>
-
-    <div id="recDestPlacementFields" style="display:none;margin-bottom:12px">
-      <input id="recDestLearnerName" placeholder="Learner name" style="width:100%;padding:11px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:700;margin-bottom:8px">
-      <select id="recDestLevel" style="width:100%;padding:11px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:700">
-        <option value="">Select level</option>
-        <option>Absolute Beginner</option><option>A0</option><option>A1</option>
-        <option>A1.1</option><option>A2</option><option>B1</option><option>B2</option>
-      </select>
-    </div>
-
-    <button id="recDestConfirm" style="display:none;width:100%;padding:13px;border-radius:14px;border:none;background:#90cdf4;color:#0a0f1a;font-weight:900;font-size:.86rem;cursor:pointer;font-family:Inter,sans-serif">Start Recording</button>
-    <button id="recDestCancel" style="width:100%;padding:11px;border-radius:14px;border:none;background:transparent;color:rgba(255,255,255,.4);font-weight:700;font-size:.8rem;cursor:pointer;font-family:Inter,sans-serif;margin-top:6px">Cancel</button>
-  </div>
-</div></div>
+<div class="lc-toast-wrap"><div class="lc-toast" id="toast"></div></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
@@ -812,10 +791,6 @@ document.getElementById("copyLinkBtn").onclick = () => {
 // ══════════════════════════════════════════════════════════════
 let recordingBusy = false; // true from the moment Stop is clicked until upload fully finishes
 
-let pendingRecDestination = "general"; // "general" | "placement"
-let pendingRecLearner = "";
-let pendingRecLevel = "";
-
 function initRecording(){
   recBtn.style.display = "flex";
   recBtn.onclick = () => {
@@ -823,61 +798,8 @@ function initRecording(){
       toast("Please wait — saving previous recording…");
       return;
     }
-    if(recording){
-      stopRecording();
-      return;
-    }
-    showRecDestModal();
+    recording ? stopRecording() : startRecording();
   };
-
-  const modal = document.getElementById("recDestModal");
-  const generalBtn = document.getElementById("recDestGeneral");
-  const placementBtn = document.getElementById("recDestPlacement");
-  const placementFields = document.getElementById("recDestPlacementFields");
-  const confirmBtn = document.getElementById("recDestConfirm");
-  const cancelBtn = document.getElementById("recDestCancel");
-
-  generalBtn.onclick = () => {
-    pendingRecDestination = "general";
-    placementFields.style.display = "none";
-    confirmBtn.style.display = "block";
-    generalBtn.style.borderColor = "rgba(99,179,237,.6)";
-    placementBtn.style.borderColor = "rgba(255,255,255,.16)";
-    placementBtn.style.background = "rgba(255,255,255,.08)";
-    placementBtn.style.color = "#fff";
-  };
-
-  placementBtn.onclick = () => {
-    pendingRecDestination = "placement";
-    placementFields.style.display = "block";
-    confirmBtn.style.display = "block";
-    placementBtn.style.borderColor = "rgba(99,179,237,.6)";
-    generalBtn.style.borderColor = "rgba(255,255,255,.16)";
-  };
-
-  confirmBtn.onclick = () => {
-    if(pendingRecDestination === "placement"){
-      pendingRecLearner = document.getElementById("recDestLearnerName").value.trim();
-      pendingRecLevel = document.getElementById("recDestLevel").value;
-      if(!pendingRecLearner || !pendingRecLevel){
-        toast("Please enter learner name and level.");
-        return;
-      }
-    }
-    modal.style.display = "none";
-    startRecording();
-  };
-
-  cancelBtn.onclick = () => { modal.style.display = "none"; };
-}
-
-function showRecDestModal(){
-  pendingRecDestination = "general";
-  document.getElementById("recDestLearnerName").value = "";
-  document.getElementById("recDestLevel").value = "";
-  document.getElementById("recDestPlacementFields").style.display = "none";
-  document.getElementById("recDestConfirm").style.display = "none";
-  document.getElementById("recDestModal").style.display = "flex";
 }
 
 function startRecording(){
@@ -990,20 +912,10 @@ async function uploadRecording(mime){
     const url  = await snap.ref.getDownloadURL();
     const dur  = Math.round((Date.now()-startTime)/1000);
 
-    if(pendingRecDestination === "placement"){
-      await db.collection("placementRecordings").add({
-        learnerName: pendingRecLearner, level: pendingRecLevel,
-        fileName: meetingTitle || "Live Classroom Recording",
-        url: url, storagePath: path,
-        uploadedBy: MY_NAME, uploadedAt: new Date().toISOString(),
-        sourceMeetingId: MEETING_ID
-      });
-    }else{
-      await db.collection("recordings").add({
-        meetingId:MEETING_ID, meetingTitle, storagePath:path, downloadURL:url,
-        duration:dur, mimeType:mime, createdAt:new Date().toISOString(), recordedBy:MY_NAME
-      });
-    }
+    await db.collection("recordings").add({
+      meetingId:MEETING_ID, meetingTitle, storagePath:path, downloadURL:url,
+      duration:dur, mimeType:mime, createdAt:new Date().toISOString(), recordedBy:MY_NAME
+    });
     await db.collection("meetings").doc(MEETING_ID).update({ hasRecording:true }).catch(()=>{});
     toast("✅ Recording saved!", 4000);
   }catch(e){

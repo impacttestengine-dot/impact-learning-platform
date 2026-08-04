@@ -72,9 +72,6 @@ document.addEventListener("DOMContentLoaded", async function(){
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download
           </a>
-          <button class="rec-btn" onclick="moveToPlacement('${doc.id}','${(r.downloadURL||"").replace(/'/g,"\\'")}','${(r.storagePath||"").replace(/'/g,"\\'")}','${(r.meetingTitle||"Recording").replace(/'/g,"\\'")}')" style="border-color:rgba(99,179,237,.3);color:#90cdf4">
-            🎙 To Placement
-          </button>
           <button class="rec-btn" data-id="${doc.id}" data-path="${r.storagePath||""}" onclick="deleteRec(this)" style="border-color:rgba(255,100,100,.25);color:#feb2b2">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
             Delete
@@ -86,28 +83,6 @@ document.addEventListener("DOMContentLoaded", async function(){
     grid.innerHTML = `<div class="empty-state"><h3>Could not load recordings</h3><p>${e.message}</p></div>`;
   }
 });
-
-async function moveToPlacement(recId, downloadURL, storagePath, fileName){
-  const learnerName = prompt("Learner name for this placement recording:");
-  if(!learnerName || !learnerName.trim()) return;
-  const level = prompt("Level (e.g. A1, B2, Absolute Beginner):");
-  if(!level || !level.trim()) return;
-
-  const db = firebase.firestore();
-  const myName = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "";
-
-  try{
-    await db.collection("placementRecordings").add({
-      learnerName: learnerName.trim(), level: level.trim(),
-      fileName: fileName || "Recording", url: downloadURL, storagePath: storagePath || "",
-      uploadedBy: myName, uploadedAt: new Date().toISOString(),
-      copiedFromRecordingId: recId
-    });
-    alert("✓ Copied to Placement Recordings.");
-  }catch(e){
-    alert("Could not copy: " + e.message);
-  }
-}
 
 async function deleteRec(btn){
   if(!confirm("Delete this recording permanently?")) return;

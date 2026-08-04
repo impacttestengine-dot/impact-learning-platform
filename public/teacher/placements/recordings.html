@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
       const recs=byLevel[level];
       const card=document.createElement("div");
       card.className="folder-card";
-      const rows=recs.map(r=>`<div class="rec-item"><span>${r.learnerName||"Unknown"}</span><a href="${r.url}" target="_blank">Play</a></div>`).join("");
+      const rows=recs.map(r=>`<div class="rec-item"><span>${r.learnerName||"Unknown"} <span style="opacity:.5;font-weight:600">· ${r.uploadedBy||"Unknown"}</span></span><a href="${r.url}" target="_blank">Play</a></div>`).join("");
       card.innerHTML=`
         <div class="folder-head">
           <span class="folder-icon">📁</span>
