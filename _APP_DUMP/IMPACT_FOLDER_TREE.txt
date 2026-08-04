@@ -1,6 +1,0 @@
-﻿IMPACT PLATFORM - FOLDER TREE
-Generated: 2026-08-01 14:09:14
-Root: C:\impact-test-platform
-============================================================
-
-impact-test-platform/

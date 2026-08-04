@@ -16,7 +16,8 @@ body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-seri
 .hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.7rem);font-weight:400}
 .hero p{font-weight:800;color:rgba(255,255,255,.65)}
 .panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:24px;margin-bottom:22px}
-.form{display:grid;grid-template-columns:1.2fr 1fr 180px auto;gap:12px}
+.form-row{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-bottom:12px}
+.form-row2{display:grid;grid-template-columns:1fr 1fr 160px auto;gap:12px}
 input,select,button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:white;border-radius:18px;padding:14px 15px;font-weight:800;font-family:Inter,sans-serif}
 select option{color:#111}
 input::placeholder{color:rgba(255,255,255,.42)}
@@ -24,25 +25,33 @@ input[type="date"]{color-scheme:dark}
 button{cursor:pointer;transition:.15s ease}
 button:hover{transform:translateY(-2px) scale(1.02);background:rgba(255,255,255,.15)}
 button:active{transform:scale(.95);opacity:.8}
-.add{background:rgba(255,255,255,.14)}
+.add{background:rgba(139,92,246,.2);border-color:rgba(139,92,246,.4)}
+.deliverable-hint{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:-4px;margin-bottom:12px;padding-left:4px}
+
 .filter-row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
 .filter-chip{padding:9px 16px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:.82rem;font-weight:800;cursor:pointer;transition:.15s}
 .filter-chip.active{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4}
+
 .list{display:grid;gap:14px}
 .task{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:start;padding:18px;border-radius:24px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
 .task.overdue{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.06)}
+.task.auto{border-color:rgba(139,92,246,.3)}
 .check{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-weight:900}
 .check.done{background:rgba(132,204,22,.22);border-color:rgba(132,204,22,.45)}
+.check.auto-locked{cursor:default;opacity:.85}
 .title{font-weight:900;font-size:1rem;margin-bottom:6px}
 .meta{font-size:.78rem;color:rgba(255,255,255,.62);font-weight:800;line-height:1.7}
-.badge{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.badge{display:inline-block;margin-top:8px;margin-right:6px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
 .badge.overdue-badge{background:rgba(239,68,68,.2);color:#fca5a5}
+.badge.auto-badge{background:rgba(139,92,246,.2);color:#c4b5fd}
+.deliverable-link{display:inline-block;margin-top:10px;font-size:.78rem;font-weight:900;color:#90cdf4;text-decoration:none;border-bottom:1px solid rgba(144,205,244,.4)}
+.deliverable-link:hover{color:#bfe3ff}
 .actions{display:flex;gap:8px}
 .small{padding:10px 12px;border-radius:14px;font-size:.76rem}
 .delete{background:rgba(255,80,80,.14)}
 .empty{text-align:center;color:rgba(255,255,255,.55);font-weight:800;padding:24px}
 @media(max-width:850px){
-  .form{grid-template-columns:1fr}
+  .form-row,.form-row2{grid-template-columns:1fr}
   .task{grid-template-columns:1fr}
   .actions{justify-content:flex-start}
 }
@@ -55,17 +64,35 @@ button:active{transform:scale(.95);opacity:.8}
 <main class="page">
   <section class="hero">
     <h1>Team Tasks</h1>
-    <p>Create, assign, track, and complete team tasks.</p>
+    <p>Assign real platform deliverables. They tick themselves off when done.</p>
   </section>
 
   <section class="panel">
-    <form id="taskForm" class="form">
-      <input id="taskTitle" placeholder="Task title" required>
-      <select id="assignedTo" required>
-        <option value="">Assign to...</option>
-      </select>
-      <input id="dueDate" type="date" required>
-      <button class="add" type="submit">Add Task</button>
+    <form id="taskForm">
+      <div class="form-row">
+        <input id="taskTitle" placeholder="Task title (e.g. 'A1 Lesson Plan for September')" required>
+        <select id="deliverableType">
+          <option value="">No linked deliverable (manual tick)</option>
+          <option value="lessonPlan">📚 Create a Lesson Plan</option>
+          <option value="activity">🎨 Create an Activity</option>
+          <option value="delfMock">📝 Create a DELF Mock</option>
+          <option value="marking">✓ Clear Marking Queue</option>
+          <option value="classLogged">🎥 Log a Class</option>
+          <option value="teamDoc">📄 Upload a Team Document</option>
+          <option value="recording">📹 Upload/Review a Recording (manual)</option>
+          <option value="kpi">📊 Review KPIs (manual)</option>
+          <option value="other">✎ Other (manual)</option>
+        </select>
+      </div>
+      <p class="deliverable-hint" id="deliverableHint">Tasks with a linked deliverable auto-complete when the real thing is created in the platform — no need to tick manually.</p>
+      <div class="form-row2">
+        <select id="assignedTo" required>
+          <option value="">Assign to...</option>
+        </select>
+        <input id="dueDate" type="date" required>
+        <input id="taskNotes" placeholder="Notes (optional)">
+        <button class="add" type="submit">Add Task</button>
+      </div>
     </form>
   </section>
 
@@ -75,10 +102,9 @@ button:active{transform:scale(.95);opacity:.8}
       <button class="filter-chip" data-filter="pending" type="button">Pending</button>
       <button class="filter-chip" data-filter="completed" type="button">Completed</button>
       <button class="filter-chip" data-filter="overdue" type="button">Overdue</button>
+      <button class="filter-chip" data-filter="auto" type="button">Auto-tracked</button>
     </div>
-    <div id="taskList" class="list">
-      <div class="empty">Loading tasks...</div>
-    </div>
+    <div id="taskList" class="list"><div class="empty">Loading tasks...</div></div>
   </section>
 </main>
 
@@ -92,13 +118,36 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
   const form=document.getElementById("taskForm");
   const taskTitle=document.getElementById("taskTitle");
+  const deliverableType=document.getElementById("deliverableType");
   const assignedTo=document.getElementById("assignedTo");
   const dueDate=document.getElementById("dueDate");
+  const taskNotes=document.getElementById("taskNotes");
   const list=document.getElementById("taskList");
   const filterRow=document.getElementById("filterRow");
 
+  const DELIVERABLE_LABELS = {
+    lessonPlan:"📚 Lesson Plan", activity:"🎨 Activity", delfMock:"📝 DELF Mock",
+    marking:"✓ Marking Queue", classLogged:"🎥 Logged Class", teamDoc:"📄 Team Document",
+    recording:"📹 Recording", kpi:"📊 KPI Review", other:"✎ Other"
+  };
+  const DELIVERABLE_LINKS = {
+    lessonPlan:"/teacher/lesson-builder.html", activity:"/teacher/activity-builder.html",
+    delfMock:"/teacher/delf-mock-builder.html", marking:"/teacher/marking.html",
+    classLogged:"/teacher/classes.html", teamDoc:"/teacher/team-docs.html",
+    recording:"/teacher/recordings.html", kpi:"/teacher/kpis.html"
+  };
+  const AUTO_TYPES = new Set(["lessonPlan","activity","delfMock","marking","classLogged","teamDoc"]);
+
   let tasks=[];
   let currentFilter="all";
+
+  function namesMatch(a, b){
+    if(!a || !b) return false;
+    a = String(a).trim().toLowerCase();
+    b = String(b).trim().toLowerCase();
+    if(!a || !b) return false;
+    return a === b || b.includes(a) || a.includes(b);
+  }
 
   function fmtDate(v){
     if(!v) return "";
@@ -119,9 +168,73 @@ document.addEventListener("DOMContentLoaded", async()=>{
       const snap = await db.collection("impactPasskeys").where("role","!=","Learner").get();
       const names = snap.docs.map(d=>d.data().name).filter(Boolean).sort();
       assignedTo.innerHTML = '<option value="">Assign to...</option>' + names.map(n=>`<option value="${n}">${n}</option>`).join("");
-    }catch(e){
-      console.warn("Could not load personnel list:", e);
+    }catch(e){ console.warn("Could not load personnel list:", e); }
+  }
+
+  // ── AUTO-COMPLETION CHECKS ──────────────────────────────────
+  // For each auto-tracked task, check whether the real deliverable
+  // now exists in the platform, created by the assignee, at or
+  // after the task was created. Runs once on page load.
+  async function checkAutoCompletions(taskList){
+    const autoTasks = taskList.filter(t => AUTO_TYPES.has(t.deliverableType) && !t.completed);
+    if(!autoTasks.length) return [];
+
+    const [lessonSnap, activitySnap, delfSnap, completionsSnap, trackerSnap, teamDocsSnap] = await Promise.all([
+      db.collection("lessonPlans").get().catch(()=>({docs:[]})),
+      db.collection("activityPlans").get().catch(()=>({docs:[]})),
+      db.collection("delfMocks").get().catch(()=>({docs:[]})),
+      db.collection("learnerCompletions").get().catch(()=>({docs:[]})),
+      db.collection("classTracker").get().catch(()=>({docs:[]})),
+      db.collection("teamDocs").get().catch(()=>({docs:[]}))
+    ]);
+
+    const lessons = lessonSnap.docs.map(d=>d.data());
+    const activities = activitySnap.docs.map(d=>d.data());
+    const delfMocks = delfSnap.docs.map(d=>d.data());
+    const completions = completionsSnap.docs.map(d=>d.data());
+    const classes = trackerSnap.docs.map(d=>d.data());
+    const teamDocs = teamDocsSnap.docs.map(d=>d.data());
+
+    const justCompleted = [];
+
+    for(const t of autoTasks){
+      const taskCreated = new Date(t.createdAt || 0);
+      let done = false;
+
+      if(t.deliverableType === "lessonPlan"){
+        done = lessons.some(l => namesMatch(t.assignedTo, l.createdByTeacher) && new Date(l.updatedAt||0) >= taskCreated);
+      }
+      if(t.deliverableType === "activity"){
+        done = activities.some(a => namesMatch(t.assignedTo, a.createdByTeacher) && new Date(a.updatedAt||0) >= taskCreated);
+      }
+      if(t.deliverableType === "delfMock"){
+        done = delfMocks.some(m => namesMatch(t.assignedTo, m.createdByTeacher) && new Date(m.updatedAt||0) >= taskCreated);
+      }
+      if(t.deliverableType === "marking"){
+        const relevant = completions.filter(c => namesMatch(t.assignedTo, c.itemCreatedByTeacher));
+        const stillUngraded = relevant.filter(c => c.score === null || c.score === undefined);
+        done = relevant.length > 0 && stillUngraded.length === 0;
+      }
+      if(t.deliverableType === "classLogged"){
+        done = classes.some(c => namesMatch(t.assignedTo, c.teacher) && new Date(c.startedAt||0) >= taskCreated);
+      }
+      if(t.deliverableType === "teamDoc"){
+        done = teamDocs.some(d => namesMatch(t.assignedTo, d.uploadedBy) && new Date(d.uploadedAt||0) >= taskCreated);
+      }
+
+      if(done){
+        const now = new Date();
+        await db.collection("tasks").doc(t.id).set({
+          completed: true,
+          completedAt: now.toISOString(),
+          completedAtText: now.toLocaleString(),
+          completedVia: "auto"
+        }, {merge:true});
+        justCompleted.push(t.title);
+      }
     }
+
+    return justCompleted;
   }
 
   async function load(){
@@ -129,6 +242,14 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const snap=await db.collection("tasks").get();
     tasks=snap.docs.map(d=>({id:d.id,...d.data()}))
       .sort((a,b)=>new Date(a.dueDate||0)-new Date(b.dueDate||0));
+
+    const justCompleted = await checkAutoCompletions(tasks);
+    if(justCompleted.length){
+      // Re-fetch to reflect auto-completions just written
+      const snap2 = await db.collection("tasks").get();
+      tasks = snap2.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.dueDate||0)-new Date(b.dueDate||0));
+    }
+
     render();
   }
 
@@ -137,6 +258,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     if(currentFilter==="pending") filtered = tasks.filter(t=>!t.completed);
     if(currentFilter==="completed") filtered = tasks.filter(t=>t.completed);
     if(currentFilter==="overdue") filtered = tasks.filter(t=>isOverdue(t));
+    if(currentFilter==="auto") filtered = tasks.filter(t=>AUTO_TYPES.has(t.deliverableType));
 
     if(!filtered.length){
       list.innerHTML='<div class="empty">No tasks here.</div>';
@@ -148,17 +270,24 @@ document.addEventListener("DOMContentLoaded", async()=>{
     filtered.forEach(t=>{
       const done=!!t.completed;
       const overdue=isOverdue(t);
+      const isAuto = AUTO_TYPES.has(t.deliverableType);
       const card=document.createElement("article");
-      card.className="task" + (overdue?" overdue":"");
+      card.className="task" + (overdue?" overdue":"") + (isAuto?" auto":"");
+
+      const deliverableLabel = DELIVERABLE_LABELS[t.deliverableType] || "";
+      const deliverableLink = DELIVERABLE_LINKS[t.deliverableType] || "";
 
       card.innerHTML=`
-        <button class="check ${done?'done':''}" title="Mark complete">${done?'✓':''}</button>
+        <button class="check ${done?'done':''} ${isAuto?'auto-locked':''}" title="${isAuto?'Auto-tracked — ticks itself when the deliverable is created':'Mark complete'}">${done?'✓':''}</button>
         <div>
           <div class="title">${t.title||"Untitled Task"}</div>
           <div class="meta">Assigned to: ${t.assignedTo||"Unassigned"}</div>
           <div class="meta">Due: ${fmtDate(t.dueDate)}</div>
-          ${t.completedAtText?`<div class="meta">Completed: ${t.completedAtText}</div>`:""}
+          ${t.notes?`<div class="meta">${t.notes}</div>`:""}
+          ${t.completedAtText?`<div class="meta">Completed: ${t.completedAtText}${t.completedVia==='auto'?' (auto)':''}</div>`:""}
           <span class="badge ${overdue?'overdue-badge':''}">${done?'Completed':overdue?'Overdue':'Pending'}</span>
+          ${isAuto?`<span class="badge auto-badge">${deliverableLabel}</span>`:""}
+          ${deliverableLink && !done ? `<br><a class="deliverable-link" href="${deliverableLink}">Go do this →</a>` : ""}
         </div>
         <div class="actions">
           <button class="small edit">Edit</button>
@@ -166,21 +295,27 @@ document.addEventListener("DOMContentLoaded", async()=>{
         </div>
       `;
 
-      card.querySelector(".check").onclick=async()=>{
-        const now=new Date();
-        await db.collection("tasks").doc(t.id).set({
-          completed:!done,
-          completedAt:!done ? now.toISOString() : "",
-          completedAtText:!done ? now.toLocaleString() : "",
-          updatedAt:now.toISOString()
-        },{merge:true});
-        await load();
-      };
+      const checkBtn = card.querySelector(".check");
+      if(!isAuto){
+        checkBtn.onclick=async()=>{
+          const now=new Date();
+          await db.collection("tasks").doc(t.id).set({
+            completed:!done,
+            completedAt:!done ? now.toISOString() : "",
+            completedAtText:!done ? now.toLocaleString() : "",
+            completedVia: !done ? "manual" : "",
+            updatedAt:now.toISOString()
+          },{merge:true});
+          await load();
+        };
+      }
 
       card.querySelector(".edit").onclick=()=>{
         taskTitle.value=t.title||"";
+        deliverableType.value=t.deliverableType||"";
         assignedTo.value=t.assignedTo||"";
         dueDate.value=t.dueDate||"";
+        taskNotes.value=t.notes||"";
         form.dataset.editing=t.id;
         taskTitle.focus();
       };
@@ -211,8 +346,10 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
     const data={
       title:taskTitle.value.trim(),
+      deliverableType:deliverableType.value,
       assignedTo:assignedTo.value,
       dueDate:dueDate.value,
+      notes:taskNotes.value.trim(),
       completed:false,
       updatedAt:now.toISOString(),
       updatedAtText:now.toLocaleString()
