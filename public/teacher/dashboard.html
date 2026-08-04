@@ -97,7 +97,16 @@ body{min-height:100vh;font-family:Inter,system-ui,sans-serif;color:#fff;backgrou
   stroke-linejoin:round !important;
 }
 
-</style>
+
+.kpi-snapshot-strip{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px 0 8px;max-width:680px;margin-left:auto;margin-right:auto}
+.kpi-mini{flex:1;min-width:96px;text-align:center;padding:10px 8px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.kpi-mini-label{font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.4);margin-bottom:4px}
+.kpi-mini-value{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.5rem;font-weight:400}
+.kpi-mini-value.good{color:#6ee7b7}
+.kpi-mini-value.warn{color:#fbbf24}
+.kpi-mini-value.bad{color:#fca5a5}
+.kpi-strip-link{display:block;text-align:center;font-size:.72rem;font-weight:800;color:rgba(255,255,255,.35);text-decoration:none;margin-bottom:30px;transition:.15s}
+.kpi-strip-link:hover{color:rgba(255,255,255,.6)}</style>
 </head>
 
 <body>
@@ -143,6 +152,9 @@ d="M14 10l6-3v10l-6-3z"></path>
     <p class="eyebrow">Teacher Workspace</p>
     <h1 id="dashboardWelcome">Welcome, <span id="userName">User</span></h1>
   </header>
+
+  <div class="kpi-snapshot-strip" id="kpiSnapshotStrip"></div>
+  <a class="kpi-strip-link" href="/teacher/kpis.html">View full KPI breakdown →</a>
 
   <section class="dashboard-grid">
     <a class="dashboard-card" href="/teacher/records.html">
@@ -198,6 +210,102 @@ document.addEventListener("DOMContentLoaded", function(){
   const name = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "User";
   const el = document.getElementById("userName");
   if(el) el.textContent = name;
+
+  // ── KPI Snapshot Strip ──────────────────────────────────────
+  // Uses the same fuzzy name-matching as kpis.html so a short
+  // passkey name (e.g. "Prosper") still correctly links to full
+  // names used in class/task records (e.g. "Yormesah Prosper").
+  window.addEventListener("load", async function(){
+    try{
+      if(!window.firebase || !firebase.firestore || name==="User") return;
+      const db = firebase.firestore();
+      const strip = document.getElementById("kpiSnapshotStrip");
+      if(!strip) return;
+
+      function namesMatch(passkeyName, recordName){
+        if(!passkeyName || !recordName) return false;
+        const a = String(passkeyName).trim().toLowerCase();
+        const b = String(recordName).trim().toLowerCase();
+        if(!a || !b) return false;
+        return a === b || b.includes(a) || a.includes(b);
+      }
+
+      function nearestMarkInfo(startedAt){
+        const d = new Date(startedAt);
+        const minutes = d.getMinutes();
+        const lastMark = minutes < 30 ? 0 : 30;
+        const nextMark = lastMark === 0 ? 30 : 60;
+        const minutesUntilNextMark = nextMark - minutes;
+        if(minutesUntilNextMark <= 5){
+          const inferred = new Date(d);
+          if(nextMark === 60){ inferred.setHours(inferred.getHours()+1, 0, 0, 0); }
+          else{ inferred.setMinutes(30, 0, 0); }
+          return inferred;
+        }
+        const inferred = new Date(d);
+        inferred.setMinutes(lastMark, 0, 0);
+        return inferred;
+      }
+
+      function computePunctuality(classes){
+        const withStart = classes.filter(x=>x.startedAt);
+        if(!withStart.length) return { pct: 0, count: 0 };
+        let onTime = 0, counted = 0;
+        withStart.forEach(x=>{
+          const actual = new Date(x.startedAt);
+          let agreedTime = null;
+          if(x.time){
+            const [schedH, schedM] = String(x.time).split(":").map(Number);
+            if(!isNaN(schedH) && !isNaN(schedM)){
+              const scheduled = new Date(actual);
+              scheduled.setHours(schedH, schedM, 0, 0);
+              if(Math.abs(actual - scheduled) / 60000 <= 35) agreedTime = scheduled;
+            }
+          }
+          if(!agreedTime) agreedTime = nearestMarkInfo(x.startedAt);
+          const diffMinutes = (actual - agreedTime) / 60000;
+          counted++;
+          if(diffMinutes <= 5) onTime++;
+        });
+        return { pct: counted ? Math.round((onTime/counted)*100) : 0, count: counted };
+      }
+
+      function tone(pct){ return pct>=80?"good":pct>=50?"warn":"bad"; }
+
+      const [trackerSnap, tasksSnap, completionsSnap] = await Promise.all([
+        db.collection("classTracker").get(),
+        db.collection("tasks").get(),
+        db.collection("learnerCompletions").get().catch(()=>({docs:[]}))
+      ]);
+
+      const classes = trackerSnap.docs.map(d=>d.data()).filter(x=>namesMatch(name, x.teacher));
+      const personTasks = tasksSnap.docs.map(d=>d.data()).filter(x=>namesMatch(name, x.assignedTo));
+      const gradedSubmissions = completionsSnap.docs.map(d=>d.data()).filter(s=>
+        namesMatch(name, s.itemCreatedByTeacher) && namesMatch(name, s.markedBy)
+      );
+
+      const partVals = classes.map(x=>Number(String(x.studentParticipation||"").replace("%",""))).filter(n=>!isNaN(n));
+      const participation = partVals.length ? Math.round(partVals.reduce((a,b)=>a+b,0)/partVals.length) : 0;
+
+      const scoreVals = gradedSubmissions.map(s=>{
+        const max = Number(s.maxScore) || 100;
+        return (Number(s.score||0)/max)*100;
+      }).filter(n=>!isNaN(n));
+      const progressRate = scoreVals.length ? Math.round(scoreVals.reduce((a,b)=>a+b,0)/scoreVals.length) : 0;
+
+      const punctualityResult = computePunctuality(classes);
+
+      const doneTasks = personTasks.filter(t=>t.completed).length;
+      const taskCompletion = personTasks.length ? Math.round((doneTasks/personTasks.length)*100) : 100;
+
+      strip.innerHTML = `
+        <div class="kpi-mini"><div class="kpi-mini-label">Participation</div><div class="kpi-mini-value ${tone(participation)}">${participation}%</div></div>
+        <div class="kpi-mini"><div class="kpi-mini-label">Progress Rate</div><div class="kpi-mini-value ${tone(progressRate)}">${progressRate}%</div></div>
+        <div class="kpi-mini"><div class="kpi-mini-label">Punctuality</div><div class="kpi-mini-value ${tone(punctualityResult.pct)}">${punctualityResult.pct}%</div></div>
+        <div class="kpi-mini"><div class="kpi-mini-label">Tasks Done</div><div class="kpi-mini-value ${tone(taskCompletion)}">${taskCompletion}%</div></div>
+      `;
+    }catch(e){ console.warn("KPI snapshot failed:", e); }
+  });
 
   const wrap = document.getElementById("dashboardMenuWrap");
   const btn = document.getElementById("dashboardToggleBtn");
