@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6,32 +6,6 @@
 <title>Live Class | Impact</title>
 <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/live-classroom.css">
-<style>
-.lesson-panel{position:fixed;top:64px;right:16px;width:min(360px,90vw);background:rgba(14,17,28,.97);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:22px;z-index:500;backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.5);display:none}
-.lesson-panel.show{display:block}
-.lesson-block-item{border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:12px 14px}
-.lesson-block-item.showing{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)}
-.lesson-block-type{font-size:.66rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.4);margin-bottom:4px}
-.lesson-block-preview{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:8px;line-height:1.4;max-height:60px;overflow:hidden}
-.lesson-block-showbtn{width:100%;padding:8px;border-radius:10px;border:1px solid rgba(99,179,237,.35);background:rgba(99,179,237,.15);color:#90cdf4;font-family:Inter,sans-serif;font-weight:800;font-size:.76rem;cursor:pointer}
-.lesson-block-showbtn:hover{background:rgba(99,179,237,.25)}
-.lesson-block-showbtn.active{background:rgba(52,211,153,.2);border-color:rgba(52,211,153,.4);color:#6ee7b7}
-
-.presented-overlay{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;pointer-events:none;background:rgba(5,6,11,.7)}
-.presented-overlay.active{display:flex}
-.presented-overlay.active ~ .room-shell .video-grid,
-body.presenting .video-grid{display:flex !important;flex-direction:column !important;position:fixed !important;right:12px !important;bottom:92px !important;top:auto !important;left:auto !important;width:200px !important;height:auto !important;max-height:60vh !important;overflow-y:auto !important;z-index:410 !important;gap:8px !important}
-body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 !important;flex-shrink:0 !important;min-height:110px !important}
-.presented-card{pointer-events:auto;width:min(900px,88vw);max-height:76vh;overflow-y:auto;background:#fff;color:#1a1a1a;border-radius:20px;padding:32px;box-shadow:0 30px 90px rgba(0,0,0,.5)}
-.presented-card img,.presented-card video{width:100%;border-radius:12px;max-height:60vh;object-fit:contain;background:#0a0c14;display:block}
-.presented-card .p-header{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;color:#0f172a;margin-bottom:8px}
-.presented-card .p-subheader{font-size:1.2rem;font-weight:700;color:#334155;margin-bottom:8px}
-.presented-card .p-text{font-size:1rem;color:#4b5563;line-height:1.7}
-.presented-card .p-question{font-size:1.1rem;font-weight:700;color:#0f172a;margin-bottom:12px}
-.presented-card .p-opt{padding:12px 16px;border-radius:10px;border:1.5px solid #e0e3e8;margin-bottom:8px;font-size:.95rem}
-.presented-stop-btn{pointer-events:auto;padding:12px 26px;border-radius:14px;border:none;background:#ef4444;color:#fff;font-weight:900;font-size:.86rem;cursor:pointer;font-family:Inter,sans-serif}
-.presented-stop-btn:hover{background:#dc2626}
-</style>
 </head>
 <body style="overflow:hidden">
 
@@ -82,9 +56,6 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
       <button class="ctrl-btn ctrl-btn-rec" id="recBtn" type="button" title="Record" style="display:none">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
       </button>
-      <button class="ctrl-btn ctrl-btn-round" id="lessonBtn" type="button" title="Present Lesson" style="display:none">
-        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-      </button>
       <button class="ctrl-btn ctrl-btn-round" id="inviteBtn" type="button" title="Invite">
         <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       </button>
@@ -104,20 +75,6 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
 </div>
 
 <div class="perm-banner" id="permBanner">⚠️ <span id="permBannerText">Camera/microphone access needed.</span></div>
-
-<div class="lesson-panel" id="lessonPanel">
-  <button class="invite-close" id="lessonPanelClose" type="button">✕</button>
-  <h3 style="font-family:'Sorts Mill Goudy',serif;font-weight:400;font-size:1.15rem;margin-bottom:14px">Present Lesson</h3>
-  <select id="lessonPicker" style="width:100%;padding:11px 13px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.86rem;margin-bottom:14px">
-    <option value="">Select a lesson plan...</option>
-  </select>
-  <div id="lessonBlockList" style="max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px"></div>
-</div>
-
-<div class="presented-overlay" id="presentedOverlay">
-  <div class="presented-card" id="presentedCard"></div>
-  <button class="presented-stop-btn" id="presentedStopBtn" type="button" style="display:none">Stop Presenting</button>
-</div>
 
 <div class="invite-panel" id="invitePanel">
   <button class="invite-close" id="inviteClose" type="button">✕</button>
@@ -843,153 +800,6 @@ participantList.addEventListener("click", async (e) => {
 // ── Invite panel ──
 document.getElementById("inviteBtn").onclick = () => document.getElementById("invitePanel").classList.toggle("show");
 document.getElementById("inviteClose").onclick = () => document.getElementById("invitePanel").classList.remove("show");
-
-// ── PRESENT LESSON (host only) ──────────────────────────────
-(function(){
-  const lessonBtn = document.getElementById("lessonBtn");
-  const lessonPanel = document.getElementById("lessonPanel");
-  const lessonPanelClose = document.getElementById("lessonPanelClose");
-  const lessonPicker = document.getElementById("lessonPicker");
-  const lessonBlockList = document.getElementById("lessonBlockList");
-  const presentedOverlay = document.getElementById("presentedOverlay");
-  const presentedCard = document.getElementById("presentedCard");
-  const presentedStopBtn = document.getElementById("presentedStopBtn");
-
-  if(!IS_HOST) return; // only the host can present
-
-  lessonBtn.style.display = "flex";
-
-  lessonBtn.onclick = () => lessonPanel.classList.toggle("show");
-  lessonPanelClose.onclick = () => lessonPanel.classList.remove("show");
-
-  let currentLessonBlocks = [];
-  let currentlyShowingIndex = -1;
-
-  async function loadTeacherLessons(){
-    try{
-      const snap = await db.collection("lessonPlans")
-        .where("createdByTeacher","==",MY_NAME)
-        .get();
-      const plans = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      lessonPicker.innerHTML = '<option value="">Select a lesson plan...</option>' +
-        plans.map(p => `<option value="${p.id}">${p.title || "Untitled Lesson"}</option>`).join("");
-      lessonPicker._plans = plans;
-    }catch(e){
-      console.warn("Could not load lesson plans:", e);
-    }
-  }
-
-  function renderBlockPreview(b){
-    if(b.type === "mediafile" && b.src){
-      return b.kind === "video"
-        ? `<video src="${b.src}" muted style="width:100%;height:70px;object-fit:cover;border-radius:8px"></video>`
-        : `<img src="${b.src}" style="width:100%;height:70px;object-fit:cover;border-radius:8px">`;
-    }
-    if(b.type === "header") return (b.content || "Header").replace(/<[^>]+>/g,"");
-    if(b.type === "subheader") return (b.content || "Subheader").replace(/<[^>]+>/g,"");
-    if(b.type === "text") return (b.content || "Text").replace(/<[^>]+>/g,"").slice(0,80);
-    if(b.type === "mc" || b.type === "activity_mc") return (b.question || "Multiple choice question").replace(/<[^>]+>/g,"");
-    if(b.type === "short" || b.type === "long") return (b.question || "Question").replace(/<[^>]+>/g,"");
-    return "Block";
-  }
-
-  function renderBlockList(){
-    lessonBlockList.innerHTML = currentLessonBlocks.map((b, i) => `
-      <div class="lesson-block-item ${i===currentlyShowingIndex?'showing':''}">
-        <div class="lesson-block-type">${(b.type||"block")}</div>
-        <div class="lesson-block-preview">${renderBlockPreview(b)}</div>
-        <button class="lesson-block-showbtn ${i===currentlyShowingIndex?'active':''}" data-idx="${i}">
-          ${i===currentlyShowingIndex ? "Showing to class" : "Show to Class"}
-        </button>
-      </div>
-    `).join("");
-
-    lessonBlockList.querySelectorAll(".lesson-block-showbtn").forEach(btn => {
-      btn.onclick = () => {
-        const idx = Number(btn.dataset.idx);
-        if(currentlyShowingIndex === idx){
-          stopPresenting();
-        }else{
-          presentBlock(idx);
-        }
-      };
-    });
-  }
-
-  lessonPicker.onchange = async () => {
-    const id = lessonPicker.value;
-    if(!id){ currentLessonBlocks = []; lessonBlockList.innerHTML = ""; return; }
-    const plan = (lessonPicker._plans || []).find(p => p.id === id);
-    currentLessonBlocks = (plan && Array.isArray(plan.blocks)) ? plan.blocks : [];
-    currentlyShowingIndex = -1;
-    renderBlockList();
-  };
-
-  async function presentBlock(idx){
-    currentlyShowingIndex = idx;
-    renderBlockList();
-    await db.collection("meetings").doc(MEETING_ID).update({
-      presentedBlock: currentLessonBlocks[idx],
-      presentedAt: new Date().toISOString()
-    }).catch(()=>{});
-  }
-
-  async function stopPresenting(){
-    currentlyShowingIndex = -1;
-    renderBlockList();
-    await db.collection("meetings").doc(MEETING_ID).update({
-      presentedBlock: null
-    }).catch(()=>{});
-  }
-
-  presentedStopBtn.onclick = stopPresenting;
-
-  loadTeacherLessons();
-})();
-
-// ── LISTEN FOR PRESENTED CONTENT (all participants, including host) ──
-(function(){
-  const presentedOverlay = document.getElementById("presentedOverlay");
-  const presentedCard = document.getElementById("presentedCard");
-  const presentedStopBtn = document.getElementById("presentedStopBtn");
-
-  function renderPresentedBlock(b){
-    if(!b) return "";
-    if(b.type === "mediafile" && b.src){
-      return b.kind === "video"
-        ? `<video src="${b.src}" controls autoplay style="width:100%"></video>`
-        : `<img src="${b.src}">`;
-    }
-    if(b.type === "header") return `<div class="p-header">${b.content||""}</div>`;
-    if(b.type === "subheader") return `<div class="p-subheader">${b.content||""}</div>`;
-    if(b.type === "text") return `<div class="p-text">${b.content||""}</div>`;
-    if(b.type === "mc" || b.type === "activity_mc"){
-      const opts = (b.options||[]).map(o => `<div class="p-opt">${o}</div>`).join("");
-      return `<div class="p-question">${b.question||""}</div>${opts}`;
-    }
-    if(b.type === "short" || b.type === "long"){
-      return `<div class="p-question">${b.question||""}</div>`;
-    }
-    return "";
-  }
-
-  db.collection("meetings").doc(MEETING_ID).onSnapshot(function(snap){
-    const data = snap.data();
-    if(!data) return;
-    const block = data.presentedBlock;
-
-    if(block){
-      presentedCard.innerHTML = renderPresentedBlock(block);
-      presentedOverlay.classList.add("active");
-      document.body.classList.add("presenting");
-      if(IS_HOST) presentedStopBtn.style.display = "inline-block";
-    }else{
-      presentedOverlay.classList.remove("active");
-      document.body.classList.remove("presenting");
-      presentedStopBtn.style.display = "none";
-    }
-  });
-})();
 document.getElementById("copyIdBtn").onclick = () => { navigator.clipboard.writeText(MEETING_ID).catch(()=>{}); toast("Meeting ID copied!"); };
 document.getElementById("copyLinkBtn").onclick = () => {
   const link = `${location.origin}/teacher/live-join.html?id=${MEETING_ID}`;
