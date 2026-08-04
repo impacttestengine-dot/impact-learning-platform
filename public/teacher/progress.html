@@ -9,17 +9,42 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
-.page{position:relative;z-index:2;width:min(1120px,92vw);margin:auto;padding:110px 0 90px}
+.page{position:relative;z-index:2;width:min(1080px,92vw);margin:auto;padding:110px 0 90px}
 .nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
 .nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
-.hero{text-align:center;margin-bottom:34px}
+.hero{text-align:center;margin-bottom:32px}
 .hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
 .hero p{color:rgba(255,255,255,.65);font-weight:800}
-.grid{display:grid;gap:18px}
-.card{padding:22px;border-radius:30px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px)}
-.card h2{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;margin-bottom:10px}
-.meta{color:rgba(255,255,255,.65);font-weight:800;line-height:1.7}
-.score{display:inline-block;margin-top:12px;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.1);font-weight:900}
+
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);padding:24px;margin-bottom:22px}
+.form-row{display:grid;grid-template-columns:1fr 140px auto;gap:12px;margin-bottom:12px}
+input,select,textarea,button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:white;border-radius:16px;padding:13px 14px;font-family:Inter,sans-serif;font-weight:800}
+textarea{width:100%;resize:vertical;font-weight:600}
+button{cursor:pointer;transition:.15s}
+.add{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4}
+
+.filter-row{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+.filter-chip{padding:9px 16px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:.82rem;font-weight:800;cursor:pointer;transition:.15s}
+.filter-chip.active{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4}
+.search-box{width:100%;margin-bottom:16px}
+
+.grid{display:grid;gap:14px}
+.card{padding:22px;border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(20px)}
+.card h2{font-family:"Sorts Mill Goudy",serif;font-size:1.6rem;font-weight:400;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.type-badge{font-size:.66rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:999px}
+.type-badge.activity{background:rgba(236,72,153,.18);color:#f9a8d4}
+.type-badge.lesson{background:rgba(99,102,241,.18);color:#a5b4fc}
+.type-badge.delfMock{background:rgba(217,119,6,.18);color:#fbbf24}
+.type-badge.manual{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.meta{color:rgba(255,255,255,.65);font-weight:700;line-height:1.7;font-size:.86rem}
+.score{display:inline-block;margin-top:10px;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.1);font-weight:900;font-size:.86rem}
+.notes-text{margin-top:8px;font-size:.84rem;color:rgba(255,255,255,.6);line-height:1.6;white-space:pre-wrap}
+.card-actions{margin-top:12px}
+.small{padding:8px 12px;font-size:.76rem;border-radius:12px}
+.delete{background:rgba(255,80,80,.14);border-color:rgba(255,100,100,.25);color:#feb2b2}
+.delete:hover{background:rgba(255,80,80,.24)}
+.empty{text-align:center;color:rgba(255,255,255,.4);font-weight:700;padding:40px}
+@media(max-width:700px){.form-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -29,9 +54,28 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 <main class="page">
 <section class="hero">
 <h1>Progress</h1>
-<p>Scores from activities, assessments, DELF mocks, and end-of-year records appear here.</p>
+<p>Real scores from activities, lessons, and DELF mocks, plus manual entries for other assessments.</p>
 </section>
-<section id="progressWrap" class="grid"><div class="card">Loading progress...</div></section>
+
+<section class="panel">
+  <div class="form-row">
+    <input id="manualLearner" placeholder="Learner name">
+    <input id="manualScore" placeholder="Score / grade (e.g. 82% or B+)">
+    <button class="add" id="addManualBtn" type="button">Add Entry</button>
+  </div>
+  <textarea id="manualNotes" rows="2" placeholder="Notes (e.g. 'In-class oral evaluation — strong pronunciation, needs work on past tense')"></textarea>
+</section>
+
+<div class="filter-row" id="filterRow">
+  <button class="filter-chip active" data-filter="all" type="button">All</button>
+  <button class="filter-chip" data-filter="activity" type="button">Activities</button>
+  <button class="filter-chip" data-filter="lesson" type="button">Lessons</button>
+  <button class="filter-chip" data-filter="delfMock" type="button">DELF Mocks</button>
+  <button class="filter-chip" data-filter="manual" type="button">Manual Entries</button>
+</div>
+<input class="search-box" id="searchInput" type="search" placeholder="Search by learner name...">
+
+<section id="progressWrap" class="grid"><div class="empty">Loading progress...</div></section>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -39,42 +83,125 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 <script src="/__/firebase/init.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", async()=>{
- const db=firebase.firestore();
- const wrap=document.getElementById("progressWrap");
+  const db=firebase.firestore();
+  const wrap=document.getElementById("progressWrap");
+  const filterRow=document.getElementById("filterRow");
+  const searchInput=document.getElementById("searchInput");
+  const myName = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "";
 
- async function seed(){
-  const base=[
-   {id:"michael-activity-1",learner:"Michael",type:"Activity",title:"A0 Video Questions 1",score:100,maxScore:100,studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:00:00"},
-   {id:"michael-activity-2",learner:"Michael",type:"Activity",title:"A0 Listening Practice",score:85,maxScore:100,studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:10:00"},
-   {id:"michael-activity-3",learner:"Michael",type:"Activity",title:"A0 Oral Practice",score:90,maxScore:100,studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:20:00"}
-  ];
-  await Promise.all(base.map(x=>db.collection("progressRecords").doc(x.id).set(x,{merge:true})));
- }
- await seed();
+  let allRecords=[];
+  let currentFilter="all";
 
- const snap=await db.collection("progressRecords").get();
- const rows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const TYPE_LABELS = { activity:"🎨 Activity", lesson:"📚 Lesson", delfMock:"📝 DELF Mock", manual:"✎ Manual Entry" };
 
- if(!rows.length){wrap.innerHTML='<div class="card">No progress records yet.</div>';return}
- wrap.innerHTML="";
- rows.forEach(r=>{
-  const date=new Date(r.createdAt||Date.now()).toLocaleString();
-  const score = r.maxScore ? Math.round((Number(r.score||0)/Number(r.maxScore))*100) : Number(r.score||0);
-  const card=document.createElement("article");
-  card.className="card";
-  card.innerHTML=`
-    <h2>${r.learner||"Learner"}</h2>
-    <div class="meta">${r.type||"Record"} · ${r.title||""}</div>
-    <div class="meta">${date}</div>
-    <span class="score">Progress Score: ${score}%</span>
-    <div class="meta">Student Satisfaction: ${r.studentSatisfaction || "-"} / 5</div>
-    <div class="meta">Teaching Quality: ${r.teachingQuality || "-"} / 5</div>
-  `;
-  wrap.appendChild(card);
- });
+  async function load(){
+    wrap.innerHTML='<div class="empty">Loading progress...</div>';
+
+    const completionsSnap = await db.collection("learnerCompletions").get().catch(()=>({docs:[]}));
+
+    const realRecords = completionsSnap.docs
+      .map(d=>({id:d.id, ...d.data()}))
+      .filter(c => c.score !== null && c.score !== undefined)
+      .map(c => ({
+        source: "real",
+        docId: c.id,
+        type: c.itemType,
+        learner: c.learnerName,
+        title: c.itemTitle,
+        score: c.score,
+        maxScore: c.maxScore || 100,
+        markedBy: c.markedBy,
+        date: c.markedAt || c.completedAt
+      }));
+
+    const manualSnap = await db.collection("progressManualEntries").get().catch(()=>({docs:[]}));
+    const manualRecords = manualSnap.docs.map(d=>({
+      id:d.id, source:"manual", type:"manual",
+      learner:d.data().learnerName, scoreText:d.data().scoreText,
+      notes:d.data().notes, createdBy:d.data().createdBy, date:d.data().createdAt
+    }));
+
+    allRecords = [...realRecords, ...manualRecords].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    render(allRecords);
+  }
+
+  function render(items){
+    let filtered = items;
+    if(currentFilter!=="all") filtered = items.filter(r=>r.type===currentFilter);
+
+    const q = searchInput.value.trim().toLowerCase();
+    if(q) filtered = filtered.filter(r=>(r.learner||"").toLowerCase().includes(q));
+
+    if(!filtered.length){ wrap.innerHTML='<div class="empty">No progress records match.</div>'; return; }
+
+    wrap.innerHTML="";
+    filtered.forEach(r=>{
+      const card=document.createElement("article");
+      card.className="card";
+
+      if(r.source==="real"){
+        const pct = r.maxScore ? Math.round((Number(r.score)/Number(r.maxScore))*100) : Number(r.score);
+        card.innerHTML=`
+          <h2>${r.learner||"Learner"} <span class="type-badge ${r.type}">${TYPE_LABELS[r.type]||r.type}</span></h2>
+          <div class="meta">${r.title||""}</div>
+          <div class="meta">Marked by ${r.markedBy||"—"} · ${r.date?new Date(r.date).toLocaleDateString():""}</div>
+          <span class="score">Score: ${r.score}/${r.maxScore} (${pct}%)</span>
+          <div class="card-actions"><button class="small delete" data-real-id="${r.docId}">Remove Score</button></div>
+        `;
+        card.querySelector(".delete").onclick=async()=>{
+          if(!confirm("Remove this score? The learner's submission stays on record, but this progress entry will disappear.")) return;
+          await db.collection("learnerCompletions").doc(r.docId).update({
+            score: null, markedBy: "", markedAt: ""
+          });
+          await load();
+        };
+      }else{
+        card.innerHTML=`
+          <h2>${r.learner||"Learner"} <span class="type-badge manual">${TYPE_LABELS.manual}</span></h2>
+          <div class="meta">Added by ${r.createdBy||"—"} · ${r.date?new Date(r.date).toLocaleDateString():""}</div>
+          ${r.scoreText?`<span class="score">${r.scoreText}</span>`:""}
+          ${r.notes?`<div class="notes-text">${r.notes}</div>`:""}
+          <div class="card-actions"><button class="small delete" data-id="${r.id}">Delete</button></div>
+        `;
+        card.querySelector(".delete").onclick=async()=>{
+          if(confirm("Delete this manual entry?")){ await db.collection("progressManualEntries").doc(r.id).delete(); await load(); }
+        };
+      }
+      wrap.appendChild(card);
+    });
+  }
+
+  document.getElementById("addManualBtn").onclick=async()=>{
+    const learnerName=document.getElementById("manualLearner").value.trim();
+    if(!learnerName){ alert("Please enter a learner name."); return; }
+    const now=new Date();
+    await db.collection("progressManualEntries").add({
+      learnerName,
+      scoreText: document.getElementById("manualScore").value.trim(),
+      notes: document.getElementById("manualNotes").value.trim(),
+      createdBy: myName,
+      createdAt: now.toISOString()
+    });
+    document.getElementById("manualLearner").value="";
+    document.getElementById("manualScore").value="";
+    document.getElementById("manualNotes").value="";
+    await load();
+  };
+
+  filterRow.addEventListener("click", (e)=>{
+    const chip=e.target.closest(".filter-chip");
+    if(!chip) return;
+    document.querySelectorAll(".filter-chip").forEach(c=>c.classList.remove("active"));
+    chip.classList.add("active");
+    currentFilter=chip.dataset.filter;
+    render(allRecords);
+  });
+
+  searchInput.oninput=()=>render(allRecords);
+
+  await load();
 });
 </script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
-
