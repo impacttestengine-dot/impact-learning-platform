@@ -10,6 +10,9 @@ service firebase.storage {
     match /activityMedia/{allPaths=**} {
       allow read, write: if true;
     }
+    match /delfAudio/{allPaths=**} {
+      allow read, write: if true;
+    }
     match /{allPaths=**} {
       allow read, write: if false;
     }

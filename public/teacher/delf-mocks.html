@@ -3,85 +3,278 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>DELF Mocks | Impact</title>
+<title>DELF Exam Mocks | Impact</title>
 <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif}
-.page{position:relative;z-index:2;width:min(1180px,92vw);margin:auto;padding:110px 0 90px}
-.nav{position:fixed;top:24px;left:28px;z-index:10;display:flex;gap:12px}
-.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
-.hero{text-align:center;margin-bottom:34px}
-.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.7rem;font-weight:900;color:rgba(255,255,255,.6)}
-h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.8rem);font-weight:400}
-.hero p{color:rgba(255,255,255,.68);font-weight:800}
-.actions{text-align:center;margin:24px 0}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 20px;border-radius:18px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.1);color:white;text-decoration:none;font-weight:900;transition:.16s ease}
-.btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.17)}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.folder{border-radius:32px;padding:24px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);box-shadow:0 24px 70px rgba(0,0,0,.28)}
-.folder h2{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;margin-bottom:10px}
-.exam-list{display:grid;gap:10px;margin-top:18px}
-.exam{padding:14px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);font-weight:900}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-height:100vh}
+.page{position:relative;z-index:2;width:min(1100px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:36px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.55);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);font-weight:400;line-height:1}
+.hero p{margin-top:12px;color:rgba(255,255,255,.6);font-weight:700}
+
+/* TRACK TABS */
+.track-tabs{display:flex;gap:10px;justify-content:center;margin-bottom:36px;flex-wrap:wrap}
+.track-tab{padding:12px 24px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-family:Inter,sans-serif;font-weight:900;font-size:.86rem;cursor:pointer;transition:.18s ease}
+.track-tab:hover{background:rgba(255,255,255,.1);color:#fff}
+.track-tab.active{background:rgba(217,119,6,.22);border-color:rgba(217,119,6,.5);color:#fbbf24}
+
+.action-bar{display:flex;align-items:center;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+.new-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:18px;background:rgba(217,119,6,.18);border:1px solid rgba(217,119,6,.4);color:#fbbf24;font-family:Inter,sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;text-decoration:none;transition:.18s ease}
+.new-btn:hover{background:rgba(217,119,6,.3);transform:translateY(-2px)}
+.new-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;flex-shrink:0}
+.folder-count{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.45)}
+
+.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+
+.empty-state{text-align:center;padding:72px 40px;border:2px dashed rgba(255,255,255,.1);border-radius:28px;color:rgba(255,255,255,.35)}
+.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.5rem;font-weight:400;margin-bottom:10px;color:rgba(255,255,255,.5)}
+.empty-state p{font-size:.86rem;font-weight:700;line-height:1.6}
+
+.folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.folder-card{border-radius:24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);overflow:hidden;transition:.22s ease;cursor:pointer}
+.folder-card.open{border-color:rgba(217,119,6,.35);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.folder-head{display:flex;align-items:center;gap:14px;padding:20px;transition:.18s ease}
+.folder-card:hover .folder-head{background:rgba(255,255,255,.06)}
+.folder-icon{font-size:2rem;line-height:1;flex-shrink:0}
+.folder-meta{flex:1;min-width:0}
+.folder-name{font-family:"Sorts Mill Goudy",serif;font-size:1.4rem;font-weight:400}
+.folder-sub{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45);margin-top:3px}
+.folder-chevron{color:rgba(255,255,255,.3);font-size:.9rem;transition:transform .22s ease;flex-shrink:0}
+.folder-card.open .folder-chevron{transform:rotate(90deg)}
+.folder-body{max-height:0;overflow:hidden;transition:max-height .38s ease,padding .28s ease;padding:0 14px}
+.folder-card.open .folder-body{max-height:900px;padding:0 14px 14px}
+.plan-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
+.plan-row:last-child{margin-bottom:0}
+.plan-row:hover{background:rgba(255,255,255,.09)}
+.plan-name{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plan-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:.82rem;transition:.14s ease}
+.plan-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+.plan-btn.del:hover{background:rgba(255,60,60,.2);border-color:rgba(255,100,100,.3)}
+
+.del-popover{margin-top:6px;margin-bottom:2px;padding:12px 14px;border-radius:14px;background:rgba(30,10,10,.92);border:1px solid rgba(255,100,100,.35);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;gap:10px;animation:popIn .15s ease}
+@keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.del-popover-msg{font-size:.8rem;font-weight:800;color:rgba(255,255,255,.85);flex:1;line-height:1.35}
+.del-popover-actions{display:flex;gap:8px;flex-shrink:0}
+.del-popover-cancel{padding:7px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.09);color:#fff;font-size:.78rem;font-weight:800;cursor:pointer;font-family:Inter,sans-serif}
+.del-popover-ok{padding:7px 14px;border-radius:10px;border:1px solid rgba(255,100,100,.4);background:rgba(200,40,40,.28);color:#fca5a5;font-size:.78rem;font-weight:900;cursor:pointer;font-family:Inter,sans-serif}
+.del-popover-cancel:hover{background:rgba(255,255,255,.16)}
+.del-popover-ok:hover{background:rgba(200,40,40,.45)}
+
+@media(max-width:700px){.folders-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
-
-<nav class="nav">
-  <a href="/teacher/dashboard.html">⌘</a>
-</nav>
+<script src="/js/impact-page-nav.js"></script>
 
 <main class="page">
   <section class="hero">
-    <p class="eyebrow">Assessment Workspace</p>
-    <h1>DELF Mocks</h1>
-    <p>Folders for DELF Prim, DELF Junior, and DELF Tout Public exams.</p>
-    <div class="actions">
-      <a class="btn" href="/teacher/delf-mock-builder.html">Create DELF Mock</a>
-    </div>
+    <p class="eyebrow">Teacher Workspace</p>
+    <h1>DELF Exam Mocks</h1>
+    <p>Folders are created automatically when you save a mock exam from the builder.</p>
   </section>
 
-  <section class="grid">
-    <article class="folder">
-      <h2>DELF Prim</h2>
-      <p>For primary school learners.</p>
-      <div class="exam-list">
-        <div class="exam">A1.1</div>
-        <div class="exam">A1</div>
-        <div class="exam">A2</div>
-      </div>
-    </article>
+  <div class="track-tabs" id="trackTabs">
+    <button class="track-tab active" data-track="Tout Public" type="button">DELF Tout Public</button>
+    <button class="track-tab" data-track="Junior" type="button">DELF Junior</button>
+    <button class="track-tab" data-track="Prim" type="button">DELF Prim</button>
+  </div>
 
-    <article class="folder">
-      <h2>DELF Junior</h2>
-      <p>For teenage learners.</p>
-      <div class="exam-list">
-        <div class="exam">A1</div>
-        <div class="exam">A2</div>
-        <div class="exam">B1</div>
-        <div class="exam">B2</div>
-      </div>
-    </article>
+  <div class="action-bar">
+    <a class="new-btn" id="newMockBtn" href="/teacher/delf-mock-builder.html">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Mock Exam
+    </a>
+    <span class="folder-count" id="folderCount"></span>
+  </div>
 
-    <article class="folder">
-      <h2>DELF Tout Public</h2>
-      <p>For adult and general candidates.</p>
-      <div class="exam-list">
-        <div class="exam">A1</div>
-        <div class="exam">A2</div>
-        <div class="exam">B1</div>
-        <div class="exam">B2</div>
-      </div>
-    </article>
-  </section>
+  <p class="section-label" id="sectionLabel">DELF Tout Public — Levels</p>
+  <div id="foldersWrap"><div class="empty-state"><h3>Loading...</h3></div></div>
 </main>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+  const wrap = document.getElementById("foldersWrap");
+  const folderCount = document.getElementById("folderCount");
+  const sectionLabel = document.getElementById("sectionLabel");
+  const newMockBtn = document.getElementById("newMockBtn");
+  let allMocks = [];
+  let openFolder = null;
+  let currentTrack = "Tout Public";
+  const LEVELS = ["A1","A2","B1","B2"];
+
+  function showDeletePopover(anchorRow, msg){
+    document.querySelectorAll(".del-popover").forEach(p=>p.remove());
+    return new Promise(resolve=>{
+      const pop = document.createElement("div");
+      pop.className = "del-popover";
+      pop.innerHTML = `<span class="del-popover-msg">${msg}</span>
+        <div class="del-popover-actions">
+          <button class="del-popover-cancel" type="button">Cancel</button>
+          <button class="del-popover-ok" type="button">Delete</button>
+        </div>`;
+      anchorRow.after(pop);
+      pop.scrollIntoView({behavior:"smooth",block:"nearest"});
+      const close = r=>{ pop.remove(); document.removeEventListener("click", outside); resolve(r); };
+      pop.querySelector(".del-popover-ok").onclick = e=>{ e.stopPropagation(); close(true); };
+      pop.querySelector(".del-popover-cancel").onclick = e=>{ e.stopPropagation(); close(false); };
+      const outside = e=>{ if(!pop.contains(e.target)) close(false); };
+      setTimeout(()=>document.addEventListener("click", outside), 50);
+    });
+  }
+
+  async function loadMocks(){
+    try{
+      const snap = await db.collection("delfMocks").orderBy("updatedAt","desc").get();
+      allMocks = snap.docs.map(d=>({id:d.id,...d.data()}));
+    }catch(e){
+      const snap = await db.collection("delfMocks").get();
+      allMocks = snap.docs.map(d=>({id:d.id,...d.data()}));
+    }
+    render();
+  }
+
+  function render(){
+    sectionLabel.textContent = `DELF ${currentTrack} — Levels`;
+    newMockBtn.href = `/teacher/delf-mock-builder.html?track=${encodeURIComponent(currentTrack)}`;
+
+    const trackMocks = allMocks.filter(m => (m.track||"Tout Public") === currentTrack);
+    const map = {};
+    trackMocks.forEach(m=>{
+      const lvl = (m.level||"A1").trim();
+      if(!map[lvl]) map[lvl] = [];
+      map[lvl].push(m);
+    });
+
+    const levelsPresent = LEVELS.filter(l => map[l] && map[l].length);
+    folderCount.textContent = levelsPresent.length ? levelsPresent.length + " level" + (levelsPresent.length===1?"":"s") : "";
+
+    if(!levelsPresent.length){
+      wrap.innerHTML = `<div class="empty-state">
+        <h3>No mock exams yet</h3>
+        <p>Create a DELF ${currentTrack} mock exam and select a level in the builder.<br>The folder will appear here automatically.</p>
+      </div>`;
+      return;
+    }
+
+    wrap.innerHTML = `<div class="folders-grid" id="grid"></div>`;
+    const grid = document.getElementById("grid");
+
+    LEVELS.forEach(level=>{
+      if(!map[level] || !map[level].length) return;
+      const mocks = map[level];
+      const card = document.createElement("div");
+      card.className = "folder-card" + (openFolder===level?" open":"");
+      card.dataset.level = level;
+
+      const rows = mocks.map(m=>`
+        <div class="plan-row">
+          <span class="plan-name">${m.title||"Untitled Mock Exam"}</span>
+          <button class="plan-btn view-btn" data-id="${m.id}" title="Preview">👁</button>
+          <button class="plan-btn edit-btn" data-id="${m.id}" title="Edit">✏️</button>
+          <button class="plan-btn del del-btn" data-id="${m.id}" data-title="${(m.title||"Untitled Mock Exam").replace(/"/g,"&quot;")}" title="Delete">✕</button>
+        </div>`).join("");
+
+      card.innerHTML = `
+        <div class="folder-head">
+          <span class="folder-icon">${openFolder===level?"📂":"📁"}</span>
+          <div class="folder-meta">
+            <div class="folder-name">DELF ${level}</div>
+            <div class="folder-sub">${mocks.length} mock exam${mocks.length===1?"":"s"}</div>
+          </div>
+          <span class="folder-chevron">›</span>
+        </div>
+        <div class="folder-body">${rows}</div>`;
+      grid.appendChild(card);
+    });
+
+    bindEvents();
+  }
+
+  function bindEvents(){
+    const grid = document.getElementById("grid");
+    if(!grid) return;
+
+    grid.addEventListener("click", async function(e){
+      const delBtn = e.target.closest(".del-btn");
+      if(delBtn){
+        e.stopPropagation();
+        const anchorRow = delBtn.closest(".plan-row");
+        const ok = await showDeletePopover(anchorRow, `Delete &ldquo;${delBtn.dataset.title}&rdquo;?`);
+        if(!ok) return;
+        await db.collection("delfMocks").doc(delBtn.dataset.id).delete();
+        allMocks = allMocks.filter(m=>m.id!==delBtn.dataset.id);
+        const cardLevel = delBtn.closest(".folder-card").dataset.level;
+        const remaining = allMocks.filter(m=>(m.level||"A1")===cardLevel && (m.track||"Tout Public")===currentTrack);
+        if(!remaining.length) openFolder = null;
+        render();
+        return;
+      }
+      const viewBtn = e.target.closest(".view-btn");
+      if(viewBtn){ e.stopPropagation(); location.href = "/teacher/delf-mock-view.html?id="+encodeURIComponent(viewBtn.dataset.id); return; }
+      const editBtn = e.target.closest(".edit-btn");
+      if(editBtn){ e.stopPropagation(); location.href = "/teacher/delf-mock-builder.html?edit="+encodeURIComponent(editBtn.dataset.id); return; }
+      const card = e.target.closest(".folder-card");
+      if(card){
+        const level = card.dataset.level;
+        if(openFolder===level){
+          openFolder = null; card.classList.remove("open"); card.querySelector(".folder-icon").textContent="📁";
+        } else {
+          document.querySelectorAll(".folder-card.open").forEach(c=>{c.classList.remove("open");c.querySelector(".folder-icon").textContent="📁";});
+          openFolder = level; card.classList.add("open"); card.querySelector(".folder-icon").textContent="📂";
+        }
+      }
+    });
+
+    document.addEventListener("click", function(e){
+      if(!e.target.closest(".folder-card") && !e.target.closest(".del-popover")){
+        document.querySelectorAll(".folder-card.open").forEach(c=>{
+          c.classList.remove("open");
+          const fi=c.querySelector(".folder-icon"); if(fi) fi.textContent="📁";
+        });
+        openFolder = null;
+      }
+    });
+  }
+
+  document.getElementById("trackTabs").addEventListener("click", function(e){
+    const tab = e.target.closest(".track-tab");
+    if(!tab) return;
+    document.querySelectorAll(".track-tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    currentTrack = tab.dataset.track;
+    openFolder = null;
+    render();
+  });
+
+  await loadMocks();
+});
+</script>
+<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script id="team-meetings-menu-fix">
+(function(){
+  function injectTeamMeetings(){
+    const menu=document.querySelector(".quick-menu")||document.querySelector(".menu-dropdown")||document.querySelector(".menu-panel")||document.querySelector(".menu-links")||document.querySelector(".dropdown-menu");
+    if(!menu||document.getElementById("teamMeetingsMenuLink")) return;
+    const recycleLink=Array.from(menu.querySelectorAll("a")).find(a=>(a.textContent||"").toLowerCase().includes("recycle"));
+    if(!recycleLink) return;
+    const newLink=recycleLink.cloneNode(true);
+    newLink.id="teamMeetingsMenuLink";newLink.href="/teacher/team-meetings.html";newLink.textContent="Team Meetings";newLink.removeAttribute("style");
+    recycleLink.parentNode.insertBefore(newLink,recycleLink);
+  }
+  injectTeamMeetings();setInterval(injectTeamMeetings,1500);
+})();
+</script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
-
-
-

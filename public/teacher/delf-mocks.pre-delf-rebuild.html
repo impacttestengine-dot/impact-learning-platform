@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DELF Mocks | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(1180px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:10;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:34px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.7rem;font-weight:900;color:rgba(255,255,255,.6)}
+h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.8rem);font-weight:400}
+.hero p{color:rgba(255,255,255,.68);font-weight:800}
+.actions{text-align:center;margin:24px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 20px;border-radius:18px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.1);color:white;text-decoration:none;font-weight:900;transition:.16s ease}
+.btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.17)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.folder{border-radius:32px;padding:24px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);box-shadow:0 24px 70px rgba(0,0,0,.28)}
+.folder h2{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;margin-bottom:10px}
+.exam-list{display:grid;gap:10px;margin-top:18px}
+.exam{padding:14px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);font-weight:900}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="nav">
+  <a href="/teacher/dashboard.html">⌘</a>
+</nav>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Assessment Workspace</p>
+    <h1>DELF Mocks</h1>
+    <p>Folders for DELF Prim, DELF Junior, and DELF Tout Public exams.</p>
+    <div class="actions">
+      <a class="btn" href="/teacher/delf-mock-builder.html">Create DELF Mock</a>
+    </div>
+  </section>
+
+  <section class="grid">
+    <article class="folder">
+      <h2>DELF Prim</h2>
+      <p>For primary school learners.</p>
+      <div class="exam-list">
+        <div class="exam">A1.1</div>
+        <div class="exam">A1</div>
+        <div class="exam">A2</div>
+      </div>
+    </article>
+
+    <article class="folder">
+      <h2>DELF Junior</h2>
+      <p>For teenage learners.</p>
+      <div class="exam-list">
+        <div class="exam">A1</div>
+        <div class="exam">A2</div>
+        <div class="exam">B1</div>
+        <div class="exam">B2</div>
+      </div>
+    </article>
+
+    <article class="folder">
+      <h2>DELF Tout Public</h2>
+      <p>For adult and general candidates.</p>
+      <div class="exam-list">
+        <div class="exam">A1</div>
+        <div class="exam">A2</div>
+        <div class="exam">B1</div>
+        <div class="exam">B2</div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+
+
