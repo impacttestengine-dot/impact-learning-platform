@@ -37,6 +37,7 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 .kpi-source{font-size:.68rem;color:rgba(255,255,255,.3);font-weight:700;margin-top:8px}
 
 .empty-state{text-align:center;padding:60px;color:rgba(255,255,255,.35);font-weight:700}
+.match-note{text-align:center;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.3);margin-bottom:20px}
 </style>
 </head>
 <body>
@@ -53,6 +54,8 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
   <div class="empty-state" style="padding:20px">Loading personnel...</div>
 </div>
 
+<p class="match-note" id="matchNote"></p>
+
 <div class="kpi-grid" id="kpiGrid">
   <div class="empty-state">Select a team member above to view their KPIs.</div>
 </div>
@@ -66,6 +69,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
   const db=firebase.firestore();
   const selector=document.getElementById("personnelSelector");
   const grid=document.getElementById("kpiGrid");
+  const matchNote=document.getElementById("matchNote");
 
   function barClass(pct){
     if(pct>=80) return "good";
@@ -73,27 +77,31 @@ document.addEventListener("DOMContentLoaded", async()=>{
     return "bad";
   }
 
+  // ── FUZZY NAME MATCHING ──────────────────────────────────────
+  // Passkey names (e.g. "Prosper") don't always exactly match the
+  // full name used in class/task records (e.g. "Yormesah Prosper").
+  // Firestore can't do partial-string queries, so instead of an
+  // exact where("teacher","==",name) filter, we pull ALL records
+  // for the collection once and match client-side: a record counts
+  // as belonging to this person if either name contains the other
+  // (case-insensitive, trimmed). This correctly links "Prosper" to
+  // "Yormesah Prosper" without renaming anyone's passkey.
+  //
+  // Tradeoff: if two different people share a short overlapping name
+  // (e.g. "Anna" vs "Anna Smith" AND "Anna Jones"), this could match
+  // both. Acceptable for small teams; flagged here for awareness.
+  function namesMatch(passkeyName, recordName){
+    if(!passkeyName || !recordName) return false;
+    const a = String(passkeyName).trim().toLowerCase();
+    const b = String(recordName).trim().toLowerCase();
+    if(!a || !b) return false;
+    return a === b || b.includes(a) || a.includes(b);
+  }
+
   // ── PUNCTUALITY ──────────────────────────────────────────────
-  // Classes are sometimes held off their original schedule (same Meet
-  // link, different day/time). Each classTracker record is checked
-  // against two possible "agreed times", in priority order:
-  //
-  //  1. REAL SCHEDULE: if the class's original scheduled "time" field
-  //     is within ~35 minutes of the actual startedAt clock time, that
-  //     scheduled time is trusted directly.
-  //
-  //  2. INFERRED TIME: otherwise, the class is treated as off-schedule.
-  //     Real classes almost always start on a :00 or :30 mark, so the
-  //     actual start time is used to infer what that mark most likely
-  //     was — with early-start detection (started up to 5 min BEFORE
-  //     a mark counts toward that upcoming mark, not the previous one).
-  //
-  // A 5-minute grace window is applied against whichever agreed time
-  // is determined, in both cases.
   function nearestMarkInfo(startedAt){
     const d = new Date(startedAt);
     const minutes = d.getMinutes();
-
     const lastMark = minutes < 30 ? 0 : 30;
     const nextMark = lastMark === 0 ? 30 : 60;
     const minutesUntilNextMark = nextMark - minutes;
@@ -148,51 +156,54 @@ document.addEventListener("DOMContentLoaded", async()=>{
     return { pct: counted ? Math.round((onTime/counted)*100) : 0, count: counted };
   }
 
-  async function computeKpisFor(personName){
-    const [trackerSnap, tasksSnap, completionsSnap] = await Promise.all([
-      db.collection("classTracker").where("teacher","==",personName).get(),
-      db.collection("tasks").where("assignedTo","==",personName).get(),
-      db.collection("learnerCompletions")
-        .where("itemCreatedByTeacher","==",personName)
-        .where("markedBy","==",personName)
-        .get()
-        .catch(()=>({docs:[]}))
+  // ── DATA CACHE ────────────────────────────────────────────────
+  // Fetch each collection ONCE (not per-person) since we now need
+  // to scan all records client-side for fuzzy matching.
+  let allClassTracker = null;
+  let allTasks = null;
+  let allCompletions = null;
+  let allProgress = null;
+
+  async function loadAllData(){
+    const [trackerSnap, tasksSnap, completionsSnap, progressSnap] = await Promise.all([
+      db.collection("classTracker").get(),
+      db.collection("tasks").get(),
+      db.collection("learnerCompletions").get().catch(()=>({docs:[]})),
+      db.collection("progressRecords").get().catch(()=>({docs:[]}))
     ]);
+    allClassTracker = trackerSnap.docs.map(d=>d.data());
+    allTasks = tasksSnap.docs.map(d=>d.data());
+    allCompletions = completionsSnap.docs.map(d=>d.data());
+    allProgress = progressSnap.docs.map(d=>d.data());
+  }
 
-    const classes = trackerSnap.docs.map(d=>d.data());
-    const personTasks = tasksSnap.docs.map(d=>d.data());
-    const gradedSubmissions = completionsSnap.docs.map(d=>d.data());
+  async function computeKpisFor(personName){
+    const classes = allClassTracker.filter(x=>namesMatch(personName, x.teacher));
+    const personTasks = allTasks.filter(x=>namesMatch(personName, x.assignedTo));
+    const gradedSubmissions = allCompletions.filter(s=>
+      namesMatch(personName, s.itemCreatedByTeacher) && namesMatch(personName, s.markedBy)
+    );
+    const progress = allProgress.filter(x=>namesMatch(personName, x.teacher));
 
-    // Participation
     const participationVals = classes.map(x=>Number(String(x.studentParticipation||"").replace("%",""))).filter(n=>!isNaN(n));
     const participation = participationVals.length ? Math.round(participationVals.reduce((a,b)=>a+b,0)/participationVals.length) : 0;
 
-    // Progress rate — real average score across activities/homework/mocks
-    // this teacher both created AND personally marked.
     const scoreVals = gradedSubmissions.map(s=>{
       const max = Number(s.maxScore) || 100;
       return (Number(s.score||0)/max)*100;
     }).filter(n=>!isNaN(n));
     const progressRate = scoreVals.length ? Math.round(scoreVals.reduce((a,b)=>a+b,0)/scoreVals.length) : 0;
 
-    // Punctuality — real comparison of scheduled/inferred vs actual start time
     const punctualityResult = computePunctuality(classes);
     const punctuality = punctualityResult.pct;
 
-    // Task completion
     const doneTasks = personTasks.filter(t=>t.completed).length;
     const taskCompletion = personTasks.length ? Math.round((doneTasks/personTasks.length)*100) : 100;
 
-    // Satisfaction + Quality — legacy feedback source, kept as-is
-    let satisfaction = 0, quality = 0;
-    try{
-      const progressSnap = await db.collection("progressRecords").where("teacher","==",personName).get();
-      const progress = progressSnap.docs.map(d=>d.data());
-      const satVals = progress.map(x=>Number(x.studentSatisfaction)).filter(n=>!isNaN(n));
-      satisfaction = satVals.length ? (satVals.reduce((a,b)=>a+b,0)/satVals.length) : 0;
-      const qualityVals = progress.map(x=>Number(x.teachingQuality)).filter(n=>!isNaN(n));
-      quality = qualityVals.length ? (qualityVals.reduce((a,b)=>a+b,0)/qualityVals.length) : 0;
-    }catch(e){}
+    const satVals = progress.map(x=>Number(x.studentSatisfaction)).filter(n=>!isNaN(n));
+    const satisfaction = satVals.length ? (satVals.reduce((a,b)=>a+b,0)/satVals.length) : 0;
+    const qualityVals = progress.map(x=>Number(x.teachingQuality)).filter(n=>!isNaN(n));
+    const quality = qualityVals.length ? (qualityVals.reduce((a,b)=>a+b,0)/qualityVals.length) : 0;
 
     return {
       participation, progressRate, punctuality, taskCompletion, satisfaction, quality,
@@ -236,7 +247,10 @@ document.addEventListener("DOMContentLoaded", async()=>{
         return;
       }
 
+      await loadAllData();
+
       selector.innerHTML = people.map(p=>`<button class="personnel-chip" data-name="${p.name}" type="button">${p.name}</button>`).join("");
+      matchNote.textContent = "Matched by name — works even if class records use a fuller name than the passkey.";
 
       selector.addEventListener("click", async function(e){
         const chip = e.target.closest(".personnel-chip");
