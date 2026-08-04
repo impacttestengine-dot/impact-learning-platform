@@ -46,7 +46,7 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 <main class="page">
 <section class="hero">
 <h1>Team KPIs</h1>
-<p>Select a team member to view their individual performance breakdown.</p>
+<p>Teacher performance breakdown — select a teacher to view their KPIs.</p>
 </section>
 
 <div class="personnel-selector" id="personnelSelector">
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
   async function loadPersonnel(){
     try{
-      const snap = await db.collection("impactPasskeys").where("role","!=","Learner").get();
+      const snap = await db.collection("impactPasskeys").where("role","==","Teacher").get();
       const people = snap.docs.map(d=>d.data()).filter(p=>p.name);
 
       if(!people.length){
