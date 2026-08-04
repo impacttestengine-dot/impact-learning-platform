@@ -1,24 +1,15 @@
-﻿rules_version = '2';
+rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-
-    // Live Classroom recordings — writable by anyone on the platform
-    // (platform uses passkey auth, not Firebase Auth)
     match /recordings/{allPaths=**} {
       allow read, write: if true;
     }
-
-    // Lesson Builder media (Media File block uploads)
     match /lessonMedia/{allPaths=**} {
       allow read, write: if true;
     }
-
-    // Activity Builder media (Media File block uploads)
     match /activityMedia/{allPaths=**} {
       allow read, write: if true;
     }
-
-    // All other storage paths — deny by default
     match /{allPaths=**} {
       allow read, write: if false;
     }
