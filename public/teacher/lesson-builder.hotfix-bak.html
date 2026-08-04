@@ -601,8 +601,8 @@ function bindBlock(block){
     // Show a local preview immediately via a blob URL (instant, no upload wait)
     const localPreviewUrl = URL.createObjectURL(file);
     mediaPreview.innerHTML = isVideo
-      ? `<video src="${localPreviewUrl}" controls></video>`
-      : `<img src="${localPreviewUrl}" alt="">`;
+      ? \<video src="\" controls></video>\
+      : \<img src="\" alt="">\;
     mediaPreview.classList.add("show");
     if(mediaEmpty) mediaEmpty.style.display = "none";
 
@@ -617,7 +617,7 @@ function bindBlock(block){
 
     try{
       const ext = file.name.split(".").pop() || (isVideo ? "mp4" : "jpg");
-      const path = `lessonMedia/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const path = \$Collection/\_\.\\;
       const snap = await storage.ref(path).put(file);
       const downloadUrl = await snap.ref.getDownloadURL();
 
