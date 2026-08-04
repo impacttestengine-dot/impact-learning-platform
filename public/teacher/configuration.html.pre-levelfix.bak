@@ -286,10 +286,7 @@ button{
     <div class="field" id="levelField" style="display:none">
       <label>Learner Level</label>
       <select id="learnerLevel">
-        <option>Absolute Beginner</option>
-        <option>A0</option>
         <option>A1</option>
-        <option>A1.1</option>
         <option>A2</option>
         <option>B1</option>
         <option>B2</option>

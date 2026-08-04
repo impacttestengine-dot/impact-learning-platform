@@ -261,7 +261,15 @@ display:none;
 .assign-level-chip{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-size:.8rem;font-weight:800;color:rgba(255,255,255,.7);transition:.15s}
 .assign-level-chip:hover{background:rgba(255,255,255,.13)}
 .assign-level-chip.checked{background:rgba(6,182,212,.22);border-color:rgba(6,182,212,.5);color:#fff}
-.assign-level-chip input{display:none}</style>
+.assign-level-chip input{display:none}
+.learner-picker-list{max-height:160px;overflow-y:auto;margin-top:6px;border-radius:10px;background:rgba(255,255,255,.04);display:none}
+.learner-picker-list.show{display:block}
+.learner-picker-row{padding:9px 12px;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer;transition:.12s}
+.learner-picker-row:hover{background:rgba(255,255,255,.1)}
+.assign-learners-selected{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.assigned-learner-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);font-size:.76rem;font-weight:700;color:#fff}
+.assigned-learner-chip button{background:transparent;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:.8rem;padding:0;line-height:1}
+.assigned-learner-chip button:hover{color:#fca5a5}</style>
 </head>
 
 <body>
@@ -369,6 +377,57 @@ if(assignLevelsGroup){
   assignLevelsGroup.addEventListener("change", function(e){
     const chip = e.target.closest(".assign-level-chip");
     if(chip) chip.classList.toggle("checked", e.target.checked);
+  });
+}
+
+// ── Assign to Specific Learner(s) ──
+let allLearners = [];
+let selectedLearners = [];
+const learnerSearchInput = document.getElementById("learnerSearchInput");
+const learnerPickerList = document.getElementById("learnerPickerList");
+const assignLearnersSelected = document.getElementById("assignLearnersSelected");
+
+async function loadLearnersList(){
+  try{
+    const snap = await firebase.firestore().collection("impactPasskeys").where("role","==","Learner").get();
+    allLearners = snap.docs.map(d=>({name:d.data().name||"Unnamed",level:d.data().level||""}));
+  }catch(e){ console.warn("Could not load learners list:", e); }
+}
+
+function renderSelectedLearnerChips(){
+  assignLearnersSelected.innerHTML = selectedLearners.map(name=>`
+    <span class="assigned-learner-chip">${name}<button type="button" data-remove-learner="${name}">✕</button></span>
+  `).join("");
+}
+
+if(learnerSearchInput){
+  loadLearnersList();
+
+  learnerSearchInput.addEventListener("input", function(){
+    const q = learnerSearchInput.value.trim().toLowerCase();
+    if(!q){ learnerPickerList.classList.remove("show"); learnerPickerList.innerHTML=""; return; }
+    const matches = allLearners.filter(l=>l.name.toLowerCase().includes(q) && !selectedLearners.includes(l.name));
+    if(!matches.length){ learnerPickerList.classList.remove("show"); learnerPickerList.innerHTML=""; return; }
+    learnerPickerList.innerHTML = matches.map(l=>`<div class="learner-picker-row" data-pick-learner="${l.name}">${l.name} <span style="opacity:.5">(${l.level||"no level"})</span></div>`).join("");
+    learnerPickerList.classList.add("show");
+  });
+
+  learnerPickerList.addEventListener("click", function(e){
+    const row = e.target.closest("[data-pick-learner]");
+    if(!row) return;
+    const name = row.dataset.pickLearner;
+    if(!selectedLearners.includes(name)) selectedLearners.push(name);
+    renderSelectedLearnerChips();
+    learnerSearchInput.value = "";
+    learnerPickerList.classList.remove("show");
+    learnerPickerList.innerHTML = "";
+  });
+
+  assignLearnersSelected.addEventListener("click", function(e){
+    const btn = e.target.closest("[data-remove-learner]");
+    if(!btn) return;
+    selectedLearners = selectedLearners.filter(n=>n!==btn.dataset.removeLearner);
+    renderSelectedLearnerChips();
   });
 }
 const db = firebase.firestore();
@@ -1018,7 +1077,7 @@ async function load(){
   const d = doc.data();
   titleInput.value = d.title || d.name || "";
   if(d.level) levelSelect.value = d.level;
-  if(Array.isArray(d.assignedLevels)){d.assignedLevels.forEach(lvl=>{const cb=document.querySelector("#assignLevelsGroup input[value=\""+lvl+"\"]");if(cb){cb.checked=true;cb.closest(".assign-level-chip").classList.add("checked");}});}
+  if(Array.isArray(d.assignedLevels)){d.assignedLevels.forEach(lvl=>{const cb=document.querySelector("#assignLevelsGroup input[value=\""+lvl+"\"]");if(cb){cb.checked=true;cb.closest(".assign-level-chip").classList.add("checked");}});}if(Array.isArray(d.assignedLearners)){selectedLearners=d.assignedLearners.slice();renderSelectedLearnerChips();}
 
   // JSON (v2) plan
   if(d.version===2 && Array.isArray(d.blocks)){

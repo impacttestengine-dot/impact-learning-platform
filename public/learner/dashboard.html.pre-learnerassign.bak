@@ -197,38 +197,29 @@ document.addEventListener("DOMContentLoaded", async function(){
 
   // ── Lessons ──
   try{
-    const [byLevel, byName] = await Promise.all([
-      db.collection("lessonPlans").where("assignedLevels","array-contains",level).get(),
-      db.collection("lessonPlans").where("assignedLearners","array-contains",name).get()
-    ]);
-    const lessonIds = new Set([...byLevel.docs.map(d=>d.id), ...byName.docs.map(d=>d.id)]);
+    const lessonsSnap = await db.collection("lessonPlans").where("assignedLevels","array-contains",level).get();
+    const lessonIds = lessonsSnap.docs.map(d=>d.id);
     const doneLessons = await getCompletedIds("lesson");
-    const doneCount = Array.from(lessonIds).filter(id=>doneLessons.has(id)).length;
-    setBadge("badge-lessons", lessonIds.size, doneCount);
+    const doneCount = lessonIds.filter(id=>doneLessons.has(id)).length;
+    setBadge("badge-lessons", lessonIds.length, doneCount);
   }catch(e){ console.warn("lessons badge failed", e); }
 
   // ── Activities ──
   try{
-    const [byLevel, byName] = await Promise.all([
-      db.collection("activityPlans").where("assignedLevels","array-contains",level).get(),
-      db.collection("activityPlans").where("assignedLearners","array-contains",name).get()
-    ]);
-    const actIds = new Set([...byLevel.docs.map(d=>d.id), ...byName.docs.map(d=>d.id)]);
+    const actSnap = await db.collection("activityPlans").where("assignedLevels","array-contains",level).get();
+    const actIds = actSnap.docs.map(d=>d.id);
     const doneAct = await getCompletedIds("activity");
-    const doneCount = Array.from(actIds).filter(id=>doneAct.has(id)).length;
-    setBadge("badge-activities", actIds.size, doneCount);
+    const doneCount = actIds.filter(id=>doneAct.has(id)).length;
+    setBadge("badge-activities", actIds.length, doneCount);
   }catch(e){ console.warn("activities badge failed", e); }
 
   // ── DELF Mocks (Assessments) ──
   try{
-    const [byLevel, byName] = await Promise.all([
-      db.collection("delfMocks").where("assignedLevels","array-contains",level).get(),
-      db.collection("delfMocks").where("assignedLearners","array-contains",name).get()
-    ]);
-    const delfIds = new Set([...byLevel.docs.map(d=>d.id), ...byName.docs.map(d=>d.id)]);
+    const delfSnap = await db.collection("delfMocks").where("assignedLevels","array-contains",level).get();
+    const delfIds = delfSnap.docs.map(d=>d.id);
     const doneDelf = await getCompletedIds("delfMock");
-    const doneCount = Array.from(delfIds).filter(id=>doneDelf.has(id)).length;
-    setBadge("badge-assessments", delfIds.size, doneCount);
+    const doneCount = delfIds.filter(id=>doneDelf.has(id)).length;
+    setBadge("badge-assessments", delfIds.length, doneCount);
   }catch(e){ console.warn("assessments badge failed", e); }
 });
 </script>

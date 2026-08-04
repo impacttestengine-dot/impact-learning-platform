@@ -166,17 +166,27 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
   <div>
     <label class="settings-label">Level</label>
     <select class="settings-select" id="mockLevel">
-      <option>A1</option><option>A2</option><option>B1</option><option>B2</option>
+      <option>Absolute Beginner</option>
+      <option>A0</option><option>A1</option><option>A1.1</option>
+      <option>A2</option><option>B1</option><option>B2</option>
     </select>
   </div>
   <div>
     <label class="settings-label">Assign to Learner Level(s)</label>
     <div class="assign-levels-group" id="assignLevelsGroup">
+      <label class="assign-level-chip"><input type="checkbox" value="Absolute Beginner">Abs. Beginner</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A0">A0</label>
       <label class="assign-level-chip"><input type="checkbox" value="A1">A1</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A1.1">A1.1</label>
       <label class="assign-level-chip"><input type="checkbox" value="A2">A2</label>
       <label class="assign-level-chip"><input type="checkbox" value="B1">B1</label>
       <label class="assign-level-chip"><input type="checkbox" value="B2">B2</label>
     </div>
+
+    <label class="settings-label" style="margin-top:14px">Assign to Specific Learner(s)</label>
+    <input type="text" class="settings-input" id="learnerSearchInput" placeholder="Search learner by name..." autocomplete="off">
+    <div class="learner-picker-list" id="learnerPickerList"></div>
+    <div class="assign-learners-selected" id="assignLearnersSelected"></div>
   </div>
   <div class="settings-divider"></div>
   <button class="ctrl-btn primary" id="saveBtn" type="button">💾  Save</button>
@@ -201,6 +211,57 @@ if(assignLevelsGroup){
   assignLevelsGroup.addEventListener("change", function(e){
     const chip = e.target.closest(".assign-level-chip");
     if(chip) chip.classList.toggle("checked", e.target.checked);
+  });
+}
+
+// ── Assign to Specific Learner(s) ──
+let allLearners = [];
+let selectedLearners = [];
+const learnerSearchInput = document.getElementById("learnerSearchInput");
+const learnerPickerList = document.getElementById("learnerPickerList");
+const assignLearnersSelected = document.getElementById("assignLearnersSelected");
+
+async function loadLearnersList(){
+  try{
+    const snap = await firebase.firestore().collection("impactPasskeys").where("role","==","Learner").get();
+    allLearners = snap.docs.map(d=>({name:d.data().name||"Unnamed",level:d.data().level||""}));
+  }catch(e){ console.warn("Could not load learners list:", e); }
+}
+
+function renderSelectedLearnerChips(){
+  assignLearnersSelected.innerHTML = selectedLearners.map(name=>`
+    <span class="assigned-learner-chip">${name}<button type="button" data-remove-learner="${name}">✕</button></span>
+  `).join("");
+}
+
+if(learnerSearchInput){
+  loadLearnersList();
+
+  learnerSearchInput.addEventListener("input", function(){
+    const q = learnerSearchInput.value.trim().toLowerCase();
+    if(!q){ learnerPickerList.classList.remove("show"); learnerPickerList.innerHTML=""; return; }
+    const matches = allLearners.filter(l=>l.name.toLowerCase().includes(q) && !selectedLearners.includes(l.name));
+    if(!matches.length){ learnerPickerList.classList.remove("show"); learnerPickerList.innerHTML=""; return; }
+    learnerPickerList.innerHTML = matches.map(l=>`<div class="learner-picker-row" data-pick-learner="${l.name}">${l.name} <span style="opacity:.5">(${l.level||"no level"})</span></div>`).join("");
+    learnerPickerList.classList.add("show");
+  });
+
+  learnerPickerList.addEventListener("click", function(e){
+    const row = e.target.closest("[data-pick-learner]");
+    if(!row) return;
+    const name = row.dataset.pickLearner;
+    if(!selectedLearners.includes(name)) selectedLearners.push(name);
+    renderSelectedLearnerChips();
+    learnerSearchInput.value = "";
+    learnerPickerList.classList.remove("show");
+    learnerPickerList.innerHTML = "";
+  });
+
+  assignLearnersSelected.addEventListener("click", function(e){
+    const btn = e.target.closest("[data-remove-learner]");
+    if(!btn) return;
+    selectedLearners = selectedLearners.filter(n=>n!==btn.dataset.removeLearner);
+    renderSelectedLearnerChips();
   });
 }
 const canvas = document.getElementById("canvas");
@@ -492,6 +553,7 @@ async function save(){
       track: trackSelect.value,
       level: levelSelect.value,
       assignedLevels,
+      assignedLearners:selectedLearners,
       blocks: blocks,
       version: 1,
       updatedAt: new Date().toISOString()
@@ -555,7 +617,7 @@ async function load(){
   titleInput.value = d.title || "";
   if(d.track) trackSelect.value = d.track;
   if(d.level) levelSelect.value = d.level;
-  if(Array.isArray(d.assignedLevels)){d.assignedLevels.forEach(lvl=>{const cb=document.querySelector("#assignLevelsGroup input[value=\""+lvl+"\"]");if(cb){cb.checked=true;cb.closest(".assign-level-chip").classList.add("checked");}});}
+  if(Array.isArray(d.assignedLevels)){d.assignedLevels.forEach(lvl=>{const cb=document.querySelector("#assignLevelsGroup input[value=\""+lvl+"\"]");if(cb){cb.checked=true;cb.closest(".assign-level-chip").classList.add("checked");}});}if(Array.isArray(d.assignedLearners)){selectedLearners=d.assignedLearners.slice();renderSelectedLearnerChips();}
   if(Array.isArray(d.blocks)) rebuildFromBlocks(d.blocks);
 }
 

@@ -94,7 +94,12 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 
 @media(max-width:1024px){.workspace{grid-template-columns:230px 1fr 210px}}
 @media(max-width:800px){.workspace{grid-template-columns:1fr;height:auto}.blocks-panel,.settings-panel{height:auto;max-height:400px}}
-</style>
+
+.assign-levels-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.assign-level-chip{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-size:.8rem;font-weight:800;color:rgba(255,255,255,.7);transition:.15s}
+.assign-level-chip:hover{background:rgba(255,255,255,.13)}
+.assign-level-chip.checked{background:rgba(217,119,6,.22);border-color:rgba(217,119,6,.5);color:#fff}
+.assign-level-chip input{display:none}</style>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
@@ -164,6 +169,15 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
       <option>A1</option><option>A2</option><option>B1</option><option>B2</option>
     </select>
   </div>
+  <div>
+    <label class="settings-label">Assign to Learner Level(s)</label>
+    <div class="assign-levels-group" id="assignLevelsGroup">
+      <label class="assign-level-chip"><input type="checkbox" value="A1">A1</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A2">A2</label>
+      <label class="assign-level-chip"><input type="checkbox" value="B1">B1</label>
+      <label class="assign-level-chip"><input type="checkbox" value="B2">B2</label>
+    </div>
+  </div>
   <div class="settings-divider"></div>
   <button class="ctrl-btn primary" id="saveBtn" type="button">💾  Save</button>
   <button class="ctrl-btn" id="newBtn" type="button">＋  New Exam</button>
@@ -182,6 +196,13 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 document.addEventListener("DOMContentLoaded", function(){
 const db = firebase.firestore();
 const storage = firebase.storage();
+const assignLevelsGroup = document.getElementById("assignLevelsGroup");
+if(assignLevelsGroup){
+  assignLevelsGroup.addEventListener("change", function(e){
+    const chip = e.target.closest(".assign-level-chip");
+    if(chip) chip.classList.toggle("checked", e.target.checked);
+  });
+}
 const canvas = document.getElementById("canvas");
 const canvasEmpty = document.getElementById("canvasEmpty");
 const titleInput = document.getElementById("mockTitle");
@@ -465,10 +486,12 @@ function rebuildFromBlocks(blocks){
 async function save(){
   try{
     const blocks = serializeBlocks();
+    const assignedLevels=Array.from(document.querySelectorAll("#assignLevelsGroup input:checked")).map(c=>c.value);
     const payload = {
       title: titleInput.value.trim() || "Untitled Mock Exam",
       track: trackSelect.value,
       level: levelSelect.value,
+      assignedLevels,
       blocks: blocks,
       version: 1,
       updatedAt: new Date().toISOString()
@@ -532,6 +555,7 @@ async function load(){
   titleInput.value = d.title || "";
   if(d.track) trackSelect.value = d.track;
   if(d.level) levelSelect.value = d.level;
+  if(Array.isArray(d.assignedLevels)){d.assignedLevels.forEach(lvl=>{const cb=document.querySelector("#assignLevelsGroup input[value=\""+lvl+"\"]");if(cb){cb.checked=true;cb.closest(".assign-level-chip").classList.add("checked");}});}
   if(Array.isArray(d.blocks)) rebuildFromBlocks(d.blocks);
 }
 
