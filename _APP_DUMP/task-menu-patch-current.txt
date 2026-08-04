@@ -30,10 +30,6 @@
 
     const menu = kpiItem.parentElement;
 
-    // Remove Tasks, Team Meetings (permanently), and Recycle Bin so they
-    // can be re-added fresh below without duplicating. Team Meetings is
-    // intentionally NOT re-added — the feature has been fully removed
-    // from the platform.
     Array.from(menu.children).forEach(el => {
       const text = (el.textContent || "").trim();
       if(text === "Tasks" || text === "Team Meetings" || text === "Recycle Bin"){
@@ -62,9 +58,11 @@
 
     if(operations){
       menu.insertBefore(makeMenuLink("Tasks","/teacher/tasks.html",kpiItem), operations);
+      menu.insertBefore(makeMenuLink("Team Meetings","/teacher/team-meetings.html",kpiItem), operations.nextSibling);
       menu.appendChild(makeMenuLink("Recycle Bin","/teacher/recycle-bin.html",kpiItem));
     }else{
       menu.appendChild(makeMenuLink("Tasks","/teacher/tasks.html",kpiItem));
+      menu.appendChild(makeMenuLink("Team Meetings","/teacher/team-meetings.html",kpiItem));
       menu.appendChild(makeMenuLink("Recycle Bin","/teacher/recycle-bin.html",kpiItem));
     }
   }
@@ -74,3 +72,4 @@
   setTimeout(addMenuItems,1000);
   setTimeout(addMenuItems,1800);
 })();
+
