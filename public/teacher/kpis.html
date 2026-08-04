@@ -4,62 +4,102 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Team KPIs | Impact</title>
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
-.page{position:relative;z-index:2;width:min(1080px,92vw);margin:auto;padding:110px 0 90px}
-.nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
+.nav{position:fixed;top:24px;left:28px;z-index:50}
 .nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
-.hero{text-align:center;margin-bottom:32px}
-.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
-.hero p{color:rgba(255,255,255,.65);font-weight:800}
 
-.personnel-selector{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:36px}
-.personnel-chip{padding:11px 20px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.65);font-weight:800;font-size:.86rem;cursor:pointer;transition:.18s}
-.personnel-chip:hover{background:rgba(255,255,255,.1)}
-.personnel-chip.active{background:rgba(99,179,237,.22);border-color:rgba(99,179,237,.5);color:#90cdf4}
+.layout{position:relative;z-index:2;display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
 
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:20px}
-.kpi-card{border-radius:26px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px);padding:24px}
-.kpi-card-cat{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:8px}
-.kpi-card h3{font-family:"Sorts Mill Goudy",serif;font-size:1.4rem;font-weight:400;margin-bottom:12px}
-.kpi-value-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
-.kpi-value{font-family:"Sorts Mill Goudy",serif;font-size:2.4rem;font-weight:400}
-.kpi-target{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.4)}
-.kpi-bar-track{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:8px}
-.kpi-bar-fill{height:100%;border-radius:999px;transition:width .5s ease}
-.kpi-bar-fill.good{background:linear-gradient(90deg,#34d399,#10b981)}
-.kpi-bar-fill.warn{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
-.kpi-bar-fill.bad{background:linear-gradient(90deg,#f87171,#ef4444)}
-.kpi-desc{font-size:.78rem;color:rgba(255,255,255,.5);font-weight:700;line-height:1.5}
-.kpi-source{font-size:.68rem;color:rgba(255,255,255,.3);font-weight:700;margin-top:8px}
+/* SIDEBAR */
+.sidebar{padding:110px 20px 40px;border-right:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02)}
+.sidebar-title{font-family:"Sorts Mill Goudy",serif;font-size:1.5rem;font-weight:400;margin-bottom:4px;padding:0 8px}
+.sidebar-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:24px;padding:0 8px}
+.person-list{display:flex;flex-direction:column;gap:4px}
+.person-item{display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:14px;cursor:pointer;transition:.15s;border:1px solid transparent}
+.person-item:hover{background:rgba(255,255,255,.05)}
+.person-item.active{background:rgba(99,179,237,.14);border-color:rgba(99,179,237,.3)}
+.person-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:900;color:#fff;flex-shrink:0}
+.person-name{font-size:.86rem;font-weight:800;color:rgba(255,255,255,.85)}
+.person-item.active .person-name{color:#90cdf4}
+
+/* MAIN CONTENT */
+.content{padding:110px 40px 80px;max-width:1100px}
+@media(max-width:900px){.content{padding:100px 20px 60px}}
+.content-header{margin-bottom:32px}
+.content-eyebrow{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:8px}
+.content-title{font-family:"Sorts Mill Goudy",serif;font-size:clamp(2.2rem,4vw,3.2rem);font-weight:400}
+
+/* HERO STATS ROW */
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+@media(max-width:800px){.hero-stats{grid-template-columns:repeat(2,1fr)}}
+.hero-stat{border-radius:24px;padding:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden}
+.hero-stat::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
+.hero-stat.good::before{background:linear-gradient(90deg,#34d399,#10b981)}
+.hero-stat.warn::before{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+.hero-stat.bad::before{background:linear-gradient(90deg,#f87171,#ef4444)}
+.hero-stat-label{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-bottom:10px}
+.hero-stat-value{font-family:"Sorts Mill Goudy",serif;font-size:2.6rem;font-weight:400;line-height:1}
+.hero-stat-target{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.35);margin-top:6px}
+
+/* DETAIL CARDS with mini bar chart */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:800px){.detail-grid{grid-template-columns:1fr}}
+.detail-card{border-radius:24px;padding:24px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1)}
+.detail-card-cat{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:6px}
+.detail-card h3{font-family:"Sorts Mill Goudy",serif;font-size:1.3rem;font-weight:400;margin-bottom:14px}
+.bar-chart-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-chart-label{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);width:64px;flex-shrink:0;text-align:right}
+.bar-chart-track{flex:1;height:20px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden;position:relative}
+.bar-chart-fill{height:100%;border-radius:8px;transition:width .6s cubic-bezier(.2,.8,.3,1)}
+.bar-chart-fill.good{background:linear-gradient(90deg,#34d399,#10b981)}
+.bar-chart-fill.warn{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+.bar-chart-fill.bad{background:linear-gradient(90deg,#f87171,#ef4444)}
+.bar-chart-value{font-size:.7rem;font-weight:900;color:rgba(255,255,255,.6);width:38px;flex-shrink:0}
+.detail-desc{font-size:.78rem;color:rgba(255,255,255,.5);font-weight:600;line-height:1.5;margin-top:14px}
+.detail-source{font-size:.66rem;color:rgba(255,255,255,.3);font-weight:700;margin-top:6px}
+
+/* Radial ring for the primary combined score */
+.ring-card{grid-column:1/-1;display:flex;align-items:center;gap:32px;border-radius:28px;padding:28px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);margin-bottom:16px}
+@media(max-width:700px){.ring-card{flex-direction:column;text-align:center}}
+.ring-wrap{flex-shrink:0}
+.ring-label{font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-bottom:6px}
+.ring-name{font-family:"Sorts Mill Goudy",serif;font-size:1.8rem;font-weight:400;margin-bottom:8px}
+.ring-desc{font-size:.84rem;color:rgba(255,255,255,.55);font-weight:600;line-height:1.6}
 
 .empty-state{text-align:center;padding:60px;color:rgba(255,255,255,.35);font-weight:700}
-.match-note{text-align:center;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.3);margin-bottom:20px}
+.match-note{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:6px}
 </style>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
 <nav class="nav"><a href="/teacher/dashboard.html">⌘</a></nav>
 
-<main class="page">
-<section class="hero">
-<h1>Team KPIs</h1>
-<p>Academic team performance breakdown — select a team member to view their KPIs.</p>
-</section>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Team KPIs</div>
+    <div class="sidebar-sub">Select a team member</div>
+    <div class="person-list" id="personnelSelector">
+      <div class="empty-state" style="padding:20px 0">Loading...</div>
+    </div>
+  </aside>
 
-<div class="personnel-selector" id="personnelSelector">
-  <div class="empty-state" style="padding:20px">Loading personnel...</div>
+  <main class="content">
+    <div class="content-header">
+      <p class="content-eyebrow">Performance Dashboard</p>
+      <h1 class="content-title" id="personHeading">—</h1>
+      <p class="match-note" id="matchNote"></p>
+    </div>
+
+    <div id="ringWrap"></div>
+    <div class="hero-stats" id="heroStats"></div>
+    <div class="detail-grid" id="detailGrid"></div>
+  </main>
 </div>
-
-<p class="match-note" id="matchNote"></p>
-
-<div class="kpi-grid" id="kpiGrid">
-  <div class="empty-state">Select a team member above to view their KPIs.</div>
-</div>
-</main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
@@ -68,28 +108,14 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 document.addEventListener("DOMContentLoaded", async()=>{
   const db=firebase.firestore();
   const selector=document.getElementById("personnelSelector");
-  const grid=document.getElementById("kpiGrid");
+  const heading=document.getElementById("personHeading");
+  const ringWrap=document.getElementById("ringWrap");
+  const heroStats=document.getElementById("heroStats");
+  const detailGrid=document.getElementById("detailGrid");
   const matchNote=document.getElementById("matchNote");
 
-  function barClass(pct){
-    if(pct>=80) return "good";
-    if(pct>=50) return "warn";
-    return "bad";
-  }
+  function tone(pct){ return pct>=80?"good":pct>=50?"warn":"bad"; }
 
-  // ── FUZZY NAME MATCHING ──────────────────────────────────────
-  // Passkey names (e.g. "Prosper") don't always exactly match the
-  // full name used in class/task records (e.g. "Yormesah Prosper").
-  // Firestore can't do partial-string queries, so instead of an
-  // exact where("teacher","==",name) filter, we pull ALL records
-  // for the collection once and match client-side: a record counts
-  // as belonging to this person if either name contains the other
-  // (case-insensitive, trimmed). This correctly links "Prosper" to
-  // "Yormesah Prosper" without renaming anyone's passkey.
-  //
-  // Tradeoff: if two different people share a short overlapping name
-  // (e.g. "Anna" vs "Anna Smith" AND "Anna Jones"), this could match
-  // both. Acceptable for small teams; flagged here for awareness.
   function namesMatch(passkeyName, recordName){
     if(!passkeyName || !recordName) return false;
     const a = String(passkeyName).trim().toLowerCase();
@@ -98,24 +124,18 @@ document.addEventListener("DOMContentLoaded", async()=>{
     return a === b || b.includes(a) || a.includes(b);
   }
 
-  // ── PUNCTUALITY ──────────────────────────────────────────────
   function nearestMarkInfo(startedAt){
     const d = new Date(startedAt);
     const minutes = d.getMinutes();
     const lastMark = minutes < 30 ? 0 : 30;
     const nextMark = lastMark === 0 ? 30 : 60;
     const minutesUntilNextMark = nextMark - minutes;
-
     if(minutesUntilNextMark <= 5){
       const inferred = new Date(d);
-      if(nextMark === 60){
-        inferred.setHours(inferred.getHours()+1, 0, 0, 0);
-      }else{
-        inferred.setMinutes(30, 0, 0);
-      }
+      if(nextMark === 60){ inferred.setHours(inferred.getHours()+1, 0, 0, 0); }
+      else{ inferred.setMinutes(30, 0, 0); }
       return inferred;
     }
-
     const inferred = new Date(d);
     inferred.setMinutes(lastMark, 0, 0);
     return inferred;
@@ -124,45 +144,27 @@ document.addEventListener("DOMContentLoaded", async()=>{
   function computePunctuality(classes){
     const withStart = classes.filter(x=>x.startedAt);
     if(!withStart.length) return { pct: 0, count: 0 };
-
-    let onTime = 0;
-    let counted = 0;
-
+    let onTime = 0, counted = 0;
     withStart.forEach(x=>{
       const actual = new Date(x.startedAt);
       let agreedTime = null;
-
       if(x.time){
         const [schedH, schedM] = String(x.time).split(":").map(Number);
         if(!isNaN(schedH) && !isNaN(schedM)){
           const scheduled = new Date(actual);
           scheduled.setHours(schedH, schedM, 0, 0);
-          const diffFromSchedule = Math.abs(actual - scheduled) / 60000;
-          if(diffFromSchedule <= 35){
-            agreedTime = scheduled;
-          }
+          if(Math.abs(actual - scheduled) / 60000 <= 35) agreedTime = scheduled;
         }
       }
-
-      if(!agreedTime){
-        agreedTime = nearestMarkInfo(x.startedAt);
-      }
-
+      if(!agreedTime) agreedTime = nearestMarkInfo(x.startedAt);
       const diffMinutes = (actual - agreedTime) / 60000;
       counted++;
       if(diffMinutes <= 5) onTime++;
     });
-
     return { pct: counted ? Math.round((onTime/counted)*100) : 0, count: counted };
   }
 
-  // ── DATA CACHE ────────────────────────────────────────────────
-  // Fetch each collection ONCE (not per-person) since we now need
-  // to scan all records client-side for fuzzy matching.
-  let allClassTracker = null;
-  let allTasks = null;
-  let allCompletions = null;
-  let allProgress = null;
+  let allClassTracker=null, allTasks=null, allCompletions=null, allProgress=null;
 
   async function loadAllData(){
     const [trackerSnap, tasksSnap, completionsSnap, progressSnap] = await Promise.all([
@@ -212,29 +214,89 @@ document.addEventListener("DOMContentLoaded", async()=>{
     };
   }
 
-  function renderKpis(name, k){
-    const cards = [
-      {cat:"Engagement", title:"Student Participation", value:k.participation+"%", pct:k.participation, target:"≥80%", desc:"Average % of lesson blocks where the student actively participated.", source:"Class Tracker · "+k.classCount+" classes"},
-      {cat:"Learning Outcomes", title:"Student Progress Rate", value:k.progressRate+"%", pct:k.progressRate, target:"≥65%", desc:"Average score across activities, homework, and DELF mocks this teacher created and personally marked.", source:"Marking · "+k.gradedCount+" graded"},
-      {cat:"Professionalism", title:"Punctuality", value:k.punctuality+"%", pct:k.punctuality, target:"100%", desc:"Classes started within 5 minutes of their agreed time — real schedule when it matches, or the nearest :00/:30 mark when the class was held off-schedule.", source:"Class Tracker · "+k.punctualityCount+" classes"},
-      {cat:"Professionalism", title:"Task Completion", value:k.taskCompletion+"%", pct:k.taskCompletion, target:"100%", desc:"Administrative and teaching tasks completed on time.", source:"Tasks · "+k.taskCount+" assigned"},
-      {cat:"Student Satisfaction", title:"Satisfaction Rating", value:k.satisfaction.toFixed(1)+"/5", pct:(k.satisfaction/5)*100, target:"≥4/5", desc:"Average learner satisfaction rating from feedback.", source:"Feedback Records"},
-      {cat:"Teaching Quality", title:"Clarity of Instruction", value:k.quality.toFixed(1)+"/5", pct:(k.quality/5)*100, target:"≥4/5", desc:"Average learner rating on clarity of explanations.", source:"Feedback Records"}
-    ];
+  // ── RADIAL RING (SVG, no library needed) ──
+  function renderRing(overallPct){
+    const r = 42, circumference = 2*Math.PI*r;
+    const offset = circumference - (overallPct/100)*circumference;
+    const color = overallPct>=80 ? "#10b981" : overallPct>=50 ? "#f59e0b" : "#ef4444";
+    return `
+      <svg width="110" height="110" viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
+        <circle cx="55" cy="55" r="${r}" fill="none" stroke="${color}" stroke-width="10"
+          stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+          stroke-linecap="round" transform="rotate(-90 55 55)"
+          style="transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.3,1)"/>
+        <text x="55" y="62" text-anchor="middle" font-family="Sorts Mill Goudy, serif" font-size="26" fill="#fff">${overallPct}%</text>
+      </svg>
+    `;
+  }
 
-    grid.innerHTML = cards.map(c=>`
-      <div class="kpi-card">
-        <div class="kpi-card-cat">${c.cat}</div>
-        <h3>${c.title}</h3>
-        <div class="kpi-value-row">
-          <span class="kpi-value">${c.value}</span>
-          <span class="kpi-target">Target ${c.target}</span>
+  function renderKpis(name, k){
+    heading.textContent = name;
+
+    const overall = Math.round((k.participation + k.progressRate + k.punctuality + k.taskCompletion) / 4);
+
+    ringWrap.innerHTML = `
+      <div class="ring-card">
+        <div class="ring-wrap">${renderRing(overall)}</div>
+        <div>
+          <div class="ring-label">Overall Performance</div>
+          <div class="ring-name">${overall >= 80 ? "Excellent" : overall >= 50 ? "On Track" : "Needs Attention"}</div>
+          <p class="ring-desc">Blended score across participation, progress rate, punctuality, and task completion. ${k.classCount} classes and ${k.taskCount} tasks tracked for this period.</p>
         </div>
-        <div class="kpi-bar-track"><div class="kpi-bar-fill ${barClass(c.pct)}" style="width:${Math.min(c.pct,100)}%"></div></div>
-        <p class="kpi-desc">${c.desc}</p>
-        <p class="kpi-source">${c.source}</p>
       </div>
-    `).join("");
+    `;
+
+    heroStats.innerHTML = `
+      <div class="hero-stat ${tone(k.participation)}"><div class="hero-stat-label">Participation</div><div class="hero-stat-value">${k.participation}%</div><div class="hero-stat-target">Target ≥80%</div></div>
+      <div class="hero-stat ${tone(k.progressRate)}"><div class="hero-stat-label">Progress Rate</div><div class="hero-stat-value">${k.progressRate}%</div><div class="hero-stat-target">Target ≥65%</div></div>
+      <div class="hero-stat ${tone(k.punctuality)}"><div class="hero-stat-label">Punctuality</div><div class="hero-stat-value">${k.punctuality}%</div><div class="hero-stat-target">Target 100%</div></div>
+      <div class="hero-stat ${tone(k.taskCompletion)}"><div class="hero-stat-label">Task Completion</div><div class="hero-stat-value">${k.taskCompletion}%</div><div class="hero-stat-target">Target 100%</div></div>
+    `;
+
+    const satPct = (k.satisfaction/5)*100;
+    const qualPct = (k.quality/5)*100;
+
+    detailGrid.innerHTML = `
+      <div class="detail-card">
+        <div class="detail-card-cat">Student Satisfaction</div>
+        <h3>Feedback Ratings</h3>
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">Satisfaction</span>
+          <div class="bar-chart-track"><div class="bar-chart-fill ${tone(satPct)}" style="width:${satPct}%"></div></div>
+          <span class="bar-chart-value">${k.satisfaction.toFixed(1)}/5</span>
+        </div>
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">Clarity</span>
+          <div class="bar-chart-track"><div class="bar-chart-fill ${tone(qualPct)}" style="width:${qualPct}%"></div></div>
+          <span class="bar-chart-value">${k.quality.toFixed(1)}/5</span>
+        </div>
+        <p class="detail-desc">Average learner ratings from feedback records.</p>
+        <p class="detail-source">Feedback Records</p>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-card-cat">Breakdown</div>
+        <h3>Core Metrics</h3>
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">Class count</span>
+          <div class="bar-chart-track"><div class="bar-chart-fill good" style="width:${Math.min(k.classCount*10,100)}%"></div></div>
+          <span class="bar-chart-value">${k.classCount}</span>
+        </div>
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">Graded</span>
+          <div class="bar-chart-track"><div class="bar-chart-fill good" style="width:${Math.min(k.gradedCount*10,100)}%"></div></div>
+          <span class="bar-chart-value">${k.gradedCount}</span>
+        </div>
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">Tasks</span>
+          <div class="bar-chart-track"><div class="bar-chart-fill good" style="width:${Math.min(k.taskCount*10,100)}%"></div></div>
+          <span class="bar-chart-value">${k.taskCount}</span>
+        </div>
+        <p class="detail-desc">Punctuality measured across ${k.punctualityCount} classes with timing data — real schedule when it matches, or the nearest :00/:30 mark when held off-schedule.</p>
+        <p class="detail-source">Class Tracker · Marking · Tasks</p>
+      </div>
+    `;
   }
 
   async function loadPersonnel(){
@@ -243,29 +305,36 @@ document.addEventListener("DOMContentLoaded", async()=>{
       const people = snap.docs.map(d=>d.data()).filter(p=>p.name);
 
       if(!people.length){
-        selector.innerHTML = '<div class="empty-state" style="padding:20px">No personnel found. Create passkeys in Configuration first.</div>';
+        selector.innerHTML = '<div class="empty-state" style="padding:20px 0">No personnel found.</div>';
         return;
       }
 
       await loadAllData();
 
-      selector.innerHTML = people.map(p=>`<button class="personnel-chip" data-name="${p.name}" type="button">${p.name}</button>`).join("");
-      matchNote.textContent = "Matched by name — works even if class records use a fuller name than the passkey.";
+      selector.innerHTML = people.map((p,i)=>`
+        <div class="person-item${i===0?' active':''}" data-name="${p.name}">
+          <div class="person-avatar">${(p.name||"?")[0].toUpperCase()}</div>
+          <div class="person-name">${p.name}</div>
+        </div>
+      `).join("");
+      matchNote.textContent = "Matched by name — works even with shortened passkey names.";
 
       selector.addEventListener("click", async function(e){
-        const chip = e.target.closest(".personnel-chip");
-        if(!chip) return;
-        document.querySelectorAll(".personnel-chip").forEach(c=>c.classList.remove("active"));
-        chip.classList.add("active");
-        grid.innerHTML = '<div class="empty-state">Loading KPIs...</div>';
-        const k = await computeKpisFor(chip.dataset.name);
-        renderKpis(chip.dataset.name, k);
+        const item = e.target.closest(".person-item");
+        if(!item) return;
+        document.querySelectorAll(".person-item").forEach(c=>c.classList.remove("active"));
+        item.classList.add("active");
+        heading.textContent = "Loading...";
+        const k = await computeKpisFor(item.dataset.name);
+        renderKpis(item.dataset.name, k);
       });
 
-      selector.querySelector(".personnel-chip").click();
+      const first = selector.querySelector(".person-item");
+      const k = await computeKpisFor(first.dataset.name);
+      renderKpis(first.dataset.name, k);
     }catch(e){
       console.error(e);
-      selector.innerHTML = '<div class="empty-state" style="padding:20px">Could not load personnel.</div>';
+      selector.innerHTML = '<div class="empty-state" style="padding:20px 0">Could not load personnel.</div>';
     }
   }
 
