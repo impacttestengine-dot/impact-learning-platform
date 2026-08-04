@@ -84,7 +84,7 @@ body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif
 <section class="hero"><h1>Billing</h1><p>Learners ready for invoicing, based on completed groups of 4 billable classes.</p></section>
 
 <div class="cutoff-banner">
-  <span class="cutoff-text">Billing continues from where the manual process left off — cutoff: <b id="cutoffLabel">Loading...</b></span>
+  <span class="cutoff-text">Billing continues from where the manual process left off Â· cutoff: <b id="cutoffLabel">Loading...</b></span>
 </div>
 
 <p class="section-label">? Ready to Invoice</p>
@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         const fourthClassDate = new Date(groupClasses[3].startedAt || groupClasses[3].createdAt);
 
         // Only groups whose 4th (completing) class happened AFTER the cutoff
-        // are new/unbilled — anything fully before cutoff was handled manually.
+        // are new/unbilled Â· anything fully before cutoff was handled manually.
         if(fourthClassDate > cutoffDate){
           const groupKey = learner + "|" + fourthClassDate.toISOString();
           if(!billedGroups.has(groupKey)){
@@ -241,10 +241,10 @@ document.addEventListener("DOMContentLoaded", async function(){
       card.innerHTML = `
         <div class="ready-top">
           <div class="ready-name">${group.learner}</div>
-          <span class="ready-badge">4/4 · Invoice Ready</span>
+          <span class="ready-badge">4/4 Â· Invoice Ready</span>
         </div>
-        <div class="ready-meta">Level: ${group.level || "—"} · Teacher: ${group.teacher || "—"}</div>
-        <div class="ready-dates">${dates.join(" · ")}</div>
+        <div class="ready-meta">Level: ${group.level || "Â·"} Â· Teacher: ${group.teacher || "Â·"}</div>
+        <div class="ready-dates">${dates.join(" Â· ")}</div>
         <div class="ready-actions">
           <button class="btn primary" data-idx="${idx}" data-action="preview">Preview Invoice</button>
           <button class="btn" data-idx="${idx}" data-action="download">Download Word Doc</button>
@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     pendingGrid.innerHTML = list.map(p=>`
       <div class="pending-card">
         <div class="pending-name">${p.learner}</div>
-        <div class="pending-count">${p.count}/4 classes · ${p.level||"—"}</div>
+        <div class="pending-count">${p.count}/4 classes Â· ${p.level||"Â·"}</div>
         <div class="mini-bar"><div class="mini-bar-fill" style="width:${(p.count/4)*100}%"></div></div>
       </div>
     `).join("");
@@ -303,14 +303,14 @@ document.addEventListener("DOMContentLoaded", async function(){
         <thead><tr><th>Level</th><th>Bill Period</th><th>Description</th><th>No of classes held</th><th>Fee</th><th>Amount</th></tr></thead>
         <tbody>
           <tr>
-            <td>${group.level||"—"}</td>
+            <td>${group.level||"Â·"}</td>
             <td>1</td>
             <td>4 classes is equivalent to one bill period.</td>
             <td>4</td>
             <td class="fee-input"><input type="text" id="feeInput" placeholder="0.00"></td>
-            <td id="amountDisplay">—</td>
+            <td id="amountDisplay">Â·</td>
           </tr>
-          <tr><td colspan="4" style="text-align:right;font-weight:800">Total</td><td colspan="2" id="totalDisplay" style="font-weight:800">—</td></tr>
+          <tr><td colspan="4" style="text-align:right;font-weight:800">Total</td><td colspan="2" id="totalDisplay" style="font-weight:800">Â·</td></tr>
         </tbody>
       </table>
       <div class="inv-dates">
@@ -340,8 +340,8 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     document.getElementById("feeInput").addEventListener("input", (e)=>{
       const fee = e.target.value.trim();
-      document.getElementById("amountDisplay").textContent = fee ? "GHC " + fee : "—";
-      document.getElementById("totalDisplay").textContent = fee ? "GHC " + fee : "—";
+      document.getElementById("amountDisplay").textContent = fee ? "GHC " + fee : "Â·";
+      document.getElementById("totalDisplay").textContent = fee ? "GHC " + fee : "Â·";
     });
 
     document.getElementById("closeModalBtn").onclick = ()=> modalOverlay.classList.remove("open");
@@ -414,7 +414,7 @@ document.addEventListener("DOMContentLoaded", async function(){
                   cell("Amount",{fill:BRAND,bold:true,color:"FFFFFF",align:AlignmentType.CENTER,width:1000})
                 ]}),
                 new TableRow({children:[
-                  cell(group.level||"—",{fill:LIGHT_BG,align:AlignmentType.CENTER,width:1600}),
+                  cell(group.level||"Â·",{fill:LIGHT_BG,align:AlignmentType.CENTER,width:1600}),
                   cell("1",{fill:LIGHT_BG,align:AlignmentType.CENTER,width:1400}),
                   cell("4 classes is equivalent to one bill period.",{width:4000}),
                   cell("4",{align:AlignmentType.CENTER,width:1600}),

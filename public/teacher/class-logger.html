@@ -217,7 +217,7 @@ body.modal-locked{
       <label>Learner</label>
       <input id="m_learner" type="text" placeholder="Learner name" list="m_learner_list" autocomplete="off">
       <datalist id="m_learner_list"></datalist>
-      <div class="field-hint" id="m_learner_hint">Matched to existing learner — will join their tracker.</div>
+      <div class="field-hint" id="m_learner_hint">Matched to existing learner Â· will join their tracker.</div>
     </div>
 
     <div class="field-group">
@@ -338,7 +338,7 @@ let allLogs=[];
 let knownLearners=[];
 
 const BILLABLE_MINUTES_THRESHOLD=20;
-const FIRST_BILLING_START=new Date(2026,5,4); // 04 June 2026 — fixed for testing
+const FIRST_BILLING_START=new Date(2026,5,4); // 04 June 2026 Â· fixed for testing
 
 function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
 function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
@@ -424,7 +424,7 @@ function render(logs){
       card.innerHTML=`
         <div class="pill">${session}</div>
         <div class="info">
-          <div class="top">Level: ${x.level||""} · Session ${session} · Teacher: ${x.teacher||""} · Room: ${x.meetRoom||x.platform||""}</div>
+          <div class="top">Level: ${x.level||""} Â· Session ${session} Â· Teacher: ${x.teacher||""} Â· Room: ${x.meetRoom||x.platform||""}</div>
           <div>Started: ${x.startedAtText||x.startedAt||""}</div>
           <div>Ended: ${x.endedAtText||x.endedAt||"Not ended"}</div>
           <div>Duration: ${x.minutesSpent||x.durationMinutes||0} minute(s)</div>
