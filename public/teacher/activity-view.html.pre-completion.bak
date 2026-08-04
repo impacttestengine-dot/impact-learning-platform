@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", async function(){
   let current=0;
   function renderBlock(b){
     if(b.type==="__html__")return `<div style="color:#374151;font-size:.9rem;line-height:1.7">${b.content}</div>`;
-    if(b.type==="__final__")return `<div class="final-slide"><h2>Activity complete! 🎉</h2><p>You have finished this activity.</p><button class="final-submit" onclick="recordCompletion();window.close()">Close Preview</button></div>`;
+    if(b.type==="__final__")return `<div class="final-slide"><h2>Activity complete! 🎉</h2><p>You have finished this activity.</p><button class="final-submit" onclick="window.close()">Close Preview</button></div>`;
     if(b.type==="header")return `<div class="sv-header">${b.content||""}</div>`;
     if(b.type==="subheader")return `<div class="sv-subheader">${b.content||""}</div>`;
     if(b.type==="text")return `<div class="sv-text">${b.content||""}</div>`;
@@ -209,20 +209,6 @@ document.addEventListener("DOMContentLoaded", async function(){
   document.addEventListener("keydown",function(e){if(e.key==="ArrowRight"||e.key==="Enter")nextBtn.click();if(e.key==="ArrowLeft")prevBtn.click();});
   renderSlide(0);
 });
-
-  // Write a completion record when the learner submits this item.
-  // Used by the Learner Hub to flip the pending indicator from red to green.
-  async function recordCompletion(){
-    try{
-      const learnerName = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactLearnerName") || "Unknown Learner";
-      await db.collection("learnerCompletions").add({
-        learnerName,
-        itemId: id,
-        itemType: "activity",
-        completedAt: new Date().toISOString()
-      });
-    }catch(e){ console.warn("Could not record completion:", e); }
-  }
 </script>
 <script src="/js/impact-round-icons.js?v=001"></script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>

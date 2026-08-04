@@ -186,19 +186,6 @@ document.addEventListener("DOMContentLoaded", async function(){
   body.innerHTML = html;
 });
 
-async function recordDelfCompletion(itemId){
-  try{
-    const db = firebase.firestore();
-    const learnerName = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactLearnerName") || "Unknown Learner";
-    await db.collection("learnerCompletions").add({
-      learnerName,
-      itemId,
-      itemType: "delfMock",
-      completedAt: new Date().toISOString()
-    });
-  }catch(e){ console.warn("Could not record completion:", e); }
-}
-
 function startDelfTimer(elId, totalSeconds, btn){
   btn.disabled = true;
   let remaining = totalSeconds;

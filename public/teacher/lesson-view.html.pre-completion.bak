@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", async function(){
       return `<div style="color:#374151;font-size:.9rem;line-height:1.7">${b.content}</div>`;
     }
     if(b.type === "__final__"){
-      return `<div class="final-slide"><h2>All done! 🎉</h2><p>You have completed this lesson plan.</p><button class="final-submit" onclick="recordCompletion();window.close()">Close Preview</button></div>`;
+      return `<div class="final-slide"><h2>All done! 🎉</h2><p>You have completed this lesson plan.</p><button class="final-submit" onclick="window.close()">Close Preview</button></div>`;
     }
     if(b.type==="mediafile"){
       if(!b.src) return "";
@@ -367,20 +367,6 @@ document.addEventListener("DOMContentLoaded", async function(){
 
   renderSlide(0);
 });
-
-  // Write a completion record when the learner submits this item.
-  // Used by the Learner Hub to flip the pending indicator from red to green.
-  async function recordCompletion(){
-    try{
-      const learnerName = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactLearnerName") || "Unknown Learner";
-      await db.collection("learnerCompletions").add({
-        learnerName,
-        itemId: id,
-        itemType: "lesson",
-        completedAt: new Date().toISOString()
-      });
-    }catch(e){ console.warn("Could not record completion:", e); }
-  }
 </script>
 <script src="/js/impact-round-icons.js?v=001"></script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>

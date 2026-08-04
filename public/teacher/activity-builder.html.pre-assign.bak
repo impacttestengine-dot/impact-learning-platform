@@ -154,12 +154,7 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 .c-block.align-center .mc-options,.c-block.align-center .pc-grid{justify-content:center}
 .c-block.align-right .mc-options,.c-block.align-right .pc-grid{justify-content:flex-end}
 .impact-upload-text{color:#374151 !important;font-weight:700 !important}
-
-.assign-levels-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-.assign-level-chip{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-size:.8rem;font-weight:800;color:rgba(255,255,255,.7);transition:.15s}
-.assign-level-chip:hover{background:rgba(255,255,255,.13)}
-.assign-level-chip.checked{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.5);color:#fff}
-.assign-level-chip input{display:none}</style>
+</style>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
@@ -225,15 +220,6 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
       <option>A0</option><option>A1</option><option>A1.1</option>
       <option>A2</option><option>B1</option><option>B2</option>
     </select>
-  </div>
-  <div>
-    <label class="settings-label">Assign to Learner Level(s)</label>
-    <div class="assign-levels-group" id="assignLevelsGroup">
-      <label class="assign-level-chip"><input type="checkbox" value="A1">A1</label>
-      <label class="assign-level-chip"><input type="checkbox" value="A2">A2</label>
-      <label class="assign-level-chip"><input type="checkbox" value="B1">B1</label>
-      <label class="assign-level-chip"><input type="checkbox" value="B2">B2</label>
-    </div>
   </div>
   <div class="settings-divider"></div>
   <button class="ctrl-btn primary" id="saveBtn" type="button">💾  Save</button>
@@ -491,7 +477,7 @@ function rebuildFromBlocks(blocks){
 }
 async function save(){
   const blocks=serializeBlocks();
-  const assignedLevels=Array.from(document.querySelectorAll("#assignLevelsGroup input:checked")).map(c=>c.value);const payload={title:titleInput.value.trim()||"Untitled Activity",level:levelSelect.value,assignedLevels,blocks,version:2,updatedAt:new Date().toISOString()};
+  const payload={title:titleInput.value.trim()||"Untitled Activity",level:levelSelect.value,blocks,version:2,updatedAt:new Date().toISOString()};
   if(currentId){await db.collection(COLLECTION).doc(currentId).set(payload,{merge:true});}
   else{const ref=await db.collection(COLLECTION).add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/activity-builder.html?edit="+currentId);}
   tick();return currentId;

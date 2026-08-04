@@ -256,12 +256,7 @@ display:none;
 .c-block.align-right .c-block-inner{text-align:right}
 .c-block.align-center .mc-options,.c-block.align-center .pc-grid{justify-content:center}
 .c-block.align-right .mc-options,.c-block.align-right .pc-grid{justify-content:flex-end}
-
-.assign-levels-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-.assign-level-chip{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-size:.8rem;font-weight:800;color:rgba(255,255,255,.7);transition:.15s}
-.assign-level-chip:hover{background:rgba(255,255,255,.13)}
-.assign-level-chip.checked{background:rgba(6,182,212,.22);border-color:rgba(6,182,212,.5);color:#fff}
-.assign-level-chip input{display:none}</style>
+</style>
 </head>
 
 <body>
@@ -364,13 +359,6 @@ display:none;
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-const assignLevelsGroup = document.getElementById("assignLevelsGroup");
-if(assignLevelsGroup){
-  assignLevelsGroup.addEventListener("change", function(e){
-    const chip = e.target.closest(".assign-level-chip");
-    if(chip) chip.classList.toggle("checked", e.target.checked);
-  });
-}
 const db = firebase.firestore();
 const storage = firebase.storage();
 const canvas = document.getElementById("canvas");
@@ -1018,7 +1006,6 @@ async function load(){
   const d = doc.data();
   titleInput.value = d.title || d.name || "";
   if(d.level) levelSelect.value = d.level;
-  if(Array.isArray(d.assignedLevels)){d.assignedLevels.forEach(lvl=>{const cb=document.querySelector("#assignLevelsGroup input[value=\""+lvl+"\"]");if(cb){cb.checked=true;cb.closest(".assign-level-chip").classList.add("checked");}});}
 
   // JSON (v2) plan
   if(d.version===2 && Array.isArray(d.blocks)){

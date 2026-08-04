@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Learner Hub | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif}
+.page{position:relative;z-index:2;width:min(1100px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:34px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(232,216,166,.78);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);font-weight:400;line-height:1}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.card{min-height:160px;padding:24px;border-radius:28px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.28);color:#fff;text-decoration:none}
+.card:hover{transform:translateY(-3px);background:rgba(255,255,255,.11)}
+.card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2rem;font-weight:400;margin-bottom:20px}
+.card p{color:rgba(255,255,255,.68);font-weight:700;line-height:1.55}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+
+.learner-home-btn{
+  position:fixed;
+  top:24px;
+  left:24px;
+  z-index:9999;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  color:#fff;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(18px);
+  box-shadow:0 16px 44px rgba(0,0,0,.32);
+  font-size:1.15rem;
+  transition:.18s ease;
+}
+
+.learner-home-btn:hover{
+  transform:translateY(-2px) scale(1.04);
+  background:rgba(255,255,255,.16);
+}
+</style>
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+</head>
+<body><a class="learner-home-btn" href="/" title="Home">⌂</a>
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Learner Hub</p>
+    <h1 id="learnerWelcome">Welcome</h1>
+  </section>
+
+  <section class="grid">
+    <a class="card" href="/learner/lessons.html"><h2>Lessons</h2><p>View assigned lessons and class resources.</p></a>
+    <a class="card" href="/learner/activities.html"><h2>Activities</h2><p>Complete assigned activities and exercises.</p></a>
+    <a class="card" href="/learner/exams.html"><h2>Assessments</h2><p>Open tests, mock exams, and assessment tasks.</p></a>
+    <a class="card" href="/learner/progress.html"><h2>Progress</h2><p>Track growth, comments, scores, and recommendations.</p></a>
+  </section>
+</main>
+
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+<script>
+const name = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactLearnerName") || "";
+if(name){
+  document.getElementById("learnerWelcome").textContent = "Welcome, " + name;
+}
+</script>
+<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+</body>
+</html>
+
+
+
+
+
+
