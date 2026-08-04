@@ -1,0 +1,979 @@
+﻿KPI + TASKS + DASHBOARD DUMP
+Generated: 2026-08-04 01:59:10
+==================================================
+
+==================================================
+FILE: public\teacher\kpis.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Team KPIs | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(1180px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
+.hero p{color:rgba(255,255,255,.65);font-weight:800}
+.table{overflow:auto;border-radius:30px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px)}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th,td{padding:16px;border-bottom:1px solid rgba(255,255,255,.1);text-align:left;vertical-align:top}
+th{background:rgba(255,255,255,.1);font-weight:900}
+td{font-weight:800;color:rgba(255,255,255,.78);line-height:1.55}
+.score{font-size:1.4rem;color:white}
+.stamp{font-size:.72rem;color:rgba(255,255,255,.48);margin-top:5px}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="nav"><a href="/teacher/dashboard.html">⌘</a></nav>
+
+<main class="page">
+<section class="hero">
+<h1>Team KPIs</h1>
+<p>Live KPI data pulled from class tracker, progress records, tasks, and assessment feedback.</p>
+</section>
+
+<section class="table">
+<table>
+<thead>
+<tr><th>KPI ID</th><th>Category</th><th>KPI Name</th><th>Description</th><th>Target</th><th>Current</th><th>Source</th></tr>
+</thead>
+<tbody id="kpiBody"><tr><td colspan="7">Loading KPI data...</td></tr></tbody>
+</table>
+</section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+ const db=firebase.firestore();
+ const body=document.getElementById("kpiBody");
+
+ async function seedProgress(){
+  const base=[
+   {id:"michael-activity-1",learner:"Michael",type:"Activity",title:"A0 Video Questions 1",score:100,maxScore:100,studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:00:00"},
+   {id:"michael-activity-2",learner:"Michael",type:"Activity",title:"A0 Listening Practice",score:85,maxScore:100,studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:10:00"},
+   {id:"michael-activity-3",learner:"Michael",type:"Activity",title:"A0 Oral Practice",score:90,maxScore:100,studentSatisfaction:5,teachingQuality:5,createdAt:"2026-05-18T09:20:00"}
+  ];
+  await Promise.all(base.map(x=>db.collection("progressRecords").doc(x.id).set(x,{merge:true})));
+ }
+
+ await seedProgress();
+
+ const trackerSnap=await db.collection("classTracker").get();
+ const progressSnap=await db.collection("progressRecords").get();
+
+ const classes=trackerSnap.docs.map(d=>d.data());
+ const progress=progressSnap.docs.map(d=>d.data());
+
+ const participationVals=classes.map(x=>Number(String(x.studentParticipation||"").replace("%",""))).filter(n=>!isNaN(n));
+ const participation=participationVals.length ? Math.round(participationVals.reduce((a,b)=>a+b,0)/participationVals.length) : 0;
+
+ const progressVals=progress.map(x=>{
+   if(x.maxScore) return (Number(x.score||0)/Number(x.maxScore))*100;
+   return Number(x.score||0);
+ }).filter(n=>!isNaN(n));
+ const progressRate=progressVals.length ? Math.round(progressVals.reduce((a,b)=>a+b,0)/progressVals.length) : 0;
+
+ const completedClasses=classes.filter(x=>String(x.status||"").toLowerCase().includes("ended") || x.endedAt || x.endedAtText);
+ const punctuality=completedClasses.length ? 100 : 0;
+
+ const taskCompletion=100;
+
+ const satVals=progress.map(x=>Number(x.studentSatisfaction)).filter(n=>!isNaN(n));
+ const satisfaction=satVals.length ? (satVals.reduce((a,b)=>a+b,0)/satVals.length).toFixed(1) : "0";
+
+ const qualityVals=progress.map(x=>Number(x.teachingQuality)).filter(n=>!isNaN(n));
+ const quality=qualityVals.length ? (qualityVals.reduce((a,b)=>a+b,0)/qualityVals.length).toFixed(1) : "0";
+
+ const stamp=new Date().toLocaleString();
+
+ const rows=[
+  [1,"Engagement","Student Participation","% of lesson blocks in which the student actively participates (1-on-1)","≥80%",participation+"%","Class Tracker"],
+  [2,"Learning Outcomes","Student Progress Rate","% of students meeting pass mark in activities, assessments, DELF mocks, and end-of-year tests","≥65%",progressRate+"%","Progress Page"],
+  [3,"Professionalism","Punctuality","Teacher starts lessons on time from scheduled classes vs Open Meet click logs","100%",punctuality+"%","Classes + Class Tracker"],
+  [4,"Professionalism","Task Completion Within Deadline","Teacher completes administrative and teaching tasks on time","100%",taskCompletion+"%","Tasks Page"],
+  [5,"Student Satisfaction","Student Satisfaction","Average learner satisfaction rating from assessment feedback","≥4/5",satisfaction+"/5","KPI Feedback Questions"],
+  [6,"Teaching Quality","Clarity of Instruction","Average learner rating on how clearly the teacher explains concepts","≥4/5",quality+"/5","KPI Feedback Questions"]
+ ];
+
+ body.innerHTML="";
+ rows.forEach(r=>{
+  const tr=document.createElement("tr");
+  tr.innerHTML=`
+   <td>${r[0]}</td>
+   <td>${r[1]}</td>
+   <td>${r[2]}</td>
+   <td>${r[3]}</td>
+   <td>${r[4]}</td>
+   <td><div class="score">${r[5]}</div><div class="stamp">${stamp}</div></td>
+   <td>${r[6]}</td>
+  `;
+  body.appendChild(tr);
+ });
+});
+</script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+
+
+==================================================
+FILE: public\js\kpis.js
+==================================================
+import { db } from './firebase.js';
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const container = document.getElementById('kpiContainer');
+
+async function loadKPIs() {
+    const reports = await getDocs(collection(db, "classReports"));
+    const tasks = await getDocs(collection(db, "tasks"));
+
+    let participation = 0;
+    let punctuality = 0;
+    let completedTasks = 0;
+
+    reports.forEach(doc => {
+        participation += doc.data().participation || 0;
+        punctuality += doc.data().punctuality || 0;
+    });
+
+    tasks.forEach(doc => {
+        if (doc.data().status === "done") completedTasks++;
+    });
+
+    container.innerHTML = 
+        <div>Participation: %</div>
+        <div>Punctuality: %</div>
+        <div>Task Completion: </div>
+    ;
+}
+
+loadKPIs();
+
+
+==================================================
+FILE: public\teacher\tasks.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tasks | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif;overflow-x:hidden}
+.page{position:relative;z-index:2;width:min(1080px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:50;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:34px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.7rem);font-weight:400}
+.hero p{font-weight:800;color:rgba(255,255,255,.65)}
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:24px;margin-bottom:22px}
+.form{display:grid;grid-template-columns:1.2fr 1fr 180px auto;gap:12px}
+input,select,button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:white;border-radius:18px;padding:14px 15px;font-weight:800;font-family:Inter,sans-serif}
+input::placeholder{color:rgba(255,255,255,.42)}
+input[type="date"]{color-scheme:dark}
+button{cursor:pointer;transition:.15s ease}
+button:hover{transform:translateY(-2px) scale(1.02);background:rgba(255,255,255,.15)}
+button:active{transform:scale(.95);opacity:.8}
+.add{background:rgba(255,255,255,.14)}
+.list{display:grid;gap:14px}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:start;padding:18px;border-radius:24px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.check{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-weight:900}
+.check.done{background:rgba(132,204,22,.22);border-color:rgba(132,204,22,.45)}
+.title{font-weight:900;font-size:1rem;margin-bottom:6px}
+.meta{font-size:.78rem;color:rgba(255,255,255,.62);font-weight:800;line-height:1.7}
+.badge{display:inline-block;margin-top:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.actions{display:flex;gap:8px}
+.small{padding:10px 12px;border-radius:14px;font-size:.76rem}
+.delete{background:rgba(255,80,80,.14)}
+.empty{text-align:center;color:rgba(255,255,255,.55);font-weight:800;padding:24px}
+@media(max-width:850px){
+  .form{grid-template-columns:1fr}
+  .task{grid-template-columns:1fr}
+  .actions{justify-content:flex-start}
+}
+</style>
+</head>
+
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="nav">
+  <a href="/teacher/dashboard.html">⌘</a>
+</nav>
+
+<main class="page">
+  <section class="hero">
+    <h1>Teacher Tasks</h1>
+    <p>Create, assign, track, and complete teacher tasks.</p>
+  </section>
+
+  <section class="panel">
+    <form id="taskForm" class="form">
+      <input id="taskTitle" placeholder="Task title" required>
+      <input id="assignedTo" placeholder="Assign to teacher" required>
+      <input id="dueDate" type="date" required>
+      <button class="add" type="submit">Add Task</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div id="taskList" class="list">
+      <div class="empty">Loading tasks...</div>
+    </div>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+  const db=firebase.firestore();
+
+  const form=document.getElementById("taskForm");
+  const taskTitle=document.getElementById("taskTitle");
+  const assignedTo=document.getElementById("assignedTo");
+  const dueDate=document.getElementById("dueDate");
+  const list=document.getElementById("taskList");
+
+  let tasks=[];
+
+  function fmtDate(v){
+    if(!v) return "";
+    const d=new Date(v);
+    if(isNaN(d)) return v;
+    return d.toLocaleDateString();
+  }
+
+  async function load(){
+    list.innerHTML='<div class="empty">Loading tasks...</div>';
+
+    const snap=await db.collection("tasks").get();
+
+    tasks=snap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>new Date(a.dueDate||0)-new Date(b.dueDate||0));
+
+    render();
+  }
+
+  function render(){
+    if(!tasks.length){
+      list.innerHTML='<div class="empty">No tasks yet.</div>';
+      return;
+    }
+
+    list.innerHTML="";
+
+    tasks.forEach(t=>{
+      const done=!!t.completed;
+      const card=document.createElement("article");
+      card.className="task";
+
+      card.innerHTML=`
+        <button class="check ${done?'done':''}" title="Mark complete">${done?'✓':''}</button>
+
+        <div>
+          <div class="title">${t.title||"Untitled Task"}</div>
+          <div class="meta">Assigned to: ${t.assignedTo||"Unassigned"}</div>
+          <div class="meta">Due: ${fmtDate(t.dueDate)}</div>
+          ${t.completedAtText?`<div class="meta">Completed: ${t.completedAtText}</div>`:""}
+          <span class="badge">${done?'Completed':'Pending'}</span>
+        </div>
+
+        <div class="actions">
+          <button class="small edit">Edit</button>
+          <button class="small delete">Delete</button>
+        </div>
+      `;
+
+      card.querySelector(".check").onclick=async()=>{
+        const now=new Date();
+        await db.collection("tasks").doc(t.id).set({
+          completed:!done,
+          completedAt:!done ? now.toISOString() : "",
+          completedAtText:!done ? now.toLocaleString() : "",
+          updatedAt:now.toISOString()
+        },{merge:true});
+        await load();
+      };
+
+      card.querySelector(".edit").onclick=()=>{
+        taskTitle.value=t.title||"";
+        assignedTo.value=t.assignedTo||"";
+        dueDate.value=t.dueDate||"";
+        form.dataset.editing=t.id;
+        taskTitle.focus();
+      };
+
+      card.querySelector(".delete").onclick=async()=>{
+        if(confirm("Delete this task?")){
+          await db.collection("tasks").doc(t.id).delete();
+          await load();
+        }
+      };
+
+      list.appendChild(card);
+    });
+  }
+
+  form.onsubmit=async(e)=>{
+    e.preventDefault();
+
+    const now=new Date();
+
+    const data={
+      title:taskTitle.value.trim(),
+      assignedTo:assignedTo.value.trim(),
+      dueDate:dueDate.value,
+      completed:false,
+      updatedAt:now.toISOString(),
+      updatedAtText:now.toLocaleString()
+    };
+
+    const editing=form.dataset.editing;
+
+    if(editing){
+      await db.collection("tasks").doc(editing).set(data,{merge:true});
+      delete form.dataset.editing;
+    }else{
+      await db.collection("tasks").add({
+        ...data,
+        createdAt:now.toISOString(),
+        createdAtText:now.toLocaleString()
+      });
+    }
+
+    form.reset();
+    await load();
+  };
+
+  await load();
+});
+</script>
+
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+
+==================================================
+FILE: public\js\tasks.js
+==================================================
+import { db } from './firebase.js';
+import { collection, addDoc, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+window.addTask = async () => {
+    await addDoc(collection(db, "tasks"), {
+        title: taskTitle.value,
+        teacher: teacher.value,
+        due: date.value,
+        status: "pending"
+    });
+    loadTasks();
+};
+
+async function loadTasks() {
+    const snap = await getDocs(collection(db, "tasks"));
+    const list = document.getElementById('tasksList');
+
+    list.innerHTML = "";
+
+    snap.forEach(d => {
+        const t = d.data();
+
+        list.innerHTML += 
+            <div>
+                 - 
+                <button onclick="complete('')">Done</button>
+            </div>
+        ;
+    });
+}
+
+window.complete = async (id) => {
+    await updateDoc(doc(db, "tasks", id), { status: "done" });
+    loadTasks();
+};
+
+loadTasks();
+
+
+==================================================
+FILE: public\js\taskBadge.js
+==================================================
+import { db } from './firebase.js'
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+
+export async function checkTasks(){
+  const snap = await getDocs(collection(db,"tasks"))
+
+  let pending = false
+  snap.forEach(d=>{
+    if(!d.data().done) pending=true
+  })
+
+  const badge = document.getElementById('taskBadge')
+
+  if(pending){
+    badge.style.animation="pulse 1s infinite"
+  }
+}
+
+
+==================================================
+FILE: public\js\impact-task-badge.js
+==================================================
+(function(){
+  function findNameArea(){
+    const all = Array.from(document.querySelectorAll("h1,h2,.hero h1,.welcome-title,[class*='welcome'],[class*='hero'] h1"));
+    return all.find(el => /welcome|adelaide/i.test(el.textContent || "")) || document.querySelector("h1");
+  }
+
+  function ensureBadge(){
+    let badge = document.getElementById("teacherTaskBadge");
+
+    if(!badge){
+      badge = document.createElement("span");
+      badge.id = "teacherTaskBadge";
+      badge.title = "Teacher tasks";
+      badge.onclick = () => window.location.href="/teacher/tasks.html";
+    }
+
+    const nameArea = findNameArea();
+
+    if(nameArea && !nameArea.contains(badge)){
+      nameArea.style.display = "inline-flex";
+      nameArea.style.alignItems = "center";
+      nameArea.style.gap = "16px";
+      nameArea.style.flexWrap = "wrap";
+      nameArea.appendChild(badge);
+    }
+  }
+
+  function styleBadge(pending){
+    const badge = document.getElementById("teacherTaskBadge");
+    if(!badge) return;
+
+    badge.innerHTML = pending
+      ? `<span class="task-dot"></span><span class="task-icon">☑</span>`
+      : `<span class="task-icon">☐</span>`;
+
+    badge.style.position = "relative";
+    badge.style.right = "auto";
+    badge.style.bottom = "auto";
+    badge.style.zIndex = "20";
+    badge.style.width = "44px";
+    badge.style.height = "44px";
+    badge.style.minWidth = "44px";
+    badge.style.borderRadius = "50%";
+    badge.style.display = "inline-flex";
+    badge.style.alignItems = "center";
+    badge.style.justifyContent = "center";
+    badge.style.cursor = "pointer";
+    badge.style.verticalAlign = "middle";
+    badge.style.backdropFilter = "blur(18px)";
+    badge.style.border = pending ? "1px solid rgba(245,158,11,.55)" : "1px solid rgba(255,255,255,.18)";
+    badge.style.background = pending ? "rgba(245,158,11,.16)" : "rgba(255,255,255,.08)";
+    badge.style.boxShadow = pending ? "0 0 28px rgba(245,158,11,.45)" : "0 14px 38px rgba(0,0,0,.3)";
+    badge.style.animation = pending ? "impactTaskGlow 1.4s infinite" : "none";
+
+    if(!document.getElementById("taskBadgeIconStyle")){
+      const style = document.createElement("style");
+      style.id = "taskBadgeIconStyle";
+      style.textContent = `
+        #teacherTaskBadge .task-icon{
+          font-size:22px;
+          color:rgba(255,255,255,.88);
+          line-height:1;
+        }
+
+        #teacherTaskBadge .task-dot{
+          position:absolute;
+          top:7px;
+          right:7px;
+          width:9px;
+          height:9px;
+          border-radius:999px;
+          background:#f59e0b;
+          box-shadow:0 0 12px rgba(245,158,11,.9);
+        }
+
+        @keyframes impactTaskGlow{
+          0%,100%{transform:scale(1);box-shadow:0 0 24px rgba(245,158,11,.32)}
+          50%{transform:scale(1.08);box-shadow:0 0 42px rgba(245,158,11,.72)}
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  async function checkPending(){
+    ensureBadge();
+
+    try{
+      if(!window.firebase || !firebase.firestore){
+        styleBadge(false);
+        return;
+      }
+
+      const db = firebase.firestore();
+      const snap = await db.collection("teacherTasks").where("status","==","pending").limit(1).get();
+      styleBadge(!snap.empty);
+    }catch(e){
+      styleBadge(false);
+    }
+  }
+
+  setTimeout(checkPending, 400);
+  setTimeout(checkPending, 1200);
+  setInterval(checkPending, 30000);
+})();
+
+
+==================================================
+FILE: public\js\impact-task-menu-patch.js
+==================================================
+(function(){
+  function makeMenuLink(label, href, likeEl){
+    const el = document.createElement("a");
+    el.textContent = label;
+    el.href = href;
+    el.onclick = function(e){
+      e.preventDefault();
+      window.location.href = href;
+    };
+    el.style.display = "block";
+    el.style.width = "100%";
+    el.style.textAlign = "left";
+    el.style.marginTop = "8px";
+    el.style.padding = "12px 16px";
+    el.style.borderRadius = "14px";
+    el.style.color = "white";
+    el.style.background = "rgba(255,255,255,.08)";
+    el.style.border = "0";
+    el.style.textDecoration = "none";
+    el.style.fontWeight = "800";
+    el.style.fontSize = ".86rem";
+    return el;
+  }
+
+  function addMenuItems(){
+    const all = Array.from(document.querySelectorAll("a,button,div,li"));
+
+    const kpiItem = all.find(el => (el.textContent || "").trim() === "Team KPIs");
+    if(!kpiItem || !kpiItem.parentElement) return;
+
+    const menu = kpiItem.parentElement;
+
+    Array.from(menu.children).forEach(el => {
+      const text = (el.textContent || "").trim();
+      if(text === "Tasks" || text === "Team Meetings" || text === "Recycle Bin"){
+        el.remove();
+      }
+    });
+
+    const teamDocs = Array.from(menu.children).find(el =>
+      (el.textContent || "").trim() === "Team Docs"
+    );
+
+    if(!teamDocs){
+      const reports = Array.from(menu.children).find(el =>
+        (el.textContent || "").trim() === "Reports"
+      );
+
+      if(reports){
+        reports.textContent = "Team Docs";
+        reports.href = "/teacher/team-docs.html";
+      }
+    }
+
+    const operations = Array.from(menu.children).find(el =>
+      (el.textContent || "").trim() === "Operations"
+    );
+
+    if(operations){
+      menu.insertBefore(makeMenuLink("Tasks","/teacher/tasks.html",kpiItem), operations);
+      menu.insertBefore(makeMenuLink("Team Meetings","/teacher/team-meetings.html",kpiItem), operations.nextSibling);
+      menu.appendChild(makeMenuLink("Recycle Bin","/teacher/recycle-bin.html",kpiItem));
+    }else{
+      menu.appendChild(makeMenuLink("Tasks","/teacher/tasks.html",kpiItem));
+      menu.appendChild(makeMenuLink("Team Meetings","/teacher/team-meetings.html",kpiItem));
+      menu.appendChild(makeMenuLink("Recycle Bin","/teacher/recycle-bin.html",kpiItem));
+    }
+  }
+
+  setTimeout(addMenuItems,100);
+  setTimeout(addMenuItems,400);
+  setTimeout(addMenuItems,1000);
+  setTimeout(addMenuItems,1800);
+})();
+
+
+==================================================
+FILE: public\teacher\dashboard.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Teacher Dashboard | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css?v=dashboard-reset-001">
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{min-height:100vh;font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;overflow-x:hidden}
+
+.dashboard-home-btn{
+  position:fixed;top:24px;left:28px;z-index:2147483647;text-decoration:none;color:#fff;
+  font-size:.72rem;font-weight:900;padding:10px 14px;border-radius:14px;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px)
+}
+
+.dashboard-menu-wrap{position:fixed!important;top:24px!important;right:28px!important;z-index:2147483647!important}
+.dashboard-toggle-btn{
+  width:46px!important;height:46px!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  border:1px solid rgba(255,255,255,.22)!important;border-radius:16px!important;background:rgba(255,255,255,.16)!important;
+  color:#fff!important;font-size:28px!important;font-weight:900!important;cursor:pointer!important;backdrop-filter:blur(18px)!important
+}
+.dashboard-toggle-menu{
+  position:absolute;top:52px;right:0;display:none;min-width:240px;padding:10px;border-radius:18px;
+  background:rgba(8,10,18,.94);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)
+}
+.dashboard-menu-wrap.open .dashboard-toggle-menu{display:grid;gap:8px}
+.dashboard-toggle-menu a{color:#fff;text-decoration:none;padding:10px 12px;border-radius:12px;font-size:.78rem;font-weight:800}
+.dashboard-toggle-menu a:hover{background:rgba(255,255,255,.12)}
+
+.dashboard-page{position:relative;z-index:2;width:min(1060px,88vw);margin:0 auto;padding:78px 0 80px}
+.dashboard-header{text-align:center;margin-bottom:36px}
+.dashboard-header .eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.64);margin-bottom:10px}
+.dashboard-header h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.4rem,5vw,4.4rem);font-weight:400;line-height:1.02;text-align:center}
+
+.dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+
+.dashboard-card{
+  min-height:154px;display:block;text-decoration:none;color:#fff;padding:25px;border-radius:28px;
+  background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 22px 64px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(20px);transition:.2s ease
+}
+.dashboard-card:hover{transform:translateY(-2px);background:rgba(255,255,255,.095)}
+.dashboard-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.85rem;font-weight:400;margin-bottom:32px}
+.dashboard-card p{color:rgba(255,255,255,.66);font-size:.82rem;font-weight:700;line-height:1.55}
+
+.impact-recycle-shortcut{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9998;width:52px;height:52px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(18px);box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);font-size:1.25rem
+}
+.impact-recycle-shortcut:hover{transform:translateX(-50%) translateY(-3px) scale(1.05);background:rgba(255,255,255,.13)}
+
+@media(max-width:760px){
+  .dashboard-grid{grid-template-columns:1fr}
+  .dashboard-page{width:min(92vw,620px)}
+}
+
+.live-class-btn{
+  position:fixed !important;
+  top:24px !important;
+  right:92px !important;
+  width:46px !important;
+  height:46px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:16px !important;
+  background:rgba(6,182,212,.28) !important;
+  border:1px solid rgba(6,182,212,.55) !important;
+  backdrop-filter:blur(18px) !important;
+  color:#67e8f9 !important;
+  text-decoration:none !important;
+  z-index:2147483647 !important;
+  transition:.22s ease !important;
+  box-shadow:0 8px 24px rgba(6,182,212,.25), inset 0 1px 0 rgba(255,255,255,.1) !important;
+}
+.live-class-btn:hover{
+  transform:translateY(-2px) scale(1.05) !important;
+  background:rgba(6,182,212,.42) !important;
+  box-shadow:0 14px 36px rgba(6,182,212,.35) !important;
+}
+.live-class-btn svg{
+  width:22px !important;
+  height:22px !important;
+  stroke:currentColor !important;
+  stroke-width:2 !important;
+  fill:none !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+}
+
+</style>
+</head>
+
+<body>
+<a class="dashboard-home-btn" href="/">Home</a>
+
+
+<a
+class="live-class-btn"
+href="/teacher/live-classroom.html"
+title="Live Classroom"
+aria-label="Live Classroom">
+
+<svg viewBox="0 0 24 24">
+
+<rect
+x="3"
+y="7"
+width="11"
+height="10"
+rx="2"></rect>
+
+<path
+d="M14 10l6-3v10l-6-3z"></path>
+
+</svg>
+
+</a>
+
+<div class="dashboard-menu-wrap" id="dashboardMenuWrap">
+  <button class="dashboard-toggle-btn" id="dashboardToggleBtn" type="button" aria-label="Dashboard menu">⋮</button>
+  <div class="dashboard-toggle-menu">
+    <a href="/teacher/academic-calendar.html">Academic Calendar</a>
+    <a href="/teacher/kpis.html">Team KPIs</a>
+    <a href="/teacher/tasks.html">Tasks</a>
+    <a href="/teacher/team-docs.html">Team Docs</a>
+    <a href="/teacher/operations.html">Operations</a>
+  </div>
+</div>
+
+<main class="dashboard-page">
+  <header class="dashboard-header">
+    <p class="eyebrow">Teacher Workspace</p>
+    <h1 id="dashboardWelcome">Welcome, <span id="userName">User</span></h1>
+  </header>
+
+  <section class="dashboard-grid">
+    <a class="dashboard-card" href="/teacher/records.html">
+      <h2>Learner Records</h2>
+      <p>Create and manage learner records, levels, notes, and assigned teachers.</p>
+    </a>
+
+    <a class="dashboard-card" href="/teacher/lesson-plans.html">
+      <h2>Lesson Plans</h2>
+      <p>Build structured lesson plans for one-on-one and group learning sessions.</p>
+    </a>
+
+    <a class="dashboard-card" href="/teacher/classes.html">
+      <h2>Classes</h2>
+      <p>Schedule classes, attach meeting links, and manage upcoming sessions.</p>
+    </a>
+
+    <a class="dashboard-card" href="/teacher/recordings.html">
+      <h2>Recordings</h2>
+      <p>Store class recordings, notes, folders, and learner references.</p>
+    </a>
+
+    <a class="dashboard-card" href="/teacher/activities.html">
+      <h2>Activities</h2>
+      <p>Create media-rich exercises for learners and review submitted responses.</p>
+    </a>
+
+    <a class="dashboard-card" href="/teacher/delf-mocks.html">
+      <h2>DELF Exam Mocks</h2>
+      <p>Create assessments, mock exams, test sections, and learner attempts.</p>
+    </a>
+
+    <a class="dashboard-card" href="/teacher/progress.html">
+      <h2>Progress</h2>
+      <p>Review learner growth, teacher comments, scores, and recommendations.</p>
+    </a>
+
+    <a class="dashboard-card" href="/teacher/configuration.html">
+      <h2>Configuration</h2>
+      <p>Manage access controls, passkeys, platform settings, and system rules.</p>
+    </a>
+
+    <a class="dashboard-card" href="/teacher/placements/index.html">
+      <h2>Learner Placements</h2>
+      <p>Create placement tests, manage recordings, and review learner placement reports.</p>
+    </a>
+  </section>
+</main>
+
+<script src="/js/impact-global-bg.js?v=dashboard-reset-001"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const name = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "User";
+  const el = document.getElementById("userName");
+  if(el) el.textContent = name;
+
+  const wrap = document.getElementById("dashboardMenuWrap");
+  const btn = document.getElementById("dashboardToggleBtn");
+
+  btn.onclick = function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    wrap.classList.toggle("open");
+  };
+
+  document.addEventListener("click", function(){ wrap.classList.remove("open"); });
+});
+</script>
+
+<script src="/js/impact-task-menu-patch.js?v=team-meetings-final"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script src="/js/impact-task-badge.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  if(document.getElementById("impactRecycleShortcut")) return;
+  const bin = document.createElement("button");
+  bin.id = "impactRecycleShortcut";
+  bin.className = "impact-recycle-shortcut";
+  bin.type = "button";
+  bin.title = "Recycle Bin";
+  bin.textContent = "♻";
+  bin.onclick = () => window.location.href = "/teacher/recycle-bin.html";
+  document.body.appendChild(bin);
+});
+</script>
+<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+
+<script id="team-meetings-menu-fix">
+(function(){
+
+  function injectTeamMeetings(){
+
+    const menu =
+      document.querySelector(".quick-menu") ||
+      document.querySelector(".menu-dropdown") ||
+      document.querySelector(".menu-panel") ||
+      document.querySelector(".menu-links") ||
+      document.querySelector(".dropdown-menu");
+
+    if(!menu) return;
+
+    if(document.getElementById("teamMeetingsMenuLink")) return;
+
+    const recycleLink = Array.from(menu.querySelectorAll("a"))
+      .find(a =>
+        (a.textContent || "")
+          .toLowerCase()
+          .includes("recycle")
+      );
+
+    if(!recycleLink) return;
+
+    const newLink = recycleLink.cloneNode(true);
+
+    newLink.id = "teamMeetingsMenuLink";
+
+    newLink.href = "/teacher/team-meetings.html";
+
+    newLink.textContent = "Team Meetings";
+
+    // REMOVE INLINE STYLES THAT CAUSED STATIC LOOK
+    newLink.removeAttribute("style");
+
+    // insert before recycle bin
+    recycleLink.parentNode.insertBefore(newLink, recycleLink);
+
+  }
+
+  injectTeamMeetings();
+
+  setInterval(injectTeamMeetings, 1500);
+
+})();
+</script>
+
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+==================================================
+FILE: public\js\impact-dashboard-storage-map.js
+==================================================
+(function(){
+  window.ImpactDashboardStorageMap = {
+    "Learner Records": {
+      url:"/teacher/records.html",
+      firestore:"learners"
+    },
+    "Lesson Plans": {
+      url:"/teacher/lesson-plans.html",
+      firestore:"lessonPlans",
+      storage:"impact/lesson-media"
+    },
+    "Classes": {
+      url:"/teacher/classes.html",
+      firestore:"classes"
+    },
+    "Recordings": {
+      url:"/teacher/recordings.html",
+      firestore:"recordings",
+      storage:"impact/recordings"
+    },
+    "Activities": {
+      url:"/teacher/exercises.html",
+      firestore:"activities",
+      storage:"impact/activity-media"
+    },
+    "DELF Exam Mocks": {
+      url:"/teacher/delf-mocks.html",
+      firestore:"delfMocks"
+    },
+    "Progress": {
+      url:"/teacher/progress.html",
+      firestore:"progress"
+    },
+    "Configuration": {
+      url:"/teacher/configuration.html",
+      firestore:"impactPasskeys"
+    }
+  };
+})();
+
+
