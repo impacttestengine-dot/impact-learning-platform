@@ -1,219 +1,270 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Records | Impact Learning Platform</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Learner Records | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(1180px,94vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:50;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
+.hero p{color:rgba(255,255,255,.65);font-weight:800}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+.layout{display:grid;grid-template-columns:400px minmax(0,1fr);gap:22px;align-items:start}
+@media(max-width:980px){.layout{grid-template-columns:1fr}}
 
-  <link rel="stylesheet" href="/css/records.css?v=records-module-01">
-  <link rel="stylesheet" href="/css/personnel-system.css">
-  <link rel="stylesheet" href="/css/impact-global-bg.css?v=blur-bg-logo-clean-001">
-  <link rel="stylesheet" href="/css/impact-page-nav.css?v=nav-global-001">
-<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(22px);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:24px}
+.form-card{position:sticky;top:110px}
+.form-card h2{font-family:"Sorts Mill Goudy",serif;font-size:1.7rem;font-weight:400;margin-bottom:4px}
+.form-hint{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:16px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:11px 13px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.86rem;outline:none}
+.field select option{color:#111}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-actions{display:flex;gap:10px;margin-top:16px}
+.btn{flex:1;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.09);color:#fff;font-weight:900;font-size:.84rem;cursor:pointer;font-family:Inter,sans-serif;transition:.15s}
+.btn:hover{background:rgba(255,255,255,.16)}
+.btn.primary{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4}
+.btn.primary:hover{background:rgba(99,179,237,.3)}
+.form-status{margin-top:10px;font-size:.78rem;font-weight:800;min-height:18px}
+.form-status.ok{color:#6ee7b7}
+.form-status.err{color:#fca5a5}
+
+.list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.list-head h2{font-family:"Sorts Mill Goudy",serif;font-size:1.7rem;font-weight:400}
+.count-badge{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45)}
+.search-box{width:100%;padding:11px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:#fff;font-family:Inter,sans-serif;font-weight:700;margin-bottom:16px}
+.records-grid{display:grid;gap:12px}
+.record-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.record-name{font-weight:900;font-size:1rem;margin-bottom:4px}
+.record-meta{font-size:.78rem;color:rgba(255,255,255,.55);font-weight:700;line-height:1.7}
+.status-pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.68rem;font-weight:900;margin-top:6px}
+.status-pill.active{background:rgba(52,211,153,.18);color:#6ee7b7}
+.status-pill.paused{background:rgba(251,191,36,.18);color:#fbbf24}
+.status-pill.completed{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.row-actions{display:flex;gap:8px}
+.row-actions button{padding:9px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;font-size:.76rem;font-weight:800;cursor:pointer;font-family:Inter,sans-serif}
+.row-actions button.del{background:rgba(255,80,80,.14)}
+.empty{text-align:center;color:rgba(255,255,255,.4);font-weight:700;padding:40px}
+</style>
 </head>
 <body>
-  <main class="records-page">
-    <div class="bg-layer"></div>
-    <div class="shade-layer"></div>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="nav"><a href="/teacher/dashboard.html">⌘</a></nav>
 
-    <header class="topbar">
-      
-      
-    </header>
+<main class="page">
+<section class="hero">
+<h1>Learner Records</h1>
+<p>Create and manage learner records, levels, and assigned teachers.</p>
+</section>
 
-    <section class="records-shell">
-      <div class="records-head">
-        <p class="eyebrow">TEACHER WORKSPACE</p>
-        <h1>Records</h1>
+<div class="layout">
+  <section class="panel form-card">
+    <h2 id="formTitle">New Record</h2>
+    <p class="form-hint" id="formHint">Fill in learner details below.</p>
+
+    <form id="recordForm">
+      <div class="field"><label>Full Name</label><input id="fullName" type="text" required></div>
+      <div class="field-row">
+        <div class="field"><label>Age</label><input id="age" type="number" min="1"></div>
+        <div class="field"><label>Enrolled</label><input id="enrollmentDate" type="date"></div>
       </div>
-
-      <div class="records-layout">
-        <section class="form-card">
-          <div class="editor-head">
-  <div>
-    <h2 id="editorTitle">New Record</h2>
-    <p id="editorHint">Create a new learner record</p>
-  </div>
-
-  <button class="mini-glass-btn" type="button" onclick="newRecord()">New</button>
-</div>
-
-          <form id="recordForm">
-            <div class="field-grid">
-              <label>
-                Full Name
-                <input id="fullName" type="text" required>
-              </label>
-
-              <label>
-                Age
-                <input id="age" type="number" min="1">
-              </label>
-
-              <label>
-                Date of Enrollment
-                <input id="enrollmentDate" type="date">
-              </label>
-
-              <label>
-                Current Level
-                <select id="level">
-  <option value="">Select level</option>
-  <option>Absolute Beginner</option>
-  <option>A0</option>
-  <option>A1</option>
-  <option>A1.1</option>
-  <option>A2</option>
-  <option>B1</option>
-  <option>B2</option>
-</select>
-              </label>
-
-              <label>
-                Assigned Teacher
-                <input id="personnel" type="text">
-              </label>
-
-              <label>
-                Parent / Guardian
-                <input id="parentName" type="text">
-              </label>
-
-              <label>
-                Parent Phone
-                <input id="parentPhone" type="tel">
-              </label>
-
-              <label class="wide">
-                Parent Email
-                <input id="parentEmail" type="email">
-              </label>
-
-              <label>
-                Class Days
-                <input id="classDays" type="text" placeholder="e.g. Mondays & Wednesdays">
-              </label>
-
-              <label>
-                Status
-                <select id="status">
-                  <option>Active</option>
-                  <option>Paused</option>
-                  <option>Completed</option>
-                </select>
-              </label>
-
-              <label class="wide">
-                Notes
-                <textarea id="notes" rows="4"></textarea>
-              </label>
-            </div>
-
-            <div class="form-actions">
-  <button class="glass-btn" type="submit">Save Record</button>
-  <button class="ghost-btn" type="button" onclick="cancelEdit()">Clear Form</button>
-</div>
-            <p id="formStatus" class="form-status"></p>
-          </form>
-        </section>
-
-        <section class="list-card">
-          <div class="list-head">
-            <h2>Learner Records</h2>
-            <span id="recordCount">0 records</span>
-          </div>
-
-          <div id="recordsList" class="records-list">
-            <div class="empty-state">No records yet.</div>
-          </div>
-        </section>
+      <div class="field-row">
+        <div class="field">
+          <label>Level</label>
+          <select id="level">
+            <option value="">Select level</option>
+            <option>Absolute Beginner</option>
+            <option>A0</option><option>A1</option><option>A1.1</option>
+            <option>A2</option><option>B1</option><option>B2</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select id="status">
+            <option>Active</option>
+            <option>Paused</option>
+            <option>Completed</option>
+          </select>
+        </div>
       </div>
-    </section>
-  </main>
+      <div class="field">
+        <label>Assigned Teacher</label>
+        <select id="personnel">
+          <option value="">Select teacher...</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Parent / Guardian</label><input id="parentName" type="text"></div>
+        <div class="field"><label>Parent Phone</label><input id="parentPhone" type="tel"></div>
+      </div>
+      <div class="field"><label>Parent Email</label><input id="parentEmail" type="email"></div>
+      <div class="field"><label>Class Days</label><input id="classDays" type="text" placeholder="e.g. Mondays & Wednesdays"></div>
+      <div class="field"><label>Notes</label><textarea id="notes" rows="3"></textarea></div>
 
-  <script type="module" src="/js/records.js?v=records-module-01"></script>
-  <script src="/js/impact-global-bg.js?v=blur-bg-logo-clean-001"></script>
-  <script src="/js/impact-page-nav.js?v=nav-global-001"></script>
-<script src="/js/impact-task-menu-patch.js"></script><script src="/js/impact-round-icons.js?v=001"></script>
-<script src="/js/impact-recycle-bin.js"></script>
+      <div class="form-actions">
+        <button class="btn primary" type="submit">Save Record</button>
+        <button class="btn" type="button" id="clearBtn">Clear Form</button>
+      </div>
+      <p class="form-status" id="formStatus"></p>
+    </form>
+  </section>
 
-<script id="team-meetings-menu-fix">
-(function(){
+  <section class="panel">
+    <div class="list-head">
+      <h2>All Records</h2>
+      <span class="count-badge" id="recordCount">0 records</span>
+    </div>
+    <input class="search-box" id="searchInput" type="search" placeholder="Search by name, level, or teacher...">
+    <div class="records-grid" id="recordsList"><div class="empty">Loading records...</div></div>
+  </section>
+</div>
+</main>
 
-  function injectTeamMeetings(){
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+  const db=firebase.firestore();
+  const form=document.getElementById("recordForm");
+  const formTitle=document.getElementById("formTitle");
+  const formHint=document.getElementById("formHint");
+  const formStatus=document.getElementById("formStatus");
+  const recordsList=document.getElementById("recordsList");
+  const recordCount=document.getElementById("recordCount");
+  const searchInput=document.getElementById("searchInput");
+  const personnelSelect=document.getElementById("personnel");
 
-    const menu =
-      document.querySelector(".quick-menu") ||
-      document.querySelector(".menu-dropdown") ||
-      document.querySelector(".menu-panel") ||
-      document.querySelector(".menu-links") ||
-      document.querySelector(".dropdown-menu");
+  const fields = ["fullName","age","enrollmentDate","level","status","personnel","parentName","parentPhone","parentEmail","classDays","notes"];
+  let allRecords = [];
+  let editingId = null;
 
-    if(!menu) return;
-
-    if(document.getElementById("teamMeetingsMenuLink")) return;
-
-    const recycleLink = Array.from(menu.querySelectorAll("a"))
-      .find(a =>
-        (a.textContent || "")
-          .toLowerCase()
-          .includes("recycle")
-      );
-
-    if(!recycleLink) return;
-
-    const newLink = recycleLink.cloneNode(true);
-
-    newLink.id = "teamMeetingsMenuLink";
-
-    newLink.href = "/teacher/team-meetings.html";
-
-    newLink.textContent = "Team Meetings";
-
-    // REMOVE INLINE STYLES THAT CAUSED STATIC LOOK
-    newLink.removeAttribute("style");
-
-    // insert before recycle bin
-    recycleLink.parentNode.insertBefore(newLink, recycleLink);
-
+  async function loadPersonnel(){
+    try{
+      const snap = await db.collection("impactPasskeys").where("role","!=","Learner").get();
+      const names = snap.docs.map(d=>d.data().name).filter(Boolean).sort();
+      personnelSelect.innerHTML = '<option value="">Select teacher...</option>' + names.map(n=>`<option value="${n}">${n}</option>`).join("");
+    }catch(e){ console.warn("Could not load personnel:", e); }
   }
 
-  injectTeamMeetings();
+  function getFormData(){
+    const data = {};
+    fields.forEach(f => data[f] = document.getElementById(f).value.trim());
+    return data;
+  }
 
-  setInterval(injectTeamMeetings, 1500);
+  function clearForm(){
+    fields.forEach(f => document.getElementById(f).value = "");
+    editingId = null;
+    formTitle.textContent = "New Record";
+    formHint.textContent = "Fill in learner details below.";
+    formStatus.textContent = "";
+    formStatus.className = "form-status";
+  }
+  document.getElementById("clearBtn").onclick = clearForm;
 
-})();
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const data = getFormData();
+    if(!data.fullName){
+      formStatus.textContent = "Full name is required.";
+      formStatus.className = "form-status err";
+      return;
+    }
+
+    const now = new Date();
+    const payload = {
+      ...data,
+      updatedAt: now.toISOString(),
+      updatedBy: sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || ""
+    };
+
+    try{
+      if(editingId){
+        await db.collection("learners").doc(editingId).set(payload, {merge:true});
+      }else{
+        payload.createdAt = now.toISOString();
+        payload.createdBy = payload.updatedBy;
+        await db.collection("learners").add(payload);
+      }
+      formStatus.textContent = "✓ Saved";
+      formStatus.className = "form-status ok";
+      clearForm();
+      await load();
+    }catch(err){
+      formStatus.textContent = "⚠️ Save failed: " + err.message;
+      formStatus.className = "form-status err";
+    }
+  };
+
+  async function load(){
+    recordsList.innerHTML = '<div class="empty">Loading records...</div>';
+    const snap = await db.collection("learners").get();
+    allRecords = snap.docs.map(d=>({id:d.id, ...d.data()}))
+      .sort((a,b)=>(a.fullName||"").localeCompare(b.fullName||""));
+    render(allRecords);
+  }
+
+  function render(items){
+    recordCount.textContent = items.length + (items.length===1?" record":" records");
+    if(!items.length){
+      recordsList.innerHTML = '<div class="empty">No records yet.</div>';
+      return;
+    }
+    recordsList.innerHTML = "";
+    items.forEach(r=>{
+      const statusClass = String(r.status||"Active").toLowerCase();
+      const row = document.createElement("div");
+      row.className = "record-row";
+      row.innerHTML = `
+        <div>
+          <div class="record-name">${r.fullName||"Unnamed"}</div>
+          <div class="record-meta">Level: ${r.level||"—"} · Teacher: ${r.personnel||"Unassigned"}</div>
+          ${r.parentName?`<div class="record-meta">Parent: ${r.parentName} ${r.parentPhone?"· "+r.parentPhone:""}</div>`:""}
+          <span class="status-pill ${statusClass}">${r.status||"Active"}</span>
+        </div>
+        <div class="row-actions">
+          <button class="edit" data-id="${r.id}">Edit</button>
+          <button class="del" data-id="${r.id}">Delete</button>
+        </div>
+      `;
+      row.querySelector(".edit").onclick = () => {
+        fields.forEach(f => document.getElementById(f).value = r[f] || "");
+        editingId = r.id;
+        formTitle.textContent = "Edit Record";
+        formHint.textContent = "Editing " + (r.fullName||"this learner") + ".";
+        window.scrollTo({top:0, behavior:"smooth"});
+      };
+      row.querySelector(".del").onclick = async () => {
+        if(!confirm("Delete this learner record?")) return;
+        await db.collection("learners").doc(r.id).delete();
+        await load();
+      };
+      recordsList.appendChild(row);
+    });
+  }
+
+  searchInput.oninput = () => {
+    const q = searchInput.value.trim().toLowerCase();
+    if(!q){ render(allRecords); return; }
+    render(allRecords.filter(r =>
+      [r.fullName, r.level, r.personnel, r.status].join(" ").toLowerCase().includes(q)
+    ));
+  };
+
+  await loadPersonnel();
+  await load();
+});
 </script>
-
+<script src="/js/impact-recycle-bin.js"></script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
