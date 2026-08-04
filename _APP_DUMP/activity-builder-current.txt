@@ -229,11 +229,19 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
   <div>
     <label class="settings-label">Assign to Learner Level(s)</label>
     <div class="assign-levels-group" id="assignLevelsGroup">
+      <label class="assign-level-chip"><input type="checkbox" value="Absolute Beginner">Abs. Beginner</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A0">A0</label>
       <label class="assign-level-chip"><input type="checkbox" value="A1">A1</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A1.1">A1.1</label>
       <label class="assign-level-chip"><input type="checkbox" value="A2">A2</label>
       <label class="assign-level-chip"><input type="checkbox" value="B1">B1</label>
       <label class="assign-level-chip"><input type="checkbox" value="B2">B2</label>
     </div>
+
+    <label class="settings-label" style="margin-top:14px">Assign to Specific Learner(s)</label>
+    <input type="text" class="settings-input" id="learnerSearchInput" placeholder="Search learner by name..." autocomplete="off">
+    <div class="learner-picker-list" id="learnerPickerList"></div>
+    <div class="assign-learners-selected" id="assignLearnersSelected"></div>
   </div>
   <div class="settings-divider"></div>
   <button class="ctrl-btn primary" id="saveBtn" type="button">💾  Save</button>
@@ -491,7 +499,7 @@ function rebuildFromBlocks(blocks){
 }
 async function save(){
   const blocks=serializeBlocks();
-  const assignedLevels=Array.from(document.querySelectorAll("#assignLevelsGroup input:checked")).map(c=>c.value);const payload={title:titleInput.value.trim()||"Untitled Activity",level:levelSelect.value,assignedLevels,blocks,version:2,updatedAt:new Date().toISOString()};
+  const assignedLevels=Array.from(document.querySelectorAll("#assignLevelsGroup input:checked")).map(c=>c.value);const payload={title:titleInput.value.trim()||"Untitled Activity",level:levelSelect.value,assignedLevels,assignedLearners:selectedLearners,blocks,version:2,updatedAt:new Date().toISOString()};
   if(currentId){await db.collection(COLLECTION).doc(currentId).set(payload,{merge:true});}
   else{const ref=await db.collection(COLLECTION).add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/activity-builder.html?edit="+currentId);}
   tick();return currentId;

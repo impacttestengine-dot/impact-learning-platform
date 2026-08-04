@@ -272,6 +272,66 @@ let selectedBlock=null;
 let undoStack=[];
 let dragSrc=null;
 let pageCount=1;
+const assignLevelsGroup = document.getElementById("assignLevelsGroup");
+if(assignLevelsGroup){
+  assignLevelsGroup.addEventListener("change", function(e){
+    const chip = e.target.closest(".assign-level-chip");
+    if(chip) chip.classList.toggle("checked", e.target.checked);
+  });
+}
+
+let allLearners = [];
+let selectedLearners = [];
+const learnerSearchInput = document.getElementById("learnerSearchInput");
+const learnerPickerList = document.getElementById("learnerPickerList");
+const assignLearnersSelected = document.getElementById("assignLearnersSelected");
+
+async function loadLearnersList(){
+  try{
+    const snap = await db.collection("impactPasskeys").where("role","==","Learner").get();
+    allLearners = snap.docs.map(d=>({name:d.data().name||"Unnamed",level:d.data().level||""}));
+  }catch(e){ console.warn("Could not load learners list:", e); }
+}
+
+function renderSelectedLearnerChips(){
+  if(!assignLearnersSelected) return;
+  assignLearnersSelected.innerHTML = selectedLearners.map(name=>
+    '<span class="assigned-learner-chip">'+name+'<button type="button" data-remove-learner="'+name+'">✕</button></span>'
+  ).join("");
+}
+
+if(learnerSearchInput){
+  loadLearnersList();
+
+  learnerSearchInput.addEventListener("input", function(){
+    const q = learnerSearchInput.value.trim().toLowerCase();
+    if(!q){ learnerPickerList.classList.remove("show"); learnerPickerList.innerHTML=""; return; }
+    const matches = allLearners.filter(l=>l.name.toLowerCase().includes(q) && !selectedLearners.includes(l.name));
+    if(!matches.length){ learnerPickerList.classList.remove("show"); learnerPickerList.innerHTML=""; return; }
+    learnerPickerList.innerHTML = matches.map(l=>
+      '<div class="learner-picker-row" data-pick-learner="'+l.name+'">'+l.name+' <span style="opacity:.5">('+(l.level||"no level")+')</span></div>'
+    ).join("");
+    learnerPickerList.classList.add("show");
+  });
+
+  learnerPickerList.addEventListener("click", function(e){
+    const row = e.target.closest("[data-pick-learner]");
+    if(!row) return;
+    const name = row.dataset.pickLearner;
+    if(!selectedLearners.includes(name)) selectedLearners.push(name);
+    renderSelectedLearnerChips();
+    learnerSearchInput.value = "";
+    learnerPickerList.classList.remove("show");
+    learnerPickerList.innerHTML = "";
+  });
+
+  assignLearnersSelected.addEventListener("click", function(e){
+    const btn = e.target.closest("[data-remove-learner]");
+    if(!btn) return;
+    selectedLearners = selectedLearners.filter(n=>n!==btn.dataset.removeLearner);
+    renderSelectedLearnerChips();
+  });
+}
 function showEmpty(){if(!canvas.querySelector(".c-block"))canvasEmpty.style.display="";}
 function hideEmpty(){canvasEmpty.style.display="none";}
 function allBlocks(){return Array.from(canvas.querySelectorAll(".c-block"));}
