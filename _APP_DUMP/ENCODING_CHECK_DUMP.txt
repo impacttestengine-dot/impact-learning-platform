@@ -1,0 +1,1185 @@
+﻿ENCODING CHECK DUMP
+==================================================
+==================================================
+FILE: public\teacher\class-logger.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Class Tracker | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;max-width:100%;overflow-x:hidden} body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(980px,88vw);max-width:980px;margin:0 auto;padding:110px 0 90px;overflow:hidden}
+.nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.pdf-btn{position:fixed!important;top:24px!important;right:28px!important;left:auto!important;z-index:999999!important;width:54px!important;height:54px!important;border-radius:18px!important;border:1px solid rgba(255,255,255,.18)!important;background:rgba(255,255,255,.10)!important;color:white!important;font-size:22px!important;cursor:pointer!important;backdrop-filter:blur(18px)!important}
+.hero{text-align:center;margin-bottom:34px;width:100%;overflow:hidden}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
+.hero p{font-weight:800;color:rgba(255,255,255,.65)}
+.search-row{display:flex;gap:12px;margin-bottom:24px;align-items:stretch}
+.search{flex:1;padding:16px 18px;border-radius:22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:white;font-weight:800}
+.add-manual-btn{flex-shrink:0;padding:0 22px;border-radius:22px;background:rgba(120,170,255,.16);border:1px solid rgba(120,170,255,.3);color:#bcd4ff;font-weight:900;cursor:pointer;white-space:nowrap}
+.learner{margin-bottom:30px}
+.learner h2{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;margin-bottom:14px}
+.card{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:16px;margin-bottom:14px;padding:20px;border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);width:100%;max-width:100%;overflow:hidden;align-items:start}
+.pill{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);font-weight:900}
+.info{font-size:.84rem;font-weight:800;line-height:1.75;color:rgba(255,255,255,.82)}
+.top{font-weight:900;color:white}
+.status{display:inline-block;margin-top:10px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.badge{display:inline-block;margin-top:10px;margin-left:8px;padding:7px 12px;border-radius:999px;font-size:.72rem;font-weight:900}
+.badge-type{background:rgba(120,170,255,.18);color:#bcd4ff}
+.badge-billable{background:rgba(80,220,140,.16);color:#9ef0bf}
+.badge-nonbillable{background:rgba(255,120,120,.16);color:#ffb3b3}
+.delete{border:none;border-radius:14px;padding:10px 16px;background:rgba(255,80,80,.14);color:white;font-weight:900;cursor:pointer;align-self:start;justify-self:end;width:auto;min-width:92px;height:44px;line-height:1;display:flex;align-items:center;justify-content:center}
+.empty{padding:24px;border-radius:24px;background:rgba(255,255,255,.06);text-align:center;font-weight:800;color:rgba(255,255,255,.6)}
+button{transition:.15s ease}
+button:hover{transform:translateY(-2px) scale(1.03)}
+button:active{transform:scale(.94);opacity:.8}
+</style>
+<style id="class-tracker-delete-layout-fix">
+.card{
+  grid-template-columns:64px minmax(0,1fr) 110px !important;
+  align-items:start !important;
+  overflow:hidden !important;
+}
+.info{
+  min-width:0 !important;
+  word-break:break-word !important;
+  overflow-wrap:anywhere !important;
+}
+.delete{
+  width:92px !important;
+  height:42px !important;
+  min-width:92px !important;
+  padding:0 14px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  justify-self:end !important;
+  align-self:start !important;
+  border-radius:14px !important;
+  line-height:1 !important;
+}
+@media(max-width:700px){
+  .card{
+    grid-template-columns:48px 1fr !important;
+  }
+  .delete{
+    grid-column:2 !important;
+    justify-self:start !important;
+    margin-top:10px !important;
+  }
+}
+</style>
+<style id="manual-class-modal-styles">
+body.modal-locked{
+  overflow:hidden !important;
+  height:100vh !important;
+}
+.modal-overlay{
+  display:none;
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  background:rgba(2,3,8,.92) !important;
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+  z-index:2147483647 !important;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  overflow-y:auto;
+}
+.modal-overlay.open{
+  display:flex !important;
+}
+.modal-box{
+  width:min(560px,100%);
+  max-height:88vh;
+  overflow-y:auto;
+  background:#0d0f17;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:28px;
+  padding:30px;
+  box-shadow:0 30px 90px rgba(0,0,0,.6);
+}
+.modal-box h3{
+  font-family:"Sorts Mill Goudy",serif;
+  font-size:1.8rem;
+  font-weight:400;
+  margin-bottom:20px;
+}
+.field-group{margin-bottom:16px}
+.field-group label{
+  display:block;
+  font-size:.78rem;
+  font-weight:900;
+  color:rgba(255,255,255,.6);
+  margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.field-group input,
+.field-group select,
+.field-group textarea{
+  width:100%;
+  padding:13px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+  color:white;
+  font-weight:700;
+  font-family:Inter,sans-serif;
+  font-size:.92rem;
+}
+.field-group textarea{min-height:80px;resize:vertical}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.modal-actions{
+  display:flex;
+  gap:12px;
+  margin-top:22px;
+}
+.modal-save{
+  flex:1;
+  padding:14px;
+  border-radius:16px;
+  border:none;
+  background:rgba(120,170,255,.22);
+  color:#bcd4ff;
+  font-weight:900;
+  cursor:pointer;
+}
+.modal-cancel{
+  flex:1;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.14);
+  background:transparent;
+  color:white;
+  font-weight:900;
+  cursor:pointer;
+}
+.field-error{
+  color:#ffb3b3;
+  font-size:.78rem;
+  font-weight:800;
+  margin-top:10px;
+  display:none;
+}
+.field-hint{
+  color:rgba(120,200,255,.85);
+  font-size:.76rem;
+  font-weight:700;
+  margin-top:6px;
+  display:none;
+}
+</style>
+</head>
+
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="nav">
+<a href="/teacher/billing.html" title="Billing" style="background:rgba(99,179,237,.16);border-color:rgba(99,179,237,.3)">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+</a>
+  <a href="/teacher/dashboard.html">?</a>
+  <a href="/teacher/classes.html">?</a>
+</nav>
+
+<button id="pdfBtn" class="pdf-btn">??</button>
+
+<main class="page">
+  <section class="hero">
+    <h1>Class Tracker</h1>
+    <p>Started classes, ended classes, duration, participation, and teacher remarks are logged here.</p>
+  </section>
+
+  <div class="search-row">
+    <input id="search" class="search" placeholder="Search learner, teacher, level, room, remark...">
+    <button id="addManualBtn" type="button" class="add-manual-btn">+ Add Class</button>
+  </div>
+
+  <section id="wrap"><div class="empty">Loading class tracker...</div></section>
+</main>
+
+<div id="manualModalOverlay" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Add Class</h3>
+
+    <div class="field-group">
+      <label>Learner</label>
+      <input id="m_learner" type="text" placeholder="Learner name" list="m_learner_list" autocomplete="off">
+      <datalist id="m_learner_list"></datalist>
+      <div class="field-hint" id="m_learner_hint">Matched to existing learner � will join their tracker.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Teacher</label>
+      <input id="m_teacher" type="text" placeholder="Teacher name">
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label>Level</label>
+        <input id="m_level" type="text" placeholder="e.g. A1.1, B1">
+      </div>
+      <div class="field-group">
+        <label>Date</label>
+        <input id="m_date" type="date">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label>Start Time</label>
+        <input id="m_start" type="time">
+      </div>
+      <div class="field-group">
+        <label>End Time</label>
+        <input id="m_end" type="time">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label>Participation (%)</label>
+        <input id="m_participation" type="number" min="0" max="100" placeholder="e.g. 80">
+      </div>
+      <div class="field-group">
+        <label>Platform Used</label>
+        <input id="m_platform" type="text" placeholder="e.g. Zoom, WhatsApp Call">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Remarks</label>
+      <textarea id="m_remarks" placeholder="Notes about the class..."></textarea>
+    </div>
+
+    <div class="field-error" id="m_error">Please fill in Learner, Teacher, Date, Start Time, and End Time.</div>
+
+    <div class="modal-actions">
+      <button type="button" class="modal-cancel" id="m_cancel">Cancel</button>
+      <button type="button" class="modal-save" id="m_save">Save Class</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+(function(){
+  const manualOverlay=document.getElementById("manualModalOverlay");
+  const addManualBtn=document.getElementById("addManualBtn");
+  const mCancel=document.getElementById("m_cancel");
+
+  function openManualModal(){
+    document.getElementById("m_learner").value="";
+    document.getElementById("m_teacher").value="";
+    document.getElementById("m_level").value="";
+    document.getElementById("m_date").value="";
+    document.getElementById("m_start").value="";
+    document.getElementById("m_end").value="";
+    document.getElementById("m_participation").value="";
+    document.getElementById("m_platform").value="";
+    document.getElementById("m_remarks").value="";
+    document.getElementById("m_error").style.display="none";
+    document.getElementById("m_learner_hint").style.display="none";
+    document.body.appendChild(manualOverlay);
+    manualOverlay.classList.add("open");
+    document.body.classList.add("modal-locked");
+    window.scrollTo(0,0);
+  }
+
+  function closeManualModal(){
+    manualOverlay.classList.remove("open");
+    document.body.classList.remove("modal-locked");
+  }
+
+  if(addManualBtn){
+    addManualBtn.addEventListener("click",function(e){
+      e.preventDefault();
+      openManualModal();
+    });
+  }
+
+  if(mCancel){
+    mCancel.addEventListener("click",function(e){
+      e.preventDefault();
+      closeManualModal();
+    });
+  }
+
+  manualOverlay.addEventListener("click",function(e){
+    if(e.target===manualOverlay) closeManualModal();
+  });
+
+  window.__closeManualModal=closeManualModal;
+})();
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded",async()=>{
+const db=firebase.firestore();
+const wrap=document.getElementById("wrap");
+const search=document.getElementById("search");
+let allLogs=[];
+let knownLearners=[];
+
+const BILLABLE_MINUTES_THRESHOLD=20;
+const FIRST_BILLING_START=new Date(2026,5,4); // 04 June 2026 � fixed for testing
+
+function clean(v){return String(v||"").replace(/\s*minute\(s\)\s*$/i,"").trim()}
+function ms(x){return new Date(x.startedAt||x.createdAt||x.loggedAt||0).getTime()||0}
+
+function isBillable(x){
+  if(typeof x.billable==="boolean") return x.billable;
+  const canceled=String(x.lessonCanceled||"").trim().toLowerCase()==="yes";
+  if(canceled) return false;
+  const completedField=String(x.lessonCompleted||"").trim().toLowerCase();
+  if(completedField==="no") return false;
+  if(x.status==="Completed") return true;
+  if(x.status==="Ended"){
+    const mins=Number(x.minutesSpent||x.durationMinutes||0);
+    return mins>=BILLABLE_MINUTES_THRESHOLD;
+  }
+  return false;
+}
+
+function resolveLearnerName(typedName){
+  const typedNorm=typedName.trim().toLowerCase().replace(/\s+/g," ");
+  for(const known of knownLearners){
+    if(known.trim().toLowerCase().replace(/\s+/g," ")===typedNorm) return known;
+  }
+  return typedName.trim();
+}
+
+function formatDateLong(d){
+  const day=String(d.getDate()).padStart(2,"0");
+  const month=d.toLocaleString("en-GB",{month:"long"});
+  const year=d.getFullYear();
+  return `${day} ${month} ${year}`;
+}
+
+async function load(){
+  const snap=await db.collection("classTracker").get();
+  const seen=new Set();
+  allLogs=snap.docs.map(d=>({id:d.id,...d.data()}))
+    .sort((a,b)=>ms(a)-ms(b))
+    .filter(x=>{
+      const key=[x.learner,x.startedAt||x.startedAtText,x.endedAt||x.endedAtText,x.meetRoom].join("|");
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+  const nameSet=new Set();
+  allLogs.forEach(x=>{if(x.learner) nameSet.add(x.learner);});
+  knownLearners=Array.from(nameSet).sort();
+
+  const datalist=document.getElementById("m_learner_list");
+  if(datalist){
+    datalist.innerHTML=knownLearners.map(n=>`<option value="${n.replace(/"/g,"&quot;")}">`).join("");
+  }
+
+  render(allLogs);
+}
+
+function render(logs){
+  if(!logs.length){wrap.innerHTML='<div class="empty">No tracker records found.</div>';return}
+
+  const groups={};
+  logs.forEach(x=>{
+    const name=x.learner||"Unnamed Learner";
+    if(!groups[name]) groups[name]=[];
+    groups[name].push(x);
+  });
+
+  wrap.innerHTML="";
+
+  Object.keys(groups).sort().forEach(name=>{
+    const sec=document.createElement("section");
+    sec.className="learner";
+    sec.innerHTML=`<h2>${name}</h2>`;
+
+    let billableCount=0;
+    groups[name].sort((a,b)=>ms(a)-ms(b)).forEach((x)=>{
+      const billable=isBillable(x);
+      if(billable) billableCount++;
+      const session=billable?(billableCount+"/4"):"-/4";
+      const entryType=(x.entryType||"auto").toUpperCase();
+      const card=document.createElement("article");
+      card.className="card";
+      card.innerHTML=`
+        <div class="pill">${session}</div>
+        <div class="info">
+          <div class="top">Level: ${x.level||""} � Session ${session} � Teacher: ${x.teacher||""} � Room: ${x.meetRoom||x.platform||""}</div>
+          <div>Started: ${x.startedAtText||x.startedAt||""}</div>
+          <div>Ended: ${x.endedAtText||x.endedAt||"Not ended"}</div>
+          <div>Duration: ${x.minutesSpent||x.durationMinutes||0} minute(s)</div>
+          ${x.lessonCompleted?`<div>Lesson completed: ${clean(x.lessonCompleted)}</div>`:""}
+          ${x.lessonCanceled?`<div>Lesson canceled: ${clean(x.lessonCanceled)}</div>`:""}
+          ${x.studentParticipation?`<div>Student participation: ${clean(x.studentParticipation)}</div>`:""}
+          ${x.teacherRemarks?`<div>Remarks: ${clean(x.teacherRemarks)}</div>`:""}
+          <span class="status">${x.status||"Logged"}</span>
+          <span class="badge badge-type">${entryType}</span>
+          <span class="badge ${billable?"badge-billable":"badge-nonbillable"}">${billable?"BILLABLE":"NON-BILLABLE"}</span>
+        </div>
+        <button class="delete">Delete</button>
+      `;
+      card.querySelector(".delete").onclick=async()=>{
+        if(confirm("Delete this tracker record?")){
+          await db.collection("classTracker").doc(x.id).delete();
+          await load();
+        }
+      };
+      sec.appendChild(card);
+    });
+
+    wrap.appendChild(sec);
+  });
+}
+
+search.oninput=()=>render(allLogs.filter(x=>JSON.stringify(x).toLowerCase().includes(search.value.toLowerCase())));
+
+document.getElementById("pdfBtn").onclick=async()=>{
+  const pdfBtn=document.getElementById("pdfBtn");
+  pdfBtn.disabled=true;
+
+  try{
+    const historyRef=db.collection("billingExportHistory").doc("lastExport");
+    const today=new Date();
+
+    // PRODUCTION
+const historySnap = await historyRef.get();
+let rangeStart;
+
+if(historySnap.exists && historySnap.data().lastExportEndDate){
+    const lastEnd = new Date(historySnap.data().lastExportEndDate);
+    rangeStart = new Date(lastEnd);
+    rangeStart.setDate(rangeStart.getDate() + 1);
+}else{
+    rangeStart = new Date(FIRST_BILLING_START);
+}
+
+    
+
+    const rangeStartLabel=formatDateLong(rangeStart);
+    const rangeEndLabel=formatDateLong(today);
+    const filename=`Billing Tracker from ${rangeStartLabel} to ${rangeEndLabel}.pdf`;
+
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:"landscape",unit:"pt",format:"a4"});
+
+    const margin=45;
+    const top=80;
+    const noW=42;
+    const studentW=120;
+    const dateW=62;
+    const dateCols=10;
+    const headerH=54;
+    const rowH=82;
+    const xNo=margin;
+    const xStudent=xNo+noW;
+    const xDates=xStudent+studentW;
+
+    pdf.setFont("helvetica","bold");
+    pdf.setFontSize(16);
+    pdf.text(filename.replace(".pdf",""),margin,55);
+
+    function cell(x,y,w,h,fill){
+      pdf.setFillColor(fill[0],fill[1],fill[2]);
+      pdf.setDrawColor(80,45,35);
+      pdf.setLineWidth(.6);
+      pdf.rect(x,y,w,h,"FD");
+    }
+
+    function centerText(txt,x,y,w,h,size){
+      pdf.setFont("helvetica","bold");
+      pdf.setFontSize(size);
+      pdf.setTextColor(15,22,33);
+      const lines=pdf.splitTextToSize(String(txt),w-8);
+      const lineH=size+2;
+      const total=lines.length*lineH;
+      let yy=y+(h-total)/2+size;
+      lines.forEach(line=>{
+        pdf.text(line,x+w/2,yy,{align:"center"});
+        yy+=lineH;
+      });
+    }
+
+    cell(xNo,top,noW,headerH,[213,226,232]);
+    cell(xStudent,top,studentW,headerH,[213,226,232]);
+    cell(xDates,top,dateW*dateCols,headerH,[213,226,232]);
+    centerText("NO.",xNo,top,noW,headerH,10);
+    centerText("STUDENT",xStudent,top,studentW,headerH,10);
+    centerText("CLASS DATES",xDates,top,dateW*dateCols,headerH,11);
+
+    const billableLogs=allLogs.filter(x=>isBillable(x));
+    const grouped={};
+    billableLogs.forEach(x=>{
+      const name=x.learner||"Student";
+      const raw=x.startedAtText||x.startedAt||"";
+      const date=String(raw).split(",")[0].trim();
+      if(!date) return;
+      if(!grouped[name]) grouped[name]=[];
+      if(!grouped[name].includes(date)) grouped[name].push(date);
+    });
+
+    let y=top+headerH;
+    let n=1;
+
+    Object.keys(grouped).sort().forEach(name=>{
+      if(y+rowH>540){
+        pdf.addPage("a4","landscape");
+        y=60;
+        cell(xNo,y,noW,headerH,[213,226,232]);
+        cell(xStudent,y,studentW,headerH,[213,226,232]);
+        cell(xDates,y,dateW*dateCols,headerH,[213,226,232]);
+        centerText("NO.",xNo,y,noW,headerH,10);
+        centerText("STUDENT",xStudent,y,studentW,headerH,10);
+        centerText("CLASS DATES",xDates,y,dateW*dateCols,headerH,11);
+        y+=headerH;
+      }
+
+      const boxes=[];
+      for(let i=0;i<grouped[name].length;i+=4){
+        boxes.push(grouped[name].slice(i,i+4));
+      }
+      while(boxes.length<dateCols) boxes.push([]);
+
+      cell(xNo,y,noW,rowH,[235,242,245]);
+      cell(xStudent,y,studentW,rowH,[235,242,245]);
+
+      pdf.setTextColor(20,25,35);
+      pdf.setFont("helvetica","bold");
+      pdf.setFontSize(9);
+      pdf.text(String(n++),xNo+noW/2,y+18,{align:"center"});
+      pdf.text(name,xStudent+10,y+18);
+
+      boxes.slice(0,dateCols).forEach((dates,i)=>{
+        const x=xDates+(i*dateW);
+        cell(x,y,dateW,rowH,[235,242,245]);
+        pdf.setFont("helvetica","normal");
+        pdf.setFontSize(8);
+        pdf.setTextColor(20,25,35);
+        let yy=y+16;
+        dates.forEach(d=>{
+          pdf.text(d,x+6,yy);
+          yy+=12;
+        });
+      });
+
+      y+=rowH;
+    });
+
+    pdf.save(filename);
+
+    await historyRef.set({
+      lastExportEndDate:"2026-07-06T00:00:00.000Z",
+      lastExportEndDateLabel:"06 July 2026",
+      lastExportStartDateLabel:rangeStartLabel,
+      lastExportFilename:filename,
+      updatedAt:today.toISOString()
+    });
+
+  }catch(err){
+    console.error(err);
+    alert("Could not generate the Billing Tracker PDF. Please try again.");
+  }finally{
+    pdfBtn.disabled=false;
+  }
+};
+
+const mLearnerInput=document.getElementById("m_learner");
+const mLearnerHint=document.getElementById("m_learner_hint");
+mLearnerInput.addEventListener("input",()=>{
+  const typed=mLearnerInput.value.trim();
+  if(!typed){mLearnerHint.style.display="none";return;}
+  const matched=resolveLearnerName(typed);
+  const typedNorm=typed.toLowerCase().replace(/\s+/g," ");
+  const matchedNorm=matched.toLowerCase().replace(/\s+/g," ");
+  mLearnerHint.style.display=(typedNorm===matchedNorm&&knownLearners.includes(matched))?"block":"none";
+});
+
+const mSave=document.getElementById("m_save");
+const mError=document.getElementById("m_error");
+
+mSave.onclick=async()=>{
+  const learnerTyped=document.getElementById("m_learner").value.trim();
+  const teacher=document.getElementById("m_teacher").value.trim();
+  const level=document.getElementById("m_level").value.trim();
+  const date=document.getElementById("m_date").value;
+  const startTime=document.getElementById("m_start").value;
+  const endTime=document.getElementById("m_end").value;
+  const participation=document.getElementById("m_participation").value.trim();
+  const platform=document.getElementById("m_platform").value.trim();
+  const remarks=document.getElementById("m_remarks").value.trim();
+
+  if(!learnerTyped||!teacher||!date||!startTime||!endTime){
+    mError.style.display="block";
+    return;
+  }
+  mError.style.display="none";
+
+  const learner=resolveLearnerName(learnerTyped);
+  const startedAt=new Date(`${date}T${startTime}`);
+  const endedAt=new Date(`${date}T${endTime}`);
+  let minutesSpent=Math.round((endedAt-startedAt)/60000);
+  if(minutesSpent<0) minutesSpent=0;
+
+  mSave.disabled=true;
+  mSave.innerText="Saving...";
+
+  try{
+    await db.collection("classTracker").add({
+      learner,
+      teacher,
+      level,
+      meetRoom:"",
+      platform:platform||"",
+      startedAt:startedAt.toISOString(),
+      startedAtText:startedAt.toLocaleString(),
+      endedAt:endedAt.toISOString(),
+      endedAtText:endedAt.toLocaleString(),
+      minutesSpent,
+      lessonCompleted:"Yes",
+      lessonCanceled:"No",
+      studentParticipation:participation?`${participation}%`:"",
+      teacherRemarks:remarks,
+      entryType:"manual",
+      billable:true,
+      status:"Completed"
+    });
+
+    if(window.__closeManualModal) window.__closeManualModal();
+    await load();
+  }catch(err){
+    console.error(err);
+    alert("Could not save manual class. Please try again.");
+  }finally{
+    mSave.disabled=false;
+    mSave.innerText="Save Class";
+  }
+};
+
+load();
+});
+</script>
+
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+
+
+
+
+
+==================================================
+FILE: public\teacher\billing.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Billing | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(1080px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(2.6rem,6vw,4.6rem);font-weight:400}
+.hero p{color:rgba(255,255,255,.65);font-weight:800}
+
+.cutoff-banner{border-radius:22px;padding:18px 22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);margin-bottom:26px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.cutoff-text{font-size:.84rem;font-weight:800;color:rgba(255,255,255,.7)}
+.cutoff-text b{color:#90cdf4}
+
+.section-label{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+
+.ready-grid{display:grid;gap:14px;margin-bottom:36px}
+.ready-card{padding:22px;border-radius:26px;background:linear-gradient(135deg,rgba(16,185,129,.14),rgba(16,185,129,.04));border:1px solid rgba(16,185,129,.3)}
+.ready-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:10px}
+.ready-name{font-family:"Sorts Mill Goudy",serif;font-size:1.5rem;font-weight:400}
+.ready-badge{padding:6px 14px;border-radius:999px;background:rgba(16,185,129,.2);color:#6ee7b7;font-size:.72rem;font-weight:900;white-space:nowrap}
+.ready-meta{font-size:.82rem;color:rgba(255,255,255,.6);font-weight:700;line-height:1.7}
+.ready-dates{font-size:.78rem;color:rgba(255,255,255,.5);font-weight:700;margin-top:8px}
+.ready-actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{padding:11px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-weight:900;font-size:.82rem;cursor:pointer;font-family:Inter,sans-serif;transition:.15s}
+.btn:hover{background:rgba(255,255,255,.16)}
+.btn.primary{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4}
+.btn.primary:hover{background:rgba(99,179,237,.32)}
+.btn.done{background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.35);color:#6ee7b7}
+
+.pending-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px}
+.pending-card{padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.pending-name{font-weight:800;font-size:.9rem;margin-bottom:4px}
+.pending-count{font-size:.76rem;color:rgba(255,255,255,.5);font-weight:700}
+.mini-bar{height:6px;border-radius:999px;background:rgba(255,255,255,.08);margin-top:8px;overflow:hidden}
+.mini-bar-fill{height:100%;background:linear-gradient(90deg,#fbbf24,#f59e0b);border-radius:999px}
+
+.empty-state{text-align:center;padding:50px;color:rgba(255,255,255,.4);font-weight:700;border:2px dashed rgba(255,255,255,.1);border-radius:24px}
+
+/* PREVIEW MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.invoice-doc{width:min(700px,100%);background:#fff;color:#1a1a1a;border-radius:8px;padding:40px;font-family:Arial,sans-serif;max-height:90vh;overflow-y:auto}
+.inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.inv-logo{font-size:1.6rem;font-weight:900;color:#1a1a1a}
+.inv-title{font-size:1.6rem;font-weight:900;color:#B5654A}
+.inv-meta{text-align:right;font-size:.85rem;font-weight:700;margin-bottom:16px}
+.inv-billto-bar{background:#B5654A;color:#fff;padding:8px 12px;font-weight:800;font-size:.85rem;border-radius:2px}
+.inv-billto-body{padding:8px 4px;font-size:.85rem;line-height:1.7}
+.inv-billto-body input{border:1px solid #ddd;border-radius:6px;padding:4px 8px;font-size:.85rem;width:100%;margin-bottom:4px;font-family:Arial,sans-serif}
+.inv-period{text-align:center;font-weight:800;font-size:.9rem;margin:16px 0}
+.inv-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:.82rem}
+.inv-table th{background:#B5654A;color:#fff;padding:8px;border:1px solid #B5654A}
+.inv-table td{padding:8px;border:1px solid #ddd;text-align:center}
+.inv-table td.fee-input input{width:70px;border:1px solid #ccc;border-radius:4px;padding:3px 6px;text-align:center}
+.inv-dates{font-size:.8rem;line-height:1.8;background:#F1E4DC;padding:12px;border-radius:8px;margin-bottom:12px}
+.inv-footer{font-size:.78rem;line-height:1.7;color:#333}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+.modal-actions button{padding:11px 20px;border-radius:12px;border:none;font-weight:800;font-size:.84rem;cursor:pointer;font-family:Inter,sans-serif}
+.modal-actions .close-btn{background:#e5e7eb;color:#374151}
+.modal-actions .download-btn{background:#B5654A;color:#fff}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="nav">
+  <a href="/teacher/class-logger.html" title="Back to Class Tracker">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+  </a>
+  <a href="/teacher/dashboard.html" title="Dashboard">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+</nav>
+
+<main class="page">
+<section class="hero"><h1>Billing</h1><p>Learners ready for invoicing, based on completed groups of 4 billable classes.</p></section>
+
+<div class="cutoff-banner">
+  <span class="cutoff-text">Billing continues from where the manual process left off � cutoff: <b id="cutoffLabel">Loading...</b></span>
+</div>
+
+<p class="section-label">? Ready to Invoice</p>
+<div class="ready-grid" id="readyGrid"><div class="empty-state">Loading...</div></div>
+
+<p class="section-label">In Progress</p>
+<div class="pending-grid" id="pendingGrid"></div>
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="invoice-doc" id="invoiceDoc"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script type="module">
+  import * as docxLib from "https://cdn.jsdelivr.net/npm/docx@8.5.0/+esm";
+  window.docx = docxLib;
+  window.__docxReady = true;
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+  const readyGrid = document.getElementById("readyGrid");
+  const pendingGrid = document.getElementById("pendingGrid");
+  const cutoffLabel = document.getElementById("cutoffLabel");
+  const modalOverlay = document.getElementById("modalOverlay");
+  const invoiceDoc = document.getElementById("invoiceDoc");
+
+  const LEVELS_ORDER = ["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
+
+  function isBillable(x){
+    if(typeof x.billable === "boolean") return x.billable;
+    const canceled = String(x.lessonCanceled||"").trim().toLowerCase()==="yes";
+    if(canceled) return false;
+    const completedField = String(x.lessonCompleted||"").trim().toLowerCase();
+    if(completedField==="no") return false;
+    if(x.status==="Completed") return true;
+    return false;
+  }
+  function ms(x){ return new Date(x.startedAt||x.createdAt||0).getTime()||0; }
+  function fmtDate(d){
+    const date = new Date(d);
+    if(isNaN(date)) return "";
+    const day = String(date.getDate()).padStart(2,"0");
+    const month = date.toLocaleString("en-GB",{month:"long"});
+    return `${day} ${month} ${date.getFullYear()}`;
+  }
+
+  let cutoffDate = null;
+  let allInvoiceGroups = []; // { learner, level, teacher, classes:[4 classes], readyForInvoice:bool }
+
+  async function getNextInvoiceNumber(){
+    const ref = db.collection("billingInvoiceCounter").doc("counter");
+    return db.runTransaction(async (t)=>{
+      const doc = await t.get(ref);
+      const year = new Date().getFullYear().toString().slice(-2);
+      let seq = 1;
+      if(doc.exists && doc.data().year === year){
+        seq = (doc.data().lastSeq||0) + 1;
+      }
+      t.set(ref, { year, lastSeq: seq }, {merge:true});
+      return "2" + year + String(seq).padStart(2,"0"); // matches sample pattern e.g. 20262
+    });
+  }
+
+  async function getExistingBilledGroups(){
+    // Track which groups have already had an invoice generated, so we
+    // don't show the same completed group as "ready" twice.
+    const snap = await db.collection("billingInvoiceLog").get();
+    const billed = new Set();
+    snap.docs.forEach(d=>{
+      const data = d.data();
+      billed.add(data.learner + "|" + data.groupEndDate);
+    });
+    return billed;
+  }
+
+  async function load(){
+    // 1. Get cutoff from existing billingExportHistory
+    const historySnap = await db.collection("billingExportHistory").doc("lastExport").get();
+    cutoffDate = historySnap.exists && historySnap.data().lastExportEndDate
+      ? new Date(historySnap.data().lastExportEndDate)
+      : new Date(0);
+    cutoffLabel.textContent = fmtDate(cutoffDate);
+
+    // 2. Get ALL classTracker records (full history, not just post-cutoff)
+    const trackerSnap = await db.collection("classTracker").get();
+    const allLogs = trackerSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>ms(a)-ms(b));
+
+    // 3. Group by learner, compute running billable count across FULL history
+    const byLearner = {};
+    allLogs.forEach(x=>{
+      const name = x.learner || "Unnamed Learner";
+      if(!byLearner[name]) byLearner[name] = [];
+      if(isBillable(x)) byLearner[name].push(x);
+    });
+
+    const billedGroups = await getExistingBilledGroups();
+
+    allInvoiceGroups = [];
+    const pendingList = [];
+
+    Object.keys(byLearner).sort().forEach(learner=>{
+      const classes = byLearner[learner]; // full billable history, in order
+      const totalGroups = Math.floor(classes.length / 4);
+
+      for(let g=0; g<totalGroups; g++){
+        const groupClasses = classes.slice(g*4, g*4+4);
+        const fourthClassDate = new Date(groupClasses[3].startedAt || groupClasses[3].createdAt);
+
+        // Only groups whose 4th (completing) class happened AFTER the cutoff
+        // are new/unbilled � anything fully before cutoff was handled manually.
+        if(fourthClassDate > cutoffDate){
+          const groupKey = learner + "|" + fourthClassDate.toISOString();
+          if(!billedGroups.has(groupKey)){
+            allInvoiceGroups.push({
+              learner,
+              level: groupClasses[groupClasses.length-1].level || "",
+              teacher: groupClasses[groupClasses.length-1].teacher || "",
+              classes: groupClasses,
+              groupEndDate: fourthClassDate.toISOString()
+            });
+          }
+        }
+      }
+
+      // In-progress: remainder classes after the last complete group, if any occurred after cutoff
+      const remainder = classes.length % 4;
+      if(remainder > 0){
+        const remainderClasses = classes.slice(classes.length - remainder);
+        const mostRecentDate = new Date(remainderClasses[remainderClasses.length-1].startedAt || 0);
+        if(mostRecentDate > cutoffDate || classes.length > totalGroups*4){
+          pendingList.push({ learner, count: remainder, level: remainderClasses[remainderClasses.length-1].level||"" });
+        }
+      }
+    });
+
+    renderReady();
+    renderPending(pendingList);
+  }
+
+  function renderReady(){
+    if(!allInvoiceGroups.length){
+      readyGrid.innerHTML = '<div class="empty-state">No learners are ready for invoicing right now.</div>';
+      return;
+    }
+    readyGrid.innerHTML = "";
+    allInvoiceGroups.forEach((group, idx)=>{
+      const dates = group.classes.map(c=>fmtDate(c.startedAt||c.createdAt));
+      const card = document.createElement("div");
+      card.className = "ready-card";
+      card.innerHTML = `
+        <div class="ready-top">
+          <div class="ready-name">${group.learner}</div>
+          <span class="ready-badge">4/4 � Invoice Ready</span>
+        </div>
+        <div class="ready-meta">Level: ${group.level || "�"} � Teacher: ${group.teacher || "�"}</div>
+        <div class="ready-dates">${dates.join(" � ")}</div>
+        <div class="ready-actions">
+          <button class="btn primary" data-idx="${idx}" data-action="preview">Preview Invoice</button>
+          <button class="btn" data-idx="${idx}" data-action="download">Download Word Doc</button>
+        </div>
+      `;
+      readyGrid.appendChild(card);
+    });
+
+    readyGrid.addEventListener("click", async function(e){
+      const btn = e.target.closest("[data-action]");
+      if(!btn) return;
+      const group = allInvoiceGroups[Number(btn.dataset.idx)];
+      if(btn.dataset.action === "preview") showPreview(group);
+      if(btn.dataset.action === "download") await downloadInvoice(group, btn);
+    });
+  }
+
+  function renderPending(list){
+    if(!list.length){
+      pendingGrid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Nothing in progress.</div>';
+      return;
+    }
+    pendingGrid.innerHTML = list.map(p=>`
+      <div class="pending-card">
+        <div class="pending-name">${p.learner}</div>
+        <div class="pending-count">${p.count}/4 classes � ${p.level||"�"}</div>
+        <div class="mini-bar"><div class="mini-bar-fill" style="width:${(p.count/4)*100}%"></div></div>
+      </div>
+    `).join("");
+  }
+
+  // -- PREVIEW MODAL --
+  function showPreview(group){
+    const dates = group.classes.map(c=>fmtDate(c.startedAt||c.createdAt));
+    const startDate = dates[0];
+    const endDate = dates[dates.length-1];
+
+    invoiceDoc.innerHTML = `
+      <div class="inv-header">
+        <div class="inv-logo">IMPACT</div>
+        <div class="inv-title">INVOICE</div>
+      </div>
+      <div class="inv-meta">
+        Date: ${fmtDate(new Date())}<br>
+        Invoice #<span id="invNumPlaceholder">Generating...</span>
+      </div>
+      <div class="inv-billto-bar">Bill To:</div>
+      <div class="inv-billto-body">
+        <input type="text" id="parentNameInput" placeholder="Parent/Guardian name" value="">
+        <input type="text" id="addressInput" placeholder="Address" value="">
+        <input type="text" id="phoneInput" placeholder="Phone number" value="">
+        <input type="text" id="emailInput" placeholder="Email address" value="">
+      </div>
+      <div class="inv-period">PERIOD (${startDate.toUpperCase()} TO ${endDate.toUpperCase()})</div>
+      <table class="inv-table">
+        <thead><tr><th>Level</th><th>Bill Period</th><th>Description</th><th>No of classes held</th><th>Fee</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>${group.level||"�"}</td>
+            <td>1</td>
+            <td>4 classes is equivalent to one bill period.</td>
+            <td>4</td>
+            <td class="fee-input"><input type="text" id="feeInput" placeholder="0.00"></td>
+            <td id="amountDisplay">�</td>
+          </tr>
+          <tr><td colspan="4" style="text-align:right;font-weight:800">Total</td><td colspan="2" id="totalDisplay" style="font-weight:800">�</td></tr>
+        </tbody>
+      </table>
+      <div class="inv-dates">
+        <strong>Dates of classes held:</strong><br>
+        ${dates.join(" &nbsp;&nbsp; ")}
+      </div>
+      <p style="margin-bottom:8px">We thank you for your business</p>
+      <div class="inv-footer">
+        Kindly make payment to the collecting account<br>
+        <strong>Acc Name:</strong> Emelia Febri Asiedu Attoh<br>
+        <strong>Acc No:</strong> 9040007880175<br>
+        <strong>Bank:</strong> Stanbic Bank<br>
+        <strong>Branch:</strong> Accra Main<br><br>
+        If you have any questions concerning this invoice, contact Admin via WhatsApp on 0535200304 or impact.thelanguagepeople@gmail.com<br>
+        Thank you for your business!
+      </div>
+      <div class="modal-actions">
+        <button class="close-btn" id="closeModalBtn">Close</button>
+        <button class="download-btn" id="modalDownloadBtn">Download Word Doc</button>
+      </div>
+    `;
+
+    getNextInvoiceNumber().then(num=>{
+      document.getElementById("invNumPlaceholder").textContent = num;
+      invoiceDoc.dataset.invoiceNumber = num;
+    });
+
+    document.getElementById("feeInput").addEventListener("input", (e)=>{
+      const fee = e.target.value.trim();
+      document.getElementById("amountDisplay").textContent = fee ? "GHC " + fee : "�";
+      document.getElementById("totalDisplay").textContent = fee ? "GHC " + fee : "�";
+    });
+
+    document.getElementById("closeModalBtn").onclick = ()=> modalOverlay.classList.remove("open");
+    document.getElementById("modalDownloadBtn").onclick = async ()=>{
+      await downloadInvoice(group, document.getElementById("modalDownloadBtn"), {
+        parentName: document.getElementById("parentNameInput").value,
+        address: document.getElementById("addressInput").value,
+        phone: document.getElementById("phoneInput").value,
+        email: document.getElementById("emailInput").value,
+        fee: document.getElementById("feeInput").value,
+        invoiceNumber: invoiceDoc.dataset.invoiceNumber
+      });
+    };
+
+    modalOverlay.classList.add("open");
+  }
+
+  // -- DOCX GENERATION (docx-js, browser bundle) --
+  
+
+      const dates = group.classes.map(c=>fmtDate(c.startedAt||c.createdAt));
+      const invoiceNumber = (overrides && overrides.invoiceNumber) || await getNextInvoiceNumber();
+      const BRAND = "B5654A";
+      const LIGHT_BG = "F1E4DC";
+
+      function cell(text, opts={}){
+        return new TableCell({
+          width: { size: opts.width||2000, type: WidthType.DXA },
+          shading: opts.fill ? { type: ShadingType.CLEAR, fill: opts.fill } : undefined,
+          children: [new Paragraph({ alignment: opts.align||AlignmentType.LEFT, children:[new TextRun({text:text, bold:opts.bold||false, color:opts.color||"000000", size:opts.size||20})] })],
+          verticalAlign: "center"
+        });
+      }
+
+      const doc = new Document({
+        sections: [{
+          properties: { page: { size:{width:12240,height:15840}, margin:{top:720,bottom:720,left:720,right:720} } },
+          children: [
+            new Table({
+              width:{size:10800,type:WidthType.DXA}, columnWidths:[5400,5400],
+              borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE},insideHorizontal:{style:BorderStyle.NONE},insideVertical:{style:BorderStyle.NONE}},
+              rows:[new TableRow({children:[
+                new TableCell({width:{size:5400,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:"IMPACT",bold:true,size:32})]})]}),
+                new TableCell({width:{size:5400,type:WidthType.DXA},children:[new Paragraph({alignment:AlignmentType.RIGHT,children:[new TextRun({text:"INVOICE",bold:true,size:32,color:BRAND})]})]})
+              ]})]
+            }),
+            new Paragraph({text:""}),
+            new Paragraph({alignment:AlignmentType.RIGHT, children:[new TextRun({text:"Date: "+fmtDate(new Date()), bold:true, size:20})]}),
+            new Paragraph({alignment:AlignmentType.RIGHT, children:[new TextRun({text:"Invoice #"+invoiceNumber, bold:true, size:20})]}),
+            new Paragraph({text:""}),
+            new Table({ width:{size:10800,type:WidthType.DXA}, columnWidths:[10800],
+              rows:[new TableRow({children:[cell("Bill To:",{fill:BRAND,bold:true,color:"FFFFFF",width:10800})]})]
+            }),
+            new Paragraph({children:[new TextRun({text:(overrides&&overrides.parentName)||"[PARENT NAME]",size:20})]}),
+            new Paragraph({children:[new TextRun({text:(overrides&&overrides.address)||"[ADDRESS]",size:20})]}),
+            new Paragraph({children:[new TextRun({text:(overrides&&overrides.phone)||"[PHONE]",size:20})]}),
+            new Paragraph({children:[new TextRun({text:(overrides&&overrides.email)||"[EMAIL]",size:20,color:"1155CC"})]}),
+            new Paragraph({text:""}),
+            new Paragraph({alignment:AlignmentType.CENTER, children:[new TextRun({text:`PERIOD (${dates[0].toUpperCase()} TO ${dates[dates.length-1].toUpperCase()})`, bold:true, size:20})]}),
+            new Paragraph({text:""}),
+            new Table({
+              width:{size:10800,type:WidthType.DXA}, columnWidths:[1600,1400,4000,1600,1200,1000],
+              rows:[
+                new TableRow({children:[
+                  cell("Level",{fill:BRAND,bold:true,color:"FFFFFF",align:AlignmentType.CENTER,width:1600}),
+                  cell("Bill Period",{fill:BRAND,bold:true,color:"FFFFFF",align:AlignmentType.CENTER,width:1400}),
+                  cell("Description",{fill:BRAND,bold:true,color:"FFFFFF",align:AlignmentType.CENTER,width:4000}),
+                  cell("No of classes held",{fill:BRAND,bold:true,color:"FFFFFF",align:AlignmentType.CENTER,width:1600}),
+                  cell("Fee",{fill:BRAND,bold:true,color:"FFFFFF",align:AlignmentType.CENTER,width:1200}),
+                  cell("Amount",{fill:BRAND,bold:true,color:"FFFFFF",align:AlignmentType.CENTER,width:1000})
+                ]}),
+                new TableRow({children:[
+                  cell(group.level||"�",{fill:LIGHT_BG,align:AlignmentType.CENTER,width:1600}),
+                  cell("1",{fill:LIGHT_BG,align:AlignmentType.CENTER,width:1400}),
+                  cell("4 classes is equivalent to one bill period.",{width:4000}),
+                  cell("4",{align:AlignmentType.CENTER,width:1600}),
+                  cell((overrides&&overrides.fee)?("GHC "+overrides.fee):"",{align:AlignmentType.CENTER,width:1200}),
+                  cell((overrides&&overrides.fee)?("GHC "+overrides.fee):"",{align:AlignmentType.CENTER,width:1000})
+                ]}),
+                new TableRow({children:[
+                  cell("Total",{fill:LIGHT_BG,bold:true,width:9000,align:AlignmentType.RIGHT}),
+                  cell((overrides&&overrides.fee)?("GHC "+overrides.fee):"",{width:1000})
+                ]})
+              ]
+            }),
+            new Paragraph({text:""}),
+            new Paragraph({children:[new TextRun({text:"Dates of classes held: Billing Period",bold:true,size:20})]}),
+            new Paragraph({children:[new TextRun({text:dates.join("    "),size:20})]}),
+            new Paragraph({text:""}),
+            new Paragraph({children:[new TextRun({text:"We thank you for your business",size:20})]}),
+            new Paragraph({text:""}),
+            new Paragraph({children:[new TextRun({text:"Kindly make payment to the collecting account",size:20})]}),
+            new Paragraph({children:[new TextRun({text:"Acc Name:  Emelia Febri Asiedu Attoh",bold:true,size:20})]}),
+            new Paragraph({children:[new TextRun({text:"Acc No:  9040007880175",bold:true,size:20})]}),
+            new Paragraph({children:[new TextRun({text:"Bank:  Stanbic Bank",bold:true,size:20})]}),
+            new Paragraph({children:[new TextRun({text:"Branch:  Accra Main",bold:true,size:20})]}),
+            new Paragraph({text:""}),
+            new Paragraph({children:[new TextRun({text:"If you have any questions concerning this invoice, contact Admin via WhatsApp on 0535200304 or impact.thelanguagepeople@gmail.com",size:18})]}),
+            new Paragraph({children:[new TextRun({text:"Thank you for your business!",size:20})]})
+          ]
+        }]
+      });
+
+      const blob = await Packer.toBlob(doc);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Invoice_${invoiceNumber}_${group.learner.replace(/\s+/g,"_")}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      // Log this group as billed so it won't show as "ready" again
+      await db.collection("billingInvoiceLog").add({
+        learner: group.learner,
+        groupEndDate: group.groupEndDate,
+        invoiceNumber,
+        level: group.level,
+        teacher: group.teacher,
+        classDates: dates,
+        generatedAt: new Date().toISOString(),
+        generatedBy: sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || ""
+      });
+
+      modalOverlay.classList.remove("open");
+      await load();
+    }catch(err){
+      console.error(err);
+      alert("Could not generate invoice: " + err.message);
+    }finally{
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  }
+
+  await load();
+});
+</script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
