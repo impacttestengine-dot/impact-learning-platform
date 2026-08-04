@@ -988,7 +988,6 @@ async function save(){
   try{
     const blocks = serializeBlocks();
     const payload = {
-createdByTeacher:(sessionStorage.getItem("impactAccessName")||sessionStorage.getItem("impactPersonnelName")||`"),
       title: titleInput.value.trim() || "Untitled Lesson",
       level: levelSelect.value,
       blocks: blocks,
@@ -1126,5 +1125,6 @@ load();
 
 </body>
 </html>
+
 
 

@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Marking | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
+.page{position:relative;z-index:2;width:min(920px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:20;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:400}
+.hero p{color:rgba(255,255,255,.65);font-weight:800}
+.filter-row{display:flex;gap:10px;justify-content:center;margin-bottom:28px;flex-wrap:wrap}
+.filter-chip{padding:10px 18px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:.84rem;font-weight:800;cursor:pointer;transition:.15s}
+.filter-chip.active{background:rgba(139,92,246,.2);border-color:rgba(139,92,246,.4);color:#c4b5fd}
+.list{display:grid;gap:14px}
+.mark-card{padding:22px;border-radius:26px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.mark-card.graded{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.04)}
+.mark-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+.mark-title{font-weight:900;font-size:1.05rem;margin-bottom:6px}
+.mark-meta{font-size:.78rem;color:rgba(255,255,255,.55);font-weight:700;line-height:1.7}
+.mark-type-badge{padding:5px 12px;border-radius:999px;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.mark-type-badge.activity{background:rgba(236,72,153,.18);color:#f9a8d4}
+.mark-type-badge.lesson{background:rgba(99,102,241,.18);color:#a5b4fc}
+.mark-type-badge.delfMock{background:rgba(217,119,6,.18);color:#fbbf24}
+.mark-row{display:flex;gap:10px;align-items:center;margin-top:14px}
+.mark-input{width:90px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;font-weight:800;text-align:center;font-family:Inter,sans-serif}
+.mark-max{color:rgba(255,255,255,.5);font-weight:700;font-size:.86rem}
+.mark-save{padding:10px 20px;border-radius:12px;border:1px solid rgba(139,92,246,.4);background:rgba(139,92,246,.18);color:#c4b5fd;font-weight:900;font-size:.84rem;cursor:pointer;font-family:Inter,sans-serif;transition:.15s}
+.mark-save:hover{background:rgba(139,92,246,.3)}
+.mark-graded-info{margin-top:10px;font-size:.8rem;font-weight:800;color:#6ee7b7}
+.empty{text-align:center;color:rgba(255,255,255,.4);font-weight:800;padding:50px}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="nav"><a href="/teacher/dashboard.html">⌘</a></nav>
+<main class="page">
+<section class="hero">
+<h1>Marking</h1>
+<p>Review and score submissions for items you created.</p>
+</section>
+<div class="filter-row" id="filterRow">
+  <button class="filter-chip active" data-filter="ungraded" type="button">Needs Marking</button>
+  <button class="filter-chip" data-filter="graded" type="button">Marked</button>
+  <button class="filter-chip" data-filter="all" type="button">All</button>
+</div>
+<div class="list" id="markList"><div class="empty">Loading submissions...</div></div>
+</main>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+  const db=firebase.firestore();
+  const list=document.getElementById("markList");
+  const filterRow=document.getElementById("filterRow");
+  const myName = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "";
+  let submissions=[];
+  let currentFilter="ungraded";
+
+  function fmtDate(v){
+    if(!v) return "";
+    const d=new Date(v);
+    if(isNaN(d)) return v;
+    return d.toLocaleString();
+  }
+
+  async function load(){
+    if(!myName){
+      list.innerHTML = '<div class="empty">Could not identify your teacher account.</div>';
+      return;
+    }
+    list.innerHTML = '<div class="empty">Loading submissions...</div>';
+    const snap = await db.collection("learnerCompletions").where("itemCreatedByTeacher","==",myName).get();
+    submissions = snap.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>new Date(b.completedAt||0)-new Date(a.completedAt||0));
+    render();
+  }
+
+  function render(){
+    let filtered = submissions;
+    if(currentFilter==="ungraded") filtered = submissions.filter(s=>s.score===null || s.score===undefined);
+    if(currentFilter==="graded") filtered = submissions.filter(s=>s.score!==null && s.score!==undefined);
+    if(!filtered.length){ list.innerHTML = '<div class="empty">Nothing here.</div>'; return; }
+    list.innerHTML = "";
+    filtered.forEach(s=>{
+      const isGraded = s.score !== null && s.score !== undefined;
+      const card = document.createElement("div");
+      card.className = "mark-card" + (isGraded ? " graded" : "");
+      card.innerHTML = `
+        <div class="mark-top">
+          <div>
+            <div class="mark-title">${s.itemTitle || "Untitled"}</div>
+            <div class="mark-meta">Learner: ${s.learnerName || "Unknown"}<br>Submitted: ${fmtDate(s.completedAt)}</div>
+          </div>
+          <span class="mark-type-badge ${s.itemType}">${s.itemType === "delfMock" ? "DELF Mock" : s.itemType}</span>
+        </div>
+        ${isGraded ? `<div class="mark-graded-info">✓ Scored ${s.score}/${s.maxScore||100} by ${s.markedBy} · ${fmtDate(s.markedAt)}</div>` : `
+          <div class="mark-row">
+            <input type="number" class="mark-input" min="0" max="${s.maxScore||100}" placeholder="Score" id="score-${s.id}">
+            <span class="mark-max">/ ${s.maxScore||100}</span>
+            <button class="mark-save" data-id="${s.id}" type="button">Save Score</button>
+          </div>`}
+      `;
+      list.appendChild(card);
+    });
+    list.querySelectorAll(".mark-save").forEach(btn=>{
+      btn.addEventListener("click", async function(){
+        const id = btn.dataset.id;
+        const input = document.getElementById("score-"+id);
+        const score = Number(input.value);
+        if(isNaN(score) || input.value===""){ alert("Please enter a valid score."); return; }
+        btn.disabled = true;
+        btn.textContent = "Saving...";
+        try{
+          await db.collection("learnerCompletions").doc(id).update({ score, markedBy: myName, markedAt: new Date().toISOString() });
+          await load();
+        }catch(e){
+          alert("Could not save score: " + e.message);
+          btn.disabled = false;
+          btn.textContent = "Save Score";
+        }
+      });
+    });
+  }
+
+  filterRow.addEventListener("click", function(e){
+    const chip = e.target.closest(".filter-chip");
+    if(!chip) return;
+    document.querySelectorAll(".filter-chip").forEach(c=>c.classList.remove("active"));
+    chip.classList.add("active");
+    currentFilter = chip.dataset.filter;
+    render();
+  });
+
+  await load();
+});
+</script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>

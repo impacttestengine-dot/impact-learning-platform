@@ -549,6 +549,7 @@ async function save(){
     const blocks = serializeBlocks();
     const assignedLevels=Array.from(document.querySelectorAll("#assignLevelsGroup input:checked")).map(c=>c.value);
     const payload = {
+createdByTeacher:(sessionStorage.getItem("impactAccessName")||sessionStorage.getItem("impactPersonnelName")||`"),
       title: titleInput.value.trim() || "Untitled Mock Exam",
       track: trackSelect.value,
       level: levelSelect.value,

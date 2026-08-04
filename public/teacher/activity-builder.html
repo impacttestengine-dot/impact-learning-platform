@@ -559,7 +559,7 @@ function rebuildFromBlocks(blocks){
 }
 async function save(){
   const blocks=serializeBlocks();
-  const assignedLevels=Array.from(document.querySelectorAll("#assignLevelsGroup input:checked")).map(c=>c.value);const payload={title:titleInput.value.trim()||"Untitled Activity",level:levelSelect.value,assignedLevels,assignedLearners:selectedLearners,blocks,version:2,updatedAt:new Date().toISOString()};
+  const assignedLevels=Array.from(document.querySelectorAll("#assignLevelsGroup input:checked")).map(c=>c.value);const payload={title:titleInput.value.trim()||"Untitled Activity",level:levelSelect.value,assignedLevels,assignedLearners:selectedLearners,createdByTeacher:(sessionStorage.getItem("impactAccessName")||sessionStorage.getItem("impactPersonnelName")||""),blocks,version:2,updatedAt:new Date().toISOString()};
   if(currentId){await db.collection(COLLECTION).doc(currentId).set(payload,{merge:true});}
   else{const ref=await db.collection(COLLECTION).add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/activity-builder.html?edit="+currentId);}
   tick();return currentId;
