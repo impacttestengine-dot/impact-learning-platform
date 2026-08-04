@@ -1,13 +1,61 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Live Classroom | Impact</title>
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
-<link rel="stylesheet" href="/css/live-classroom.css">
-<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+
+.lc-nav{position:fixed;top:24px;left:28px;z-index:999}
+.lc-nav-btn{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);transition:.2s ease}
+.lc-nav-btn:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+.lc-nav-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8}
+
+.lobby{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 60px}
+
+.lobby-eyebrow{text-transform:uppercase;letter-spacing:.32em;font-size:.66rem;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:18px}
+.lobby h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.6rem,5.6vw,4.4rem);font-weight:400;line-height:1.04;letter-spacing:-.01em}
+.lobby-sub{margin-top:14px;color:rgba(255,255,255,.48);font-weight:500;font-size:.94rem;max-width:420px;text-align:center;line-height:1.6}
+
+.lobby-cards{display:grid;grid-template-columns:1fr 1fr;gap:1px;width:min(760px,92vw);margin:56px 0 40px;border-radius:28px;overflow:hidden;background:rgba(255,255,255,.09);box-shadow:0 40px 100px rgba(0,0,0,.4)}
+@media(max-width:640px){.lobby-cards{grid-template-columns:1fr}}
+
+.lc-card{background:rgba(11,13,20,.92);padding:38px 34px;text-align:left;position:relative}
+
+.lc-card-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.lc-card-icon svg{width:20px;height:20px;fill:none;stroke:rgba(255,255,255,.85);stroke-width:1.6}
+
+.lc-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.5rem;font-weight:400;margin-bottom:10px;letter-spacing:-.01em}
+.lc-card p{font-size:.8rem;font-weight:500;color:rgba(255,255,255,.42);line-height:1.6;margin-bottom:24px;min-height:58px}
+
+.lc-input{width:100%;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);color:#fff;font-family:Inter,sans-serif;font-weight:500;font-size:.86rem;outline:none;margin-bottom:10px;transition:.18s ease}
+.lc-input:focus{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.07)}
+.lc-input::placeholder{color:rgba(255,255,255,.28)}
+
+.lc-btn{width:100%;padding:13px;border-radius:12px;border:none;font-family:Inter,sans-serif;font-weight:700;font-size:.84rem;cursor:pointer;transition:.2s ease;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
+.lc-btn svg{width:15px;height:15px;stroke-width:2}
+.lc-btn:hover{transform:translateY(-1px)}
+.lc-btn:active{transform:scale(.98)}
+.lc-btn-primary{background:#fff;color:#0a0c14}
+.lc-btn-primary:hover{background:rgba(255,255,255,.9)}
+.lc-btn-success{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.22)}
+.lc-btn-success:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.32)}
+
+.error-msg{color:#f0a5a5;font-size:.74rem;font-weight:600;margin-top:8px;min-height:16px}
+
+.lobby-links{display:flex;align-items:center;gap:20px;margin-top:6px}
+.lobby-link{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.4);font-size:.78rem;font-weight:600;text-decoration:none;transition:.18s ease}
+.lobby-link:hover{color:rgba(255,255,255,.75)}
+.lobby-link svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none}
+.lobby-divider{width:1px;height:14px;background:rgba(255,255,255,.15)}
+
+.lc-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:9999;background:rgba(16,18,26,.95);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);padding:11px 20px;border-radius:13px;font-size:.8rem;font-weight:600;color:#fff;opacity:0;transition:.25s ease;pointer-events:none;white-space:nowrap}
+.lc-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
@@ -21,39 +69,51 @@
 <main class="lobby">
   <p class="lobby-eyebrow">Impact Platform</p>
   <h1>Live Classroom</h1>
-  <p class="lobby-sub">Start or join a live video class. Up to 10 participants.</p>
+  <p class="lobby-sub">Start or join a live video class, hosted directly inside your workspace.</p>
 
   <div class="lobby-cards">
-    <!-- CREATE -->
     <div class="lc-card">
-      <span class="lc-card-icon">🎥</span>
+      <div class="lc-card-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><polygon points="16,10 22,7 22,17 16,14"/></svg>
+      </div>
       <h2>Start a Class</h2>
-      <p>Create a new meeting room. Share the Meeting ID with your learners so they can join.</p>
+      <p>Create a new meeting room and share the Meeting ID with your learners so they can join.</p>
       <input class="lc-input" id="createName" type="text" placeholder="Your display name" maxlength="40">
       <input class="lc-input" id="meetingTitle" type="text" placeholder="Meeting title (optional)" maxlength="60">
       <button class="lc-btn lc-btn-primary" id="createBtn" type="button">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
         Create Meeting
       </button>
       <div class="error-msg" id="createErr"></div>
     </div>
 
-    <!-- JOIN -->
     <div class="lc-card">
-      <span class="lc-card-icon">🚪</span>
+      <div class="lc-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      </div>
       <h2>Join a Class</h2>
       <p>Enter the Meeting ID shared by your teacher to join an existing live class.</p>
       <input class="lc-input" id="joinName" type="text" placeholder="Your display name" maxlength="40">
-      <input class="lc-input" id="joinId" type="text" placeholder="Meeting ID" maxlength="20" style="text-transform:uppercase;letter-spacing:.1em">
+      <input class="lc-input" id="joinId" type="text" placeholder="Meeting ID" maxlength="20" style="text-transform:uppercase;letter-spacing:.08em">
       <button class="lc-btn lc-btn-success" id="joinBtn" type="button">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
         Join Meeting
       </button>
       <div class="error-msg" id="joinErr"></div>
     </div>
   </div>
 
-  <a class="lobby-recordings-link" href="/teacher/recordings.html">📹 View Recordings</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a class="lobby-recordings-link" href="/teacher/live-classroom-data.html">📊 Data Centre</a>
+  <div class="lobby-links">
+    <a class="lobby-link" href="/teacher/recordings.html">
+      <svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><polygon points="16,10 22,7 22,17 16,14"/></svg>
+      Recordings
+    </a>
+    <div class="lobby-divider"></div>
+    <a class="lobby-link" href="/teacher/live-classroom-data.html">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Data Centre
+    </a>
+  </div>
 </main>
 
 <div class="lc-toast" id="toast"></div>
@@ -83,7 +143,6 @@ document.addEventListener("DOMContentLoaded", function(){
     return id;
   }
 
-  // ── CREATE ──────────────────────────────────────────────────
   document.getElementById("createBtn").onclick = async function(){
     const name  = document.getElementById("createName").value.trim();
     const title = document.getElementById("meetingTitle").value.trim() || "Impact Live Class";
@@ -104,13 +163,12 @@ document.addEventListener("DOMContentLoaded", function(){
       hostName:   name
     });
 
-    toast("Meeting created! Redirecting...");
-    setTimeout(()=>{
-      location.href = `/teacher/live-room.html?id=${meetingId}&name=${encodeURIComponent(name)}&host=true`;
+    toast("Meeting created — redirecting");
+    setTimeout(function(){
+      location.href = "/teacher/live-room.html?id=" + meetingId + "&name=" + encodeURIComponent(name) + "&host=true";
     }, 600);
   };
 
-  // ── JOIN ───────────────────────────────────────────────────
   document.getElementById("joinBtn").onclick = async function(){
     const name = document.getElementById("joinName").value.trim();
     const id   = document.getElementById("joinId").value.trim().toUpperCase().replace(/\s/g,"");
@@ -125,21 +183,19 @@ document.addEventListener("DOMContentLoaded", function(){
       if(!snap.exists || snap.data().status !== "active"){
         err.textContent = "Meeting not found or has ended."; return;
       }
-      toast("Joining meeting...");
-      setTimeout(()=>{
-        location.href = `/teacher/live-join.html?id=${id}&name=${encodeURIComponent(name)}&host=false`;
+      toast("Joining meeting");
+      setTimeout(function(){
+        location.href = "/teacher/live-join.html?id=" + id + "&name=" + encodeURIComponent(name) + "&host=false";
       }, 400);
     }catch(e){
       err.textContent = "Could not reach the meeting. Check your connection.";
     }
   };
 
-  // Allow pressing Enter on join ID field
   document.getElementById("joinId").addEventListener("keydown", function(e){
     if(e.key === "Enter") document.getElementById("joinBtn").click();
   });
 
-  // Check for invite link ?join=MEETINGID
   const params = new URLSearchParams(location.search);
   if(params.get("join")){
     document.getElementById("joinId").value = params.get("join");
@@ -149,7 +205,6 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 
 <script src="/js/impact-page-nav.js"></script>
-<script src="/js/impact-round-icons.js?v=001"></script>
 <script src="/js/impact-recycle-bin.js"></script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
