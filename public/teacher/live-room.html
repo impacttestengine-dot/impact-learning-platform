@@ -50,6 +50,12 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
     </div>
   </header>
 
+  <div class="presenting-bar" id="presentingBar" style="display:none">
+    <span class="presenting-bar-dot"></span>
+    <span class="presenting-bar-text" id="presentingBarText">You are presenting your screen</span>
+    <button class="presenting-bar-stop" id="presentingBarStop" type="button" style="display:none">Stop Sharing</button>
+  </div>
+
   <div class="room-body">
     <div class="video-stage">
       <div class="video-grid p1" id="videoGrid"></div>
@@ -449,6 +455,7 @@ function renderParticipantList(){
           ${p.name}
           ${p.isLocal ? '<span class="you-tag">(You)</span>' : ''}
           ${p.isHost ? '<span class="p-badge">HOST</span>' : ''}
+          ${p.id === currentScreenSharerId ? '<span class="p-badge presenting-badge">PRESENTING</span>' : ''}
         </div>
       </div>
       <div class="p-icons">
@@ -698,7 +705,7 @@ function watchParticipants(){
             if(data.screenSharing && currentScreenSharerId !== rid){
               const remoteTile = document.getElementById("tile-"+rid);
               const remoteVid = remoteTile ? remoteTile.querySelector("video") : null;
-              if(remoteVid && remoteVid.srcObject) enterScreenshareLayout(rid, remoteVid.srcObject);
+              if(remoteVid && remoteVid.srcObject) enterScreenshareLayout(rid, remoteVid.srcObject, peerMeta[rid].name);
             }
             if(!data.screenSharing && currentScreenSharerId === rid){
               exitScreenshareLayout();
@@ -810,8 +817,11 @@ if(!SCREEN_SHARE_SUPPORTED){
 // Reuses the .screenshare-active/.screenshare-main/.screenshare-strip CSS
 // that already existed in live-classroom.css but was never wired up.
 let currentScreenSharerId = null;
+const presentingBar = document.getElementById("presentingBar");
+const presentingBarText = document.getElementById("presentingBarText");
+const presentingBarStop = document.getElementById("presentingBarStop");
 
-function enterScreenshareLayout(sharerId, stream){
+function enterScreenshareLayout(sharerId, stream, sharerName){
   currentScreenSharerId = sharerId;
   videoGrid.classList.add("screenshare-active");
 
@@ -838,6 +848,15 @@ function enterScreenshareLayout(sharerId, stream){
   videoGrid.querySelectorAll(".video-tile").forEach(t => {
     if(t.parentElement !== stripEl) stripEl.appendChild(t);
   });
+
+  if(presentingBar){
+    const isMe = sharerId === MY_ID;
+    presentingBarText.textContent = isMe ? "You are presenting your screen" : (sharerName || "Someone") + " is presenting";
+    presentingBarStop.style.display = isMe ? "inline-block" : "none";
+    presentingBarStop.onclick = stopScreenShare;
+    presentingBar.style.display = "flex";
+  }
+  renderParticipantList();
 }
 
 function exitScreenshareLayout(){
@@ -850,7 +869,9 @@ function exitScreenshareLayout(){
     Array.from(stripEl.children).forEach(t => videoGrid.appendChild(t));
     stripEl.remove();
   }
+  if(presentingBar) presentingBar.style.display = "none";
   updateGridLayout();
+  renderParticipantList();
 }
 
 screenBtn.onclick = async function(){
@@ -880,7 +901,7 @@ screenBtn.onclick = async function(){
     setTileStream(MY_ID, screenStream);
     document.getElementById("tile-"+MY_ID).classList.remove("mirrored");
 
-    enterScreenshareLayout(MY_ID, screenStream);
+    enterScreenshareLayout(MY_ID, screenStream, MY_NAME);
     db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
       .update({ screenSharing: true }).catch(()=>{});
 
