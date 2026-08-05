@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -140,12 +140,18 @@ h1{
 }
 
 .item{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.item-top{
   display:grid;
   grid-template-columns:78px minmax(0,1fr) 58px;
   gap:16px;
   align-items:center;
-  padding:10px 0;
-  border-bottom:1px solid rgba(255,255,255,.09);
 }
 
 .date{
@@ -206,14 +212,14 @@ h1{
 }
 
 .status-btn.ok.active::after{
-  content:"✓";
+  content:"\2713";
   font-size:12px;
   font-weight:900;
   color:#052e16;
 }
 
 .status-btn.no.active::after{
-  content:"×";
+  content:"\d7";
   font-size:12px;
   font-weight:900;
   color:#450a0a;
@@ -221,6 +227,86 @@ h1{
 
 .item.done .event-text{
   opacity:.62;
+}
+
+.item-meta{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  padding-left:94px;
+}
+
+.assignee-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:3px 9px;
+  border-radius:999px;
+  background:rgba(99,179,237,.16);
+  border:1px solid rgba(99,179,237,.32);
+  color:#bfe3ff;
+  font-size:.68rem;
+  font-weight:800;
+}
+
+.assign-btn{
+  padding:3px 10px;
+  border-radius:999px;
+  border:1px dashed rgba(255,255,255,.28);
+  background:transparent;
+  color:rgba(255,255,255,.55);
+  font-size:.68rem;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.assign-btn:hover{
+  border-color:rgba(255,255,255,.5);
+  color:#fff;
+}
+
+.timeliness-badge{
+  padding:3px 9px;
+  border-radius:999px;
+  font-size:.66rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.timeliness-badge.early{background:rgba(34,197,94,.18);color:#86efac}
+.timeliness-badge.ontime{background:rgba(99,179,237,.18);color:#93c5fd}
+.timeliness-badge.late{background:rgba(251,191,36,.18);color:#fde68a}
+.timeliness-badge.never{background:rgba(239,68,68,.18);color:#fca5a5}
+
+.assign-panel{
+  display:none;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:10px;
+  margin-left:94px;
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.assign-panel.open{
+  display:flex;
+}
+
+.assign-check{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:.72rem;
+  font-weight:700;
+  color:rgba(255,255,255,.8);
+  cursor:pointer;
+}
+
+.assign-check input{
+  cursor:pointer;
 }
 
 .add-line{
@@ -264,7 +350,7 @@ body.editing .add-line{
   cursor:pointer;
 }
 
-body.editing .item{
+body.editing .item-top{
   grid-template-columns:78px minmax(0,1fr) 58px 26px;
 }
 
@@ -353,9 +439,11 @@ textarea{
   .page{padding-top:105px}
   .months{grid-template-columns:1fr}
   .shell{padding:14px;border-radius:28px}
-  .item{grid-template-columns:70px minmax(0,1fr) 54px}
-  body.editing .item{grid-template-columns:70px minmax(0,1fr) 54px 26px}
+  .item-top{grid-template-columns:70px minmax(0,1fr) 54px}
+  body.editing .item-top{grid-template-columns:70px minmax(0,1fr) 54px 26px}
   .add-line{grid-template-columns:70px minmax(0,1fr) 42px}
+  .item-meta{padding-left:86px}
+  .assign-panel{margin-left:0}
 }
 </style>
 <link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
@@ -371,10 +459,10 @@ textarea{
     <h1>Academic Calendar</h1>
 
     <div class="top-actions">
-      <button class="btn" id="prevYear" type="button">‹</button>
+      <button class="btn" id="prevYear" type="button">&lsaquo;</button>
       <div class="year" id="yearLabel"></div>
-      <button class="btn" id="nextYear" type="button">›</button>
-      <button class="btn" id="editBtn" type="button">✎ Edit</button>
+      <button class="btn" id="nextYear" type="button">&rsaquo;</button>
+      <button class="btn" id="editBtn" type="button">&#9998; Edit</button>
     </div>
   </section>
 
@@ -385,19 +473,19 @@ textarea{
       <div class="panel">
         <h2>Always Running</h2>
         <div class="panel-body">
-          <div class="priority"><div>📅</div><div><strong>Weekly</strong><span>Lesson delivery, teacher check-ins, learner support.</span></div></div>
-          <div class="priority"><div>📊</div><div><strong>Monthly</strong><span>Performance review, lesson plan updates, learner progress checks.</span></div></div>
-          <div class="priority"><div>👥</div><div><strong>Quarterly</strong><span>Teacher training, curriculum review, parent/learner feedback.</span></div></div>
+          <div class="priority"><div>&#128197;</div><div><strong>Weekly</strong><span>Lesson delivery, teacher check-ins, learner support.</span></div></div>
+          <div class="priority"><div>&#128202;</div><div><strong>Monthly</strong><span>Performance review, lesson plan updates, learner progress checks.</span></div></div>
+          <div class="priority"><div>&#128101;</div><div><strong>Quarterly</strong><span>Teacher training, curriculum review, parent/learner feedback.</span></div></div>
         </div>
       </div>
 
       <div class="panel">
         <h2>Academic Priorities</h2>
         <div class="panel-body">
-          <div class="priority"><div>💬</div><div><strong>Oral Fluency</strong><span>Speaking confidence remains our core identity.</span></div></div>
-          <div class="priority"><div>🧾</div><div><strong>Assess All Skills</strong><span>Speaking, listening, reading, and writing.</span></div></div>
-          <div class="priority"><div>📈</div><div><strong>Visible Progress</strong><span>Celebrate small wins and track growth.</span></div></div>
-          <div class="priority"><div>🤝</div><div><strong>Excellence Together</strong><span>Plan well, teach with purpose, create impact.</span></div></div>
+          <div class="priority"><div>&#128172;</div><div><strong>Oral Fluency</strong><span>Speaking confidence remains our core identity.</span></div></div>
+          <div class="priority"><div>&#129534;</div><div><strong>Assess All Skills</strong><span>Speaking, listening, reading, and writing.</span></div></div>
+          <div class="priority"><div>&#128200;</div><div><strong>Visible Progress</strong><span>Celebrate small wins and track growth.</span></div></div>
+          <div class="priority"><div>&#129309;</div><div><strong>Excellence Together</strong><span>Plan well, teach with purpose, create impact.</span></div></div>
         </div>
       </div>
 
@@ -429,11 +517,17 @@ const notesEl = document.getElementById("notes");
 let currentYear = new Date().getFullYear();
 let editing = false;
 let data = {};
+let personnelNames = [];
 
 const monthNames = [
   "January","February","March","April","May","June",
   "July","August","September","October","November","December"
 ];
+
+const MONTH_INDEX = {
+  Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5,
+  Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11
+};
 
 const starter = {
   January:[
@@ -526,39 +620,181 @@ function docRef(){
   return db.collection("academicCalendars").doc(String(currentYear));
 }
 
+function makeItemId(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+// Converts any legacy array-shaped item (from before this rework) into the
+// new object shape. Handles every shape this file has ever stored:
+// [date,event,status] / [date,junk,event,status] / [date,event] / etc.
+function toItemObject(item){
+  if(item && typeof item === "object" && !Array.isArray(item)){
+    return {
+      id: item.id || makeItemId(),
+      date: item.date || "",
+      event: item.event || "",
+      status: (item.status === true || item.status === false) ? item.status : null,
+      assignees: Array.isArray(item.assignees) ? item.assignees : [],
+      completedAt: item.completedAt || null
+    };
+  }
+
+  if(Array.isArray(item)){
+    if(item.length >= 4){
+      return { id: makeItemId(), date: item[0], event: item[2], status: null, assignees: [], completedAt: null };
+    }
+    if(item.length === 3){
+      const statusVal = (typeof item[2] === "boolean") ? item[2] : null;
+      const eventVal = (typeof item[2] === "boolean" || item[2] === null) ? item[1] : item[2];
+      return { id: makeItemId(), date: item[0], event: eventVal, status: statusVal, assignees: [], completedAt: null };
+    }
+    if(item.length === 2){
+      return { id: makeItemId(), date: item[0], event: item[1], status: null, assignees: [], completedAt: null };
+    }
+    return { id: makeItemId(), date: "", event: String(item[0] || ""), status: null, assignees: [], completedAt: null };
+  }
+
+  return { id: makeItemId(), date: "", event: String(item || ""), status: null, assignees: [], completedAt: null };
+}
+
 function normalizeCalendarData(){
   if(!data.months) data.months = {};
 
-  monthNames.forEach(month => {
+  monthNames.forEach(function(month){
     if(!Array.isArray(data.months[month])) data.months[month] = [];
+    data.months[month] = data.months[month].map(toItemObject);
+  });
+}
 
-    data.months[month] = data.months[month].map(item => {
-      if(Array.isArray(item) && item.length >= 4){
-        return [item[0], item[2], null];
+function parseItemDueDate(dateStr, year){
+  if(!dateStr) return null;
+  const m = String(dateStr).trim().match(/^(\d{1,2})\s+([A-Za-z]{3})/);
+  if(!m) return null;
+  const day = parseInt(m[1], 10);
+  const abbr = m[2].charAt(0).toUpperCase() + m[2].slice(1,3).toLowerCase();
+  const mon = MONTH_INDEX[abbr];
+  if(mon === undefined || isNaN(day)) return null;
+  return new Date(Date.UTC(year, mon, day));
+}
+
+function toIsoDate(d){
+  if(!d) return "";
+  return d.toISOString().slice(0,10);
+}
+
+function slugify(name){
+  return String(name || "").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "unknown";
+}
+
+function classifyTimeliness(item){
+  const due = parseItemDueDate(item.date, currentYear);
+  if(!due) return null;
+
+  if(item.status === true && item.completedAt){
+    const completed = new Date(item.completedAt);
+    const oneDay = 86400000;
+    const dueEnd = new Date(due.getTime());
+    dueEnd.setUTCHours(23,59,59,999);
+
+    if(completed.getTime() < due.getTime() - oneDay) return { label:"Early", cls:"early" };
+    if(completed.getTime() <= dueEnd.getTime() + oneDay) return { label:"On time", cls:"ontime" };
+    return { label:"Late", cls:"late" };
+  }
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  if(due.getTime() < today.getTime()) return { label:"Never completed", cls:"never" };
+
+  return null;
+}
+
+async function loadPersonnel(){
+  try{
+    const snap = await db.collection("impactPasskeys").where("role","!=","Learner").get();
+    personnelNames = snap.docs.map(function(d){ return d.data().name; }).filter(Boolean).sort();
+  }catch(e){
+    console.warn("Could not load personnel list:", e);
+    personnelNames = [];
+  }
+}
+
+// Writes/updates one "tasks" doc per current assignee, and removes the doc
+// for anyone who was previously assigned but no longer is. Deterministic
+// IDs (keyed off the calendar item's own id) make this a safe diff instead
+// of a blind re-create, so KPI Task Completion counts stay accurate.
+async function syncCalendarItemTasks(month, item, previousAssignees){
+  const due = parseItemDueDate(item.date, currentYear);
+  const dueIso = toIsoDate(due);
+  const now = new Date();
+
+  const prevSet = new Set((previousAssignees || []).map(slugify));
+  const currSet = new Set(item.assignees.map(slugify));
+
+  const toRemove = Array.from(prevSet).filter(function(s){ return !currSet.has(s); });
+  const removeOps = toRemove.map(function(slug){
+    const docId = "cal-" + currentYear + "-" + item.id + "-" + slug;
+    return db.collection("tasks").doc(docId).delete().catch(function(){});
+  });
+
+  const upsertOps = item.assignees.map(async function(name){
+    const slug = slugify(name);
+    const docId = "cal-" + currentYear + "-" + item.id + "-" + slug;
+    const ref = db.collection("tasks").doc(docId);
+
+    let createdAt = now.toISOString();
+    let createdAtText = now.toLocaleString();
+    try{
+      const existing = await ref.get();
+      if(existing.exists){
+        const ex = existing.data();
+        if(ex.createdAt){ createdAt = ex.createdAt; createdAtText = ex.createdAtText || createdAtText; }
       }
+    }catch(e){}
 
-      if(Array.isArray(item) && item.length === 3){
-        if(typeof item[2] === "boolean" || item[2] === null){
-          return [item[0], item[1], item[2]];
-        }
+    const payload = {
+      title: "[Calendar] " + (item.event || "Untitled"),
+      deliverableType: "",
+      assignedTo: name,
+      dueDate: dueIso,
+      notes: "Synced from Academic Calendar (" + month + " " + currentYear + ")",
+      completed: item.status === true,
+      completedAt: (item.status === true && item.completedAt) ? item.completedAt : "",
+      completedAtText: (item.status === true && item.completedAt) ? new Date(item.completedAt).toLocaleString() : "",
+      completedVia: item.status === true ? "calendar" : "",
+      source: "academicCalendar",
+      sourceCalendarItemId: item.id,
+      sourceYear: currentYear,
+      sourceMonth: month,
+      createdAt: createdAt,
+      createdAtText: createdAtText,
+      updatedAt: now.toISOString(),
+      updatedAtText: now.toLocaleString()
+    };
 
-        return [item[0], item[2], null];
-      }
-
-      if(Array.isArray(item) && item.length === 2){
-        return [item[0], item[1], null];
-      }
-
-      return ["", String(item || ""), null];
+    return ref.set(payload, { merge: true }).catch(function(err){
+      console.warn("Task sync failed for", name, err);
     });
   });
+
+  await Promise.all(removeOps.concat(upsertOps));
+}
+
+async function deleteCalendarItemTasks(item){
+  const ops = (item.assignees || []).map(function(name){
+    const slug = slugify(name);
+    const docId = "cal-" + currentYear + "-" + item.id + "-" + slug;
+    return db.collection("tasks").doc(docId).delete().catch(function(){});
+  });
+  await Promise.all(ops);
 }
 
 async function load(){
   yearLabel.textContent = currentYear;
   statusEl.textContent = "Loading calendar...";
 
-  const fallback = () => {
+  await loadPersonnel();
+
+  const fallback = function(){
     data = JSON.parse(JSON.stringify({ months: starter, notes:"" }));
     normalizeCalendarData();
     notesEl.value = data.notes || "";
@@ -567,9 +803,9 @@ async function load(){
   };
 
   try{
-    const timeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Firestore timeout")), 4500)
-    );
+    const timeout = new Promise(function(_, reject){
+      setTimeout(function(){ reject(new Error("Firestore timeout")); }, 4500);
+    });
 
     const snap = await Promise.race([docRef().get(), timeout]);
 
@@ -577,12 +813,16 @@ async function load(){
       data = snap.data();
     }else{
       data = JSON.parse(JSON.stringify({ months: starter, notes:"" }));
-      await docRef().set(data,{merge:true});
+      await docRef().set(data, { merge:true });
     }
 
     normalizeCalendarData();
     notesEl.value = data.notes || "";
     render();
+
+    // Persist immediately so the object shape + generated ids stick,
+    // instead of re-migrating from the array shape on every load.
+    await save();
 
     statusEl.textContent = "Saved in Firestore";
   }catch(err){
@@ -596,9 +836,9 @@ async function save(){
   data.notes = notesEl.value;
 
   try{
-    await docRef().set(data,{merge:true});
-    statusEl.textContent = "Saved ✓";
-    setTimeout(()=>statusEl.textContent="Saved in Firestore",1000);
+    await docRef().set(data, { merge:true });
+    statusEl.textContent = "Saved \u2713";
+    setTimeout(function(){ statusEl.textContent = "Saved in Firestore"; }, 1000);
   }catch(err){
     console.warn("Firestore save failed:", err);
     localStorage.setItem("impactAcademicCalendar_" + currentYear, JSON.stringify(data));
@@ -606,32 +846,40 @@ async function save(){
   }
 }
 
-function makeStatus(month,index,item,row){
+function makeStatus(month, item, row){
   const wrap = document.createElement("div");
   wrap.className = "status-actions";
 
   const yes = document.createElement("button");
-  yes.className = "status-btn ok" + (item[2] === true ? " active" : "");
+  yes.className = "status-btn ok" + (item.status === true ? " active" : "");
   yes.type = "button";
 
   const no = document.createElement("button");
-  no.className = "status-btn no" + (item[2] === false ? " active" : "");
+  no.className = "status-btn no" + (item.status === false ? " active" : "");
   no.type = "button";
 
-  yes.onclick = async () => {
-    data.months[month][index][2] = true;
+  yes.onclick = async function(){
+    const prevAssignees = item.assignees.slice();
+    item.status = true;
+    item.completedAt = new Date().toISOString();
     row.classList.add("done");
     yes.classList.add("active");
     no.classList.remove("active");
+    renderTimelinessBadge(row, item);
     await save();
+    await syncCalendarItemTasks(month, item, prevAssignees);
   };
 
-  no.onclick = async () => {
-    data.months[month][index][2] = false;
+  no.onclick = async function(){
+    const prevAssignees = item.assignees.slice();
+    item.status = false;
+    item.completedAt = null;
     row.classList.remove("done");
     no.classList.add("active");
     yes.classList.remove("active");
+    renderTimelinessBadge(row, item);
     await save();
+    await syncCalendarItemTasks(month, item, prevAssignees);
   };
 
   wrap.appendChild(yes);
@@ -640,50 +888,144 @@ function makeStatus(month,index,item,row){
   return wrap;
 }
 
+function renderTimelinessBadge(row, item){
+  const metaRow = row.querySelector(".item-meta");
+  if(!metaRow) return;
+  const old = metaRow.querySelector(".timeliness-badge");
+  if(old) old.remove();
+
+  const info = classifyTimeliness(item);
+  if(!info) return;
+
+  const badge = document.createElement("span");
+  badge.className = "timeliness-badge " + info.cls;
+  badge.textContent = info.label;
+  metaRow.appendChild(badge);
+}
+
+function renderAssigneeChips(metaRow, item){
+  metaRow.querySelectorAll(".assignee-chip").forEach(function(el){ el.remove(); });
+  const assignBtn = metaRow.querySelector(".assign-btn");
+
+  item.assignees.forEach(function(name){
+    const chip = document.createElement("span");
+    chip.className = "assignee-chip";
+    chip.textContent = name;
+    metaRow.insertBefore(chip, assignBtn);
+  });
+
+  assignBtn.textContent = item.assignees.length
+    ? "+ Edit assignees"
+    : "+ Assign";
+}
+
+function makeMetaRow(month, item, row){
+  const metaRow = document.createElement("div");
+  metaRow.className = "item-meta";
+
+  const assignBtn = document.createElement("button");
+  assignBtn.className = "assign-btn";
+  assignBtn.type = "button";
+  assignBtn.textContent = "+ Assign";
+  metaRow.appendChild(assignBtn);
+
+  const panel = document.createElement("div");
+  panel.className = "assign-panel";
+
+  personnelNames.forEach(function(name){
+    const label = document.createElement("label");
+    label.className = "assign-check";
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = item.assignees.indexOf(name) !== -1;
+
+    cb.onchange = async function(){
+      const prevAssignees = item.assignees.slice();
+      if(cb.checked){
+        if(item.assignees.indexOf(name) === -1) item.assignees.push(name);
+      }else{
+        item.assignees = item.assignees.filter(function(n){ return n !== name; });
+      }
+      renderAssigneeChips(metaRow, item);
+      await save();
+      await syncCalendarItemTasks(month, item, prevAssignees);
+    };
+
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(name));
+    panel.appendChild(label);
+  });
+
+  assignBtn.onclick = function(){
+    panel.classList.toggle("open");
+  };
+
+  renderAssigneeChips(metaRow, item);
+
+  const wrapper = document.createElement("div");
+  wrapper.appendChild(metaRow);
+  wrapper.appendChild(panel);
+
+  return wrapper;
+}
+
 function render(){
   normalizeCalendarData();
   monthsEl.innerHTML = "";
 
-  monthNames.forEach(month => {
+  monthNames.forEach(function(month){
     const card = document.createElement("article");
     card.className = "card";
 
     const head = document.createElement("div");
     head.className = "card-head";
-    head.innerHTML = '<span class="head-icon">▦</span>' + month;
+    head.innerHTML = '<span class="head-icon">\u25a6</span>' + month;
 
     const list = document.createElement("div");
     list.className = "items";
 
-    data.months[month].forEach((item,index) => {
+    data.months[month].forEach(function(item, index){
       const row = document.createElement("div");
       row.className = "item";
-      row.classList.toggle("done", item[2] === true);
+      row.classList.toggle("done", item.status === true);
+
+      const top = document.createElement("div");
+      top.className = "item-top";
 
       const date = document.createElement("div");
       date.className = "date";
-      date.textContent = item[0] || "";
+      date.textContent = item.date || "";
 
       const text = document.createElement("div");
       text.className = "event-text";
-      text.textContent = item[1] || "";
+      text.textContent = item.event || "";
 
-      const status = makeStatus(month,index,item,row);
+      const status = makeStatus(month, item, row);
 
       const del = document.createElement("button");
       del.className = "delete";
       del.type = "button";
-      del.textContent = "×";
-      del.onclick = async () => {
-        data.months[month].splice(index,1);
+      del.textContent = "\u00d7";
+      del.onclick = async function(){
+        await deleteCalendarItemTasks(item);
+        data.months[month].splice(index, 1);
         render();
         await save();
       };
 
-      row.appendChild(date);
-      row.appendChild(text);
-      row.appendChild(status);
-      row.appendChild(del);
+      top.appendChild(date);
+      top.appendChild(text);
+      top.appendChild(status);
+      top.appendChild(del);
+
+      const metaWrap = makeMetaRow(month, item, row);
+
+      row.appendChild(top);
+      row.appendChild(metaWrap);
+
+      renderTimelinessBadge(row, item);
+
       list.appendChild(row);
     });
 
@@ -691,14 +1033,21 @@ function render(){
     add.className = "add-line";
     add.innerHTML = '<input placeholder="Date"><input placeholder="Event"><button type="button">+</button>';
 
-    add.querySelector("button").onclick = async () => {
+    add.querySelector("button").onclick = async function(){
       const inputs = add.querySelectorAll("input");
-      const date = inputs[0].value.trim();
-      const event = inputs[1].value.trim();
+      const dateVal = inputs[0].value.trim();
+      const eventVal = inputs[1].value.trim();
 
-      if(!date || !event) return;
+      if(!dateVal || !eventVal) return;
 
-      data.months[month].push([date,event,null]);
+      data.months[month].push({
+        id: makeItemId(),
+        date: dateVal,
+        event: eventVal,
+        status: null,
+        assignees: [],
+        completedAt: null
+      });
 
       inputs[0].value = "";
       inputs[1].value = "";
@@ -714,24 +1063,24 @@ function render(){
   });
 }
 
-editBtn.onclick = () => {
+editBtn.onclick = function(){
   editing = !editing;
-  document.body.classList.toggle("editing",editing);
-  editBtn.classList.toggle("active",editing);
-  editBtn.textContent = editing ? "✓ Editing" : "✎ Edit";
+  document.body.classList.toggle("editing", editing);
+  editBtn.classList.toggle("active", editing);
+  editBtn.textContent = editing ? "\u2713 Editing" : "\u270e Edit";
 };
 
-notesEl.addEventListener("input", () => {
+notesEl.addEventListener("input", function(){
   clearTimeout(window.noteTimer);
-  window.noteTimer = setTimeout(save,600);
+  window.noteTimer = setTimeout(save, 600);
 });
 
-document.getElementById("prevYear").onclick = async () => {
+document.getElementById("prevYear").onclick = async function(){
   currentYear--;
   await load();
 };
 
-document.getElementById("nextYear").onclick = async () => {
+document.getElementById("nextYear").onclick = async function(){
   currentYear++;
   await load();
 };
@@ -744,12 +1093,3 @@ load();
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-

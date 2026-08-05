@@ -1,0 +1,1858 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\academic-calendar.html (MAIN FILE)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\academic-calendar.html
+CHARS:  18682
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Academic Calendar | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  min-height:100vh;
+  background:#05060b;
+  color:#fff;
+  font-family:Inter,system-ui,sans-serif;
+  overflow-x:hidden;
+}
+
+.page{
+  position:relative;
+  z-index:2;
+  width:min(1450px,94vw);
+  margin:0 auto;
+  padding:118px 0 70px;
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:28px;
+}
+
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.36em;
+  font-size:.68rem;
+  font-weight:800;
+  color:rgba(235,240,255,.62);
+  margin-bottom:10px;
+}
+
+h1{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:clamp(3.2rem,6vw,5.8rem);
+  font-weight:400;
+  line-height:1;
+}
+
+.top-actions{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  margin-top:18px;
+}
+
+.btn{
+  min-height:48px;
+  padding:0 18px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.09);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+  backdrop-filter:blur(18px);
+  box-shadow:0 18px 50px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+.btn.active{
+  background:rgba(231,214,161,.22);
+  border-color:rgba(231,214,161,.5);
+}
+
+.year{
+  font-family:"Sorts Mill Goudy",Georgia,serif;
+  font-size:2.3rem;
+  min-width:130px;
+  text-align:center;
+}
+
+.shell{
+  border-radius:38px;
+  padding:26px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 34px 100px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.1);
+  backdrop-filter:blur(30px);
+}
+
+.months{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:20px;
+}
+
+.card{
+  min-height:300px;
+  border-radius:26px;
+  overflow:hidden;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+.card-head{
+  height:56px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:0 18px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  background:linear-gradient(135deg,rgba(35,79,151,.9),rgba(20,45,95,.7));
+}
+
+.card:nth-child(n+4) .card-head{
+  background:linear-gradient(135deg,rgba(36,126,70,.9),rgba(23,75,46,.72));
+}
+
+.card:nth-child(n+7) .card-head{
+  background:linear-gradient(135deg,rgba(178,130,28,.9),rgba(110,78,18,.72));
+}
+
+.card:nth-child(n+10) .card-head{
+  background:linear-gradient(135deg,rgba(165,45,45,.9),rgba(94,24,36,.72));
+}
+
+.head-icon{
+  font-size:1rem;
+  opacity:.85;
+}
+
+.items{
+  padding:14px 16px 18px;
+}
+
+.item{
+  display:grid;
+  grid-template-columns:78px minmax(0,1fr) 58px;
+  gap:16px;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.date{
+  font-size:.74rem;
+  font-weight:600;
+  color:rgba(255,255,255,.7);
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.event-text{
+  font-size:.82rem;
+  font-weight:500;
+  color:rgba(255,255,255,.9);
+  line-height:1.32;
+  white-space:normal;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+
+.status-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+}
+
+.status-btn{
+  width:18px;
+  height:18px;
+  border-radius:6px;
+  padding:0;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0;
+  line-height:1;
+  color:transparent;
+}
+
+.status-btn.ok{
+  border:1px solid rgba(34,197,94,.7);
+  background:rgba(34,197,94,.13);
+}
+
+.status-btn.no{
+  border:1px solid rgba(239,68,68,.7);
+  background:rgba(239,68,68,.13);
+}
+
+.status-btn.ok.active{
+  background:rgba(34,197,94,.95);
+}
+
+.status-btn.no.active{
+  background:rgba(239,68,68,.95);
+}
+
+.status-btn.ok.active::after{
+  content:"✓";
+  font-size:12px;
+  font-weight:900;
+  color:#052e16;
+}
+
+.status-btn.no.active::after{
+  content:"×";
+  font-size:12px;
+  font-weight:900;
+  color:#450a0a;
+}
+
+.item.done .event-text{
+  opacity:.62;
+}
+
+.add-line{
+  display:none;
+  grid-template-columns:78px minmax(0,1fr) 42px;
+  gap:16px;
+  margin:12px 16px 18px;
+}
+
+body.editing .add-line{
+  display:grid;
+}
+
+.add-line input{
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border-radius:12px;
+  padding:10px;
+  font-weight:600;
+  outline:0;
+}
+
+.add-line button{
+  border:0;
+  border-radius:12px;
+  background:rgba(231,214,161,.25);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.delete{
+  display:none;
+  border:0;
+  background:rgba(244,63,94,.18);
+  color:#fff;
+  border-radius:9px;
+  width:24px;
+  height:24px;
+  cursor:pointer;
+}
+
+body.editing .item{
+  grid-template-columns:78px minmax(0,1fr) 58px 26px;
+}
+
+body.editing .delete{
+  display:block;
+}
+
+.bottom{
+  display:grid;
+  grid-template-columns:1.1fr 1.1fr 1fr;
+  gap:18px;
+  margin-top:20px;
+}
+
+.panel{
+  border-radius:26px;
+  overflow:hidden;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.13);
+}
+
+.panel h2{
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(20,45,95,.82);
+  font-size:1rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.panel-body{
+  padding:18px;
+}
+
+.priority{
+  display:grid;
+  grid-template-columns:42px 1fr;
+  gap:12px;
+  padding:11px 0;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+
+.priority strong{
+  display:block;
+  text-transform:uppercase;
+  font-size:.86rem;
+  font-weight:700;
+}
+
+.priority span{
+  font-size:.78rem;
+  color:rgba(255,255,255,.72);
+  font-weight:500;
+}
+
+textarea{
+  width:100%;
+  min-height:180px;
+  border:0;
+  outline:0;
+  resize:vertical;
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  border-radius:18px;
+  padding:14px;
+  font:500 .9rem Inter;
+}
+
+.status{
+  text-align:center;
+  margin-top:14px;
+  color:rgba(255,255,255,.65);
+  font-weight:700;
+  font-size:.82rem;
+}
+
+@media(max-width:1050px){
+  .months{grid-template-columns:repeat(2,1fr)}
+  .bottom{grid-template-columns:1fr}
+}
+
+@media(max-width:700px){
+  .page{padding-top:105px}
+  .months{grid-template-columns:1fr}
+  .shell{padding:14px;border-radius:28px}
+  .item{grid-template-columns:70px minmax(0,1fr) 54px}
+  body.editing .item{grid-template-columns:70px minmax(0,1fr) 54px 26px}
+  .add-line{grid-template-columns:70px minmax(0,1fr) 42px}
+}
+</style>
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+</head>
+
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Teacher Workspace</p>
+    <h1>Academic Calendar</h1>
+
+    <div class="top-actions">
+      <button class="btn" id="prevYear" type="button">‹</button>
+      <div class="year" id="yearLabel"></div>
+      <button class="btn" id="nextYear" type="button">›</button>
+      <button class="btn" id="editBtn" type="button">✎ Edit</button>
+    </div>
+  </section>
+
+  <section class="shell">
+    <div class="months" id="months"></div>
+
+    <div class="bottom">
+      <div class="panel">
+        <h2>Always Running</h2>
+        <div class="panel-body">
+          <div class="priority"><div>📅</div><div><strong>Weekly</strong><span>Lesson delivery, teacher check-ins, learner support.</span></div></div>
+          <div class="priority"><div>📊</div><div><strong>Monthly</strong><span>Performance review, lesson plan updates, learner progress checks.</span></div></div>
+          <div class="priority"><div>👥</div><div><strong>Quarterly</strong><span>Teacher training, curriculum review, parent/learner feedback.</span></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Academic Priorities</h2>
+        <div class="panel-body">
+          <div class="priority"><div>💬</div><div><strong>Oral Fluency</strong><span>Speaking confidence remains our core identity.</span></div></div>
+          <div class="priority"><div>🧾</div><div><strong>Assess All Skills</strong><span>Speaking, listening, reading, and writing.</span></div></div>
+          <div class="priority"><div>📈</div><div><strong>Visible Progress</strong><span>Celebrate small wins and track growth.</span></div></div>
+          <div class="priority"><div>🤝</div><div><strong>Excellence Together</strong><span>Plan well, teach with purpose, create impact.</span></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Notes</h2>
+        <div class="panel-body">
+          <textarea id="notes" placeholder="Add academic year notes here..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <p class="status" id="status">Loading Firestore...</p>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+const db = firebase.firestore();
+
+const monthsEl = document.getElementById("months");
+const yearLabel = document.getElementById("yearLabel");
+const editBtn = document.getElementById("editBtn");
+const statusEl = document.getElementById("status");
+const notesEl = document.getElementById("notes");
+
+let currentYear = new Date().getFullYear();
+let editing = false;
+let data = {};
+
+const monthNames = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
+];
+
+const starter = {
+  January:[
+    ["12 Jan","Revision period for 2025",null],
+    ["19 Jan","2025 assessment test",null],
+    ["26 Jan","Report cards distribution",null],
+    ["28 Jan","Activity 1",null],
+    ["28 Jan","Teacher evaluation form to client pages",null],
+    ["28 Jan","January report",null],
+    ["28 Jan","Dated billing tracker PDF",null]
+  ],
+  February:[
+    ["28 Feb","Activity 2",null],
+    ["28 Feb","Teacher evaluation form to client pages",null],
+    ["28 Feb","February report",null],
+    ["28 Feb","Dated billing tracker PDF",null]
+  ],
+  March:[
+    ["25 Mar","Communique about Q1 assessment to be sent",null],
+    ["23 Mar","Quarter 1 assessment",null],
+    ["01 Apr","Report cards ready and sent",null],
+    ["28 Mar","March report",null],
+    ["28 Mar","Teacher evaluation form to client pages",null],
+    ["28 Mar","Dated billing tracker PDF",null]
+  ],
+  April:[
+    ["28 Apr","Activity 3",null],
+    ["28 Apr","Teacher evaluation form to client pages",null],
+    ["28 Apr","April report",null],
+    ["28 Apr","Dated billing tracker PDF",null]
+  ],
+  May:[
+    ["04 May","DELF examination preps begin",null],
+    ["28 May","Activity 4",null],
+    ["28 May","Teacher evaluation form to client pages",null],
+    ["28 May","May report",null],
+    ["28 May","Dated billing tracker PDF",null]
+  ],
+  June:[
+    ["15 Jun","Communique about Q2 assessment to be sent",null],
+    ["22 Jun","Quarter 2 assessment",null],
+    ["29 Jun","Report cards ready and sent",null],
+    ["28 Jun","June report",null],
+    ["28 Jun","Teacher evaluation form to client pages",null],
+    ["28 Jun","Dated billing tracker PDF",null]
+  ],
+  July:[
+    ["28 Jul","Activity 5",null],
+    ["28 Jul","Teacher evaluation form to client pages",null],
+    ["28 Jul","July report",null],
+    ["28 Jul","Dated billing tracker PDF",null]
+  ],
+  August:[
+    ["28 Aug","Activity 6",null],
+    ["28 Aug","Teacher evaluation form to client pages",null],
+    ["28 Aug","August report",null],
+    ["28 Aug","Dated billing tracker PDF",null]
+  ],
+  September:[
+    ["14 Sep","Communique about Q3 assessment to be sent",null],
+    ["21 Sep","Quarter 3 assessment",null],
+    ["28 Sep","Report cards ready and sent",null],
+    ["28 Sep","September report",null],
+    ["28 Sep","Teacher evaluation form to client pages",null],
+    ["28 Sep","Dated billing tracker PDF",null]
+  ],
+  October:[
+    ["01 Oct","DELF examination October sitting",null],
+    ["28 Oct","Activity 7",null],
+    ["28 Oct","Teacher evaluation form to client pages",null],
+    ["28 Oct","October report",null],
+    ["28 Oct","Dated billing tracker PDF",null]
+  ],
+  November:[
+    ["28 Nov","Activity 8",null],
+    ["28 Nov","Teacher evaluation form to client pages",null],
+    ["28 Nov","November report",null],
+    ["28 Nov","Dated billing tracker PDF",null]
+  ],
+  December:[
+    ["30 Nov","Communique about EOY assessment to be sent",null],
+    ["07 Dec","End of year assessment",null],
+    ["14 Dec","Report cards ready and sent",null],
+    ["20 Dec","Annual report",null],
+    ["20 Dec","Dated billing tracker PDF",null]
+  ]
+};
+
+function docRef(){
+  return db.collection("academicCalendars").doc(String(currentYear));
+}
+
+function normalizeCalendarData(){
+  if(!data.months) data.months = {};
+
+  monthNames.forEach(month => {
+    if(!Array.isArray(data.months[month])) data.months[month] = [];
+
+    data.months[month] = data.months[month].map(item => {
+      if(Array.isArray(item) && item.length >= 4){
+        return [item[0], item[2], null];
+      }
+
+      if(Array.isArray(item) && item.length === 3){
+        if(typeof item[2] === "boolean" || item[2] === null){
+          return [item[0], item[1], item[2]];
+        }
+
+        return [item[0], item[2], null];
+      }
+
+      if(Array.isArray(item) && item.length === 2){
+        return [item[0], item[1], null];
+      }
+
+      return ["", String(item || ""), null];
+    });
+  });
+}
+
+async function load(){
+  yearLabel.textContent = currentYear;
+  statusEl.textContent = "Loading calendar...";
+
+  const fallback = () => {
+    data = JSON.parse(JSON.stringify({ months: starter, notes:"" }));
+    normalizeCalendarData();
+    notesEl.value = data.notes || "";
+    render();
+    statusEl.textContent = "Calendar loaded offline. Firestore will sync when available.";
+  };
+
+  try{
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Firestore timeout")), 4500)
+    );
+
+    const snap = await Promise.race([docRef().get(), timeout]);
+
+    if(snap.exists){
+      data = snap.data();
+    }else{
+      data = JSON.parse(JSON.stringify({ months: starter, notes:"" }));
+      await docRef().set(data,{merge:true});
+    }
+
+    normalizeCalendarData();
+    notesEl.value = data.notes || "";
+    render();
+
+    statusEl.textContent = "Saved in Firestore";
+  }catch(err){
+    console.warn("Firestore load failed:", err);
+    fallback();
+  }
+}
+
+async function save(){
+  normalizeCalendarData();
+  data.notes = notesEl.value;
+
+  try{
+    await docRef().set(data,{merge:true});
+    statusEl.textContent = "Saved ✓";
+    setTimeout(()=>statusEl.textContent="Saved in Firestore",1000);
+  }catch(err){
+    console.warn("Firestore save failed:", err);
+    localStorage.setItem("impactAcademicCalendar_" + currentYear, JSON.stringify(data));
+    statusEl.textContent = "Saved locally. Firestore not reachable.";
+  }
+}
+
+function makeStatus(month,index,item,row){
+  const wrap = document.createElement("div");
+  wrap.className = "status-actions";
+
+  const yes = document.createElement("button");
+  yes.className = "status-btn ok" + (item[2] === true ? " active" : "");
+  yes.type = "button";
+
+  const no = document.createElement("button");
+  no.className = "status-btn no" + (item[2] === false ? " active" : "");
+  no.type = "button";
+
+  yes.onclick = async () => {
+    data.months[month][index][2] = true;
+    row.classList.add("done");
+    yes.classList.add("active");
+    no.classList.remove("active");
+    await save();
+  };
+
+  no.onclick = async () => {
+    data.months[month][index][2] = false;
+    row.classList.remove("done");
+    no.classList.add("active");
+    yes.classList.remove("active");
+    await save();
+  };
+
+  wrap.appendChild(yes);
+  wrap.appendChild(no);
+
+  return wrap;
+}
+
+function render(){
+  normalizeCalendarData();
+  monthsEl.innerHTML = "";
+
+  monthNames.forEach(month => {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const head = document.createElement("div");
+    head.className = "card-head";
+    head.innerHTML = '<span class="head-icon">▦</span>' + month;
+
+    const list = document.createElement("div");
+    list.className = "items";
+
+    data.months[month].forEach((item,index) => {
+      const row = document.createElement("div");
+      row.className = "item";
+      row.classList.toggle("done", item[2] === true);
+
+      const date = document.createElement("div");
+      date.className = "date";
+      date.textContent = item[0] || "";
+
+      const text = document.createElement("div");
+      text.className = "event-text";
+      text.textContent = item[1] || "";
+
+      const status = makeStatus(month,index,item,row);
+
+      const del = document.createElement("button");
+      del.className = "delete";
+      del.type = "button";
+      del.textContent = "×";
+      del.onclick = async () => {
+        data.months[month].splice(index,1);
+        render();
+        await save();
+      };
+
+      row.appendChild(date);
+      row.appendChild(text);
+      row.appendChild(status);
+      row.appendChild(del);
+      list.appendChild(row);
+    });
+
+    const add = document.createElement("div");
+    add.className = "add-line";
+    add.innerHTML = '<input placeholder="Date"><input placeholder="Event"><button type="button">+</button>';
+
+    add.querySelector("button").onclick = async () => {
+      const inputs = add.querySelectorAll("input");
+      const date = inputs[0].value.trim();
+      const event = inputs[1].value.trim();
+
+      if(!date || !event) return;
+
+      data.months[month].push([date,event,null]);
+
+      inputs[0].value = "";
+      inputs[1].value = "";
+
+      render();
+      await save();
+    };
+
+    card.appendChild(head);
+    card.appendChild(list);
+    card.appendChild(add);
+    monthsEl.appendChild(card);
+  });
+}
+
+editBtn.onclick = () => {
+  editing = !editing;
+  document.body.classList.toggle("editing",editing);
+  editBtn.classList.toggle("active",editing);
+  editBtn.textContent = editing ? "✓ Editing" : "✎ Edit";
+};
+
+notesEl.addEventListener("input", () => {
+  clearTimeout(window.noteTimer);
+  window.noteTimer = setTimeout(save,600);
+});
+
+document.getElementById("prevYear").onclick = async () => {
+  currentYear--;
+  await load();
+};
+
+document.getElementById("nextYear").onclick = async () => {
+  currentYear++;
+  await load();
+};
+
+load();
+</script>
+<script src="/js/impact-task-menu-patch.js"></script><script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /css/impact-global-bg.css (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\css\impact-global-bg.css
+CHARS:  1156
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+html,
+body{
+  min-height:100%;
+  background:#05060b !important;
+  color:#f7f8ff;
+}
+
+.impact-global-blur-bg{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:0 !important;
+  pointer-events:none !important;
+  background:
+    linear-gradient(rgba(5,6,12,.42),rgba(5,6,12,.74)),
+    url("/assets/images/homepage.jpg") center/cover no-repeat,
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%) !important;
+  transform:scale(1.08) !important;
+  filter:blur(12px) brightness(.78) saturate(.95) !important;
+}
+
+body > *:not(.impact-global-blur-bg){
+  position:relative;
+  z-index:2;
+}
+
+.bg-layer,
+.page-bg,
+.background,
+.app-bg{
+  background:
+    linear-gradient(rgba(5,6,12,.42),rgba(5,6,12,.74)),
+    url("/assets/images/homepage.jpg") center/cover no-repeat,
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%) !important;
+  filter:blur(12px) brightness(.78) saturate(.95) !important;
+}
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /css/impact-page-nav.css (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\css\impact-page-nav.css
+CHARS:  674
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+.impact-dashboard-btn,
+.impact-back-btn{
+  position:fixed !important;
+  top:24px !important;
+  z-index:2147483647 !important;
+  color:white !important;
+  text-decoration:none !important;
+  font-family:Inter,system-ui,sans-serif !important;
+  font-size:.72rem !important;
+  font-weight:900 !important;
+  padding:10px 14px !important;
+  border-radius:14px !important;
+  background:rgba(255,255,255,.10) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  backdrop-filter:blur(18px) !important;
+  -webkit-backdrop-filter:blur(18px) !important;
+  cursor:pointer !important;
+}
+
+.impact-dashboard-btn{left:28px !important;}
+.impact-back-btn{right:28px !important;}
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /js/impact-global-bg.js (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\js\impact-global-bg.js
+CHARS:  199
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+(function(){
+  if (document.querySelector(".impact-global-blur-bg")) return;
+
+  const bg = document.createElement("div");
+  bg.className = "impact-global-blur-bg";
+  document.body.prepend(bg);
+})();
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /js/impact-page-nav.js (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\js\impact-page-nav.js
+CHARS:  1289
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+(function(){
+  const path = window.location.pathname.toLowerCase();
+
+  const isHome = path === "/" || path.endsWith("/index.html");
+  const isGate = path.includes("/gate/");
+  const isDashboard =
+    path.endsWith("/teacher/dashboard.html") ||
+    path.endsWith("/learner/dashboard.html") ||
+    path.endsWith("/personnel/dashboard.html");
+
+  const isAppPage =
+    path.includes("/teacher/") ||
+    path.includes("/learner/") ||
+    path.includes("/personnel/") ||
+    path.includes("/engine/") ||
+    path.includes("/admin/");
+
+  if (isHome || isGate || isDashboard || !isAppPage) return;
+
+  document.querySelectorAll(".impact-dashboard-btn,.impact-back-btn").forEach(el => el.remove());
+
+  const dashboardUrl = path.includes("/learner/")
+    ? "/learner/dashboard.html"
+    : "/teacher/dashboard.html";
+
+  const dash = document.createElement("a");
+  dash.className = "impact-dashboard-btn";
+  dash.href = dashboardUrl;
+  dash.textContent = "Dashboard";
+  document.body.appendChild(dash);
+
+  const back = document.createElement("button");
+  back.className = "impact-back-btn";
+  back.type = "button";
+  back.textContent = "Back";
+  back.onclick = function(){
+    if(history.length > 1) history.back();
+    else location.href = dashboardUrl;
+  };
+  document.body.appendChild(back);
+})();
+
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /js/impact-task-menu-patch.js (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\js\impact-task-menu-patch.js
+CHARS:  2446
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+(function(){
+  function makeMenuLink(label, href, likeEl){
+    const el = document.createElement("a");
+    el.textContent = label;
+    el.href = href;
+    el.onclick = function(e){
+      e.preventDefault();
+      window.location.href = href;
+    };
+    el.style.display = "block";
+    el.style.width = "100%";
+    el.style.textAlign = "left";
+    el.style.marginTop = "8px";
+    el.style.padding = "12px 16px";
+    el.style.borderRadius = "14px";
+    el.style.color = "white";
+    el.style.background = "rgba(255,255,255,.08)";
+    el.style.border = "0";
+    el.style.textDecoration = "none";
+    el.style.fontWeight = "800";
+    el.style.fontSize = ".86rem";
+    return el;
+  }
+
+  function addMenuItems(){
+    const all = Array.from(document.querySelectorAll("a,button,div,li"));
+
+    const kpiItem = all.find(el => (el.textContent || "").trim() === "Team KPIs");
+    if(!kpiItem || !kpiItem.parentElement) return;
+
+    const menu = kpiItem.parentElement;
+
+    // Remove Tasks, Team Meetings (permanently), and Recycle Bin so they
+    // can be re-added fresh below without duplicating. Team Meetings is
+    // intentionally NOT re-added — the feature has been fully removed
+    // from the platform.
+    Array.from(menu.children).forEach(el => {
+      const text = (el.textContent || "").trim();
+      if(text === "Tasks" || text === "Team Meetings" || text === "Recycle Bin"){
+        el.remove();
+      }
+    });
+
+    const teamDocs = Array.from(menu.children).find(el =>
+      (el.textContent || "").trim() === "Team Docs"
+    );
+
+    if(!teamDocs){
+      const reports = Array.from(menu.children).find(el =>
+        (el.textContent || "").trim() === "Reports"
+      );
+
+      if(reports){
+        reports.textContent = "Team Docs";
+        reports.href = "/teacher/team-docs.html";
+      }
+    }
+
+    const operations = Array.from(menu.children).find(el =>
+      (el.textContent || "").trim() === "Operations"
+    );
+
+    if(operations){
+      menu.insertBefore(makeMenuLink("Tasks","/teacher/tasks.html",kpiItem), operations);
+      menu.appendChild(makeMenuLink("Recycle Bin","/teacher/recycle-bin.html",kpiItem));
+    }else{
+      menu.appendChild(makeMenuLink("Tasks","/teacher/tasks.html",kpiItem));
+      menu.appendChild(makeMenuLink("Recycle Bin","/teacher/recycle-bin.html",kpiItem));
+    }
+  }
+
+  setTimeout(addMenuItems,100);
+  setTimeout(addMenuItems,400);
+  setTimeout(addMenuItems,1000);
+  setTimeout(addMenuItems,1800);
+})();
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /js/impact-recycle-bin.js (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\js\impact-recycle-bin.js
+CHARS:  2185
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+(function(){
+  window.ImpactRecycleBin = {
+    async send(item){
+      try{
+        if(!window.firebase || !firebase.firestore) return;
+        const db = firebase.firestore();
+        await db.collection("recycleBin").add({
+          ...item,
+          deletedAt: new Date().toISOString(),
+          deletedAtText: new Date().toLocaleString(),
+          sourceUrl: location.pathname,
+          restored: false
+        });
+      }catch(e){
+        console.warn("Recycle bin log failed", e);
+      }
+    }
+  };
+
+  function patchFirestore(){
+    if(!window.firebase || !firebase.firestore || firebase.__impactRecyclePatched) return;
+    firebase.__impactRecyclePatched = true;
+
+    const proto = firebase.firestore.DocumentReference.prototype;
+    const originalDelete = proto.delete;
+
+    proto.delete = async function(){
+      let data = {};
+      try{
+        const snap = await this.get();
+        if(snap.exists) data = snap.data() || {};
+      }catch(e){}
+
+      await window.ImpactRecycleBin.send({
+        type: "firestore-document",
+        title: data.title || data.name || data.filename || data.fileName || this.id,
+        collection: this.parent && this.parent.id ? this.parent.id : "",
+        documentId: this.id,
+        data: data
+      });
+
+      return originalDelete.apply(this, arguments);
+    };
+  }
+
+  function patchStorage(){
+    if(!window.firebase || !firebase.storage || firebase.__impactStorageRecyclePatched) return;
+    firebase.__impactStorageRecyclePatched = true;
+
+    const proto = firebase.storage.Reference.prototype;
+    const originalDelete = proto.delete;
+
+    proto.delete = async function(){
+      await window.ImpactRecycleBin.send({
+        type: "storage-file",
+        title: this.name || this.fullPath || "Deleted file",
+        storagePath: this.fullPath || "",
+        fileName: this.name || ""
+      });
+
+      return originalDelete.apply(this, arguments);
+    };
+  }
+
+  function init(){
+    patchFirestore();
+    patchStorage();
+    setTimeout(patchFirestore, 1000);
+    setTimeout(patchStorage, 1000);
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", init);
+  }else{
+    init();
+  }
+})();
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\tasks.html (MAIN FILE)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\tasks.html
+CHARS:  16992
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tasks | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif;overflow-x:hidden}
+.page{position:relative;z-index:2;width:min(1080px,92vw);margin:auto;padding:110px 0 90px}
+.nav{position:fixed;top:24px;left:28px;z-index:50;display:flex;gap:12px}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:34px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.7rem);font-weight:400}
+.hero p{font-weight:800;color:rgba(255,255,255,.65)}
+.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:24px;margin-bottom:22px}
+.form-row{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-bottom:12px}
+.form-row2{display:grid;grid-template-columns:1fr 1fr 160px auto;gap:12px}
+input,select,button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:white;border-radius:18px;padding:14px 15px;font-weight:800;font-family:Inter,sans-serif}
+select option{color:#111}
+input::placeholder{color:rgba(255,255,255,.42)}
+input[type="date"]{color-scheme:dark}
+button{cursor:pointer;transition:.15s ease}
+button:hover{transform:translateY(-2px) scale(1.02);background:rgba(255,255,255,.15)}
+button:active{transform:scale(.95);opacity:.8}
+.add{background:rgba(139,92,246,.2);border-color:rgba(139,92,246,.4)}
+.deliverable-hint{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:-4px;margin-bottom:12px;padding-left:4px}
+
+.filter-row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.filter-chip{padding:9px 16px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:.82rem;font-weight:800;cursor:pointer;transition:.15s}
+.filter-chip.active{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4}
+
+.list{display:grid;gap:14px}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:start;padding:18px;border-radius:24px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.task.overdue{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.06)}
+.task.auto{border-color:rgba(139,92,246,.3)}
+.check{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-weight:900}
+.check.done{background:rgba(132,204,22,.22);border-color:rgba(132,204,22,.45)}
+.check.auto-locked{cursor:default;opacity:.85}
+.title{font-weight:900;font-size:1rem;margin-bottom:6px}
+.meta{font-size:.78rem;color:rgba(255,255,255,.62);font-weight:800;line-height:1.7}
+.badge{display:inline-block;margin-top:8px;margin-right:6px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
+.badge.overdue-badge{background:rgba(239,68,68,.2);color:#fca5a5}
+.badge.auto-badge{background:rgba(139,92,246,.2);color:#c4b5fd}
+.deliverable-link{display:inline-block;margin-top:10px;font-size:.78rem;font-weight:900;color:#90cdf4;text-decoration:none;border-bottom:1px solid rgba(144,205,244,.4)}
+.deliverable-link:hover{color:#bfe3ff}
+.actions{display:flex;gap:8px}
+.small{padding:10px 12px;border-radius:14px;font-size:.76rem}
+.delete{background:rgba(255,80,80,.14)}
+.empty{text-align:center;color:rgba(255,255,255,.55);font-weight:800;padding:24px}
+@media(max-width:850px){
+  .form-row,.form-row2{grid-template-columns:1fr}
+  .task{grid-template-columns:1fr}
+  .actions{justify-content:flex-start}
+}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="nav"><a href="/teacher/dashboard.html">⌘</a></nav>
+
+<main class="page">
+  <section class="hero">
+    <h1>Team Tasks</h1>
+    <p>Assign real platform deliverables. They tick themselves off when done.</p>
+  </section>
+
+  <section class="panel">
+    <form id="taskForm">
+      <div class="form-row">
+        <input id="taskTitle" placeholder="Task title (e.g. 'A1 Lesson Plan for September')" required>
+        <select id="deliverableType">
+          <option value="">No linked deliverable (manual tick)</option>
+          <option value="lessonPlan">📚 Create a Lesson Plan</option>
+          <option value="activity">🎨 Create an Activity</option>
+          <option value="delfMock">📝 Create a DELF Mock</option>
+          <option value="marking">✓ Clear Marking Queue</option>
+          <option value="classLogged">🎥 Log a Class</option>
+          <option value="teamDoc">📄 Upload a Team Document</option>
+          <option value="recording">📹 Upload/Review a Recording (manual)</option>
+          <option value="kpi">📊 Review KPIs (manual)</option>
+          <option value="other">✎ Other (manual)</option>
+        </select>
+      </div>
+      <p class="deliverable-hint" id="deliverableHint">Tasks with a linked deliverable auto-complete when the real thing is created in the platform — no need to tick manually.</p>
+      <div class="form-row2">
+        <select id="assignedTo" required>
+          <option value="">Assign to...</option>
+        </select>
+        <input id="dueDate" type="date" required>
+        <input id="taskNotes" placeholder="Notes (optional)">
+        <button class="add" type="submit">Add Task</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="filter-row" id="filterRow">
+      <button class="filter-chip active" data-filter="all" type="button">All</button>
+      <button class="filter-chip" data-filter="pending" type="button">Pending</button>
+      <button class="filter-chip" data-filter="completed" type="button">Completed</button>
+      <button class="filter-chip" data-filter="overdue" type="button">Overdue</button>
+      <button class="filter-chip" data-filter="auto" type="button">Auto-tracked</button>
+    </div>
+    <div id="taskList" class="list"><div class="empty">Loading tasks...</div></div>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+  const db=firebase.firestore();
+
+  const form=document.getElementById("taskForm");
+  const taskTitle=document.getElementById("taskTitle");
+  const deliverableType=document.getElementById("deliverableType");
+  const assignedTo=document.getElementById("assignedTo");
+  const dueDate=document.getElementById("dueDate");
+  const taskNotes=document.getElementById("taskNotes");
+  const list=document.getElementById("taskList");
+  const filterRow=document.getElementById("filterRow");
+
+  const DELIVERABLE_LABELS = {
+    lessonPlan:"📚 Lesson Plan", activity:"🎨 Activity", delfMock:"📝 DELF Mock",
+    marking:"✓ Marking Queue", classLogged:"🎥 Logged Class", teamDoc:"📄 Team Document",
+    recording:"📹 Recording", kpi:"📊 KPI Review", other:"✎ Other"
+  };
+  const DELIVERABLE_LINKS = {
+    lessonPlan:"/teacher/lesson-builder.html", activity:"/teacher/activity-builder.html",
+    delfMock:"/teacher/delf-mock-builder.html", marking:"/teacher/marking.html",
+    classLogged:"/teacher/classes.html", teamDoc:"/teacher/team-docs.html",
+    recording:"/teacher/recordings.html", kpi:"/teacher/kpis.html"
+  };
+  const AUTO_TYPES = new Set(["lessonPlan","activity","delfMock","marking","classLogged","teamDoc"]);
+
+  let tasks=[];
+  let currentFilter="all";
+
+  function namesMatch(a, b){
+    if(!a || !b) return false;
+    a = String(a).trim().toLowerCase();
+    b = String(b).trim().toLowerCase();
+    if(!a || !b) return false;
+    return a === b || b.includes(a) || a.includes(b);
+  }
+
+  function fmtDate(v){
+    if(!v) return "";
+    const d=new Date(v);
+    if(isNaN(d)) return v;
+    return d.toLocaleDateString();
+  }
+
+  function isOverdue(t){
+    if(t.completed || !t.dueDate) return false;
+    const due = new Date(t.dueDate);
+    const today = new Date(); today.setHours(0,0,0,0);
+    return due < today;
+  }
+
+  async function loadPersonnel(){
+    try{
+      const snap = await db.collection("impactPasskeys").where("role","!=","Learner").get();
+      const names = snap.docs.map(d=>d.data().name).filter(Boolean).sort();
+      assignedTo.innerHTML = '<option value="">Assign to...</option>' + names.map(n=>`<option value="${n}">${n}</option>`).join("");
+    }catch(e){ console.warn("Could not load personnel list:", e); }
+  }
+
+  // ── AUTO-COMPLETION CHECKS ──────────────────────────────────
+  // For each auto-tracked task, check whether the real deliverable
+  // now exists in the platform, created by the assignee, at or
+  // after the task was created. Runs once on page load.
+  async function checkAutoCompletions(taskList){
+    const autoTasks = taskList.filter(t => AUTO_TYPES.has(t.deliverableType) && !t.completed);
+    if(!autoTasks.length) return [];
+
+    const [lessonSnap, activitySnap, delfSnap, completionsSnap, trackerSnap, teamDocsSnap] = await Promise.all([
+      db.collection("lessonPlans").get().catch(()=>({docs:[]})),
+      db.collection("activityPlans").get().catch(()=>({docs:[]})),
+      db.collection("delfMocks").get().catch(()=>({docs:[]})),
+      db.collection("learnerCompletions").get().catch(()=>({docs:[]})),
+      db.collection("classTracker").get().catch(()=>({docs:[]})),
+      db.collection("teamDocs").get().catch(()=>({docs:[]}))
+    ]);
+
+    const lessons = lessonSnap.docs.map(d=>d.data());
+    const activities = activitySnap.docs.map(d=>d.data());
+    const delfMocks = delfSnap.docs.map(d=>d.data());
+    const completions = completionsSnap.docs.map(d=>d.data());
+    const classes = trackerSnap.docs.map(d=>d.data());
+    const teamDocs = teamDocsSnap.docs.map(d=>d.data());
+
+    const justCompleted = [];
+
+    for(const t of autoTasks){
+      const taskCreated = new Date(t.createdAt || 0);
+      let done = false;
+
+      if(t.deliverableType === "lessonPlan"){
+        done = lessons.some(l => namesMatch(t.assignedTo, l.createdByTeacher) && new Date(l.updatedAt||0) >= taskCreated);
+      }
+      if(t.deliverableType === "activity"){
+        done = activities.some(a => namesMatch(t.assignedTo, a.createdByTeacher) && new Date(a.updatedAt||0) >= taskCreated);
+      }
+      if(t.deliverableType === "delfMock"){
+        done = delfMocks.some(m => namesMatch(t.assignedTo, m.createdByTeacher) && new Date(m.updatedAt||0) >= taskCreated);
+      }
+      if(t.deliverableType === "marking"){
+        const relevant = completions.filter(c => namesMatch(t.assignedTo, c.itemCreatedByTeacher));
+        const stillUngraded = relevant.filter(c => c.score === null || c.score === undefined);
+        done = relevant.length > 0 && stillUngraded.length === 0;
+      }
+      if(t.deliverableType === "classLogged"){
+        done = classes.some(c => namesMatch(t.assignedTo, c.teacher) && new Date(c.startedAt||0) >= taskCreated);
+      }
+      if(t.deliverableType === "teamDoc"){
+        done = teamDocs.some(d => namesMatch(t.assignedTo, d.uploadedBy) && new Date(d.uploadedAt||0) >= taskCreated);
+      }
+
+      if(done){
+        const now = new Date();
+        await db.collection("tasks").doc(t.id).set({
+          completed: true,
+          completedAt: now.toISOString(),
+          completedAtText: now.toLocaleString(),
+          completedVia: "auto"
+        }, {merge:true});
+        justCompleted.push(t.title);
+      }
+    }
+
+    return justCompleted;
+  }
+
+  async function load(){
+    list.innerHTML='<div class="empty">Loading tasks...</div>';
+    const snap=await db.collection("tasks").get();
+    tasks=snap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>new Date(a.dueDate||0)-new Date(b.dueDate||0));
+
+    const justCompleted = await checkAutoCompletions(tasks);
+    if(justCompleted.length){
+      // Re-fetch to reflect auto-completions just written
+      const snap2 = await db.collection("tasks").get();
+      tasks = snap2.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.dueDate||0)-new Date(b.dueDate||0));
+    }
+
+    render();
+  }
+
+  function render(){
+    let filtered = tasks;
+    if(currentFilter==="pending") filtered = tasks.filter(t=>!t.completed);
+    if(currentFilter==="completed") filtered = tasks.filter(t=>t.completed);
+    if(currentFilter==="overdue") filtered = tasks.filter(t=>isOverdue(t));
+    if(currentFilter==="auto") filtered = tasks.filter(t=>AUTO_TYPES.has(t.deliverableType));
+
+    if(!filtered.length){
+      list.innerHTML='<div class="empty">No tasks here.</div>';
+      return;
+    }
+
+    list.innerHTML="";
+
+    filtered.forEach(t=>{
+      const done=!!t.completed;
+      const overdue=isOverdue(t);
+      const isAuto = AUTO_TYPES.has(t.deliverableType);
+      const card=document.createElement("article");
+      card.className="task" + (overdue?" overdue":"") + (isAuto?" auto":"");
+
+      const deliverableLabel = DELIVERABLE_LABELS[t.deliverableType] || "";
+      const deliverableLink = DELIVERABLE_LINKS[t.deliverableType] || "";
+
+      card.innerHTML=`
+        <button class="check ${done?'done':''} ${isAuto?'auto-locked':''}" title="${isAuto?'Auto-tracked — ticks itself when the deliverable is created':'Mark complete'}">${done?'✓':''}</button>
+        <div>
+          <div class="title">${t.title||"Untitled Task"}</div>
+          <div class="meta">Assigned to: ${t.assignedTo||"Unassigned"}</div>
+          <div class="meta">Due: ${fmtDate(t.dueDate)}</div>
+          ${t.notes?`<div class="meta">${t.notes}</div>`:""}
+          ${t.completedAtText?`<div class="meta">Completed: ${t.completedAtText}${t.completedVia==='auto'?' (auto)':''}</div>`:""}
+          <span class="badge ${overdue?'overdue-badge':''}">${done?'Completed':overdue?'Overdue':'Pending'}</span>
+          ${isAuto?`<span class="badge auto-badge">${deliverableLabel}</span>`:""}
+          ${deliverableLink && !done ? `<br><a class="deliverable-link" href="${deliverableLink}">Go do this →</a>` : ""}
+        </div>
+        <div class="actions">
+          <button class="small edit">Edit</button>
+          <button class="small delete">Delete</button>
+        </div>
+      `;
+
+      const checkBtn = card.querySelector(".check");
+      if(!isAuto){
+        checkBtn.onclick=async()=>{
+          const now=new Date();
+          await db.collection("tasks").doc(t.id).set({
+            completed:!done,
+            completedAt:!done ? now.toISOString() : "",
+            completedAtText:!done ? now.toLocaleString() : "",
+            completedVia: !done ? "manual" : "",
+            updatedAt:now.toISOString()
+          },{merge:true});
+          await load();
+        };
+      }
+
+      card.querySelector(".edit").onclick=()=>{
+        taskTitle.value=t.title||"";
+        deliverableType.value=t.deliverableType||"";
+        assignedTo.value=t.assignedTo||"";
+        dueDate.value=t.dueDate||"";
+        taskNotes.value=t.notes||"";
+        form.dataset.editing=t.id;
+        taskTitle.focus();
+      };
+
+      card.querySelector(".delete").onclick=async()=>{
+        if(confirm("Delete this task?")){
+          await db.collection("tasks").doc(t.id).delete();
+          await load();
+        }
+      };
+
+      list.appendChild(card);
+    });
+  }
+
+  filterRow.addEventListener("click", function(e){
+    const chip = e.target.closest(".filter-chip");
+    if(!chip) return;
+    document.querySelectorAll(".filter-chip").forEach(c=>c.classList.remove("active"));
+    chip.classList.add("active");
+    currentFilter = chip.dataset.filter;
+    render();
+  });
+
+  form.onsubmit=async(e)=>{
+    e.preventDefault();
+    const now=new Date();
+
+    const data={
+      title:taskTitle.value.trim(),
+      deliverableType:deliverableType.value,
+      assignedTo:assignedTo.value,
+      dueDate:dueDate.value,
+      notes:taskNotes.value.trim(),
+      completed:false,
+      updatedAt:now.toISOString(),
+      updatedAtText:now.toLocaleString()
+    };
+
+    const editing=form.dataset.editing;
+
+    if(editing){
+      await db.collection("tasks").doc(editing).set(data,{merge:true});
+      delete form.dataset.editing;
+    }else{
+      await db.collection("tasks").add({
+        ...data,
+        createdAt:now.toISOString(),
+        createdAtText:now.toLocaleString()
+      });
+    }
+
+    form.reset();
+    await load();
+  };
+
+  await loadPersonnel();
+  await load();
+});
+</script>
+
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\kpis.html (MAIN FILE)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\kpis.html
+CHARS:  18053
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Team KPIs | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif}
+.nav{position:fixed;top:24px;left:28px;z-index:50}
+.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+
+.layout{position:relative;z-index:2;display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+
+/* SIDEBAR */
+.sidebar{padding:110px 20px 40px;border-right:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02)}
+.sidebar-title{font-family:"Sorts Mill Goudy",serif;font-size:1.5rem;font-weight:400;margin-bottom:4px;padding:0 8px}
+.sidebar-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:24px;padding:0 8px}
+.person-list{display:flex;flex-direction:column;gap:4px}
+.person-item{display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:14px;cursor:pointer;transition:.15s;border:1px solid transparent}
+.person-item:hover{background:rgba(255,255,255,.05)}
+.person-item.active{background:rgba(99,179,237,.14);border-color:rgba(99,179,237,.3)}
+.person-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:900;color:#fff;flex-shrink:0}
+.person-name{font-size:.86rem;font-weight:800;color:rgba(255,255,255,.85)}
+.person-item.active .person-name{color:#90cdf4}
+
+/* MAIN CONTENT */
+.content{padding:110px 40px 80px;max-width:1100px}
+@media(max-width:900px){.content{padding:100px 20px 60px}}
+.content-header{margin-bottom:32px}
+.content-eyebrow{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:8px}
+.content-title{font-family:"Sorts Mill Goudy",serif;font-size:clamp(2.2rem,4vw,3.2rem);font-weight:400}
+
+/* HERO STATS ROW */
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+@media(max-width:800px){.hero-stats{grid-template-columns:repeat(2,1fr)}}
+.hero-stat{border-radius:24px;padding:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden}
+.hero-stat::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
+.hero-stat.good::before{background:linear-gradient(90deg,#34d399,#10b981)}
+.hero-stat.warn::before{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+.hero-stat.bad::before{background:linear-gradient(90deg,#f87171,#ef4444)}
+.hero-stat-label{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-bottom:10px}
+.hero-stat-value{font-family:"Sorts Mill Goudy",serif;font-size:2.6rem;font-weight:400;line-height:1}
+.hero-stat-target{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.35);margin-top:6px}
+
+/* DETAIL CARDS with mini bar chart */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:800px){.detail-grid{grid-template-columns:1fr}}
+.detail-card{border-radius:24px;padding:24px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1)}
+.detail-card-cat{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:6px}
+.detail-card h3{font-family:"Sorts Mill Goudy",serif;font-size:1.3rem;font-weight:400;margin-bottom:14px}
+.bar-chart-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-chart-label{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);width:64px;flex-shrink:0;text-align:right}
+.bar-chart-track{flex:1;height:20px;border-radius:8px;background:rgba(255,255,255,.06);overflow:hidden;position:relative}
+.bar-chart-fill{height:100%;border-radius:8px;transition:width .6s cubic-bezier(.2,.8,.3,1)}
+.bar-chart-fill.good{background:linear-gradient(90deg,#34d399,#10b981)}
+.bar-chart-fill.warn{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+.bar-chart-fill.bad{background:linear-gradient(90deg,#f87171,#ef4444)}
+.bar-chart-value{font-size:.7rem;font-weight:900;color:rgba(255,255,255,.6);width:38px;flex-shrink:0}
+.detail-desc{font-size:.78rem;color:rgba(255,255,255,.5);font-weight:600;line-height:1.5;margin-top:14px}
+.detail-source{font-size:.66rem;color:rgba(255,255,255,.3);font-weight:700;margin-top:6px}
+
+/* Radial ring for the primary combined score */
+.ring-card{grid-column:1/-1;display:flex;align-items:center;gap:32px;border-radius:28px;padding:28px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);margin-bottom:16px}
+@media(max-width:700px){.ring-card{flex-direction:column;text-align:center}}
+.ring-wrap{flex-shrink:0}
+.ring-label{font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-bottom:6px}
+.ring-name{font-family:"Sorts Mill Goudy",serif;font-size:1.8rem;font-weight:400;margin-bottom:8px}
+.ring-desc{font-size:.84rem;color:rgba(255,255,255,.55);font-weight:600;line-height:1.6}
+
+.empty-state{text-align:center;padding:60px;color:rgba(255,255,255,.35);font-weight:700}
+.match-note{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:6px}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="nav"><a href="/teacher/dashboard.html">⌘</a></nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Team KPIs</div>
+    <div class="sidebar-sub">Select a team member</div>
+    <div class="person-list" id="personnelSelector">
+      <div class="empty-state" style="padding:20px 0">Loading...</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="content-header">
+      <p class="content-eyebrow">Performance Dashboard</p>
+      <h1 class="content-title" id="personHeading">—</h1>
+      <p class="match-note" id="matchNote"></p>
+    </div>
+
+    <div id="ringWrap"></div>
+    <div class="hero-stats" id="heroStats"></div>
+    <div class="detail-grid" id="detailGrid"></div>
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async()=>{
+  const db=firebase.firestore();
+  const selector=document.getElementById("personnelSelector");
+  const heading=document.getElementById("personHeading");
+  const ringWrap=document.getElementById("ringWrap");
+  const heroStats=document.getElementById("heroStats");
+  const detailGrid=document.getElementById("detailGrid");
+  const matchNote=document.getElementById("matchNote");
+
+  function tone(pct){ return pct>=80?"good":pct>=50?"warn":"bad"; }
+
+  function namesMatch(passkeyName, recordName){
+    if(!passkeyName || !recordName) return false;
+    const a = String(passkeyName).trim().toLowerCase();
+    const b = String(recordName).trim().toLowerCase();
+    if(!a || !b) return false;
+    return a === b || b.includes(a) || a.includes(b);
+  }
+
+  function nearestMarkInfo(startedAt){
+    const d = new Date(startedAt);
+    const minutes = d.getMinutes();
+    const lastMark = minutes < 30 ? 0 : 30;
+    const nextMark = lastMark === 0 ? 30 : 60;
+    const minutesUntilNextMark = nextMark - minutes;
+    if(minutesUntilNextMark <= 5){
+      const inferred = new Date(d);
+      if(nextMark === 60){ inferred.setHours(inferred.getHours()+1, 0, 0, 0); }
+      else{ inferred.setMinutes(30, 0, 0); }
+      return inferred;
+    }
+    const inferred = new Date(d);
+    inferred.setMinutes(lastMark, 0, 0);
+    return inferred;
+  }
+
+  function computePunctuality(classes){
+    const withStart = classes.filter(x=>x.startedAt);
+    if(!withStart.length) return { pct: 0, count: 0 };
+    let onTime = 0, counted = 0;
+    withStart.forEach(x=>{
+      const actual = new Date(x.startedAt);
+      let agreedTime = null;
+      if(x.time){
+        const [schedH, schedM] = String(x.time).split(":").map(Number);
+        if(!isNaN(schedH) && !isNaN(schedM)){
+          const scheduled = new Date(actual);
+          scheduled.setHours(schedH, schedM, 0, 0);
+          if(Math.abs(actual - scheduled) / 60000 <= 35) agreedTime = scheduled;
+        }
+      }
+      if(!agreedTime) agreedTime = nearestMarkInfo(x.startedAt);
+      const diffMinutes = (actual - agreedTime) / 60000;
+      counted++;
+      if(diffMinutes <= 5) onTime++;
+    });
+    return { pct: counted ? Math.round((onTime/counted)*100) : 0, count: counted };
+  }
+
+  let allClassTracker=null, allTasks=null, allCompletions=null, allProgress=null;
+
+  async function loadAllData(){
+    const [trackerSnap, tasksSnap, completionsSnap, progressSnap] = await Promise.all([
+      db.collection("classTracker").get(),
+      db.collection("tasks").get(),
+      db.collection("learnerCompletions").get().catch(()=>({docs:[]})),
+      db.collection("progressRecords").get().catch(()=>({docs:[]}))
+    ]);
+    allClassTracker = trackerSnap.docs.map(d=>d.data());
+    allTasks = tasksSnap.docs.map(d=>d.data());
+    allCompletions = completionsSnap.docs.map(d=>d.data());
+    allProgress = progressSnap.docs.map(d=>d.data());
+  }
+
+  async function computeKpisFor(personName){
+    const classes = allClassTracker.filter(x=>namesMatch(personName, x.teacher));
+    const personTasks = allTasks.filter(x=>namesMatch(personName, x.assignedTo));
+    const gradedSubmissions = allCompletions.filter(s=>
+      namesMatch(personName, s.itemCreatedByTeacher) && namesMatch(personName, s.markedBy)
+    );
+    const progress = allProgress.filter(x=>namesMatch(personName, x.teacher));
+
+    const participationVals = classes.map(x=>Number(String(x.studentParticipation||"").replace("%",""))).filter(n=>!isNaN(n));
+    const participation = participationVals.length ? Math.round(participationVals.reduce((a,b)=>a+b,0)/participationVals.length) : 0;
+
+    const scoreVals = gradedSubmissions.map(s=>{
+      const max = Number(s.maxScore) || 100;
+      return (Number(s.score||0)/max)*100;
+    }).filter(n=>!isNaN(n));
+    const progressRate = scoreVals.length ? Math.round(scoreVals.reduce((a,b)=>a+b,0)/scoreVals.length) : 0;
+
+    const punctualityResult = computePunctuality(classes);
+    const punctuality = punctualityResult.pct;
+
+    const doneTasks = personTasks.filter(t=>t.completed).length;
+    const taskCompletion = personTasks.length ? Math.round((doneTasks/personTasks.length)*100) : 100;
+
+    const satVals = progress.map(x=>Number(x.studentSatisfaction)).filter(n=>!isNaN(n));
+    const satisfaction = satVals.length ? (satVals.reduce((a,b)=>a+b,0)/satVals.length) : 0;
+    const qualityVals = progress.map(x=>Number(x.teachingQuality)).filter(n=>!isNaN(n));
+    const quality = qualityVals.length ? (qualityVals.reduce((a,b)=>a+b,0)/qualityVals.length) : 0;
+
+    return {
+      participation, progressRate, punctuality, taskCompletion, satisfaction, quality,
+      classCount: classes.length, taskCount: personTasks.length,
+      punctualityCount: punctualityResult.count, gradedCount: scoreVals.length
+    };
+  }
+
+  // ── RADIAL RING (SVG, no library needed) ──
+  function renderRing(overallPct){
+    const r = 42, circumference = 2*Math.PI*r;
+    const offset = circumference - (overallPct/100)*circumference;
+    const color = overallPct>=80 ? "#10b981" : overallPct>=50 ? "#f59e0b" : "#ef4444";
+    return `
+      <svg width="110" height="110" viewBox="0 0 110 110">
+        <circle cx="55" cy="55" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
+        <circle cx="55" cy="55" r="${r}" fill="none" stroke="${color}" stroke-width="10"
+          stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+          stroke-linecap="round" transform="rotate(-90 55 55)"
+          style="transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.3,1)"/>
+        <text x="55" y="62" text-anchor="middle" font-family="Sorts Mill Goudy, serif" font-size="26" fill="#fff">${overallPct}%</text>
+      </svg>
+    `;
+  }
+
+  function renderKpis(name, k){
+    heading.textContent = name;
+
+    const overall = Math.round((k.participation + k.progressRate + k.punctuality + k.taskCompletion) / 4);
+
+    ringWrap.innerHTML = `
+      <div class="ring-card">
+        <div class="ring-wrap">${renderRing(overall)}</div>
+        <div>
+          <div class="ring-label">Overall Performance</div>
+          <div class="ring-name">${overall >= 80 ? "Excellent" : overall >= 50 ? "On Track" : "Needs Attention"}</div>
+          <p class="ring-desc">Blended score across participation, progress rate, punctuality, and task completion. ${k.classCount} classes and ${k.taskCount} tasks tracked for this period.</p>
+        </div>
+      </div>
+    `;
+
+    heroStats.innerHTML = `
+      <div class="hero-stat ${tone(k.participation)}"><div class="hero-stat-label">Participation</div><div class="hero-stat-value">${k.participation}%</div><div class="hero-stat-target">Target ≥80%</div></div>
+      <div class="hero-stat ${tone(k.progressRate)}"><div class="hero-stat-label">Progress Rate</div><div class="hero-stat-value">${k.progressRate}%</div><div class="hero-stat-target">Target ≥65%</div></div>
+      <div class="hero-stat ${tone(k.punctuality)}"><div class="hero-stat-label">Punctuality</div><div class="hero-stat-value">${k.punctuality}%</div><div class="hero-stat-target">Target 100%</div></div>
+      <div class="hero-stat ${tone(k.taskCompletion)}"><div class="hero-stat-label">Task Completion</div><div class="hero-stat-value">${k.taskCompletion}%</div><div class="hero-stat-target">Target 100%</div></div>
+    `;
+
+    const satPct = (k.satisfaction/5)*100;
+    const qualPct = (k.quality/5)*100;
+
+    detailGrid.innerHTML = `
+      <div class="detail-card">
+        <div class="detail-card-cat">Student Satisfaction</div>
+        <h3>Feedback Ratings</h3>
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">Satisfaction</span>
+          <div class="bar-chart-track"><div class="bar-chart-fill ${tone(satPct)}" style="width:${satPct}%"></div></div>
+          <span class="bar-chart-value">${k.satisfaction.toFixed(1)}/5</span>
+        </div>
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">Clarity</span>
+          <div class="bar-chart-track"><div class="bar-chart-fill ${tone(qualPct)}" style="width:${qualPct}%"></div></div>
+          <span class="bar-chart-value">${k.quality.toFixed(1)}/5</span>
+        </div>
+        <p class="detail-desc">Average learner ratings from feedback records.</p>
+        <p class="detail-source">Feedback Records</p>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-card-cat">Breakdown</div>
+        <h3>Core Metrics</h3>
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">Class count</span>
+          <div class="bar-chart-track"><div class="bar-chart-fill good" style="width:${Math.min(k.classCount*10,100)}%"></div></div>
+          <span class="bar-chart-value">${k.classCount}</span>
+        </div>
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">Graded</span>
+          <div class="bar-chart-track"><div class="bar-chart-fill good" style="width:${Math.min(k.gradedCount*10,100)}%"></div></div>
+          <span class="bar-chart-value">${k.gradedCount}</span>
+        </div>
+        <div class="bar-chart-row">
+          <span class="bar-chart-label">Tasks</span>
+          <div class="bar-chart-track"><div class="bar-chart-fill good" style="width:${Math.min(k.taskCount*10,100)}%"></div></div>
+          <span class="bar-chart-value">${k.taskCount}</span>
+        </div>
+        <p class="detail-desc">Punctuality measured across ${k.punctualityCount} classes with timing data — real schedule when it matches, or the nearest :00/:30 mark when held off-schedule.</p>
+        <p class="detail-source">Class Tracker · Marking · Tasks</p>
+      </div>
+    `;
+  }
+
+  async function loadPersonnel(){
+    try{
+      const snap = await db.collection("impactPasskeys").where("role","in",["Teacher","Academic Team lead"]).get();
+      const people = snap.docs.map(d=>d.data()).filter(p=>p.name);
+
+      if(!people.length){
+        selector.innerHTML = '<div class="empty-state" style="padding:20px 0">No personnel found.</div>';
+        return;
+      }
+
+      await loadAllData();
+
+      selector.innerHTML = people.map((p,i)=>`
+        <div class="person-item${i===0?' active':''}" data-name="${p.name}">
+          <div class="person-avatar">${(p.name||"?")[0].toUpperCase()}</div>
+          <div class="person-name">${p.name}</div>
+        </div>
+      `).join("");
+      matchNote.textContent = "Matched by name — works even with shortened passkey names.";
+
+      selector.addEventListener("click", async function(e){
+        const item = e.target.closest(".person-item");
+        if(!item) return;
+        document.querySelectorAll(".person-item").forEach(c=>c.classList.remove("active"));
+        item.classList.add("active");
+        heading.textContent = "Loading...";
+        const k = await computeKpisFor(item.dataset.name);
+        renderKpis(item.dataset.name, k);
+      });
+
+      const first = selector.querySelector(".person-item");
+      const k = await computeKpisFor(first.dataset.name);
+      renderKpis(first.dataset.name, k);
+    }catch(e){
+      console.error(e);
+      selector.innerHTML = '<div class="empty-state" style="padding:20px 0">Could not load personnel.</div>';
+    }
+  }
+
+  await loadPersonnel();
+});
+</script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
