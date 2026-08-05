@@ -149,7 +149,7 @@ h1{
 
 .item-top{
   display:grid;
-  grid-template-columns:78px minmax(0,1fr) 58px;
+  grid-template-columns:78px minmax(0,1fr);
   gap:16px;
   align-items:center;
 }
@@ -170,59 +170,6 @@ h1{
   white-space:normal;
   overflow-wrap:normal;
   word-break:normal;
-}
-
-.status-actions{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:7px;
-}
-
-.status-btn{
-  width:18px;
-  height:18px;
-  border-radius:6px;
-  padding:0;
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  font-size:0;
-  line-height:1;
-  color:transparent;
-}
-
-.status-btn.ok{
-  border:1px solid rgba(34,197,94,.7);
-  background:rgba(34,197,94,.13);
-}
-
-.status-btn.no{
-  border:1px solid rgba(239,68,68,.7);
-  background:rgba(239,68,68,.13);
-}
-
-.status-btn.ok.active{
-  background:rgba(34,197,94,.95);
-}
-
-.status-btn.no.active{
-  background:rgba(239,68,68,.95);
-}
-
-.status-btn.ok.active::after{
-  content:"\2713";
-  font-size:12px;
-  font-weight:900;
-  color:#052e16;
-}
-
-.status-btn.no.active::after{
-  content:"\d7";
-  font-size:12px;
-  font-weight:900;
-  color:#450a0a;
 }
 
 .item.done .event-text{
@@ -250,7 +197,7 @@ h1{
   font-weight:800;
 }
 
-.assign-btn{
+.assign-btn,.status-btn-trigger{
   padding:3px 10px;
   border-radius:999px;
   border:1px dashed rgba(255,255,255,.28);
@@ -261,7 +208,7 @@ h1{
   cursor:pointer;
 }
 
-.assign-btn:hover{
+.assign-btn:hover,.status-btn-trigger:hover{
   border-color:rgba(255,255,255,.5);
   color:#fff;
 }
@@ -273,14 +220,17 @@ h1{
   font-weight:900;
   text-transform:uppercase;
   letter-spacing:.04em;
+  border:1px dashed transparent;
+  cursor:pointer;
 }
 
+.timeliness-badge.unset{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.2)}
 .timeliness-badge.early{background:rgba(34,197,94,.18);color:#86efac}
 .timeliness-badge.ontime{background:rgba(99,179,237,.18);color:#93c5fd}
 .timeliness-badge.late{background:rgba(251,191,36,.18);color:#fde68a}
 .timeliness-badge.never{background:rgba(239,68,68,.18);color:#fca5a5}
 
-.assign-panel{
+.assign-panel,.status-panel{
   display:none;
   flex-wrap:wrap;
   gap:8px;
@@ -291,7 +241,7 @@ h1{
   border:1px solid rgba(255,255,255,.12);
 }
 
-.assign-panel.open{
+.assign-panel.open,.status-panel.open{
   display:flex;
 }
 
@@ -308,6 +258,26 @@ h1{
 .assign-check input{
   cursor:pointer;
 }
+
+.status-choice{
+  padding:6px 14px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  font-size:.72rem;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.status-choice.early{border-color:rgba(34,197,94,.5)}
+.status-choice.early:hover{background:rgba(34,197,94,.2)}
+.status-choice.ontime{border-color:rgba(99,179,237,.5)}
+.status-choice.ontime:hover{background:rgba(99,179,237,.2)}
+.status-choice.late{border-color:rgba(251,191,36,.5)}
+.status-choice.late:hover{background:rgba(251,191,36,.2)}
+.status-choice.never{border-color:rgba(239,68,68,.5)}
+.status-choice.never:hover{background:rgba(239,68,68,.2)}
 
 .add-line{
   display:none;
@@ -351,7 +321,7 @@ body.editing .add-line{
 }
 
 body.editing .item-top{
-  grid-template-columns:78px minmax(0,1fr) 58px 26px;
+  grid-template-columns:78px minmax(0,1fr) 26px;
 }
 
 body.editing .delete{
@@ -439,11 +409,11 @@ textarea{
   .page{padding-top:105px}
   .months{grid-template-columns:1fr}
   .shell{padding:14px;border-radius:28px}
-  .item-top{grid-template-columns:70px minmax(0,1fr) 54px}
-  body.editing .item-top{grid-template-columns:70px minmax(0,1fr) 54px 26px}
+  .item-top{grid-template-columns:70px minmax(0,1fr)}
+  body.editing .item-top{grid-template-columns:70px minmax(0,1fr) 26px}
   .add-line{grid-template-columns:70px minmax(0,1fr) 42px}
   .item-meta{padding-left:86px}
-  .assign-panel{margin-left:0}
+  .assign-panel,.status-panel{margin-left:0}
 }
 </style>
 <link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
@@ -527,6 +497,13 @@ const monthNames = [
 const MONTH_INDEX = {
   Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5,
   Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11
+};
+
+const STATUS_INFO = {
+  early: { label:"Early", cls:"early" },
+  ontime: { label:"On time", cls:"ontime" },
+  late: { label:"Late", cls:"late" },
+  never: { label:"Never completed", cls:"never" }
 };
 
 const starter = {
@@ -624,16 +601,22 @@ function makeItemId(){
   return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 }
 
-// Converts any legacy array-shaped item (from before this rework) into the
-// new object shape. Handles every shape this file has ever stored:
-// [date,event,status] / [date,junk,event,status] / [date,event] / etc.
+// Converts any legacy shaped item into the current object shape.
+// Handles: brand-new object shape, the old boolean-status object shape
+// (from the first rework), and every original array shape this file
+// has ever stored.
 function toItemObject(item){
   if(item && typeof item === "object" && !Array.isArray(item)){
+    let status = item.status;
+    if(status === true) status = "ontime";
+    else if(status === false) status = "never";
+    else if(status !== "early" && status !== "ontime" && status !== "late" && status !== "never") status = null;
+
     return {
       id: item.id || makeItemId(),
       date: item.date || "",
       event: item.event || "",
-      status: (item.status === true || item.status === false) ? item.status : null,
+      status: status,
       assignees: Array.isArray(item.assignees) ? item.assignees : [],
       completedAt: item.completedAt || null
     };
@@ -644,9 +627,10 @@ function toItemObject(item){
       return { id: makeItemId(), date: item[0], event: item[2], status: null, assignees: [], completedAt: null };
     }
     if(item.length === 3){
-      const statusVal = (typeof item[2] === "boolean") ? item[2] : null;
+      const legacyBool = (typeof item[2] === "boolean") ? item[2] : null;
       const eventVal = (typeof item[2] === "boolean" || item[2] === null) ? item[1] : item[2];
-      return { id: makeItemId(), date: item[0], event: eventVal, status: statusVal, assignees: [], completedAt: null };
+      const status = legacyBool === true ? "ontime" : legacyBool === false ? "never" : null;
+      return { id: makeItemId(), date: item[0], event: eventVal, status: status, assignees: [], completedAt: null };
     }
     if(item.length === 2){
       return { id: makeItemId(), date: item[0], event: item[1], status: null, assignees: [], completedAt: null };
@@ -686,26 +670,8 @@ function slugify(name){
   return String(name || "").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "unknown";
 }
 
-function classifyTimeliness(item){
-  const due = parseItemDueDate(item.date, currentYear);
-  if(!due) return null;
-
-  if(item.status === true && item.completedAt){
-    const completed = new Date(item.completedAt);
-    const oneDay = 86400000;
-    const dueEnd = new Date(due.getTime());
-    dueEnd.setUTCHours(23,59,59,999);
-
-    if(completed.getTime() < due.getTime() - oneDay) return { label:"Early", cls:"early" };
-    if(completed.getTime() <= dueEnd.getTime() + oneDay) return { label:"On time", cls:"ontime" };
-    return { label:"Late", cls:"late" };
-  }
-
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  if(due.getTime() < today.getTime()) return { label:"Never completed", cls:"never" };
-
-  return null;
+function isCompletedStatus(status){
+  return status === "early" || status === "ontime" || status === "late";
 }
 
 async function loadPersonnel(){
@@ -726,6 +692,7 @@ async function syncCalendarItemTasks(month, item, previousAssignees){
   const due = parseItemDueDate(item.date, currentYear);
   const dueIso = toIsoDate(due);
   const now = new Date();
+  const completed = isCompletedStatus(item.status);
 
   const prevSet = new Set((previousAssignees || []).map(slugify));
   const currSet = new Set(item.assignees.map(slugify));
@@ -757,10 +724,11 @@ async function syncCalendarItemTasks(month, item, previousAssignees){
       assignedTo: name,
       dueDate: dueIso,
       notes: "Synced from Academic Calendar (" + month + " " + currentYear + ")",
-      completed: item.status === true,
-      completedAt: (item.status === true && item.completedAt) ? item.completedAt : "",
-      completedAtText: (item.status === true && item.completedAt) ? new Date(item.completedAt).toLocaleString() : "",
-      completedVia: item.status === true ? "calendar" : "",
+      completed: completed,
+      completedAt: completed && item.completedAt ? item.completedAt : "",
+      completedAtText: completed && item.completedAt ? new Date(item.completedAt).toLocaleString() : "",
+      completedVia: completed ? "calendar" : "",
+      timeliness: item.status || "",
       source: "academicCalendar",
       sourceCalendarItemId: item.id,
       sourceYear: currentYear,
@@ -846,61 +814,49 @@ async function save(){
   }
 }
 
-function makeStatus(month, item, row){
-  const wrap = document.createElement("div");
-  wrap.className = "status-actions";
-
-  const yes = document.createElement("button");
-  yes.className = "status-btn ok" + (item.status === true ? " active" : "");
-  yes.type = "button";
-
-  const no = document.createElement("button");
-  no.className = "status-btn no" + (item.status === false ? " active" : "");
-  no.type = "button";
-
-  yes.onclick = async function(){
-    const prevAssignees = item.assignees.slice();
-    item.status = true;
-    item.completedAt = new Date().toISOString();
-    row.classList.add("done");
-    yes.classList.add("active");
-    no.classList.remove("active");
-    renderTimelinessBadge(row, item);
-    await save();
-    await syncCalendarItemTasks(month, item, prevAssignees);
-  };
-
-  no.onclick = async function(){
-    const prevAssignees = item.assignees.slice();
-    item.status = false;
-    item.completedAt = null;
-    row.classList.remove("done");
-    no.classList.add("active");
-    yes.classList.remove("active");
-    renderTimelinessBadge(row, item);
-    await save();
-    await syncCalendarItemTasks(month, item, prevAssignees);
-  };
-
-  wrap.appendChild(yes);
-  wrap.appendChild(no);
-
-  return wrap;
-}
-
-function renderTimelinessBadge(row, item){
-  const metaRow = row.querySelector(".item-meta");
-  if(!metaRow) return;
+function renderStatusBadge(metaRow, item){
   const old = metaRow.querySelector(".timeliness-badge");
   if(old) old.remove();
 
-  const info = classifyTimeliness(item);
-  if(!info) return;
-
   const badge = document.createElement("span");
-  badge.className = "timeliness-badge " + info.cls;
-  badge.textContent = info.label;
-  metaRow.appendChild(badge);
+  const info = STATUS_INFO[item.status];
+  badge.className = "timeliness-badge " + (info ? info.cls : "unset");
+  badge.textContent = info ? info.label : "Set status";
+  metaRow.insertBefore(badge, metaRow.firstChild);
+}
+
+function makeStatusControl(month, item, row, metaRow){
+  const panel = document.createElement("div");
+  panel.className = "status-panel";
+
+  ["early","ontime","late","never"].forEach(function(key){
+    const choice = document.createElement("button");
+    choice.type = "button";
+    choice.className = "status-choice " + key;
+    choice.textContent = STATUS_INFO[key].label;
+
+    choice.onclick = async function(){
+      const prevAssignees = item.assignees.slice();
+      item.status = key;
+      item.completedAt = (key === "never") ? null : new Date().toISOString();
+      row.classList.toggle("done", isCompletedStatus(item.status));
+      renderStatusBadge(metaRow, item);
+      panel.classList.remove("open");
+      await save();
+      await syncCalendarItemTasks(month, item, prevAssignees);
+    };
+
+    panel.appendChild(choice);
+  });
+
+  renderStatusBadge(metaRow, item);
+
+  const badgeTrigger = metaRow.querySelector(".timeliness-badge");
+  badgeTrigger.onclick = function(){
+    panel.classList.toggle("open");
+  };
+
+  return panel;
 }
 
 function renderAssigneeChips(metaRow, item){
@@ -923,14 +879,19 @@ function makeMetaRow(month, item, row){
   const metaRow = document.createElement("div");
   metaRow.className = "item-meta";
 
+  // Placeholder badge first (status control fills it in below), then assign button.
+  const placeholderBadge = document.createElement("span");
+  placeholderBadge.className = "timeliness-badge unset";
+  metaRow.appendChild(placeholderBadge);
+
   const assignBtn = document.createElement("button");
   assignBtn.className = "assign-btn";
   assignBtn.type = "button";
   assignBtn.textContent = "+ Assign";
   metaRow.appendChild(assignBtn);
 
-  const panel = document.createElement("div");
-  panel.className = "assign-panel";
+  const assignPanel = document.createElement("div");
+  assignPanel.className = "assign-panel";
 
   personnelNames.forEach(function(name){
     const label = document.createElement("label");
@@ -954,18 +915,21 @@ function makeMetaRow(month, item, row){
 
     label.appendChild(cb);
     label.appendChild(document.createTextNode(name));
-    panel.appendChild(label);
+    assignPanel.appendChild(label);
   });
 
   assignBtn.onclick = function(){
-    panel.classList.toggle("open");
+    assignPanel.classList.toggle("open");
   };
 
   renderAssigneeChips(metaRow, item);
 
+  const statusPanel = makeStatusControl(month, item, row, metaRow);
+
   const wrapper = document.createElement("div");
   wrapper.appendChild(metaRow);
-  wrapper.appendChild(panel);
+  wrapper.appendChild(statusPanel);
+  wrapper.appendChild(assignPanel);
 
   return wrapper;
 }
@@ -988,7 +952,7 @@ function render(){
     data.months[month].forEach(function(item, index){
       const row = document.createElement("div");
       row.className = "item";
-      row.classList.toggle("done", item.status === true);
+      row.classList.toggle("done", isCompletedStatus(item.status));
 
       const top = document.createElement("div");
       top.className = "item-top";
@@ -1000,8 +964,6 @@ function render(){
       const text = document.createElement("div");
       text.className = "event-text";
       text.textContent = item.event || "";
-
-      const status = makeStatus(month, item, row);
 
       const del = document.createElement("button");
       del.className = "delete";
@@ -1016,15 +978,12 @@ function render(){
 
       top.appendChild(date);
       top.appendChild(text);
-      top.appendChild(status);
       top.appendChild(del);
 
       const metaWrap = makeMetaRow(month, item, row);
 
       row.appendChild(top);
       row.appendChild(metaWrap);
-
-      renderTimelinessBadge(row, item);
 
       list.appendChild(row);
     });
