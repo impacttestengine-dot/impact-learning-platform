@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head><title>Camera Test</title></head>
+<body style="background:#111;color:#fff;font-family:sans-serif;text-align:center;padding:40px">
+<h2>Camera Isolation Test</h2>
+<div id="status" style="margin-bottom:20px;font-size:1.1rem"></div>
+<video id="v" autoplay playsinline muted style="width:480px;height:360px;background:#333;border:2px solid #666"></video>
+<script>
+const statusEl = document.getElementById("status");
+const v = document.getElementById("v");
+navigator.mediaDevices.getUserMedia({video:true, audio:false})
+  .then(stream => {
+    v.srcObject = stream;
+    const track = stream.getVideoTracks()[0];
+    statusEl.textContent = "SUCCESS - track: " + track.label + " | state: " + track.readyState + " | settings: " + JSON.stringify(track.getSettings());
+    statusEl.style.color = "#6ee7b7";
+  })
+  .catch(err => {
+    statusEl.textContent = "FAILED - " + err.name + ": " + err.message;
+    statusEl.style.color = "#fca5a5";
+  });
+</script>
+</body>
+</html>

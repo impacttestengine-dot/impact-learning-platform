@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+LINES:  1335
+CHARS:  56749
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1311,19 +1322,14 @@ async function init(){
   document.getElementById("inviteLinkField").value = `${location.origin}/teacher/live-join.html?id=${MEETING_ID}`;
 
   await startLocalStream();
-  // Load real TURN credentials FIRST - before registering (which lets other
-  // clients start connecting to us) or watching participants (which starts
-  // OUR outgoing peer connections). Previously this ran after both, so early
-  // connections silently formed with STUN-only config and failed on
-  // restrictive networks - remote tiles stayed black even though local
-  // camera worked fine.
-  await loadTurnCredentials();
   await registerSelf();
   watchParticipants();
   renderParticipantList();
   startTimer();
 
   if(IS_HOST) initRecording();
+  // Load real TURN credentials before any peer connection is created
+  await loadTurnCredentials();
 
   setStatus("Live", false);
 
