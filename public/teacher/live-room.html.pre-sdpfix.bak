@@ -239,7 +239,6 @@ const peerMeta  = {};   // peerId -> { name, isHost, camOn, micOn }
 const unsubs    = [];
 const politeMap = {};   // peerId -> bool (am I polite toward this peer?)
 const makingOffer = {};
-const lastAppliedSdp = {};  // peerId -> sdp string already applied (prevents infinite re-apply loop)
 
 // ══════════════════════════════════════════════════════════════
 // UI REFS
@@ -596,11 +595,6 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
     const remoteSdp = data[`sdp_${otherId}`];
     if(!remoteSdp || !remoteSdp.sdp) return;
 
-    // CRITICAL: this snapshot also fires when WE write our own SDP into the
-    // same doc. Without this guard we re-apply the same remote SDP forever,
-    // which throws "wrong state: stable" and blocks the connection.
-    if(lastAppliedSdp[otherId] === remoteSdp.sdp) return;
-
     try{
       const offerCollision = remoteSdp.type === "offer" &&
         (makingOffer[otherId] || pc.signalingState !== "stable");
@@ -609,7 +603,6 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
       if(ignoreOffer) return;
 
       await pc.setRemoteDescription(new RTCSessionDescription(remoteSdp));
-      lastAppliedSdp[otherId] = remoteSdp.sdp;
 
       if(remoteSdp.type === "offer"){
         await pc.setLocalDescription();
