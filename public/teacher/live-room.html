@@ -475,18 +475,35 @@ function renderParticipantList(){
 // LOCAL MEDIA — correct permission handling
 // ══════════════════════════════════════════════════════════════
 async function startLocalStream(){
+  const AUDIO_CONSTRAINTS = { echoCancellation:true, noiseSuppression:true, autoGainControl:true };
+
+  // Progressive fallback. "facingMode:user" and strict width/height/frameRate
+  // throw OverconstrainedError on many laptop webcams, which previously dropped
+  // straight to audio-only and left every video tile blank. Try loosest-last.
+  const VIDEO_ATTEMPTS = [
+    { facingMode:"user", width:{ideal:1280}, height:{ideal:720} },
+    { width:{ideal:1280}, height:{ideal:720} },
+    true
+  ];
+
+  let gotVideo = false;
+  for(const videoConstraint of VIDEO_ATTEMPTS){
+    try{
+      localStream = await navigator.mediaDevices.getUserMedia({
+        video: videoConstraint,
+        audio: AUDIO_CONSTRAINTS
+      });
+      gotVideo = true;
+      break;
+    }catch(e){
+      console.warn("getUserMedia attempt failed:", e.name, JSON.stringify(videoConstraint));
+      if(e.name === "NotAllowedError") break; // permission denied - stop retrying
+    }
+  }
+
   try{
-    localStream = await navigator.mediaDevices.getUserMedia({
-      video:{
-        facingMode: "user",
-        width:{ ideal:1280, max:1920 },
-        height:{ ideal:720, max:1080 },
-        frameRate:{ ideal:30, max:60 }
-      },
-      audio:{ echoCancellation:true, noiseSuppression:true, autoGainControl:true }
-    });
-  }catch(err){
-    console.warn("getUserMedia video+audio failed:", err.name);
+    if(gotVideo) throw { __skip:true };
+    const err = { name: "OverconstrainedError" };
     try{
       localStream = await navigator.mediaDevices.getUserMedia({
         audio:{ echoCancellation:true, noiseSuppression:true }
@@ -494,6 +511,7 @@ async function startLocalStream(){
       camOn = false;
       toast("📷 Camera unavailable — joined with mic only.");
     }catch(err2){
+      if(err2 && err2.__skip) throw err2;
       localStream = new MediaStream();
       camOn = false; micOn = false;
       if(err.name === "NotAllowedError" || err2.name === "NotAllowedError"){
@@ -501,10 +519,15 @@ async function startLocalStream(){
         document.getElementById("permBannerText").innerHTML =
           'Camera/mic blocked. Click the 🔒 icon in your address bar → Allow → then <a href="javascript:location.reload()" style="color:#fde68a;text-decoration:underline">reload</a>.';
       }else{
-        toast("⚠️ No camera or microphone detected.");
+        toast("No camera or microphone detected.");
       }
     }
+  }catch(outer){
+    if(!(outer && outer.__skip)) console.warn("media setup:", outer);
   }
+
+  if(!localStream) localStream = new MediaStream();
+  if(localStream.getVideoTracks().length === 0) camOn = false;
 
   localStream.getVideoTracks().forEach(t => t.enabled = camOn);
   localStream.getAudioTracks().forEach(t => t.enabled = micOn);
