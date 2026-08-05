@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -395,10 +395,9 @@ async function loadLearnersList(){
 }
 
 function renderSelectedLearnerChips(){
-  if(!assignLearnersSelected) return;
-  assignLearnersSelected.innerHTML = selectedLearners.map(function(name){
-    return "<span class=\"assigned-learner-chip\">" + name + "<button type=\"button\" data-remove-learner=\"" + name + "\">x</button></span>";
-  }).join("");
+  assignLearnersSelected.innerHTML = selectedLearners.map(name=>`
+    <span class="assigned-learner-chip">${name}<button type="button" data-remove-learner="${name}">✕</button></span>
+  `).join("");
 }
 
 if(learnerSearchInput){
