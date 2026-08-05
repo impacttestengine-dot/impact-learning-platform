@@ -134,9 +134,9 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
   <p class="invite-note">They'll see a camera preview before joining — just like Meet.</p>
 </div>
 
-<div class="lc-toast-wrap"><div class="lc-toast" id="toast"></div>
+<div class="lc-toast-wrap"><div class="lc-toast" id="toast"></div></div>
 
-<div id="recDestModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;">
+<div id="recDestModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;pointer-events:auto;">
   <div style="background:#14171f;border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:28px;width:min(380px,90vw);">
     <h3 style="font-family:'Sorts Mill Goudy',serif;font-weight:400;font-size:1.3rem;margin-bottom:6px;color:#fff">Save recording as...</h3>
     <p style="font-size:.8rem;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:18px">Choose where this recording should be saved.</p>
@@ -155,7 +155,7 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
     <button id="recDestConfirm" style="display:none;width:100%;padding:13px;border-radius:14px;border:none;background:#90cdf4;color:#0a0f1a;font-weight:900;font-size:.86rem;cursor:pointer;font-family:Inter,sans-serif">Start Recording</button>
     <button id="recDestCancel" style="width:100%;padding:11px;border-radius:14px;border:none;background:transparent;color:rgba(255,255,255,.4);font-weight:700;font-size:.8rem;cursor:pointer;font-family:Inter,sans-serif;margin-top:6px">Cancel</button>
   </div>
-</div></div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
@@ -694,6 +694,15 @@ function watchParticipants(){
             setCamOff(rid, !data.cameraEnabled);
             setMicIcon(rid, data.micEnabled);
             renderParticipantList();
+
+            if(data.screenSharing && currentScreenSharerId !== rid){
+              const remoteTile = document.getElementById("tile-"+rid);
+              const remoteVid = remoteTile ? remoteTile.querySelector("video") : null;
+              if(remoteVid && remoteVid.srcObject) enterScreenshareLayout(rid, remoteVid.srcObject);
+            }
+            if(!data.screenSharing && currentScreenSharerId === rid){
+              exitScreenshareLayout();
+            }
           }
         }
 
@@ -797,6 +806,53 @@ if(!SCREEN_SHARE_SUPPORTED){
   screenBtn.title = "Screen sharing is only available on desktop browsers";
 }
 
+// ── SCREENSHARE BIG-SCREEN LAYOUT ──
+// Reuses the .screenshare-active/.screenshare-main/.screenshare-strip CSS
+// that already existed in live-classroom.css but was never wired up.
+let currentScreenSharerId = null;
+
+function enterScreenshareLayout(sharerId, stream){
+  currentScreenSharerId = sharerId;
+  videoGrid.classList.add("screenshare-active");
+
+  let mainEl = document.getElementById("screenshareMain");
+  if(!mainEl){
+    mainEl = document.createElement("div");
+    mainEl.className = "screenshare-main";
+    mainEl.id = "screenshareMain";
+    const v = document.createElement("video");
+    v.autoplay = true; v.playsInline = true; v.muted = (sharerId === MY_ID);
+    mainEl.appendChild(v);
+    videoGrid.insertBefore(mainEl, videoGrid.firstChild);
+  }
+  const vidEl = mainEl.querySelector("video");
+  if(vidEl.srcObject !== stream){ vidEl.srcObject = stream; vidEl.play().catch(()=>{}); }
+
+  let stripEl = document.getElementById("screenshareStrip");
+  if(!stripEl){
+    stripEl = document.createElement("div");
+    stripEl.className = "screenshare-strip";
+    stripEl.id = "screenshareStrip";
+    videoGrid.appendChild(stripEl);
+  }
+  videoGrid.querySelectorAll(".video-tile").forEach(t => {
+    if(t.parentElement !== stripEl) stripEl.appendChild(t);
+  });
+}
+
+function exitScreenshareLayout(){
+  currentScreenSharerId = null;
+  videoGrid.classList.remove("screenshare-active");
+  const mainEl = document.getElementById("screenshareMain");
+  if(mainEl) mainEl.remove();
+  const stripEl = document.getElementById("screenshareStrip");
+  if(stripEl){
+    Array.from(stripEl.children).forEach(t => videoGrid.appendChild(t));
+    stripEl.remove();
+  }
+  updateGridLayout();
+}
+
 screenBtn.onclick = async function(){
   if(!SCREEN_SHARE_SUPPORTED){
     toast("📵 Screen sharing isn't supported on this device. Try from a desktop browser.");
@@ -824,6 +880,10 @@ screenBtn.onclick = async function(){
     setTileStream(MY_ID, screenStream);
     document.getElementById("tile-"+MY_ID).classList.remove("mirrored");
 
+    enterScreenshareLayout(MY_ID, screenStream);
+    db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
+      .update({ screenSharing: true }).catch(()=>{});
+
     screenTrack.onended = () => stopScreenShare();
   }catch(e){
     if(e.name !== "NotAllowedError") toast("Screen sharing failed: " + e.message);
@@ -834,6 +894,9 @@ async function stopScreenShare(){
   if(!screenOn) return;
   screenOn = false;
   screenBtn.classList.remove("active");
+  if(currentScreenSharerId === MY_ID) exitScreenshareLayout();
+  db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
+    .update({ screenSharing: false }).catch(()=>{});
   if(screenStream){ screenStream.getTracks().forEach(t=>t.stop()); screenStream=null; }
 
   if(localStream){
