@@ -190,34 +190,17 @@ const storage = firebase.storage();
 // array Metered.ca gives you after creating an application at
 // https://www.metered.ca — just paste their JSON array here.
 // ══════════════════════════════════════════════════════════════
-// ICE config is now fetched live from Cloudflare TURN via our Worker.
-// Starts with STUN-only fallback, then gets replaced with real TURN
-// credentials as soon as the fetch resolves (before any peer connects).
-let ICE_CONFIG = {
-  iceServers: [
-    { urls: "stun:stun.cloudflare.com:3478" },
-    { urls: "stun:stun.l.google.com:19302" }
-  ]
+const ICE_CONFIG = {
+  iceServers:[
+    { urls:"stun:stun.l.google.com:19302" },
+    { urls:"stun:stun1.l.google.com:19302" },
+    { urls:"stun:openrelay.metered.ca:80" },
+    { urls:"turn:openrelay.metered.ca:80", username:"openrelayproject", credential:"openrelayproject" },
+    { urls:"turn:openrelay.metered.ca:443", username:"openrelayproject", credential:"openrelayproject" },
+    { urls:"turn:openrelay.metered.ca:443?transport=tcp", username:"openrelayproject", credential:"openrelayproject" }
+  ],
+  iceCandidatePoolSize: 10
 };
-
-const TURN_WORKER_URL = "https://delicate-forest-823b.impacttestengine.workers.dev";
-
-async function loadTurnCredentials(){
-  try{
-    const res = await fetch(TURN_WORKER_URL);
-    if(!res.ok) throw new Error("Worker returned " + res.status);
-    const data = await res.json();
-    if(data && Array.isArray(data.iceServers) && data.iceServers.length){
-      ICE_CONFIG = { iceServers: data.iceServers };
-      console.log("Cloudflare TURN credentials loaded successfully.");
-      return true;
-    }
-    throw new Error("No iceServers in response");
-  }catch(err){
-    console.warn("Could not load Cloudflare TURN, falling back to STUN only:", err.message);
-    return false;
-  }
-}
 
 // ══════════════════════════════════════════════════════════════
 // STATE
@@ -1287,8 +1270,6 @@ async function init(){
   startTimer();
 
   if(IS_HOST) initRecording();
-  // Load real TURN credentials before any peer connection is created
-  await loadTurnCredentials();
 
   setStatus("Live", false);
 
