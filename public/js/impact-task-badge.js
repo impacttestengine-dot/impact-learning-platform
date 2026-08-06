@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
   function findNameArea(){
     const all = Array.from(document.querySelectorAll("h1,h2,.hero h1,.welcome-title,[class*='welcome'],[class*='hero'] h1"));
     return all.find(el => /welcome|adelaide/i.test(el.textContent || "")) || document.querySelector("h1");
@@ -95,7 +95,15 @@
       }
 
       const snap = await query.get();
-      styleBadge(snap.size);
+      // "Never Completed" calendar items have completed:false but are a
+      // closed, final outcome (we chose not to do it) — not something
+      // still actionable. Exclude them so the badge count matches what
+      // tasks.html actually treats as pending.
+      const stillPending = snap.docs.filter(function(d){
+        const data = d.data();
+        return !(data.source === "academicCalendar" && data.timeliness === "never");
+      });
+      styleBadge(stillPending.length);
     }catch(e){
       styleBadge(0);
     }
