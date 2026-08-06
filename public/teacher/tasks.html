@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -46,6 +46,13 @@ button:active{transform:scale(.95);opacity:.8}
 .badge.auto-badge{background:rgba(139,92,246,.2);color:#c4b5fd}
 .deliverable-link{display:inline-block;margin-top:10px;font-size:.78rem;font-weight:900;color:#90cdf4;text-decoration:none;border-bottom:1px solid rgba(144,205,244,.4)}
 .deliverable-link:hover{color:#bfe3ff}
+.calendar-link{display:inline-block;margin-top:10px;font-size:.78rem;font-weight:900;color:#90cdf4;text-decoration:none;border-bottom:1px solid rgba(144,205,244,.4)}
+.calendar-link:hover{color:#bfe3ff}
+.badge.timeliness-early{background:rgba(34,197,94,.2);color:#86efac}
+.badge.timeliness-ontime{background:rgba(99,179,237,.2);color:#93c5fd}
+.badge.timeliness-late{background:rgba(251,191,36,.2);color:#fde68a}
+.badge.timeliness-never{background:rgba(239,68,68,.2);color:#fca5a5}
+.task.calendar-sourced{border-color:rgba(99,179,237,.35);background:rgba(99,179,237,.05)}
 .actions{display:flex;gap:8px}
 .small{padding:10px 12px;border-radius:14px;font-size:.76rem}
 .delete{background:rgba(255,80,80,.14)}
@@ -137,6 +144,12 @@ document.addEventListener("DOMContentLoaded", async()=>{
     recording:"/teacher/recordings.html", kpi:"/teacher/kpis.html"
   };
   const AUTO_TYPES = new Set(["lessonPlan","activity","delfMock","marking","classLogged","teamDoc"]);
+  const TIMELINESS_INFO = {
+    early:{label:"Early", cls:"timeliness-early"},
+    ontime:{label:"On time", cls:"timeliness-ontime"},
+    late:{label:"Late", cls:"timeliness-late"},
+    never:{label:"Never Completed", cls:"timeliness-never"}
+  };
 
   let tasks=[];
   let currentFilter="all";
@@ -271,23 +284,30 @@ document.addEventListener("DOMContentLoaded", async()=>{
       const done=!!t.completed;
       const overdue=isOverdue(t);
       const isAuto = AUTO_TYPES.has(t.deliverableType);
+      const isCalendarSourced = t.source === "academicCalendar";
       const card=document.createElement("article");
-      card.className="task" + (overdue?" overdue":"") + (isAuto?" auto":"");
+      card.className="task" + (overdue?" overdue":"") + (isAuto?" auto":"") + (isCalendarSourced?" calendar-sourced":"");
 
       const deliverableLabel = DELIVERABLE_LABELS[t.deliverableType] || "";
       const deliverableLink = DELIVERABLE_LINKS[t.deliverableType] || "";
+      const timelinessInfo = isCalendarSourced ? TIMELINESS_INFO[t.timeliness] : null;
+      const isLocked = isAuto || isCalendarSourced;
 
       card.innerHTML=`
-        <button class="check ${done?'done':''} ${isAuto?'auto-locked':''}" title="${isAuto?'Auto-tracked — ticks itself when the deliverable is created':'Mark complete'}">${done?'✓':''}</button>
+        <button class="check ${done?'done':''} ${isLocked?'auto-locked':''}" title="${isAuto?'Auto-tracked — ticks itself when the deliverable is created':isCalendarSourced?'Set from Academic Calendar — edit status there':'Mark complete'}">${done?'✓':''}</button>
         <div>
           <div class="title">${t.title||"Untitled Task"}</div>
           <div class="meta">Assigned to: ${t.assignedTo||"Unassigned"}</div>
           <div class="meta">Due: ${fmtDate(t.dueDate)}</div>
           ${t.notes?`<div class="meta">${t.notes}</div>`:""}
-          ${t.completedAtText?`<div class="meta">Completed: ${t.completedAtText}${t.completedVia==='auto'?' (auto)':''}</div>`:""}
-          <span class="badge ${overdue?'overdue-badge':''}">${done?'Completed':overdue?'Overdue':'Pending'}</span>
+          ${t.completedAtText?`<div class="meta">Completed: ${t.completedAtText}${t.completedVia==='auto'?' (auto)':t.completedVia==='calendar'?' (via calendar)':''}</div>`:""}
+          ${timelinessInfo
+            ? `<span class="badge ${timelinessInfo.cls}">${timelinessInfo.label}</span>`
+            : `<span class="badge ${overdue?'overdue-badge':''}">${done?'Completed':overdue?'Overdue':'Pending'}</span>`}
           ${isAuto?`<span class="badge auto-badge">${deliverableLabel}</span>`:""}
-          ${deliverableLink && !done ? `<br><a class="deliverable-link" href="${deliverableLink}">Go do this →</a>` : ""}
+          ${isCalendarSourced
+            ? `<br><a class="calendar-link" href="/teacher/academic-calendar.html">Edit on Academic Calendar →</a>`
+            : (deliverableLink && !done ? `<br><a class="deliverable-link" href="${deliverableLink}">Go do this →</a>` : "")}
         </div>
         <div class="actions">
           <button class="small edit">Edit</button>
@@ -296,7 +316,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
       `;
 
       const checkBtn = card.querySelector(".check");
-      if(!isAuto){
+      if(!isLocked){
         checkBtn.onclick=async()=>{
           const now=new Date();
           await db.collection("tasks").doc(t.id).set({
