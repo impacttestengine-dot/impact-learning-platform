@@ -324,46 +324,12 @@ function createBlock(type,data){
   const tmpl=TEMPLATES[type];if(!tmpl)return null;
   const block=document.createElement("div");block.className="c-block";block.setAttribute("data-type",type);block.setAttribute("draggable","true");
   const actions=document.createElement("div");actions.className="block-actions";
-  actions.innerHTML='<button class="act-btn" data-act="up" title="Move up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></button><button class="act-btn" data-act="down" title="Move down"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="act-divider"></div><button class="act-btn" data-act="dupe" title="Duplicate"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><div class="act-divider"></div><button class="act-btn danger" data-act="del" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>';
+  actions.innerHTML='<button class="act-btn danger" data-act="del" title="Delete block"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>';
 
-  const toolbar=document.createElement("div");
-  toolbar.className="block-toolbar";
-  toolbar.innerHTML=`
-    <button class="bt-btn" data-align="left" title="Align left" type="button"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="15" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="15" y2="18"/></svg></button>
-    <button class="bt-btn active" data-align="center" title="Align center" type="button"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="18" y2="18"/></svg></button>
-    <button class="bt-btn" data-align="right" title="Align right" type="button"><svg viewBox="0 0 24 24"><line x1="9" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="9" y1="18" x2="21" y2="18"/></svg></button>
-    <div class="bt-divider"></div>
-    <button class="bt-btn" data-size="small" title="Small" type="button">S</button>
-    <button class="bt-btn" data-size="medium" title="Medium" type="button">M</button>
-    <button class="bt-btn active" data-size="large" title="Large (full width)" type="button">L</button>
-  `;
   const inner=document.createElement("div");inner.className="c-block-inner";inner.innerHTML=tmpl.render(data);
-  block.appendChild(actions);block.appendChild(toolbar);block.appendChild(inner);bindBlock(block);return block;
+  block.appendChild(actions);block.appendChild(inner);bindBlock(block);return block;
 }
 function bindBlock(block){
-  const toolbar = block.querySelector(".block-toolbar");
-  if(toolbar){
-    toolbar.addEventListener("click", function(e){
-      e.stopPropagation();
-      const alignBtn = e.target.closest("[data-align]");
-      if(alignBtn){
-        pushUndo();
-        block.classList.remove("align-left","align-center","align-right");
-        block.classList.add("align-"+alignBtn.dataset.align);
-        toolbar.querySelectorAll("[data-align]").forEach(b=>b.classList.remove("active"));
-        alignBtn.classList.add("active");
-      }
-      const sizeBtn = e.target.closest("[data-size]");
-      if(sizeBtn){
-        pushUndo();
-        block.classList.remove("bw-small","bw-medium","bw-large");
-        block.classList.add("bw-"+sizeBtn.dataset.size);
-        toolbar.querySelectorAll("[data-size]").forEach(b=>b.classList.remove("active"));
-        sizeBtn.classList.add("active");
-      }
-    });
-  }
-
   const mediaEmpty   = block.querySelector(".cb-media-empty");
   const mediaInput   = block.querySelector(".cb-media-input");
   const mediaPreview = block.querySelector(".cb-media-preview");
