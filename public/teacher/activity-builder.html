@@ -47,6 +47,12 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 .c-block.selected .block-actions{display:flex}
 .act-btn{width:26px;height:26px;border-radius:7px;border:none;background:transparent;color:#cbd5e1;cursor:pointer;display:grid;place-items:center;font-size:.72rem;transition:.1s}
 .act-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.act-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.block-toolbar .bt-btn{min-width:28px;height:26px;border-radius:7px;border:none;background:transparent;color:#cbd5e1;cursor:pointer;font-family:Inter,sans-serif;font-size:.74rem;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.block-toolbar .bt-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.block-toolbar .bt-btn.active{background:#8b5cf6;color:#fff}
+.block-toolbar .bt-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.block-toolbar .bt-divider{width:1px;height:16px;background:rgba(255,255,255,.16);margin:0 4px;align-self:center}
 .act-btn.danger:hover{background:rgba(239,68,68,.3);color:#fca5a5}
 .act-divider{width:1px;background:rgba(255,255,255,.12);height:16px;margin:0 3px;align-self:center}
 .cb-header{font-size:2rem;font-weight:800;color:#0f172a;line-height:1.2;outline:none;min-width:10px}
@@ -311,14 +317,14 @@ const TEMPLATES={
   date:{render:()=>`${makeQ("e.g. What is the date?")}<input class="cb-date" type="text" placeholder="DD / MM / YYYY" readonly>`},
   number:{render:()=>`${makeQ("e.g. How many?")}<input class="cb-number" type="text" placeholder="0" readonly>`},
   website:{render:()=>`${makeQ("e.g. Share a link.")}<input class="cb-url" type="text" placeholder="https://" readonly>`},
-  fileupload:{render:()=>`${makeQ("Upload your file here.")}<div class="file-zone">📎 Click or drag file here</div>`},
+  fileupload:{render:()=>`${makeQ("Upload your file here.")}<div class="file-zone">Click or drag a file here</div>`},
   signature:{render:()=>`${makeQ("Please sign below.")}<div class="sig-pad">Sign here</div>`}
 };
 function createBlock(type,data){
   const tmpl=TEMPLATES[type];if(!tmpl)return null;
   const block=document.createElement("div");block.className="c-block";block.setAttribute("data-type",type);block.setAttribute("draggable","true");
   const actions=document.createElement("div");actions.className="block-actions";
-  actions.innerHTML=`<button class="act-btn" data-act="up">↑</button><button class="act-btn" data-act="down">↓</button><div class="act-divider"></div><button class="act-btn" data-act="dupe">⧉</button><div class="act-divider"></div><button class="act-btn danger" data-act="del">✕</button>`;
+  actions.innerHTML='<button class="act-btn" data-act="up" title="Move up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></button><button class="act-btn" data-act="down" title="Move down"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button><div class="act-divider"></div><button class="act-btn" data-act="dupe" title="Duplicate"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><div class="act-divider"></div><button class="act-btn danger" data-act="del" title="Delete"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>';
 
   const toolbar=document.createElement("div");
   toolbar.className="block-toolbar";
@@ -591,7 +597,10 @@ document.getElementById("publishBtn").addEventListener("click", async function(e
   tick();
 });
 
-if(window.ImpactTextToolbar) window.ImpactTextToolbar.attach("#canvas");
+window.addEventListener("load", function(){
+  if(window.ImpactTextToolbar) window.ImpactTextToolbar.attach("#canvas");
+  else console.warn("ImpactTextToolbar failed to load");
+});
 renderStatus();
 
 load();
