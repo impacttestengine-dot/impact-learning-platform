@@ -156,7 +156,16 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 .assign-level-chip{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-size:.8rem;font-weight:800;color:rgba(255,255,255,.7);transition:.15s}
 .assign-level-chip:hover{background:rgba(255,255,255,.13)}
 .assign-level-chip.checked{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.5);color:#fff}
-.assign-level-chip input{display:none}</style>
+.assign-level-chip input{display:none}.ctrl-btn.publish{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.42);color:#6ee7b7}
+.ctrl-btn.publish:hover{background:rgba(16,185,129,.3)}
+.ctrl-btn.publish[disabled]{opacity:.45;cursor:default;transform:none}
+.status-pill-wrap{display:flex;flex-direction:column;gap:5px}
+.status-pill{align-self:flex-start;padding:5px 13px;border-radius:999px;font-size:.7rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+.status-pill.draft{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.status-pill.published{background:rgba(16,185,129,.2);color:#6ee7b7}
+.status-note{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.4);line-height:1.5}
+.act-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
@@ -223,25 +232,13 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
       <option>A2</option><option>B1</option><option>B2</option>
     </select>
   </div>
-  <div>
-    <label class="settings-label">Assign to Learner Level(s)</label>
-    <div class="assign-levels-group" id="assignLevelsGroup">
-      <label class="assign-level-chip"><input type="checkbox" value="Absolute Beginner">Abs. Beginner</label>
-      <label class="assign-level-chip"><input type="checkbox" value="A0">A0</label>
-      <label class="assign-level-chip"><input type="checkbox" value="A1">A1</label>
-      <label class="assign-level-chip"><input type="checkbox" value="A1.1">A1.1</label>
-      <label class="assign-level-chip"><input type="checkbox" value="A2">A2</label>
-      <label class="assign-level-chip"><input type="checkbox" value="B1">B1</label>
-      <label class="assign-level-chip"><input type="checkbox" value="B2">B2</label>
-    </div>
-
-    <label class="settings-label" style="margin-top:14px">Assign to Specific Learner(s)</label>
-    <input type="text" class="settings-input" id="learnerSearchInput" placeholder="Search learner by name..." autocomplete="off">
-    <div class="learner-picker-list" id="learnerPickerList"></div>
-    <div class="assign-learners-selected" id="assignLearnersSelected"></div>
+  <div class="status-pill-wrap">
+    <span class="status-pill draft" id="statusPill">Draft</span>
+    <span class="status-note" id="statusNote">Not yet visible to learners.</span>
   </div>
   <div class="settings-divider"></div>
-  <button class="ctrl-btn primary" id="saveBtn" type="button">💾  Save</button>
+  <button class="ctrl-btn primary" id="saveBtn" type="button">Save Draft</button>
+  <button class="ctrl-btn publish" id="publishBtn" type="button">Publish</button>
   <button class="ctrl-btn" id="newBtn" type="button">＋  New Activity</button>
   <button class="ctrl-btn" id="viewBtn" type="button">👁  Preview</button>
   <span class="save-tick" id="saveTick">✓ Saved</span>
@@ -374,48 +371,13 @@ function createBlock(type,data){
   const tmpl=TEMPLATES[type];if(!tmpl)return null;
   const block=document.createElement("div");block.className="c-block";block.setAttribute("data-type",type);block.setAttribute("draggable","true");
   const actions=document.createElement("div");actions.className="block-actions";
-  actions.innerHTML=`<button class="act-btn" data-act="up">↑</button><button class="act-btn" data-act="down">↓</button><div class="act-divider"></div><button class="act-btn" data-act="dupe">⧉</button><div class="act-divider"></div><button class="act-btn danger" data-act="del">✕</button>`;
+  actions.innerHTML = '<button class="act-btn danger" data-act="del" title="Delete block"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>';
 
-  const toolbar=document.createElement("div");
-  toolbar.className="block-toolbar";
-  toolbar.innerHTML=`
-    <button class="bt-btn" data-align="left" title="Align left" type="button"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="15" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="15" y2="18"/></svg></button>
-    <button class="bt-btn active" data-align="center" title="Align center" type="button"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="18" y2="18"/></svg></button>
-    <button class="bt-btn" data-align="right" title="Align right" type="button"><svg viewBox="0 0 24 24"><line x1="9" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="9" y1="18" x2="21" y2="18"/></svg></button>
-    <div class="bt-divider"></div>
-    <button class="bt-btn" data-size="small" title="Small" type="button">S</button>
-    <button class="bt-btn" data-size="medium" title="Medium" type="button">M</button>
-    <button class="bt-btn active" data-size="large" title="Large (full width)" type="button">L</button>
-  `;
   const inner=document.createElement("div");inner.className="c-block-inner";inner.innerHTML=tmpl.render(data);
-  block.appendChild(actions);block.appendChild(toolbar);block.appendChild(inner);bindBlock(block);return block;
+  block.appendChild(actions);block.appendChild(inner);bindBlock(block);return block;
 }
 function bindBlock(block){
   // ── Align / resize toolbar ──
-  const toolbar = block.querySelector(".block-toolbar");
-  if(toolbar){
-    toolbar.addEventListener("click", function(e){
-      e.stopPropagation();
-      const alignBtn = e.target.closest("[data-align]");
-      if(alignBtn){
-        pushUndo();
-        block.classList.remove("align-left","align-center","align-right");
-        block.classList.add("align-"+alignBtn.dataset.align);
-        toolbar.querySelectorAll("[data-align]").forEach(b=>b.classList.remove("active"));
-        alignBtn.classList.add("active");
-      }
-      const sizeBtn = e.target.closest("[data-size]");
-      if(sizeBtn){
-        pushUndo();
-        block.classList.remove("bw-small","bw-medium","bw-large");
-        block.classList.add("bw-"+sizeBtn.dataset.size);
-        toolbar.querySelectorAll("[data-size]").forEach(b=>b.classList.remove("active"));
-        sizeBtn.classList.add("active");
-      }
-    });
-  }
-
-  // ── Media File block: click to upload, preview immediately ──
   const mediaEmpty   = block.querySelector(".cb-media-empty");
   const mediaInput   = block.querySelector(".cb-media-input");
   const mediaPreview = block.querySelector(".cb-media-preview");
@@ -556,7 +518,8 @@ function rebuildFromBlocks(blocks){
 }
 async function save(){
   const blocks=serializeBlocks();
-  const assignedLevels=Array.from(document.querySelectorAll("#assignLevelsGroup input:checked")).map(c=>c.value);const payload={title:titleInput.value.trim()||"Untitled Lesson",level:levelSelect.value,assignedLevels,assignedLearners:selectedLearners,createdByTeacher:(sessionStorage.getItem("impactAccessName")||sessionStorage.getItem("impactPersonnelName")||""),blocks,version:2,updatedAt:new Date().toISOString()};
+  const assignedLevels=Array.from(document.querySelectorAll("#assignLevelsGroup input:checked")).map(c=>c.value);const payload={title:titleInput.value.trim()||"Untitled Lesson",level:levelSelect.value,createdByTeacher:(sessionStorage.getItem("impactAccessName")||sessionStorage.getItem("impactPersonnelName")||""),blocks,version:2,updatedAt:new Date().toISOString()};
+    if(!currentId){ payload.status = "draft"; }
   if(currentId){await db.collection(COLLECTION).doc(currentId).set(payload,{merge:true});}
   else{const ref=await db.collection(COLLECTION).add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/activity-builder.html?edit="+currentId);}
   tick();return currentId;
@@ -591,9 +554,79 @@ async function load(){
   if(d.version===2&&Array.isArray(d.blocks)){rebuildFromBlocks(d.blocks);return;}
   if(d.content){hideEmpty();const notice=document.createElement("div");notice.className="legacy-notice";notice.innerHTML="⚠️ Legacy activity — read-only. Use New + to create a fresh one.";canvas.insertBefore(notice,canvas.firstChild);const wrapper=document.createElement("div");wrapper.style.cssText="padding:12px;border-radius:10px;border:1.5px solid #e0e3e8;background:#fafbfc;color:#374151;font-size:.88rem;line-height:1.7;pointer-events:none";wrapper.innerHTML=d.content;canvas.appendChild(wrapper);}
 }
+// ---- PUBLISH ----
+let currentStatus = "draft";
+
+function renderStatus(){
+  const pill = document.getElementById("statusPill");
+  const note = document.getElementById("statusNote");
+  const pubBtn = document.getElementById("publishBtn");
+  if(!pill || !pubBtn) return;
+  if(currentStatus === "published"){
+    pill.textContent = "Published";
+    pill.className = "status-pill published";
+    note.textContent = "Live. Share it with learners from the list page.";
+    pubBtn.disabled = true;
+    pubBtn.textContent = "Published";
+  }else{
+    pill.textContent = "Draft";
+    pill.className = "status-pill draft";
+    note.textContent = "Not yet visible to learners.";
+    pubBtn.disabled = false;
+    pubBtn.textContent = "Publish";
+  }
+}
+
+const _pubBtn = document.getElementById("publishBtn");
+if(_pubBtn){
+  _pubBtn.addEventListener("click", async function(e){
+    e.preventDefault();
+    if(!titleInput.value.trim()){
+      titleInput.focus();
+      titleInput.style.border = "1.5px solid #f87171";
+      setTimeout(function(){ titleInput.style.border = ""; }, 2000);
+      return;
+    }
+    if(!allBlocks().length){ alert("Add at least one block before publishing."); return; }
+    if(!confirm("Publish this lesson plan? Once published, editing or deleting it will require your passkey and be logged.")) return;
+
+    const id = await save();
+    if(!id) return;
+
+    const who = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "";
+    await db.collection("lessonPlans").doc(id).set({
+      status: "published",
+      publishedAt: new Date().toISOString(),
+      publishedBy: who
+    }, { merge:true });
+
+    currentStatus = "published";
+    renderStatus();
+
+    if(window.ImpactPublish){
+      window.ImpactPublish.logAction({
+        action: "publish",
+        itemType: "lesson",
+        itemId: id,
+        itemTitle: titleInput.value.trim(),
+        performedBy: who
+      });
+    }
+    tick();
+  });
+}
+
+window.addEventListener("load", function(){
+  if(window.ImpactTextToolbar) window.ImpactTextToolbar.attach("#canvas");
+  else console.warn("ImpactTextToolbar failed to load");
+});
+renderStatus();
+
 load();
 });
 </script>
+<script src="/js/impact-publish.js"></script>
+<script src="/js/impact-text-toolbar.js"></script>
 <script src="/js/impact-recycle-bin.js"></script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
