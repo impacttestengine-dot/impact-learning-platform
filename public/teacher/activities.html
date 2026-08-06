@@ -36,13 +36,20 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 .folder-card.open .folder-chevron{transform:rotate(90deg)}
 .folder-body{max-height:0;overflow:hidden;transition:max-height .38s ease,padding .28s ease;padding:0 14px}
 .folder-card.open .folder-body{max-height:800px;padding:0 14px 14px}
-.plan-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
+.plan-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
 .plan-row:last-child{margin-bottom:0}
 .plan-row:hover{background:rgba(255,255,255,.09)}
 .plan-title{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .plan-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:.82rem;transition:.14s ease}
 .plan-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
 .plan-btn.del:hover{background:rgba(255,60,60,.2);border-color:rgba(255,100,100,.3)}
+.plan-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.plan-icon-btn{width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.06);color:rgba(255,255,255,.72);cursor:pointer;display:grid;place-items:center;transition:.16s ease;flex-shrink:0}
+.plan-icon-btn svg{width:16px;height:16px}
+.plan-icon-btn:hover{background:rgba(255,255,255,.15);transform:translateY(-1px);color:#fff}
+.plan-icon-btn.open:hover{background:rgba(99,179,237,.22);border-color:rgba(99,179,237,.4);color:#bfe3ff}
+.plan-icon-btn.share:hover{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.4);color:#c4b5fd}
+.plan-icon-btn.delete:hover{background:rgba(255,80,80,.2);border-color:rgba(255,100,100,.4);color:#fca5a5}
 
 .del-popover{
   margin-top:6px;
@@ -232,10 +239,12 @@ document.addEventListener("DOMContentLoaded", async function(){
           + (isPub ? '<span class="row-badge pub">Published</span>' : '<span class="row-badge dr">Draft</span>')
           + (isPub && shared ? '<span class="row-badge shared">Shared</span>' : '')
           + '</span>'
-          + '<button class="plan-btn view-btn" data-id="' + plan.id + '" title="' + (isPub?'Open':'Preview') + '">' + (isPub?'Open':'View') + '</button>'
-          + (isPub ? '<button class="plan-btn share-btn" data-id="' + plan.id + '" data-title="' + safeTitle + '" title="Share with learners">Share</button>' : '')
-          + '<button class="plan-btn edit-btn" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Edit">Edit</button>'
-          + '<button class="plan-btn del" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Delete">Delete</button>'
+          + '<div class="plan-actions">'
+          + '<button class="plan-icon-btn open view-btn" data-id="' + plan.id + '" title="' + (isPub?'Open':'Preview') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>'
+          + (isPub ? '<button class="plan-icon-btn share share-btn" data-id="' + plan.id + '" data-title="' + safeTitle + '" title="Share with learners"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg></button>' : '')
+          + '<button class="plan-icon-btn edit edit-btn" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'
+          + '<button class="plan-icon-btn delete del" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>'
+          + '</div>'
           + '</div>';
       }).join("");
       card.innerHTML = `
