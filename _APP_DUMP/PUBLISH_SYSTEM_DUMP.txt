@@ -1,0 +1,705 @@
+﻿PUBLISH SYSTEM DUMP
+Generated: 2026-08-06 11:24:02
+==================================================
+
+==================================================
+FILE: public\js\impact-firebase-store.js
+==================================================
+(function(){
+  function load(src){
+    return new Promise((resolve,reject)=>{
+      if(document.querySelector('script[src="'+src+'"]')) return resolve();
+      const s=document.createElement("script");
+      s.src=src;
+      s.onload=resolve;
+      s.onerror=reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ready(){
+    await load("https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js");
+    await load("https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js");
+    await load("https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js");
+    await load("/__/firebase/init.js");
+
+    return {
+      db: firebase.firestore(),
+      storage: firebase.storage()
+    };
+  }
+
+  function cleanKey(v){
+    return String(v || "").trim().replace(/\s+/g,"").toUpperCase();
+  }
+
+  function makeId(prefix){
+    return prefix + "-" + Date.now() + "-" + Math.random().toString(36).slice(2,8);
+  }
+
+  async function saveDoc(collectionName, data, id){
+    const { db } = await ready();
+    const docId = id || data.id || makeId(collectionName);
+
+    await db.collection(collectionName).doc(docId).set({
+      ...data,
+      id: docId,
+      updatedAt: new Date().toISOString()
+    }, { merge:true });
+
+    return docId;
+  }
+
+  async function getDocs(collectionName){
+    const { db } = await ready();
+    const snap = await db.collection(collectionName).get();
+    const rows = [];
+    snap.forEach(doc => rows.push({ id:doc.id, ...doc.data() }));
+    return rows;
+  }
+
+  async function getDoc(collectionName, id){
+    const { db } = await ready();
+    const ref = await db.collection(collectionName).doc(id).get();
+    if(!ref.exists) return null;
+    return { id:ref.id, ...ref.data() };
+  }
+
+  async function deleteDoc(collectionName, id){
+    const { db } = await ready();
+    await db.collection(collectionName).doc(id).delete();
+  }
+
+  async function uploadFile(file, folder, subfolder){
+    const { storage } = await ready();
+
+    const safeName = file.name.replace(/[^\w.\-]+/g,"_");
+    const safeFolder = String(folder || "uploads").replace(/[^\w\-\/]+/g,"_");
+    const safeSub = subfolder ? String(subfolder).replace(/[^\w\-\/]+/g,"_") + "/" : "";
+    const path = "impact/" + safeFolder + "/" + safeSub + Date.now() + "-" + safeName;
+
+    const ref = storage.ref(path);
+    await ref.put(file);
+
+    return {
+      url: await ref.getDownloadURL(),
+      path,
+      name: file.name,
+      mimeType: file.type,
+      size: file.size,
+      folder: safeFolder,
+      createdAt: new Date().toISOString()
+    };
+  }
+
+  async function saveLessonPlan(plan){
+    return await saveDoc("lessonPlans", {
+      title: plan.title || plan.name || "Untitled Lesson Plan",
+      name: plan.title || plan.name || "Untitled Lesson Plan",
+      level: plan.level || "Absolute Beginner",
+      content: plan.content || "",
+      media: plan.media || [],
+      createdAt: plan.createdAt || new Date().toISOString()
+    }, plan.id);
+  }
+
+  async function getLessonPlans(){
+    return await getDocs("lessonPlans");
+  }
+
+  async function getLessonPlan(id){
+    return await getDoc("lessonPlans", id);
+  }
+
+  async function deleteLessonPlan(id){
+    return await deleteDoc("lessonPlans", id);
+  }
+
+  async function validatePasskey(passkeyValue, gate){
+    const { db } = await ready();
+    const typed = cleanKey(passkeyValue);
+
+    const snap = await db.collection("impactPasskeys").get();
+
+    let foundDoc = null;
+    let foundData = null;
+
+    snap.forEach(doc=>{
+      const data = doc.data();
+      const stored = cleanKey(data.passkey || data.key || data.code);
+
+      if(stored === typed){
+        foundDoc = doc;
+        foundData = data;
+      }
+    });
+
+    if(!foundData){
+      return { ok:false, message:"Invalid passkey." };
+    }
+
+    if(String(foundData.status || "active").toLowerCase() !== "active"){
+      return { ok:false, message:"This passkey has been deactivated." };
+    }
+
+    await db.collection("impactGateVisits").add({
+      passkeyId: foundDoc.id,
+      name: foundData.name || "Unknown",
+      role: foundData.role || "Teacher",
+      gate: gate || "personnel",
+      passkey: foundData.passkey || passkeyValue,
+      time: new Date().toISOString()
+    });
+
+    return {
+      ok:true,
+      ownerName: foundData.name || "Personnel",
+      role: foundData.role || "Teacher",
+      level: foundData.level || ""
+    };
+  }
+
+  async function createPasskey(item){
+    const { db } = await ready();
+
+    const existing = await db.collection("impactPasskeys")
+      .where("passkey","==",item.passkey)
+      .limit(1)
+      .get();
+
+    const data = {
+      name:item.name || "Unnamed",
+      role:item.role || "Teacher",
+      level:item.level || "",
+      passkey:item.passkey,
+      status:item.status || "active",
+      createdAt:item.createdAt || new Date().toISOString(),
+      source:item.source || "configuration_page"
+    };
+
+    if(existing.empty){
+      const ref = await db.collection("impactPasskeys").add(data);
+      return ref.id;
+    }
+
+    await existing.docs[0].ref.set(data,{merge:true});
+    return existing.docs[0].id;
+  }
+
+  window.ImpactFirebaseStore = {
+    ready,
+    saveDoc,
+    getDocs,
+    getDoc,
+    deleteDoc,
+    uploadFile,
+
+    saveLessonPlan,
+    getLessonPlans,
+    getLessonPlan,
+    deleteLessonPlan,
+
+    validatePasskey,
+    createPasskey,
+
+    collections:{
+      passkeys:"impactPasskeys",
+      visits:"impactGateVisits",
+      lessonPlans:"lessonPlans",
+      learners:"learners",
+      classes:"classes",
+      recordings:"recordings",
+      activities:"activities",
+      progress:"progress",
+      delfMocks:"delfMocks",
+      configuration:"configuration"
+    }
+  };
+})();
+
+
+==================================================
+FILE: public\teacher\activities.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Activities | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-height:100vh}
+.page{position:relative;z-index:2;width:min(1080px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:48px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.55);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);font-weight:400;line-height:1}
+.hero p{margin-top:12px;color:rgba(255,255,255,.6);font-weight:700}
+.action-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;gap:16px;flex-wrap:wrap}
+.new-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;text-decoration:none;transition:.18s ease;backdrop-filter:blur(12px)}
+.new-btn:hover{background:rgba(255,255,255,.17);transform:translateY(-2px)}
+.folder-count{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.45)}
+.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+.empty-state{text-align:center;padding:72px 40px;border:2px dashed rgba(255,255,255,.1);border-radius:28px;color:rgba(255,255,255,.35)}
+.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.5rem;font-weight:400;margin-bottom:10px;color:rgba(255,255,255,.5)}
+.empty-state p{font-size:.86rem;font-weight:700;line-height:1.6}
+.folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.folder-card{border-radius:24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);overflow:hidden;transition:.22s ease;cursor:pointer}
+.folder-card.open{border-color:rgba(255,255,255,.22);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.folder-head{display:flex;align-items:center;gap:14px;padding:20px;transition:.18s ease}
+.folder-card:hover .folder-head{background:rgba(255,255,255,.06)}
+.folder-icon{font-size:2rem;line-height:1;flex-shrink:0}
+.folder-meta{flex:1;min-width:0}
+.folder-name{font-family:"Sorts Mill Goudy",serif;font-size:1.35rem;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.folder-sub{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45);margin-top:3px}
+.folder-chevron{color:rgba(255,255,255,.3);font-size:.85rem;transition:transform .22s ease;flex-shrink:0}
+.folder-card.open .folder-chevron{transform:rotate(90deg)}
+.folder-body{max-height:0;overflow:hidden;transition:max-height .38s ease,padding .28s ease;padding:0 14px}
+.folder-card.open .folder-body{max-height:800px;padding:0 14px 14px}
+.plan-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
+.plan-row:last-child{margin-bottom:0}
+.plan-row:hover{background:rgba(255,255,255,.09)}
+.plan-title{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plan-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:.82rem;transition:.14s ease}
+.plan-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+.plan-btn.del:hover{background:rgba(255,60,60,.2);border-color:rgba(255,100,100,.3)}
+
+.del-popover{
+  margin-top:6px;
+  margin-bottom:2px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:rgba(30,10,10,.92);
+  border:1px solid rgba(255,100,100,.35);
+  backdrop-filter:blur(12px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  animation:popIn .15s ease;
+}
+@keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.del-popover-msg{
+  font-size:.8rem;
+  font-weight:800;
+  color:rgba(255,255,255,.85);
+  flex:1;
+  line-height:1.35;
+}
+.del-popover-actions{display:flex;gap:8px;flex-shrink:0}
+.del-popover-cancel{
+  padding:7px 14px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.09);
+  color:#fff;
+  font-size:.78rem;
+  font-weight:800;
+  cursor:pointer;
+  font-family:Inter,sans-serif;
+}
+.del-popover-ok{
+  padding:7px 14px;
+  border-radius:10px;
+  border:1px solid rgba(255,100,100,.4);
+  background:rgba(200,40,40,.28);
+  color:#fca5a5;
+  font-size:.78rem;
+  font-weight:900;
+  cursor:pointer;
+  font-family:Inter,sans-serif;
+}
+.del-popover-cancel:hover{background:rgba(255,255,255,.16)}
+.del-popover-ok:hover{background:rgba(200,40,40,.45)}
+</style>
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Teacher Workspace</p>
+    <h1>Activities</h1>
+    <p>Folders are created automatically when you save an activity from the builder.</p>
+  </section>
+  <div class="action-bar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <a class="new-btn" href="/teacher/activity-builder.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Activity
+      </a>
+      <span class="folder-count" id="folderCount"></span>
+    </div>
+  </div>
+  <p class="section-label">Folders</p>
+  <div id="foldersWrap"><div style="text-align:center;padding:48px;color:rgba(255,255,255,.4);font-weight:700">Loading folders...</div></div>
+</main>
+
+
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+  const wrap = document.getElementById("foldersWrap");
+  const folderCount = document.getElementById("folderCount");
+  let allPlans = [];
+  let openFolder = null;
+
+  function showDeletePopover(anchorRow, msg){
+    // Remove any existing popover first
+    document.querySelectorAll(".del-popover").forEach(p=>p.remove());
+
+    return new Promise(resolve=>{
+      const pop = document.createElement("div");
+      pop.className = "del-popover";
+      pop.innerHTML = `
+        <span class="del-popover-msg">${msg}</span>
+        <div class="del-popover-actions">
+          <button class="del-popover-cancel" type="button">Cancel</button>
+          <button class="del-popover-ok" type="button">Delete</button>
+        </div>`;
+
+      // Insert after the row that was clicked
+      anchorRow.after(pop);
+      pop.scrollIntoView({behavior:"smooth", block:"nearest"});
+
+      const close = r=>{
+        pop.remove();
+        document.removeEventListener("click", outside);
+        resolve(r);
+      };
+
+      pop.querySelector(".del-popover-ok").onclick     = e=>{ e.stopPropagation(); close(true); };
+      pop.querySelector(".del-popover-cancel").onclick = e=>{ e.stopPropagation(); close(false); };
+
+      // Click outside dismisses
+      const outside = e=>{
+        if(!pop.contains(e.target)) close(false);
+      };
+      setTimeout(()=>document.addEventListener("click", outside), 50);
+    });
+  }
+
+  async function loadPlans(){
+    try{
+      const snap = await db.collection("activityPlans").orderBy("updatedAt","desc").get();
+      allPlans = snap.docs.map(d=>({id:d.id,...d.data()}));
+    }catch(e){
+      const snap = await db.collection("activityPlans").get();
+      allPlans = snap.docs.map(d=>({id:d.id,...d.data()}));
+    }
+    render();
+  }
+
+  function render(){
+    const folderMap = {};
+    allPlans.forEach(plan=>{
+      const lvl = (plan.level || "Uncategorised").trim();
+      if(!folderMap[lvl]) folderMap[lvl] = [];
+      folderMap[lvl].push(plan);
+    });
+    const levels = Object.keys(folderMap).sort();
+    folderCount.textContent = levels.length ? `${levels.length} folder${levels.length===1?"":"s"}` : "";
+
+    if(!levels.length){
+      wrap.innerHTML = `<div class="empty-state"><h3>No folders yet</h3><p>Create an activity and select a level in the builder.<br>The folder will appear here automatically.</p></div>`;
+      return;
+    }
+
+    wrap.innerHTML = `<div class="folders-grid" id="foldersGrid"></div>`;
+    const grid = document.getElementById("foldersGrid");
+
+    levels.forEach(level=>{
+      const plans = folderMap[level];
+      const card = document.createElement("div");
+      card.className = "folder-card" + (openFolder===level?" open":"");
+      card.dataset.level = level;
+      const planRows = plans.map(plan=>`
+        <div class="plan-row">
+          <span class="plan-title">${plan.title||"Untitled Activity"}</span>
+          <button class="plan-btn view-btn" data-id="${plan.id}" title="Preview">👁</button>
+          <button class="plan-btn edit-btn" data-id="${plan.id}" title="Edit">✏️</button>
+          <button class="plan-btn del" data-id="${plan.id}" data-title="${(plan.title||"Untitled Activity").replace(/"/g,"&quot;")}" title="Delete">✕</button>
+        </div>`).join("");
+      card.innerHTML = `
+        <div class="folder-head">
+          <span class="folder-icon">${openFolder===level?"📂":"📁"}</span>
+          <div class="folder-meta">
+            <div class="folder-name">${level}</div>
+            <div class="folder-sub">${plans.length} activit${plans.length===1?"y":"ies"}</div>
+          </div>
+          <span class="folder-chevron">›</span>
+        </div>
+        <div class="folder-body">${planRows}</div>`;
+      grid.appendChild(card);
+    });
+    bindEvents();
+  }
+
+  function bindEvents(){
+    const grid = document.getElementById("foldersGrid");
+    if(!grid) return;
+    grid.addEventListener("click", async function(e){
+      const delBtn = e.target.closest(".del");
+      if(delBtn){
+        e.stopPropagation();
+        const anchorRow = delBtn.closest(".plan-row");
+        const ok = await showDeletePopover(anchorRow, `Delete &ldquo;${delBtn.dataset.title||"this activity"}&rdquo;?`);
+        if(!ok) return;
+        await db.collection("activityPlans").doc(delBtn.dataset.id).delete();
+        allPlans = allPlans.filter(p=>p.id!==delBtn.dataset.id);
+        const level = delBtn.closest(".folder-card").dataset.level;
+        if(!allPlans.filter(p=>(p.level||"Uncategorised")===level).length) openFolder=null;
+        render(); return;
+      }
+      const viewBtn = e.target.closest(".view-btn");
+      if(viewBtn){ e.stopPropagation(); location.href="/teacher/activity-view.html?id="+encodeURIComponent(viewBtn.dataset.id); return; }
+      const editBtn = e.target.closest(".edit-btn");
+      if(editBtn){ e.stopPropagation(); location.href="/teacher/activity-builder.html?edit="+encodeURIComponent(editBtn.dataset.id); return; }
+      const card = e.target.closest(".folder-card");
+      if(card){
+        const level = card.dataset.level;
+        if(openFolder===level){ openFolder=null; card.classList.remove("open"); card.querySelector(".folder-icon").textContent="📁"; }
+        else {
+          document.querySelectorAll(".folder-card.open").forEach(c=>{ c.classList.remove("open"); c.querySelector(".folder-icon").textContent="📁"; });
+          openFolder=level; card.classList.add("open"); card.querySelector(".folder-icon").textContent="📂";
+        }
+      }
+    });
+  }
+
+  await loadPlans();
+});
+</script>
+<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+==================================================
+FILE: public\learner\activities.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Activities | Impact Learner Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0d0a1f;color:#fff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+.hub-warmth{position:fixed;inset:0;z-index:1;pointer-events:none;background:
+  radial-gradient(circle at 15% 10%, rgba(251,191,36,.1), transparent 45%),
+  radial-gradient(circle at 85% 15%, rgba(236,72,153,.09), transparent 45%),
+  radial-gradient(circle at 50% 90%, rgba(139,92,246,.09), transparent 50%);
+}
+
+.nav-row{position:fixed;top:24px;left:24px;z-index:9999;display:flex;gap:10px}
+.nav-btn{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(18px);font-size:1.1rem;cursor:pointer;transition:.18s ease}
+.nav-btn:hover{transform:translateY(-2px) scale(1.05);background:rgba(255,255,255,.18)}
+.nav-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+.page{position:relative;z-index:2;width:min(880px,92vw);margin:0 auto;padding:110px 0 80px}
+.hero{text-align:center;margin-bottom:36px}
+.eyebrow{text-transform:uppercase;letter-spacing:.3em;font-size:.7rem;font-weight:800;color:rgba(251,191,36,.75);margin-bottom:10px}
+.hero h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.6rem,6vw,4.2rem);font-weight:400}
+.hero p{margin-top:10px;color:rgba(255,255,255,.55);font-weight:600;font-size:.9rem}
+
+.section-label{font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
+.section-label.pending-label{color:#fecaca}
+
+.pending-grid{display:grid;gap:12px;margin-bottom:40px}
+.pending-card{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 20px;border-radius:22px;
+  background:linear-gradient(135deg,rgba(239,68,68,.18),rgba(239,68,68,.05));
+  border:1px solid rgba(239,68,68,.35);
+  text-decoration:none;color:#fff;
+  animation:pulse-card 1.8s ease-in-out infinite;
+  transition:.2s ease;
+}
+.pending-card:hover{transform:translateX(4px);border-color:rgba(239,68,68,.6)}
+@keyframes pulse-card{
+  0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.35)}
+  50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}
+}
+.pending-icon{width:44px;height:44px;border-radius:14px;background:rgba(239,68,68,.25);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.pending-info{flex:1;min-width:0}
+.pending-title{font-weight:800;font-size:.98rem;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pending-meta{font-size:.76rem;color:rgba(255,255,255,.55);font-weight:600}
+.pending-arrow{font-size:1.2rem;color:rgba(255,255,255,.4);flex-shrink:0}
+
+.empty-pending{text-align:center;padding:32px;border-radius:22px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#a7f3d0;font-weight:700;font-size:.88rem;margin-bottom:40px}
+
+.folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.folder-card{border-radius:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);overflow:hidden;transition:.2s ease;cursor:pointer}
+.folder-card.open{border-color:rgba(16,185,129,.3)}
+.folder-head{display:flex;align-items:center;gap:12px;padding:18px}
+.folder-card:hover .folder-head{background:rgba(255,255,255,.04)}
+.folder-icon{font-size:1.7rem;flex-shrink:0}
+.folder-meta{flex:1;min-width:0}
+.folder-name{font-weight:800;font-size:.95rem}
+.folder-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.folder-chevron{color:rgba(255,255,255,.3);transition:transform .2s ease}
+.folder-card.open .folder-chevron{transform:rotate(90deg)}
+.folder-body{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .25s ease;padding:0 14px}
+.folder-card.open .folder-body{max-height:600px;padding:0 14px 14px}
+.completed-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);margin-bottom:7px;text-decoration:none;color:#fff;font-size:.82rem;font-weight:700;transition:.15s}
+.completed-row:hover{background:rgba(16,185,129,.14)}
+.completed-row:last-child{margin-bottom:0}
+.completed-check{color:#6ee7b7;font-size:.9rem;flex-shrink:0}
+
+.empty-state{text-align:center;padding:60px 30px;color:rgba(255,255,255,.3);font-weight:700}
+.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.4rem;font-weight:400;margin-bottom:8px;color:rgba(255,255,255,.4)}
+.loading-text{text-align:center;color:rgba(255,255,255,.35);font-weight:700;padding:20px}
+</style>
+</head>
+<body>
+<div class="hub-warmth"></div>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="nav-row">
+  <a class="nav-btn" href="javascript:history.back()" title="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/></svg>
+  </a>
+  <a class="nav-btn" href="/learner/dashboard.html" title="Learner Hub">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+  </a>
+</nav>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Learner Hub</p>
+    <h1>Activities</h1>
+    <p>Complete your assigned activities and exercises.</p>
+  </section>
+
+  <p class="section-label pending-label">🔴 Pending</p>
+  <div class="pending-grid" id="pendingWrap"><div class="loading-text">Loading...</div></div>
+
+  <p class="section-label">✓ Completed</p>
+  <div id="foldersWrap"><div class="loading-text">Loading...</div></div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+  const name  = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactLearnerName") || "";
+  const level = sessionStorage.getItem("impactAccessLevel") || "";
+
+  const pendingWrap = document.getElementById("pendingWrap");
+  const foldersWrap = document.getElementById("foldersWrap");
+
+  if(!name){
+    pendingWrap.innerHTML = '<div class="empty-state"><h3>Please sign in</h3></div>';
+    foldersWrap.innerHTML = "";
+    return;
+  }
+
+  try{
+    const [byLevel, byName, completedSnap] = await Promise.all([
+      level ? db.collection("activityPlans").where("assignedLevels","array-contains",level).get() : Promise.resolve({docs:[]}),
+      db.collection("activityPlans").where("assignedLearners","array-contains",name).get(),
+      db.collection("learnerCompletions").where("learnerName","==",name).where("itemType","==","activity").get()
+    ]);
+
+    const completedIds = new Set();
+    completedSnap.forEach(d=>completedIds.add(d.data().itemId));
+
+    const itemMap = new Map();
+    byLevel.docs.forEach(d=>itemMap.set(d.id, {id:d.id, ...d.data()}));
+    byName.docs.forEach(d=>itemMap.set(d.id, {id:d.id, ...d.data()}));
+
+    const allItems = Array.from(itemMap.values());
+    const pending = allItems.filter(it=>!completedIds.has(it.id));
+    const completed = allItems.filter(it=>completedIds.has(it.id));
+
+    // ── PENDING ──
+    if(!pending.length){
+      pendingWrap.innerHTML = '<div class="empty-pending">✨ Nothing pending right now — you're all caught up!</div>';
+    }else{
+      pendingWrap.innerHTML = pending.map(it=>`
+        <a class="pending-card" href="/teacher/=+it.id+">
+          <div class="pending-icon">🎨</div>
+          <div class="pending-info">
+            <div class="pending-title">+(it.title||"Untitled")+</div>
+            <div class="pending-meta">+(it.level?"Level "+it.level:"")+</div>
+          </div>
+          <div class="pending-arrow">→</div>
+        </a>
+      `).join("");
+    }
+
+    // ── COMPLETED — grouped into folders by level ──
+    if(!completed.length){
+      foldersWrap.innerHTML = '<div class="empty-state"><h3>No completed items yet</h3></div>';
+    }else{
+      const byLevelMap = {};
+      completed.forEach(it=>{
+        const lvl = it.level || "Other";
+        if(!byLevelMap[lvl]) byLevelMap[lvl] = [];
+        byLevelMap[lvl].push(it);
+      });
+
+      foldersWrap.innerHTML = '<div class="folders-grid" id="grid"></div>';
+      const grid = document.getElementById("grid");
+      let openFolder = null;
+
+      Object.keys(byLevelMap).sort().forEach(lvl=>{
+        const items = byLevelMap[lvl];
+        const card = document.createElement("div");
+        card.className = "folder-card";
+        card.dataset.level = lvl;
+
+        const rows = items.map(it=>`
+          <a class="completed-row" href="/teacher/=+it.id+">
+            <span class="completed-check">✓</span>+(it.title||"Untitled")+
+          </a>
+        `).join("");
+
+        card.innerHTML = `
+          <div class="folder-head">
+            <span class="folder-icon">📁</span>
+            <div class="folder-meta">
+              <div class="folder-name">+lvl+</div>
+              <div class="folder-sub">+items.length+ completed</div>
+            </div>
+            <span class="folder-chevron">›</span>
+          </div>
+          <div class="folder-body">+rows+</div>
+        `;
+
+        card.querySelector(".folder-head").addEventListener("click", function(){
+          const wasOpen = card.classList.contains("open");
+          document.querySelectorAll(".folder-card.open").forEach(c=>c.classList.remove("open"));
+          if(!wasOpen) card.classList.add("open");
+        });
+
+        grid.appendChild(card);
+      });
+    }
+  }catch(e){
+    console.error(e);
+    pendingWrap.innerHTML = '<div class="empty-state"><h3>Could not load items</h3></div>';
+    foldersWrap.innerHTML = "";
+  }
+});
+</script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
