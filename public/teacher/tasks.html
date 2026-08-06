@@ -151,6 +151,15 @@ document.addEventListener("DOMContentLoaded", async()=>{
     never:{label:"Never Completed", cls:"timeliness-never"}
   };
 
+  // Reads a leading quantity off a task title ("3 A0 lesson plans" -> 3).
+  // Defaults to 1 when no number is present, so ordinary single-item
+  // tasks behave exactly as before.
+  function parseTargetQty(title){
+    const m = String(title || "").match(/^(\d+)\b/);
+    const n = m ? parseInt(m[1], 10) : 1;
+    return (n > 0 && n < 1000) ? n : 1;
+  }
+
   let tasks=[];
   let currentFilter="all";
 
@@ -212,37 +221,43 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
     for(const t of autoTasks){
       const taskCreated = new Date(t.createdAt || 0);
-      let done = false;
+      const target = parseTargetQty(t.title);
+      let count = 0;
 
       if(t.deliverableType === "lessonPlan"){
-        done = lessons.some(l => namesMatch(t.assignedTo, l.createdByTeacher) && new Date(l.updatedAt||0) >= taskCreated);
+        count = lessons.filter(l => namesMatch(t.assignedTo, l.createdByTeacher) && new Date(l.updatedAt||0) >= taskCreated).length;
       }
       if(t.deliverableType === "activity"){
-        done = activities.some(a => namesMatch(t.assignedTo, a.createdByTeacher) && new Date(a.updatedAt||0) >= taskCreated);
+        count = activities.filter(a => namesMatch(t.assignedTo, a.createdByTeacher) && new Date(a.updatedAt||0) >= taskCreated).length;
       }
       if(t.deliverableType === "delfMock"){
-        done = delfMocks.some(m => namesMatch(t.assignedTo, m.createdByTeacher) && new Date(m.updatedAt||0) >= taskCreated);
+        count = delfMocks.filter(m => namesMatch(t.assignedTo, m.createdByTeacher) && new Date(m.updatedAt||0) >= taskCreated).length;
       }
       if(t.deliverableType === "marking"){
         const relevant = completions.filter(c => namesMatch(t.assignedTo, c.itemCreatedByTeacher));
         const stillUngraded = relevant.filter(c => c.score === null || c.score === undefined);
-        done = relevant.length > 0 && stillUngraded.length === 0;
+        const queueCleared = relevant.length > 0 && stillUngraded.length === 0;
+        count = queueCleared ? target : 0;
       }
       if(t.deliverableType === "classLogged"){
-        done = classes.some(c => namesMatch(t.assignedTo, c.teacher) && new Date(c.startedAt||0) >= taskCreated);
+        count = classes.filter(c => namesMatch(t.assignedTo, c.teacher) && new Date(c.startedAt||0) >= taskCreated).length;
       }
       if(t.deliverableType === "teamDoc"){
-        done = teamDocs.some(d => namesMatch(t.assignedTo, d.uploadedBy) && new Date(d.uploadedAt||0) >= taskCreated);
+        count = teamDocs.filter(d => namesMatch(t.assignedTo, d.uploadedBy) && new Date(d.uploadedAt||0) >= taskCreated).length;
       }
 
-      if(done){
+      t._autoProgress = { count: count, target: target };
+
+      if(count >= target){
         const now = new Date();
-        await db.collection("tasks").doc(t.id).set({
+        const payload = {
           completed: true,
           completedAt: now.toISOString(),
           completedAtText: now.toLocaleString(),
           completedVia: "auto"
-        }, {merge:true});
+        };
+        Object.assign(t, payload);
+        await db.collection("tasks").doc(t.id).set(payload, {merge:true});
         justCompleted.push(t.title);
       }
     }
@@ -253,15 +268,9 @@ document.addEventListener("DOMContentLoaded", async()=>{
   async function load(){
     list.innerHTML='<div class="empty">Loading tasks...</div>';
     const snap=await db.collection("tasks").get();
-    tasks=snap.docs.map(d=>({id:d.id,...d.data()}))
-      .sort((a,b)=>new Date(a.dueDate||0)-new Date(b.dueDate||0));
+    tasks=snap.docs.map(d=>({id:d.id,...d.data()}));
 
-    const justCompleted = await checkAutoCompletions(tasks);
-    if(justCompleted.length){
-      // Re-fetch to reflect auto-completions just written
-      const snap2 = await db.collection("tasks").get();
-      tasks = snap2.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(a.dueDate||0)-new Date(b.dueDate||0));
-    }
+    await checkAutoCompletions(tasks);
 
     render();
   }
@@ -272,6 +281,19 @@ document.addEventListener("DOMContentLoaded", async()=>{
     if(currentFilter==="completed") filtered = tasks.filter(t=>t.completed);
     if(currentFilter==="overdue") filtered = tasks.filter(t=>isOverdue(t));
     if(currentFilter==="auto") filtered = tasks.filter(t=>AUTO_TYPES.has(t.deliverableType));
+
+    filtered = filtered.slice().sort(function(a,b){
+      function tier(t){
+        if(t.source === "academicCalendar" && t.timeliness === "never") return 2;
+        if(t.completed) return 2;
+        return isOverdue(t) ? 0 : 1;
+      }
+      const ta = tier(a), tb = tier(b);
+      if(ta !== tb) return ta - tb;
+      const ad = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+      const bd = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+      return ad - bd;
+    });
 
     if(!filtered.length){
       list.innerHTML='<div class="empty">No tasks here.</div>';
@@ -301,6 +323,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
           <div class="meta">Due: ${fmtDate(t.dueDate)}</div>
           ${t.notes?`<div class="meta">${t.notes}</div>`:""}
           ${t.completedAtText?`<div class="meta">Completed: ${t.completedAtText}${t.completedVia==='auto'?' (auto)':t.completedVia==='calendar'?' (via calendar)':''}</div>`:""}
+          ${(!done && t._autoProgress && t._autoProgress.target > 1) ? `<div class="meta">Progress: ${t._autoProgress.count} of ${t._autoProgress.target} done — ${t._autoProgress.target - t._autoProgress.count} more to go</div>` : ""}
           ${timelinessInfo
             ? `<span class="badge ${timelinessInfo.cls}">${timelinessInfo.label}</span>`
             : `<span class="badge ${overdue?'overdue-badge':''}">${done?'Completed':overdue?'Overdue':'Pending'}</span>`}
