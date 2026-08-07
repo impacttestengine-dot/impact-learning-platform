@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -17,7 +17,6 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-he
 h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);font-weight:400;line-height:1}
 .hero p{margin-top:12px;color:rgba(255,255,255,.6);font-weight:700}
 
-/* TRACK TABS */
 .track-tabs{display:flex;gap:10px;justify-content:center;margin-bottom:36px;flex-wrap:wrap}
 .track-tab{padding:12px 24px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-family:Inter,sans-serif;font-weight:900;font-size:.86rem;cursor:pointer;transition:.18s ease}
 .track-tab:hover{background:rgba(255,255,255,.1);color:#fff}
@@ -29,12 +28,14 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 .new-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;flex-shrink:0}
 .folder-count{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.45)}
 
-.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
+.section-label .count-pill{background:rgba(255,255,255,.08);padding:2px 9px;border-radius:999px;font-size:.66rem;color:rgba(255,255,255,.55)}
 
-.empty-state{text-align:center;padding:72px 40px;border:2px dashed rgba(255,255,255,.1);border-radius:28px;color:rgba(255,255,255,.35)}
-.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.5rem;font-weight:400;margin-bottom:10px;color:rgba(255,255,255,.5)}
-.empty-state p{font-size:.86rem;font-weight:700;line-height:1.6}
+.empty-state{text-align:center;padding:56px 40px;border:2px dashed rgba(255,255,255,.1);border-radius:28px;color:rgba(255,255,255,.35)}
+.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.4rem;font-weight:400;margin-bottom:8px;color:rgba(255,255,255,.5)}
+.empty-state p{font-size:.84rem;font-weight:700;line-height:1.6}
 
+.drafts-panel{border-radius:22px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);padding:12px;margin-bottom:44px}
 .folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 .folder-card{border-radius:24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);overflow:hidden;transition:.22s ease;cursor:pointer}
 .folder-card.open{border-color:rgba(217,119,6,.35);box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -47,14 +48,19 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 .folder-chevron{color:rgba(255,255,255,.3);font-size:.9rem;transition:transform .22s ease;flex-shrink:0}
 .folder-card.open .folder-chevron{transform:rotate(90deg)}
 .folder-body{max-height:0;overflow:hidden;transition:max-height .38s ease,padding .28s ease;padding:0 14px}
-.folder-card.open .folder-body{max-height:900px;padding:0 14px 14px}
-.plan-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
+.folder-card.open .folder-body{max-height:1400px;padding:0 14px 14px}
+.plan-row{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
 .plan-row:last-child{margin-bottom:0}
 .plan-row:hover{background:rgba(255,255,255,.09)}
-.plan-name{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.plan-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:.82rem;transition:.14s ease}
-.plan-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
-.plan-btn.del:hover{background:rgba(255,60,60,.2);border-color:rgba(255,100,100,.3)}
+.plan-row-top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.plan-title{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plan-meta-line{font-size:.66rem;color:rgba(255,255,255,.42);font-weight:600;line-height:1.5}
+.plan-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.plan-icon-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.06);color:rgba(255,255,255,.72);cursor:pointer;display:grid;place-items:center;transition:.16s ease;flex-shrink:0}
+.plan-icon-btn svg{width:15px;height:15px}
+.plan-icon-btn:hover{background:rgba(255,255,255,.15);transform:translateY(-1px);color:#fff}
+.plan-icon-btn.open:hover{background:rgba(217,119,6,.25);border-color:rgba(217,119,6,.5);color:#fbbf24}
+.plan-icon-btn.delete:hover{background:rgba(255,80,80,.2);border-color:rgba(255,100,100,.4);color:#fca5a5}
 
 .del-popover{margin-top:6px;margin-bottom:2px;padding:12px 14px;border-radius:14px;background:rgba(30,10,10,.92);border:1px solid rgba(255,100,100,.35);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;gap:10px;animation:popIn .15s ease}
 @keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
@@ -64,6 +70,9 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 .del-popover-ok{padding:7px 14px;border-radius:10px;border:1px solid rgba(255,100,100,.4);background:rgba(200,40,40,.28);color:#fca5a5;font-size:.78rem;font-weight:900;cursor:pointer;font-family:Inter,sans-serif}
 .del-popover-cancel:hover{background:rgba(255,255,255,.16)}
 .del-popover-ok:hover{background:rgba(200,40,40,.45)}
+.row-badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;vertical-align:middle}
+.row-badge.pub{background:rgba(16,185,129,.2);color:#6ee7b7}
+.row-badge.dr{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
 
 @media(max-width:700px){.folders-grid{grid-template-columns:1fr}}
 </style>
@@ -93,8 +102,11 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
     <span class="folder-count" id="folderCount"></span>
   </div>
 
-  <p class="section-label" id="sectionLabel">DELF Tout Public — Levels</p>
-  <div id="foldersWrap"><div class="empty-state"><h3>Loading...</h3></div></div>
+  <p class="section-label">Drafts <span class="count-pill" id="draftCount">0</span></p>
+  <div id="draftsWrap"><div style="text-align:center;padding:32px;color:rgba(255,255,255,.4);font-weight:700">Loading...</div></div>
+
+  <p class="section-label" id="sectionLabel">DELF Tout Public — Published</p>
+  <div id="foldersWrap"><div style="text-align:center;padding:32px;color:rgba(255,255,255,.4);font-weight:700">Loading...</div></div>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -103,7 +115,9 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 <script>
 document.addEventListener("DOMContentLoaded", async function(){
   const db = firebase.firestore();
-  const wrap = document.getElementById("foldersWrap");
+  const draftsWrap = document.getElementById("draftsWrap");
+  const draftCount = document.getElementById("draftCount");
+  const foldersWrap = document.getElementById("foldersWrap");
   const folderCount = document.getElementById("folderCount");
   const sectionLabel = document.getElementById("sectionLabel");
   const newMockBtn = document.getElementById("newMockBtn");
@@ -111,6 +125,27 @@ document.addEventListener("DOMContentLoaded", async function(){
   let openFolder = null;
   let currentTrack = "Tout Public";
   const LEVELS = ["A1","A2","B1","B2"];
+
+  function fmtDT(iso){
+    if(!iso) return "";
+    const d = new Date(iso);
+    if(isNaN(d.getTime())) return "";
+    return d.toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"}) + ", " + d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
+  }
+
+  function buildMetaLine(mock){
+    const parts = [];
+    if(mock.createdByTeacher && mock.createdAt){
+      parts.push("Created by " + mock.createdByTeacher + " &middot; " + fmtDT(mock.createdAt));
+    }
+    if(mock.status === "published" && mock.publishedBy && mock.publishedAt){
+      parts.push("Published by " + mock.publishedBy + " &middot; " + fmtDT(mock.publishedAt));
+    }
+    if(mock.updatedBy && mock.updatedAt && mock.updatedAt !== mock.createdAt){
+      parts.push("Last edited by " + mock.updatedBy + " &middot; " + fmtDT(mock.updatedAt));
+    }
+    return parts.join(" &nbsp;&bull;&nbsp; ");
+  }
 
   function showDeletePopover(anchorRow, msg){
     document.querySelectorAll(".del-popover").forEach(p=>p.remove());
@@ -143,13 +178,46 @@ document.addEventListener("DOMContentLoaded", async function(){
     render();
   }
 
+  function buildRowHTML(mock){
+    const isPub = (mock.status === "published");
+    const safeTitle = (mock.title||"Untitled Mock Exam").replace(/"/g,"&quot;");
+    const metaLine = buildMetaLine(mock);
+    return '<div class="plan-row">'
+      + '<div class="plan-row-top">'
+      + '<span class="plan-title">' + (mock.title||"Untitled Mock Exam")
+      + (isPub ? '<span class="row-badge pub">Published</span>' : '<span class="row-badge dr">Draft</span>')
+      + '</span>'
+      + '<div class="plan-actions">'
+      + '<button class="plan-icon-btn open view-btn" data-id="' + mock.id + '" title="' + (isPub?'Open':'Preview') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>'
+      + '<button class="plan-icon-btn edit edit-btn" data-id="' + mock.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'
+      + '<button class="plan-icon-btn delete del" data-id="' + mock.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>'
+      + '</div>'
+      + '</div>'
+      + (metaLine ? '<div class="plan-meta-line">' + metaLine + '</div>' : '')
+      + '</div>';
+  }
+
+  function renderDrafts(){
+    const drafts = allMocks.filter(m => (m.track||"Tout Public") === currentTrack && m.status !== "published");
+    draftCount.textContent = drafts.length;
+
+    if(!drafts.length){
+      draftsWrap.innerHTML = `<div class="empty-state"><h3>No drafts</h3><p>New DELF ${currentTrack} mocks you haven't published yet will show up here.</p></div>`;
+      return;
+    }
+
+    draftsWrap.innerHTML = '<div class="drafts-panel" id="draftsPanel">' + drafts.map(buildRowHTML).join("") + '</div>';
+  }
+
   function render(){
-    sectionLabel.textContent = `DELF ${currentTrack} — Levels`;
+    sectionLabel.textContent = `DELF ${currentTrack} — Published`;
     newMockBtn.href = `/teacher/delf-mock-builder.html?track=${encodeURIComponent(currentTrack)}`;
 
-    const trackMocks = allMocks.filter(m => (m.track||"Tout Public") === currentTrack);
+    renderDrafts();
+
+    const published = allMocks.filter(m => (m.track||"Tout Public") === currentTrack && m.status === "published");
     const map = {};
-    trackMocks.forEach(m=>{
+    published.forEach(m=>{
       const lvl = (m.level||"A1").trim();
       if(!map[lvl]) map[lvl] = [];
       map[lvl].push(m);
@@ -159,14 +227,15 @@ document.addEventListener("DOMContentLoaded", async function(){
     folderCount.textContent = levelsPresent.length ? levelsPresent.length + " level" + (levelsPresent.length===1?"":"s") : "";
 
     if(!levelsPresent.length){
-      wrap.innerHTML = `<div class="empty-state">
-        <h3>No mock exams yet</h3>
-        <p>Create a DELF ${currentTrack} mock exam and select a level in the builder.<br>The folder will appear here automatically.</p>
+      foldersWrap.innerHTML = `<div class="empty-state">
+        <h3>No published mock exams yet</h3>
+        <p>Publish a DELF ${currentTrack} mock exam and it'll show up here, grouped by level.</p>
       </div>`;
+      bindEvents();
       return;
     }
 
-    wrap.innerHTML = `<div class="folders-grid" id="grid"></div>`;
+    foldersWrap.innerHTML = `<div class="folders-grid" id="grid"></div>`;
     const grid = document.getElementById("grid");
 
     LEVELS.forEach(level=>{
@@ -175,15 +244,7 @@ document.addEventListener("DOMContentLoaded", async function(){
       const card = document.createElement("div");
       card.className = "folder-card" + (openFolder===level?" open":"");
       card.dataset.level = level;
-
-      const rows = mocks.map(m=>`
-        <div class="plan-row">
-          <span class="plan-name">${m.title||"Untitled Mock Exam"}</span>
-          <button class="plan-btn view-btn" data-id="${m.id}" title="Preview">👁</button>
-          <button class="plan-btn edit-btn" data-id="${m.id}" title="Edit">✏️</button>
-          <button class="plan-btn del del-btn" data-id="${m.id}" data-title="${(m.title||"Untitled Mock Exam").replace(/"/g,"&quot;")}" title="Delete">✕</button>
-        </div>`).join("");
-
+      const rows = mocks.map(buildRowHTML).join("");
       card.innerHTML = `
         <div class="folder-head">
           <span class="folder-icon">${openFolder===level?"📂":"📁"}</span>
@@ -200,50 +261,66 @@ document.addEventListener("DOMContentLoaded", async function(){
     bindEvents();
   }
 
-  function bindEvents(){
-    const grid = document.getElementById("grid");
-    if(!grid) return;
-
-    grid.addEventListener("click", async function(e){
-      const delBtn = e.target.closest(".del-btn");
-      if(delBtn){
-        e.stopPropagation();
+  async function handleRowClick(e){
+    const delBtn = e.target.closest(".del");
+    if(delBtn){
+      e.stopPropagation();
+      if(delBtn.dataset.pub === "1"){
+        const auth = await window.ImpactPublish.requirePasskey("Delete published DELF mock", true);
+        if(!auth) return;
+        await window.ImpactPublish.logAction({
+          action:"delete", itemType:"delfMock", itemId:delBtn.dataset.id,
+          itemTitle:delBtn.dataset.title, performedBy:auth.name, performedRole:auth.role
+        });
+      }else{
         const anchorRow = delBtn.closest(".plan-row");
         const ok = await showDeletePopover(anchorRow, `Delete &ldquo;${delBtn.dataset.title}&rdquo;?`);
         if(!ok) return;
-        await db.collection("delfMocks").doc(delBtn.dataset.id).delete();
-        allMocks = allMocks.filter(m=>m.id!==delBtn.dataset.id);
-        const cardLevel = delBtn.closest(".folder-card").dataset.level;
-        const remaining = allMocks.filter(m=>(m.level||"A1")===cardLevel && (m.track||"Tout Public")===currentTrack);
+      }
+      await db.collection("delfMocks").doc(delBtn.dataset.id).delete();
+      allMocks = allMocks.filter(m=>m.id!==delBtn.dataset.id);
+      const folderCard = delBtn.closest(".folder-card");
+      if(folderCard){
+        const cardLevel = folderCard.dataset.level;
+        const remaining = allMocks.filter(m=>m.status==="published" && (m.level||"A1")===cardLevel && (m.track||"Tout Public")===currentTrack);
         if(!remaining.length) openFolder = null;
-        render();
-        return;
       }
-      const viewBtn = e.target.closest(".view-btn");
-      if(viewBtn){ e.stopPropagation(); location.href = "/teacher/delf-mock-view.html?id="+encodeURIComponent(viewBtn.dataset.id); return; }
-      const editBtn = e.target.closest(".edit-btn");
-      if(editBtn){ e.stopPropagation(); location.href = "/teacher/delf-mock-builder.html?edit="+encodeURIComponent(editBtn.dataset.id); return; }
-      const card = e.target.closest(".folder-card");
-      if(card){
-        const level = card.dataset.level;
-        if(openFolder===level){
-          openFolder = null; card.classList.remove("open"); card.querySelector(".folder-icon").textContent="📁";
-        } else {
-          document.querySelectorAll(".folder-card.open").forEach(c=>{c.classList.remove("open");c.querySelector(".folder-icon").textContent="📁";});
-          openFolder = level; card.classList.add("open"); card.querySelector(".folder-icon").textContent="📂";
-        }
-      }
-    });
-
-    document.addEventListener("click", function(e){
-      if(!e.target.closest(".folder-card") && !e.target.closest(".del-popover")){
-        document.querySelectorAll(".folder-card.open").forEach(c=>{
-          c.classList.remove("open");
-          const fi=c.querySelector(".folder-icon"); if(fi) fi.textContent="📁";
+      render();
+      return;
+    }
+    const viewBtn = e.target.closest(".view-btn");
+    if(viewBtn){ e.stopPropagation(); location.href = "/teacher/delf-mock-view.html?id="+encodeURIComponent(viewBtn.dataset.id); return; }
+    const editBtn = e.target.closest(".edit-btn");
+    if(editBtn){
+      e.stopPropagation();
+      if(editBtn.dataset.pub === "1"){
+        const auth = await window.ImpactPublish.requirePasskey("Edit published DELF mock", false);
+        if(!auth) return;
+        await window.ImpactPublish.logAction({
+          action:"edit", itemType:"delfMock", itemId:editBtn.dataset.id,
+          itemTitle:editBtn.dataset.title, performedBy:auth.name, performedRole:auth.role
         });
-        openFolder = null;
       }
-    });
+      location.href = "/teacher/delf-mock-builder.html?edit="+encodeURIComponent(editBtn.dataset.id);
+      return;
+    }
+    const card = e.target.closest(".folder-card");
+    if(card){
+      const level = card.dataset.level;
+      if(openFolder===level){
+        openFolder = null; card.classList.remove("open"); card.querySelector(".folder-icon").textContent="📁";
+      } else {
+        document.querySelectorAll(".folder-card.open").forEach(c=>{c.classList.remove("open");c.querySelector(".folder-icon").textContent="📁";});
+        openFolder = level; card.classList.add("open"); card.querySelector(".folder-icon").textContent="📂";
+      }
+    }
+  }
+
+  function bindEvents(){
+    const grid = document.getElementById("grid");
+    if(grid) grid.addEventListener("click", handleRowClick);
+    const draftsPanel = document.getElementById("draftsPanel");
+    if(draftsPanel) draftsPanel.addEventListener("click", handleRowClick);
   }
 
   document.getElementById("trackTabs").addEventListener("click", function(e){
@@ -260,6 +337,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 });
 </script>
 <script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-publish.js"></script>
 <script src="/js/impact-recycle-bin.js"></script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
