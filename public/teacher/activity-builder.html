@@ -469,7 +469,7 @@ function rebuildFromBlocks(blocks){
 }
 async function save(){
   const blocks=serializeBlocks();
-  const payload={title:titleInput.value.trim()||"Untitled Activity",level:levelSelect.value,createdByTeacher:(sessionStorage.getItem("impactAccessName")||sessionStorage.getItem("impactPersonnelName")||""),blocks,version:2,updatedAt:new Date().toISOString()};if(!currentId){payload.status="draft";}
+  const who=(sessionStorage.getItem("impactAccessName")||sessionStorage.getItem("impactPersonnelName")||"");const payload={title:titleInput.value.trim()||"Untitled Activity",level:levelSelect.value,blocks,version:2,updatedAt:new Date().toISOString(),updatedBy:who};if(!currentId){payload.status="draft";payload.createdByTeacher=who;payload.createdAt=new Date().toISOString();}
   if(currentId){await db.collection(COLLECTION).doc(currentId).set(payload,{merge:true});}
   else{const ref=await db.collection(COLLECTION).add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/activity-builder.html?edit="+currentId);}
   tick();return currentId;

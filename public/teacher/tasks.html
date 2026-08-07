@@ -197,6 +197,20 @@ document.addEventListener("DOMContentLoaded", async()=>{
   // For each auto-tracked task, check whether the real deliverable
   // now exists in the platform, created by the assignee, at or
   // after the task was created. Runs once on page load.
+  const KNOWN_LEVELS = ["Absolute Beginner","A1.1","A0","A1","A2","B1","B2"];
+
+  // Reads a level off a task title ("3 A0 lesson plans" -> "A0"). Checked
+  // longest-first so "A1.1" matches before the shorter "A1" would.
+  function parseTargetLevel(title){
+    const t = String(title || "");
+    for(const lvl of KNOWN_LEVELS){
+      const escaped = lvl.replace(/\./g, "\\.");
+      const re = new RegExp("(^|[^A-Za-z0-9])" + escaped + "([^A-Za-z0-9]|$)", "i");
+      if(re.test(t)) return lvl;
+    }
+    return null;
+  }
+
   async function checkAutoCompletions(taskList){
     const autoTasks = taskList.filter(t => AUTO_TYPES.has(t.deliverableType) && !t.completed);
     if(!autoTasks.length) return [];
@@ -222,16 +236,17 @@ document.addEventListener("DOMContentLoaded", async()=>{
     for(const t of autoTasks){
       const taskCreated = new Date(t.createdAt || 0);
       const target = parseTargetQty(t.title);
+      const targetLevel = parseTargetLevel(t.title);
       let count = 0;
 
       if(t.deliverableType === "lessonPlan"){
-        count = lessons.filter(l => namesMatch(t.assignedTo, l.createdByTeacher) && new Date(l.updatedAt||0) >= taskCreated).length;
+        count = lessons.filter(l => namesMatch(t.assignedTo, l.createdByTeacher) && new Date(l.updatedAt||0) >= taskCreated && (!targetLevel || (l.level||"").trim() === targetLevel)).length;
       }
       if(t.deliverableType === "activity"){
-        count = activities.filter(a => namesMatch(t.assignedTo, a.createdByTeacher) && new Date(a.updatedAt||0) >= taskCreated).length;
+        count = activities.filter(a => namesMatch(t.assignedTo, a.createdByTeacher) && new Date(a.updatedAt||0) >= taskCreated && (!targetLevel || (a.level||"").trim() === targetLevel)).length;
       }
       if(t.deliverableType === "delfMock"){
-        count = delfMocks.filter(m => namesMatch(t.assignedTo, m.createdByTeacher) && new Date(m.updatedAt||0) >= taskCreated).length;
+        count = delfMocks.filter(m => namesMatch(t.assignedTo, m.createdByTeacher) && new Date(m.updatedAt||0) >= taskCreated && (!targetLevel || (m.level||"").trim() === targetLevel)).length;
       }
       if(t.deliverableType === "marking"){
         const relevant = completions.filter(c => namesMatch(t.assignedTo, c.itemCreatedByTeacher));

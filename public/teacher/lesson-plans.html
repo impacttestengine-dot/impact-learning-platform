@@ -341,20 +341,25 @@ function renderShareChips(){
 
 async function openShareDialog(id, title){
   shareId = id;
-  await loadLearnersOnce();
-  const doc = await db.collection("lessonPlans").doc(id).get();
-  const d = doc.exists ? doc.data() : {};
-  shareLearners = Array.isArray(d.assignedLearners) ? d.assignedLearners.slice() : [];
+  try{
+    await loadLearnersOnce();
+    const doc = await db.collection("lessonPlans").doc(id).get();
+    const d = doc.exists ? doc.data() : {};
+    shareLearners = Array.isArray(d.assignedLearners) ? d.assignedLearners.slice() : [];
 
-  document.getElementById("shareTitle").textContent = "Share: " + (title || "Lesson");
-  document.querySelectorAll("#shareLevels input").forEach(function(cb){
-    cb.checked = Array.isArray(d.assignedLevels) && d.assignedLevels.indexOf(cb.value) >= 0;
-    cb.closest(".assign-level-chip").classList.toggle("checked", cb.checked);
-  });
-  document.getElementById("shareSearch").value = "";
-  document.getElementById("sharePicker").classList.remove("show");
-  renderShareChips();
-  document.getElementById("shareOverlay").classList.add("show");
+    document.getElementById("shareTitle").textContent = "Share: " + (title || "Lesson");
+    document.querySelectorAll("#shareLevels input").forEach(function(cb){
+      cb.checked = Array.isArray(d.assignedLevels) && d.assignedLevels.indexOf(cb.value) >= 0;
+      cb.closest(".assign-level-chip").classList.toggle("checked", cb.checked);
+    });
+    document.getElementById("shareSearch").value = "";
+    document.getElementById("sharePicker").classList.remove("show");
+    renderShareChips();
+    document.getElementById("shareOverlay").classList.add("show");
+  }catch(e){
+    console.error("openShareDialog failed:", e);
+    alert("Could not open sharing options: " + e.message);
+  }
 }
 
 document.getElementById("shareLevels").addEventListener("change", function(e){
@@ -410,7 +415,7 @@ document.getElementById("shareSave").addEventListener("click", async function(){
       sharedBy: sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || ""
     }, { merge:true });
     document.getElementById("shareOverlay").classList.remove("show");
-    await load();
+    await loadPlans();
   }catch(e){
     alert("Could not save sharing: " + e.message);
   }finally{

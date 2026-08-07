@@ -1,0 +1,2774 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\activities.html (MAIN FILE)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\activities.html
+CHARS:  24360
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Activities | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-height:100vh}
+.page{position:relative;z-index:2;width:min(1080px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:48px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.55);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);font-weight:400;line-height:1}
+.hero p{margin-top:12px;color:rgba(255,255,255,.6);font-weight:700}
+.action-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;gap:16px;flex-wrap:wrap}
+.new-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;text-decoration:none;transition:.18s ease;backdrop-filter:blur(12px)}
+.new-btn:hover{background:rgba(255,255,255,.17);transform:translateY(-2px)}
+.folder-count{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.45)}
+.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+.empty-state{text-align:center;padding:72px 40px;border:2px dashed rgba(255,255,255,.1);border-radius:28px;color:rgba(255,255,255,.35)}
+.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.5rem;font-weight:400;margin-bottom:10px;color:rgba(255,255,255,.5)}
+.empty-state p{font-size:.86rem;font-weight:700;line-height:1.6}
+.folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.folder-card{border-radius:24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);overflow:hidden;transition:.22s ease;cursor:pointer}
+.folder-card.open{border-color:rgba(255,255,255,.22);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.folder-head{display:flex;align-items:center;gap:14px;padding:20px;transition:.18s ease}
+.folder-card:hover .folder-head{background:rgba(255,255,255,.06)}
+.folder-icon{font-size:2rem;line-height:1;flex-shrink:0}
+.folder-meta{flex:1;min-width:0}
+.folder-name{font-family:"Sorts Mill Goudy",serif;font-size:1.35rem;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.folder-sub{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45);margin-top:3px}
+.folder-chevron{color:rgba(255,255,255,.3);font-size:.85rem;transition:transform .22s ease;flex-shrink:0}
+.folder-card.open .folder-chevron{transform:rotate(90deg)}
+.folder-body{max-height:0;overflow:hidden;transition:max-height .38s ease,padding .28s ease;padding:0 14px}
+.folder-card.open .folder-body{max-height:800px;padding:0 14px 14px}
+.plan-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
+.plan-row:last-child{margin-bottom:0}
+.plan-row:hover{background:rgba(255,255,255,.09)}
+.plan-title{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plan-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:.82rem;transition:.14s ease}
+.plan-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+.plan-btn.del:hover{background:rgba(255,60,60,.2);border-color:rgba(255,100,100,.3)}
+.plan-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.plan-icon-btn{width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.06);color:rgba(255,255,255,.72);cursor:pointer;display:grid;place-items:center;transition:.16s ease;flex-shrink:0}
+.plan-icon-btn svg{width:16px;height:16px}
+.plan-icon-btn:hover{background:rgba(255,255,255,.15);transform:translateY(-1px);color:#fff}
+.plan-icon-btn.open:hover{background:rgba(99,179,237,.22);border-color:rgba(99,179,237,.4);color:#bfe3ff}
+.plan-icon-btn.share:hover{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.4);color:#c4b5fd}
+.plan-icon-btn.delete:hover{background:rgba(255,80,80,.2);border-color:rgba(255,100,100,.4);color:#fca5a5}
+
+.del-popover{
+  margin-top:6px;
+  margin-bottom:2px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:rgba(30,10,10,.92);
+  border:1px solid rgba(255,100,100,.35);
+  backdrop-filter:blur(12px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  animation:popIn .15s ease;
+}
+@keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.del-popover-msg{
+  font-size:.8rem;
+  font-weight:800;
+  color:rgba(255,255,255,.85);
+  flex:1;
+  line-height:1.35;
+}
+.del-popover-actions{display:flex;gap:8px;flex-shrink:0}
+.del-popover-cancel{
+  padding:7px 14px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.09);
+  color:#fff;
+  font-size:.78rem;
+  font-weight:800;
+  cursor:pointer;
+  font-family:Inter,sans-serif;
+}
+.del-popover-ok{
+  padding:7px 14px;
+  border-radius:10px;
+  border:1px solid rgba(255,100,100,.4);
+  background:rgba(200,40,40,.28);
+  color:#fca5a5;
+  font-size:.78rem;
+  font-weight:900;
+  cursor:pointer;
+  font-family:Inter,sans-serif;
+}
+.del-popover-cancel:hover{background:rgba(255,255,255,.16)}
+.del-popover-ok:hover{background:rgba(200,40,40,.45)}
+.row-badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;vertical-align:middle}
+.row-badge.pub{background:rgba(16,185,129,.2);color:#6ee7b7}
+.row-badge.dr{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
+.row-badge.shared{background:rgba(99,179,237,.18);color:#90cdf4}
+.share-overlay{display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:20px}
+.share-overlay.show{display:flex}
+.share-card{width:min(460px,100%);max-height:88vh;overflow-y:auto;background:#12151f;border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:26px}
+.share-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400;font-size:1.3rem;color:#fff;margin-bottom:16px}
+.share-label{display:block;font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);margin-bottom:7px}
+.share-input{width:100%;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.86rem;outline:none}
+.assign-levels-group{display:flex;flex-wrap:wrap;gap:8px}
+.assign-level-chip{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-size:.78rem;font-weight:800;color:rgba(255,255,255,.7)}
+.assign-level-chip.checked{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.5);color:#fff}
+.assign-level-chip input{display:none}
+.learner-picker-list{max-height:150px;overflow-y:auto;margin-top:6px;border-radius:10px;background:rgba(255,255,255,.04);display:none}
+.learner-picker-list.show{display:block}
+.learner-picker-row{padding:9px 12px;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer}
+.learner-picker-row:hover{background:rgba(255,255,255,.1)}
+.assign-learners-selected{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.assigned-learner-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);font-size:.75rem;font-weight:700;color:#fff}
+.assigned-learner-chip button{background:transparent;border:none;color:rgba(255,255,255,.5);cursor:pointer;padding:0}
+.share-actions{display:flex;gap:10px;margin-top:20px}
+.share-btn-ctl{flex:1;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.84rem;cursor:pointer}
+.share-btn-ctl.primary{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.45);color:#c4b5fd}
+</style>
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Teacher Workspace</p>
+    <h1>Activities</h1>
+    <p>Folders are created automatically when you save an activity from the builder.</p>
+  </section>
+  <div class="action-bar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <a class="new-btn" href="/teacher/activity-builder.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Activity
+      </a>
+      <span class="folder-count" id="folderCount"></span>
+    </div>
+  </div>
+  <p class="section-label">Folders</p>
+  <div id="foldersWrap"><div style="text-align:center;padding:48px;color:rgba(255,255,255,.4);font-weight:700">Loading folders...</div></div>
+</main>
+
+
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+  const wrap = document.getElementById("foldersWrap");
+  const folderCount = document.getElementById("folderCount");
+  let allPlans = [];
+  let openFolder = null;
+
+  function showDeletePopover(anchorRow, msg){
+    // Remove any existing popover first
+    document.querySelectorAll(".del-popover").forEach(p=>p.remove());
+
+    return new Promise(resolve=>{
+      const pop = document.createElement("div");
+      pop.className = "del-popover";
+      pop.innerHTML = `
+        <span class="del-popover-msg">${msg}</span>
+        <div class="del-popover-actions">
+          <button class="del-popover-cancel" type="button">Cancel</button>
+          <button class="del-popover-ok" type="button">Delete</button>
+        </div>`;
+
+      // Insert after the row that was clicked
+      anchorRow.after(pop);
+      pop.scrollIntoView({behavior:"smooth", block:"nearest"});
+
+      const close = r=>{
+        pop.remove();
+        document.removeEventListener("click", outside);
+        resolve(r);
+      };
+
+      pop.querySelector(".del-popover-ok").onclick     = e=>{ e.stopPropagation(); close(true); };
+      pop.querySelector(".del-popover-cancel").onclick = e=>{ e.stopPropagation(); close(false); };
+
+      // Click outside dismisses
+      const outside = e=>{
+        if(!pop.contains(e.target)) close(false);
+      };
+      setTimeout(()=>document.addEventListener("click", outside), 50);
+    });
+  }
+
+  async function loadPlans(){
+    try{
+      const snap = await db.collection("activityPlans").orderBy("updatedAt","desc").get();
+      allPlans = snap.docs.map(d=>({id:d.id,...d.data()}));
+    }catch(e){
+      const snap = await db.collection("activityPlans").get();
+      allPlans = snap.docs.map(d=>({id:d.id,...d.data()}));
+    }
+    render();
+  }
+
+  function render(){
+    const folderMap = {};
+    allPlans.forEach(plan=>{
+      const lvl = (plan.level || "Uncategorised").trim();
+      if(!folderMap[lvl]) folderMap[lvl] = [];
+      folderMap[lvl].push(plan);
+    });
+    const levels = Object.keys(folderMap).sort();
+    folderCount.textContent = levels.length ? `${levels.length} folder${levels.length===1?"":"s"}` : "";
+
+    if(!levels.length){
+      wrap.innerHTML = `<div class="empty-state"><h3>No folders yet</h3><p>Create an activity and select a level in the builder.<br>The folder will appear here automatically.</p></div>`;
+      return;
+    }
+
+    wrap.innerHTML = `<div class="folders-grid" id="foldersGrid"></div>`;
+    const grid = document.getElementById("foldersGrid");
+
+    levels.forEach(level=>{
+      const plans = folderMap[level];
+      const card = document.createElement("div");
+      card.className = "folder-card" + (openFolder===level?" open":"");
+      card.dataset.level = level;
+      const planRows = plans.map(function(plan){
+        const isPub = (plan.status === "published");
+        const safeTitle = (plan.title||"Untitled Activity").replace(/"/g,"&quot;");
+        const shared = ((plan.assignedLevels&&plan.assignedLevels.length)||(plan.assignedLearners&&plan.assignedLearners.length));
+        return '<div class="plan-row">'
+          + '<span class="plan-title">' + (plan.title||"Untitled Activity")
+          + (isPub ? '<span class="row-badge pub">Published</span>' : '<span class="row-badge dr">Draft</span>')
+          + (isPub && shared ? '<span class="row-badge shared">Shared</span>' : '')
+          + '</span>'
+          + '<div class="plan-actions">'
+          + '<button class="plan-icon-btn open view-btn" data-id="' + plan.id + '" title="' + (isPub?'Open':'Preview') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>'
+          + (isPub ? '<button class="plan-icon-btn share share-btn" data-id="' + plan.id + '" data-title="' + safeTitle + '" title="Share with learners"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg></button>' : '')
+          + '<button class="plan-icon-btn edit edit-btn" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'
+          + '<button class="plan-icon-btn delete del" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>'
+          + '</div>'
+          + '</div>';
+      }).join("");
+      card.innerHTML = `
+        <div class="folder-head">
+          <span class="folder-icon">${openFolder===level?"📂":"📁"}</span>
+          <div class="folder-meta">
+            <div class="folder-name">${level}</div>
+            <div class="folder-sub">${plans.length} activit${plans.length===1?"y":"ies"}</div>
+          </div>
+          <span class="folder-chevron">›</span>
+        </div>
+        <div class="folder-body">${planRows}</div>`;
+      grid.appendChild(card);
+    });
+    bindEvents();
+  }
+
+  function bindEvents(){
+    const grid = document.getElementById("foldersGrid");
+    if(!grid) return;
+    grid.addEventListener("click", async function(e){
+      const shareBtn = e.target.closest(".share-btn");
+      if(shareBtn){
+        e.stopPropagation();
+        openShareDialog(shareBtn.dataset.id, shareBtn.dataset.title);
+        return;
+      }
+      const delBtn = e.target.closest(".del");
+      if(delBtn){
+        e.stopPropagation();
+        if(delBtn.dataset.pub === "1"){
+          const auth = await window.ImpactPublish.requirePasskey("Delete published activity", true);
+          if(!auth) return;
+          await window.ImpactPublish.logAction({
+            action:"delete", itemType:"activity", itemId:delBtn.dataset.id,
+            itemTitle:delBtn.dataset.title, performedBy:auth.name, performedRole:auth.role
+          });
+        }else{
+          const anchorRow = delBtn.closest(".plan-row");
+          const ok = await showDeletePopover(anchorRow, `Delete &ldquo;${delBtn.dataset.title||"this activity"}&rdquo;?`);
+          if(!ok) return;
+        }
+        await db.collection("activityPlans").doc(delBtn.dataset.id).delete();
+        allPlans = allPlans.filter(p=>p.id!==delBtn.dataset.id);
+        const level = delBtn.closest(".folder-card").dataset.level;
+        if(!allPlans.filter(p=>(p.level||"Uncategorised")===level).length) openFolder=null;
+        render(); return;
+      }
+      const viewBtn = e.target.closest(".view-btn");
+      if(viewBtn){ e.stopPropagation(); location.href="/teacher/activity-view.html?id="+encodeURIComponent(viewBtn.dataset.id); return; }
+      const editBtn = e.target.closest(".edit-btn");
+      if(editBtn){
+        e.stopPropagation();
+        if(editBtn.dataset.pub === "1"){
+          const auth = await window.ImpactPublish.requirePasskey("Edit published activity", false);
+          if(!auth) return;
+          await window.ImpactPublish.logAction({
+            action:"edit", itemType:"activity", itemId:editBtn.dataset.id,
+            itemTitle:editBtn.dataset.title, performedBy:auth.name, performedRole:auth.role
+          });
+        }
+        location.href="/teacher/activity-builder.html?edit="+encodeURIComponent(editBtn.dataset.id);
+        return;
+      }
+      const card = e.target.closest(".folder-card");
+      if(card){
+        const level = card.dataset.level;
+        if(openFolder===level){ openFolder=null; card.classList.remove("open"); card.querySelector(".folder-icon").textContent="📁"; }
+        else {
+          document.querySelectorAll(".folder-card.open").forEach(c=>{ c.classList.remove("open"); c.querySelector(".folder-icon").textContent="📁"; });
+          openFolder=level; card.classList.add("open"); card.querySelector(".folder-icon").textContent="📂";
+        }
+      }
+    });
+  }
+
+  await loadPlans();
+
+// ---- SHARE DIALOG ----
+let shareId = null;
+let shareLearners = [];
+let allLearnersCache = [];
+
+async function loadLearnersOnce(){
+  if(allLearnersCache.length) return;
+  try{
+    const snap = await db.collection("impactPasskeys").where("role","==","Learner").get();
+    allLearnersCache = snap.docs.map(function(d){
+      return { name: d.data().name || "Unnamed", level: d.data().level || "" };
+    });
+  }catch(e){ console.warn("learners load:", e); }
+}
+
+function renderShareChips(){
+  const wrap = document.getElementById("shareSelected");
+  if(!wrap) return;
+  wrap.innerHTML = shareLearners.map(function(n){
+    return '<span class="assigned-learner-chip">' + n + '<button type="button" data-rm="' + n + '">x</button></span>';
+  }).join("");
+}
+
+async function openShareDialog(id, title){
+  shareId = id;
+  await loadLearnersOnce();
+  const doc = await db.collection("activityPlans").doc(id).get();
+  const d = doc.exists ? doc.data() : {};
+  shareLearners = Array.isArray(d.assignedLearners) ? d.assignedLearners.slice() : [];
+
+  document.getElementById("shareTitle").textContent = "Share: " + (title || "Activity");
+  document.querySelectorAll("#shareLevels input").forEach(function(cb){
+    cb.checked = Array.isArray(d.assignedLevels) && d.assignedLevels.indexOf(cb.value) >= 0;
+    cb.closest(".assign-level-chip").classList.toggle("checked", cb.checked);
+  });
+  document.getElementById("shareSearch").value = "";
+  document.getElementById("sharePicker").classList.remove("show");
+  renderShareChips();
+  document.getElementById("shareOverlay").classList.add("show");
+}
+
+document.getElementById("shareLevels").addEventListener("change", function(e){
+  const chip = e.target.closest(".assign-level-chip");
+  if(chip) chip.classList.toggle("checked", e.target.checked);
+});
+
+document.getElementById("shareSearch").addEventListener("input", function(){
+  const q = this.value.trim().toLowerCase();
+  const list = document.getElementById("sharePicker");
+  if(!q){ list.classList.remove("show"); list.innerHTML=""; return; }
+  const matches = allLearnersCache.filter(function(l){
+    return l.name.toLowerCase().indexOf(q) >= 0 && shareLearners.indexOf(l.name) < 0;
+  });
+  if(!matches.length){ list.classList.remove("show"); list.innerHTML=""; return; }
+  list.innerHTML = matches.map(function(l){
+    return '<div class="learner-picker-row" data-pick="' + l.name + '">' + l.name + ' <span style="opacity:.5">(' + (l.level||"no level") + ')</span></div>';
+  }).join("");
+  list.classList.add("show");
+});
+
+document.getElementById("sharePicker").addEventListener("click", function(e){
+  const row = e.target.closest("[data-pick]");
+  if(!row) return;
+  if(shareLearners.indexOf(row.dataset.pick) < 0) shareLearners.push(row.dataset.pick);
+  renderShareChips();
+  document.getElementById("shareSearch").value = "";
+  this.classList.remove("show");
+  this.innerHTML = "";
+});
+
+document.getElementById("shareSelected").addEventListener("click", function(e){
+  const btn = e.target.closest("[data-rm]");
+  if(!btn) return;
+  shareLearners = shareLearners.filter(function(n){ return n !== btn.dataset.rm; });
+  renderShareChips();
+});
+
+document.getElementById("shareCancel").addEventListener("click", function(){
+  document.getElementById("shareOverlay").classList.remove("show");
+});
+
+document.getElementById("shareSave").addEventListener("click", async function(){
+  if(!shareId) return;
+  const levels = Array.from(document.querySelectorAll("#shareLevels input:checked")).map(function(c){ return c.value; });
+  const btn = this;
+  btn.disabled = true; btn.textContent = "Saving...";
+  try{
+    await db.collection("activityPlans").doc(shareId).set({
+      assignedLevels: levels,
+      assignedLearners: shareLearners,
+      sharedAt: new Date().toISOString(),
+      sharedBy: sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || ""
+    }, { merge:true });
+    document.getElementById("shareOverlay").classList.remove("show");
+    await load();
+  }catch(e){
+    alert("Could not save sharing: " + e.message);
+  }finally{
+    btn.disabled = false; btn.textContent = "Save Sharing";
+  }
+});
+});
+</script>
+<script src="/js/impact-round-icons.js?v=001"></script>
+<div class="share-overlay" id="shareOverlay">
+  <div class="share-card">
+    <div class="share-title" id="shareTitle">Share with learners</div>
+    <label class="share-label">Learner Level(s)</label>
+    <div class="assign-levels-group" id="shareLevels">
+      <label class="assign-level-chip"><input type="checkbox" value="Absolute Beginner">Abs. Beginner</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A0">A0</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A1">A1</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A1.1">A1.1</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A2">A2</label>
+      <label class="assign-level-chip"><input type="checkbox" value="B1">B1</label>
+      <label class="assign-level-chip"><input type="checkbox" value="B2">B2</label>
+    </div>
+    <label class="share-label" style="margin-top:14px">Specific Learner(s)</label>
+    <input type="text" class="share-input" id="shareSearch" placeholder="Search learner by name..." autocomplete="off">
+    <div class="learner-picker-list" id="sharePicker"></div>
+    <div class="assign-learners-selected" id="shareSelected"></div>
+    <div class="share-actions">
+      <button class="share-btn-ctl" id="shareCancel" type="button">Cancel</button>
+      <button class="share-btn-ctl primary" id="shareSave" type="button">Save Sharing</button>
+    </div>
+  </div>
+</div>
+<script src="/js/impact-publish.js"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /css/impact-global-bg.css (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\css\impact-global-bg.css
+CHARS:  1156
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+html,
+body{
+  min-height:100%;
+  background:#05060b !important;
+  color:#f7f8ff;
+}
+
+.impact-global-blur-bg{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:0 !important;
+  pointer-events:none !important;
+  background:
+    linear-gradient(rgba(5,6,12,.42),rgba(5,6,12,.74)),
+    url("/assets/images/homepage.jpg") center/cover no-repeat,
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%) !important;
+  transform:scale(1.08) !important;
+  filter:blur(12px) brightness(.78) saturate(.95) !important;
+}
+
+body > *:not(.impact-global-blur-bg){
+  position:relative;
+  z-index:2;
+}
+
+.bg-layer,
+.page-bg,
+.background,
+.app-bg{
+  background:
+    linear-gradient(rgba(5,6,12,.42),rgba(5,6,12,.74)),
+    url("/assets/images/homepage.jpg") center/cover no-repeat,
+    url("/assets/images/teacher-bg.jpg") center/cover no-repeat,
+    url("/assets/images/bg.jpg") center/cover no-repeat,
+    radial-gradient(circle at center,#29304a 0%,#05060b 72%) !important;
+  filter:blur(12px) brightness(.78) saturate(.95) !important;
+}
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /css/impact-page-nav.css (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\css\impact-page-nav.css
+CHARS:  674
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+.impact-dashboard-btn,
+.impact-back-btn{
+  position:fixed !important;
+  top:24px !important;
+  z-index:2147483647 !important;
+  color:white !important;
+  text-decoration:none !important;
+  font-family:Inter,system-ui,sans-serif !important;
+  font-size:.72rem !important;
+  font-weight:900 !important;
+  padding:10px 14px !important;
+  border-radius:14px !important;
+  background:rgba(255,255,255,.10) !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  backdrop-filter:blur(18px) !important;
+  -webkit-backdrop-filter:blur(18px) !important;
+  cursor:pointer !important;
+}
+
+.impact-dashboard-btn{left:28px !important;}
+.impact-back-btn{right:28px !important;}
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /js/impact-global-bg.js (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\js\impact-global-bg.js
+CHARS:  199
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+(function(){
+  if (document.querySelector(".impact-global-blur-bg")) return;
+
+  const bg = document.createElement("div");
+  bg.className = "impact-global-blur-bg";
+  document.body.prepend(bg);
+})();
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /js/impact-page-nav.js (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\js\impact-page-nav.js
+CHARS:  1289
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+(function(){
+  const path = window.location.pathname.toLowerCase();
+
+  const isHome = path === "/" || path.endsWith("/index.html");
+  const isGate = path.includes("/gate/");
+  const isDashboard =
+    path.endsWith("/teacher/dashboard.html") ||
+    path.endsWith("/learner/dashboard.html") ||
+    path.endsWith("/personnel/dashboard.html");
+
+  const isAppPage =
+    path.includes("/teacher/") ||
+    path.includes("/learner/") ||
+    path.includes("/personnel/") ||
+    path.includes("/engine/") ||
+    path.includes("/admin/");
+
+  if (isHome || isGate || isDashboard || !isAppPage) return;
+
+  document.querySelectorAll(".impact-dashboard-btn,.impact-back-btn").forEach(el => el.remove());
+
+  const dashboardUrl = path.includes("/learner/")
+    ? "/learner/dashboard.html"
+    : "/teacher/dashboard.html";
+
+  const dash = document.createElement("a");
+  dash.className = "impact-dashboard-btn";
+  dash.href = dashboardUrl;
+  dash.textContent = "Dashboard";
+  document.body.appendChild(dash);
+
+  const back = document.createElement("button");
+  back.className = "impact-back-btn";
+  back.type = "button";
+  back.textContent = "Back";
+  back.onclick = function(){
+    if(history.length > 1) history.back();
+    else location.href = dashboardUrl;
+  };
+  document.body.appendChild(back);
+})();
+
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /js/impact-publish.js (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\js\impact-publish.js
+CHARS:  6457
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+/* impact-publish.js
+   Passkey verification gate + audit logging for published items.
+   Requires firebase compat SDK already loaded on the page.
+   Pure ASCII only. */
+(function(){
+
+  function injectStyles(){
+    if(document.getElementById("impact-publish-styles")) return;
+    const s = document.createElement("style");
+    s.id = "impact-publish-styles";
+    s.textContent = [
+      '.ipk-overlay{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);align-items:center;justify-content:center;padding:20px}',
+      '.ipk-overlay.show{display:flex}',
+      '.ipk-card{width:min(400px,100%);background:#12151f;border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:28px;box-shadow:0 30px 90px rgba(0,0,0,.6)}',
+      '.ipk-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400;font-size:1.35rem;color:#fff;margin-bottom:6px}',
+      '.ipk-sub{font-size:.82rem;font-weight:600;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:18px}',
+      '.ipk-input{width:100%;padding:13px 15px;border-radius:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.95rem;outline:none;letter-spacing:.12em;text-align:center}',
+      '.ipk-input:focus{border-color:rgba(99,179,237,.5)}',
+      '.ipk-msg{min-height:18px;font-size:.78rem;font-weight:700;color:#fca5a5;margin-top:8px;text-align:center}',
+      '.ipk-actions{display:flex;gap:10px;margin-top:16px}',
+      '.ipk-btn{flex:1;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.84rem;cursor:pointer}',
+      '.ipk-btn:hover{background:rgba(255,255,255,.16)}',
+      '.ipk-btn.primary{background:rgba(99,179,237,.22);border-color:rgba(99,179,237,.45);color:#90cdf4}',
+      '.ipk-btn.danger{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.4);color:#fca5a5}'
+    ].join("");
+    document.head.appendChild(s);
+  }
+
+  function buildModal(){
+    let el = document.getElementById("ipkOverlay");
+    if(el) return el;
+    el = document.createElement("div");
+    el.className = "ipk-overlay";
+    el.id = "ipkOverlay";
+    el.innerHTML = [
+      '<div class="ipk-card">',
+        '<div class="ipk-title" id="ipkTitle">Confirm with passkey</div>',
+        '<div class="ipk-sub" id="ipkSub">This item is published. Enter your passkey to continue. This action will be logged.</div>',
+        '<input class="ipk-input" id="ipkInput" type="password" placeholder="Your passkey" autocomplete="off">',
+        '<div class="ipk-msg" id="ipkMsg"></div>',
+        '<div class="ipk-actions">',
+          '<button class="ipk-btn" id="ipkCancel" type="button">Cancel</button>',
+          '<button class="ipk-btn primary" id="ipkConfirm" type="button">Confirm</button>',
+        '</div>',
+      '</div>'
+    ].join("");
+    document.body.appendChild(el);
+    return el;
+  }
+
+  function cleanKey(v){ return String(v==null?"":v).replace(/\s+/g,"").toLowerCase(); }
+
+  /* Opens the passkey modal. Resolves with { name, role } on success,
+     or null if the user cancelled or failed. */
+  function requirePasskey(actionLabel, dangerous){
+    injectStyles();
+    const overlay = buildModal();
+    const input   = document.getElementById("ipkInput");
+    const msg     = document.getElementById("ipkMsg");
+    const confirm = document.getElementById("ipkConfirm");
+    const cancel  = document.getElementById("ipkCancel");
+    const title   = document.getElementById("ipkTitle");
+
+    title.textContent = actionLabel || "Confirm with passkey";
+    confirm.className = "ipk-btn " + (dangerous ? "danger" : "primary");
+    input.value = "";
+    msg.textContent = "";
+    overlay.classList.add("show");
+    setTimeout(function(){ input.focus(); }, 50);
+
+    return new Promise(function(resolve){
+      function close(result){
+        overlay.classList.remove("show");
+        confirm.onclick = null;
+        cancel.onclick = null;
+        input.onkeydown = null;
+        resolve(result);
+      }
+
+      cancel.onclick = function(){ close(null); };
+
+      confirm.onclick = async function(){
+        const typed = cleanKey(input.value);
+        if(!typed){ msg.textContent = "Please enter your passkey."; return; }
+        confirm.disabled = true;
+        confirm.textContent = "Checking...";
+        try{
+          const db = firebase.firestore();
+          const snap = await db.collection("impactPasskeys").get();
+          let found = null;
+          snap.forEach(function(d){
+            const data = d.data();
+            const stored = cleanKey(data.passkey || data.key || data.code);
+            if(stored === typed) found = data;
+          });
+
+          if(!found){
+            msg.textContent = "Invalid passkey.";
+            return;
+          }
+          if(String(found.status || "active").toLowerCase() !== "active"){
+            msg.textContent = "This passkey has been deactivated.";
+            return;
+          }
+          if(String(found.role || "").toLowerCase() === "learner"){
+            msg.textContent = "Learner passkeys cannot perform this action.";
+            return;
+          }
+          close({ name: found.name || "Unknown", role: found.role || "Teacher" });
+        }catch(err){
+          msg.textContent = "Could not verify: " + err.message;
+        }finally{
+          confirm.disabled = false;
+          confirm.textContent = "Confirm";
+        }
+      };
+
+      input.onkeydown = function(e){ if(e.key === "Enter") confirm.click(); };
+    });
+  }
+
+  /* Writes an audit record. Never throws - logging must not block the action. */
+  async function logAction(entry){
+    try{
+      const db = firebase.firestore();
+      await db.collection("auditLog").add({
+        action:       entry.action || "unknown",
+        itemType:     entry.itemType || "",
+        itemId:       entry.itemId || "",
+        itemTitle:    entry.itemTitle || "",
+        performedBy:  entry.performedBy || "",
+        performedRole:entry.performedRole || "",
+        sessionUser:  sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "",
+        details:      entry.details || "",
+        at:           new Date().toISOString()
+      });
+    }catch(e){
+      console.warn("Audit log failed:", e.message);
+    }
+  }
+
+  window.ImpactPublish = {
+    requirePasskey: requirePasskey,
+    logAction: logAction
+  };
+})();
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /js/impact-recycle-bin.js (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\js\impact-recycle-bin.js
+CHARS:  2185
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+(function(){
+  window.ImpactRecycleBin = {
+    async send(item){
+      try{
+        if(!window.firebase || !firebase.firestore) return;
+        const db = firebase.firestore();
+        await db.collection("recycleBin").add({
+          ...item,
+          deletedAt: new Date().toISOString(),
+          deletedAtText: new Date().toLocaleString(),
+          sourceUrl: location.pathname,
+          restored: false
+        });
+      }catch(e){
+        console.warn("Recycle bin log failed", e);
+      }
+    }
+  };
+
+  function patchFirestore(){
+    if(!window.firebase || !firebase.firestore || firebase.__impactRecyclePatched) return;
+    firebase.__impactRecyclePatched = true;
+
+    const proto = firebase.firestore.DocumentReference.prototype;
+    const originalDelete = proto.delete;
+
+    proto.delete = async function(){
+      let data = {};
+      try{
+        const snap = await this.get();
+        if(snap.exists) data = snap.data() || {};
+      }catch(e){}
+
+      await window.ImpactRecycleBin.send({
+        type: "firestore-document",
+        title: data.title || data.name || data.filename || data.fileName || this.id,
+        collection: this.parent && this.parent.id ? this.parent.id : "",
+        documentId: this.id,
+        data: data
+      });
+
+      return originalDelete.apply(this, arguments);
+    };
+  }
+
+  function patchStorage(){
+    if(!window.firebase || !firebase.storage || firebase.__impactStorageRecyclePatched) return;
+    firebase.__impactStorageRecyclePatched = true;
+
+    const proto = firebase.storage.Reference.prototype;
+    const originalDelete = proto.delete;
+
+    proto.delete = async function(){
+      await window.ImpactRecycleBin.send({
+        type: "storage-file",
+        title: this.name || this.fullPath || "Deleted file",
+        storagePath: this.fullPath || "",
+        fileName: this.name || ""
+      });
+
+      return originalDelete.apply(this, arguments);
+    };
+  }
+
+  function init(){
+    patchFirestore();
+    patchStorage();
+    setTimeout(patchFirestore, 1000);
+    setTimeout(patchStorage, 1000);
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", init);
+  }else{
+    init();
+  }
+})();
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\activity-builder.html (MAIN FILE)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\activity-builder.html
+CHARS:  42211
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Activity Builder | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;overflow-x:hidden}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
+.lp-nav{position:fixed;top:24px;left:28px;z-index:99999;display:flex;gap:12px}
+.lp-icon-btn{width:46px;height:46px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px)}
+.lp-icon-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.page{position:relative;z-index:20;width:min(1320px,96vw);margin:0 auto;padding:108px 0 80px}
+.workspace{
+  display:grid;
+  grid-template-columns:260px minmax(0,1fr) 240px;
+  gap:18px;
+  height:calc(100vh - 108px);
+  align-items:stretch;
+}
+.panel{border-radius:28px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.28)}
+.blocks-panel{padding:18px;height:100%;overflow-y:auto;align-self:start}
+.settings-panel{padding:22px;height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:16px;align-self:start}
+.panel-title{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:8px;margin-top:18px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,.08)}
+.panel-title:first-child{margin-top:0}
+.block-group{display:flex;flex-direction:column;gap:5px}
+.block-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.83rem;cursor:pointer;transition:.15s ease;text-align:left}
+.block-btn:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.22);transform:translateX(3px)}
+.block-icon{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:rgba(255,255,255,.1);flex-shrink:0;font-size:.72rem;font-weight:900;color:rgba(255,255,255,.8)}
+.canvas-panel{background:#fff;border-radius:24px;box-shadow:0 8px 40px rgba(0,0,0,.22);height:100%;display:flex;flex-direction:column;overflow:hidden}
+.canvas-toolbar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#f4f6f9;border-bottom:1px solid #e4e7ec;flex-wrap:wrap}
+.tbtn{padding:6px 12px;border-radius:9px;border:1px solid #dde1e8;background:#fff;color:#374151;font-size:.76rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:.12s}
+.tbtn:hover{background:#eef0f4}
+.canvas{padding:28px 32px;flex:1;overflow-y:auto;color:#374151}
+.canvas-empty{text-align:center;padding:80px 40px;color:#b0b8c8;font-size:.92rem;font-weight:600;border:2px dashed #e4e7ec;border-radius:16px}
+.canvas-submit{padding:20px 32px 32px;text-align:center}
+.submit-btn-preview{padding:13px 52px;border-radius:999px;background:#8b5cf6;color:#fff;font-size:.95rem;font-weight:800;border:none;font-family:Inter,sans-serif;cursor:default;opacity:.8}
+.c-block{position:relative;margin-bottom:12px;border-radius:12px;border:2px solid transparent;transition:.15s ease;cursor:pointer}
+.c-block:hover{border-color:#e8ebf0}
+.c-block.selected{border-color:#8b5cf6 !important;background:#faf5ff !important}
+.c-block.drag-over{border-color:#8b5cf6;border-style:dashed}
+.c-block-inner{padding:16px 18px}
+.block-actions{display:none;position:absolute;top:-16px;left:50%;transform:translateX(-50%);background:#1e293b;border-radius:10px;padding:4px 6px;gap:2px;z-index:200;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.c-block.selected .block-actions{display:flex}
+.act-btn{width:26px;height:26px;border-radius:7px;border:none;background:transparent;color:#cbd5e1;cursor:pointer;display:grid;place-items:center;font-size:.72rem;transition:.1s}
+.act-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.act-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.block-toolbar .bt-btn{min-width:28px;height:26px;border-radius:7px;border:none;background:transparent;color:#cbd5e1;cursor:pointer;font-family:Inter,sans-serif;font-size:.74rem;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.block-toolbar .bt-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.block-toolbar .bt-btn.active{background:#8b5cf6;color:#fff}
+.block-toolbar .bt-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.block-toolbar .bt-divider{width:1px;height:16px;background:rgba(255,255,255,.16);margin:0 4px;align-self:center}
+.act-btn.danger:hover{background:rgba(239,68,68,.3);color:#fca5a5}
+.act-divider{width:1px;background:rgba(255,255,255,.12);height:16px;margin:0 3px;align-self:center}
+.cb-header{font-size:2rem;font-weight:800;color:#0f172a;line-height:1.2;outline:none;min-width:10px}
+.cb-subheader{font-size:1.25rem;font-weight:700;color:#1e293b;outline:none;min-width:10px}
+.cb-text{font-size:.93rem;color:#4b5563;line-height:1.7;outline:none;min-width:10px}
+.q-icon{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#8b5cf6;color:#fff;font-size:.7rem;font-weight:900;align-items:center;justify-content:center;flex-shrink:0;margin-right:8px}
+.q-label-row{display:flex;align-items:flex-start;margin-bottom:8px}
+.q-label-text{font-size:.95rem;font-weight:700;color:#0f172a;outline:none;flex:1;min-width:10px}
+.q-hint{font-size:.78rem;color:#9ca3af;font-style:italic;margin-bottom:10px;outline:none;min-width:10px}
+.cb-input{width:100%;padding:10px 14px;border-radius:9px;border:1.5px solid #e0e3e8;font-family:Inter,sans-serif;font-size:.9rem;color:#374151;background:#fff;outline:none;pointer-events:none}
+.cb-textarea{width:100%;padding:10px 14px;border-radius:9px;border:1.5px solid #e0e3e8;font-family:Inter,sans-serif;font-size:.9rem;color:#374151;background:#fff;min-height:90px;resize:none;outline:none;pointer-events:none}
+.cb-select{width:100%;padding:10px 14px;border-radius:9px;border:1.5px solid #e0e3e8;font-family:Inter,sans-serif;font-size:.9rem;color:#6b7280;background:#fff;appearance:none;pointer-events:none}
+.mc-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.mc-option{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;border:1.5px solid #e0e3e8;font-size:.88rem;color:#374151;background:#fff}
+.mc-option input[type=radio]{accent-color:#8b5cf6;width:15px;height:15px;flex-shrink:0;pointer-events:none}
+.mc-option-label{outline:none;flex:1;min-width:10px;font-size:.88rem;color:#374151}
+.mc-add{margin-top:8px;padding:8px 14px;border-radius:9px;border:1.5px dashed #d1d5db;background:transparent;color:#9ca3af;font-size:.8rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:.12s;display:block;width:100%;text-align:center}
+.mc-add:hover{border-color:#8b5cf6;color:#8b5cf6}
+.pc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.pc-item{border-radius:9px;border:1.5px solid #e0e3e8;overflow:hidden;text-align:center}
+.pc-img-placeholder{height:80px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#d1d5db}
+.pc-img-placeholder img{width:100%;height:100%;object-fit:cover}
+.pc-item-label{padding:7px 8px;display:flex;align-items:center;gap:7px;font-size:.8rem;color:#374151}
+.pc-item-label input{accent-color:#8b5cf6;flex-shrink:0;pointer-events:none}
+.ma-btns{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
+.ma-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 18px;border-radius:10px;background:#8b5cf6;color:#fff;border:none;font-weight:800;font-size:.75rem;min-width:72px;font-family:Inter,sans-serif;cursor:default}
+.ma-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2}
+.cb-date,.cb-number,.cb-url{width:100%;padding:10px 14px;border-radius:9px;border:1.5px solid #e0e3e8;font-family:Inter,sans-serif;font-size:.9rem;color:#9ca3af;background:#fff;pointer-events:none}
+.file-zone{border:2px dashed #d1d5db;border-radius:10px;padding:28px;text-align:center;color:#9ca3af;font-size:.82rem;font-weight:600;margin-top:4px}
+.impact-upload-filename{margin-top:10px;font-size:.78rem;font-weight:800;color:#06b6d4;display:none}
+.impact-upload-filename.show{display:block}
+.sig-pad{border:1.5px solid #e0e3e8;border-radius:9px;height:90px;margin-top:4px;background:#fafbfc;display:flex;align-items:center;justify-content:center;color:#d1d5db;font-size:.8rem}
+.page-break-wrap{padding:16px 0}
+.page-break-line{display:flex;align-items:center;gap:14px}
+.page-break-line::before,.page-break-line::after{content:"";flex:1;height:2px;background:repeating-linear-gradient(90deg,#8b5cf6 0,#8b5cf6 8px,transparent 8px,transparent 14px)}
+.page-break-pill{padding:8px 28px;border-radius:999px;background:#8b5cf6;color:#fff;font-weight:800;font-size:.85rem;white-space:nowrap}
+.page-break-label{font-size:.72rem;color:#9ca3af;text-align:center;margin-top:6px;text-transform:uppercase;letter-spacing:.08em}
+.settings-label{font-size:.72rem;font-weight:900;color:rgba(255,255,255,.55);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.05em}
+.settings-input{width:100%;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.88rem;outline:none}
+.settings-select{width:100%;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.88rem;outline:none}
+.settings-select option{color:#111}
+.settings-divider{height:1px;background:rgba(255,255,255,.09);margin:4px 0}
+.ctrl-btn{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.86rem;cursor:pointer;transition:.15s}
+.ctrl-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+.ctrl-btn.primary{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.45);color:#c4b5fd}
+.ctrl-btn.primary:hover{background:rgba(139,92,246,.32)}
+.ctrl-btn.publish{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.42);color:#6ee7b7}
+.ctrl-btn.publish:hover{background:rgba(16,185,129,.3)}
+.ctrl-btn.publish[disabled]{opacity:.45;cursor:default;transform:none}
+.status-pill-wrap{display:flex;flex-direction:column;gap:5px}
+.status-pill{align-self:flex-start;padding:5px 13px;border-radius:999px;font-size:.7rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+.status-pill.draft{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.status-pill.published{background:rgba(16,185,129,.2);color:#6ee7b7}
+.status-note{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.4);line-height:1.5}
+.save-tick{text-align:center;color:#86efac;font-weight:900;height:22px;opacity:0;transition:.2s;font-size:1rem}
+.save-tick.show{opacity:1}
+.panel-heading{font-family:"Sorts Mill Goudy",serif;font-size:1.05rem;font-weight:400;color:rgba(255,255,255,.88);margin-bottom:2px}
+.legacy-notice{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:14px;font-size:.8rem;color:#92400e;font-weight:700;margin-bottom:12px;line-height:1.5}
+@media(max-width:1024px){.workspace{grid-template-columns:220px 1fr 200px}}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}.blocks-panel,.settings-panel{position:relative;top:auto;max-height:none}}
+
+/* BLOCK ALIGN / RESIZE TOOLBAR — appears above selected block */
+.block-toolbar{
+  display:none;
+  position:absolute;
+  top:-42px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#1e293b;
+  border-radius:12px;
+  padding:5px 6px;
+  gap:3px;
+  z-index:150;
+  white-space:nowrap;
+  box-shadow:0 8px 28px rgba(0,0,0,.35);
+  align-items:center;
+}
+.c-block.selected .block-toolbar{display:flex}
+.bt-btn{
+  width:30px;height:30px;border-radius:8px;border:none;background:transparent;
+  color:#cbd5e1;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;transition:.12s;
+}
+.bt-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.bt-btn.active{background:#8b5cf6;color:#fff}
+.bt-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
+.bt-divider{width:1px;height:18px;background:rgba(255,255,255,.15);margin:0 3px;flex-shrink:0}
+.bt-size-label{font-size:.68rem;font-weight:800;color:#cbd5e1;padding:0 4px;min-width:34px;text-align:center}
+
+/* MEDIA FILE BLOCK */
+.cb-media-empty{
+  border:2px dashed #d1d5db;border-radius:12px;padding:40px 20px;text-align:center;
+  color:#9ca3af;font-size:.86rem;font-weight:700;cursor:pointer;transition:.15s;
+}
+.cb-media-empty:hover{border-color:#8b5cf6;color:#8b5cf6}
+.cb-media-empty svg{width:32px;height:32px;margin:0 auto 10px;display:block;stroke:currentColor;fill:none;stroke-width:1.6}
+.cb-media-input{display:none}
+.cb-media-preview{display:none;border-radius:12px;overflow:hidden;background:#f3f4f6}
+.cb-media-preview.show{display:block}
+.cb-media-preview img,.cb-media-preview video{width:100%;display:block;max-height:420px;object-fit:contain;background:#0a0c14}
+.cb-media-replace{margin-top:8px;padding:6px 12px;border-radius:8px;border:1px solid #e0e3e8;background:#fff;color:#6b7280;font-size:.74rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif}
+.cb-media-replace:hover{border-color:#8b5cf6;color:#8b5cf6}
+
+/* Block width presets applied via inline style + these size classes */
+.c-block.bw-small{max-width:340px;margin-left:auto;margin-right:auto}
+.c-block.bw-medium{max-width:560px;margin-left:auto;margin-right:auto}
+.c-block.bw-large{max-width:100%}
+
+/* Block text alignment */
+.c-block.align-left .c-block-inner{text-align:left}
+.c-block.align-center .c-block-inner{text-align:center}
+.c-block.align-right .c-block-inner{text-align:right}
+.c-block.align-center .mc-options,.c-block.align-center .pc-grid{justify-content:center}
+.c-block.align-right .mc-options,.c-block.align-right .pc-grid{justify-content:flex-end}
+.impact-upload-text{color:#374151 !important;font-weight:700 !important}
+
+.assign-levels-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.assign-level-chip{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-size:.8rem;font-weight:800;color:rgba(255,255,255,.7);transition:.15s}
+.assign-level-chip:hover{background:rgba(255,255,255,.13)}
+.assign-level-chip.checked{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.5);color:#fff}
+.assign-level-chip input{display:none}</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="lp-nav">
+  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+  <a class="lp-icon-btn" href="/teacher/activities.html" title="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+  </a>
+</nav>
+<main class="page">
+<section class="workspace">
+<aside class="panel blocks-panel">
+  <p class="panel-title">Basic</p>
+  <div class="block-group">
+    <button class="block-btn" data-block="mediafile" type="button"><span class="block-icon">🖼</span>Media File</button>
+    <button class="block-btn" data-block="header" type="button"><span class="block-icon">H1</span>Header</button>
+    <button class="block-btn" data-block="subheader" type="button"><span class="block-icon">H2</span>Subheader</button>
+    <button class="block-btn" data-block="text" type="button"><span class="block-icon">T</span>Text</button>
+    <button class="block-btn" data-block="pagebreak" type="button"><span class="block-icon">⋯</span>Page Break</button>
+  </div>
+  <p class="panel-title">Questions</p>
+  <div class="block-group">
+    <button class="block-btn" data-block="shorttext" type="button"><span class="block-icon">≡</span>Short Text</button>
+    <button class="block-btn" data-block="longtext" type="button"><span class="block-icon">≣</span>Long Text</button>
+    <button class="block-btn" data-block="multiplechoice" type="button"><span class="block-icon">◎</span>Multiple Choice</button>
+    <button class="block-btn" data-block="picturechoice" type="button"><span class="block-icon">🖼</span>Picture Choice</button>
+    <button class="block-btn" data-block="dropdown" type="button"><span class="block-icon">▾</span>Dropdown</button>
+    <button class="block-btn" data-block="mediaanswer" type="button"><span class="block-icon">▶</span>Media Answer</button>
+  </div>
+  <p class="panel-title">Special</p>
+  <div class="block-group">
+    <button class="block-btn" data-block="date" type="button"><span class="block-icon">📅</span>Date</button>
+    <button class="block-btn" data-block="number" type="button"><span class="block-icon">01</span>Number</button>
+    <button class="block-btn" data-block="website" type="button"><span class="block-icon">🔗</span>Website</button>
+    <button class="block-btn" data-block="fileupload" type="button"><span class="block-icon">📎</span>File Upload</button>
+    <button class="block-btn" data-block="signature" type="button"><span class="block-icon">✍</span>Signature</button>
+  </div>
+</aside>
+<section class="canvas-panel">
+  <div class="canvas-toolbar">
+    <button class="tbtn" id="undoBtn" type="button">↶ Undo</button>
+    <button class="tbtn" id="selectAllBtn" type="button">Select All</button>
+    <button class="tbtn" id="clearBtn" type="button">Clear Canvas</button>
+  </div>
+  <div class="canvas" id="canvas">
+    <div class="canvas-empty" id="canvasEmpty">Click any block on the left to add it to your activity.</div>
+  </div>
+  <div class="canvas-submit"><button class="submit-btn-preview" type="button" disabled>Submit</button></div>
+</section>
+<aside class="panel settings-panel">
+  <p class="panel-heading">Activity Builder</p>
+  <div class="settings-divider"></div>
+  <div>
+    <label class="settings-label">Activity Title</label>
+    <input class="settings-input" id="lessonTitle" type="text" placeholder="Enter activity title...">
+  </div>
+  <div>
+    <label class="settings-label">Level</label>
+    <select class="settings-select" id="lessonLevel">
+      <option>Absolute Beginner</option>
+      <option>A0</option><option>A1</option><option>A1.1</option>
+      <option>A2</option><option>B1</option><option>B2</option>
+    </select>
+  </div>
+  <div class="settings-divider"></div>
+  <div class="status-pill-wrap">
+    <span class="status-pill draft" id="statusPill">Draft</span>
+    <span class="status-note" id="statusNote">Not yet visible to learners.</span>
+  </div>
+  <div class="settings-divider"></div>
+  <button class="ctrl-btn primary" id="saveBtn" type="button">Save Draft</button>
+  <button class="ctrl-btn publish" id="publishBtn" type="button">Publish</button>
+  <button class="ctrl-btn" id="newBtn" type="button">New Activity</button>
+  <button class="ctrl-btn" id="viewBtn" type="button">Preview</button>
+  <span class="save-tick" id="saveTick">Saved</span>
+</aside>
+</section>
+</main>
+<input id="pcImageInput" type="file" accept="image/*" style="display:none" multiple>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+const db=firebase.firestore();
+const storage = firebase.storage();
+const COLLECTION="activityPlans";
+const VIEW_PAGE="/teacher/activity-view.html";
+const canvas=document.getElementById("canvas");
+const canvasEmpty=document.getElementById("canvasEmpty");
+const titleInput=document.getElementById("lessonTitle");
+const levelSelect=document.getElementById("lessonLevel");
+const saveTick=document.getElementById("saveTick");
+let currentId=new URLSearchParams(location.search).get("edit")||"";
+let selectedBlock=null;
+let undoStack=[];
+let dragSrc=null;
+let pageCount=1;
+// Level/learner assignment moved out of the builder. Sharing now happens
+// after publishing, from the Activities list page.
+let selectedLearners = [];
+
+function showEmpty(){if(!canvas.querySelector(".c-block"))canvasEmpty.style.display="";}
+function hideEmpty(){canvasEmpty.style.display="none";}
+function allBlocks(){return Array.from(canvas.querySelectorAll(".c-block"));}
+function tick(){saveTick.classList.add("show");setTimeout(()=>saveTick.classList.remove("show"),1600);}
+function pushUndo(){undoStack.push(serializeBlocks());if(undoStack.length>40)undoStack.shift();}
+function selectBlock(block){allBlocks().forEach(b=>b.classList.remove("selected"));if(block){block.classList.add("selected");selectedBlock=block;}else{selectedBlock=null;}}
+canvas.addEventListener("click",function(e){if(e.target===canvas||e.target===canvasEmpty)selectBlock(null);});
+function makeQ(label){return `<div class="q-label-row"><span class="q-icon">?</span><div class="q-label-text" contenteditable="true">${label}</div></div><div class="q-hint" contenteditable="true">Type in a description and fill-out hints</div>`;}
+const TEMPLATES={
+  mediafile:{render:(data)=>{
+    const src=data&&data.src?data.src:"";
+    const kind=data&&data.kind?data.kind:"";
+    const mediaTag=kind==="video"
+      ? `<video src="${src}" controls></video>`
+      : `<img src="${src}" alt="">`;
+    return `
+      <div class="cb-media-empty" style="${src?'display:none':''}">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        Click to upload an image or video
+      </div>
+      <input type="file" class="cb-media-input" accept="image/*,video/*">
+      <div class="cb-media-preview ${src?'show':''}">${src?mediaTag:''}</div>
+      ${src?`<button type="button" class="cb-media-replace">Replace file</button>`:''}
+    `;
+  }},
+  header:{render:()=>`<div class="cb-header" contenteditable="true">Activity Title</div>`},
+  subheader:{render:()=>`<div class="cb-subheader" contenteditable="true">Section A</div>`},
+  text:{render:()=>`<div class="cb-text" contenteditable="true">Write your activity content here...</div>`},
+  pagebreak:{render:(data)=>{const n=data&&data.pageNum?data.pageNum:++pageCount;return `<div class="page-break-wrap" data-page="${n}"><div style="font-size:.7rem;color:#9ca3af;margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Page ${n-1}</div><div class="page-break-line"><span class="page-break-pill">Continue</span></div><div class="page-break-label">Page ${n}</div></div>`;}},
+  shorttext:{render:()=>`${makeQ("e.g. What is your answer?")}<input class="cb-input" placeholder="Short answer..." readonly>`},
+  longtext:{render:()=>`${makeQ("e.g. Describe your response.")}<textarea class="cb-textarea" placeholder="Long answer..." readonly></textarea>`},
+  multiplechoice:{render:(data)=>{const opts=(data&&data.options)?data.options:["Option 1","Option 2","Option 3","Other"];const optHtml=opts.map(o=>`<div class="mc-option"><input type="radio" disabled><span class="mc-option-label" contenteditable="true">${o}</span></div>`).join("");return `${makeQ("e.g. Choose the correct answer.")}<div class="mc-options">${optHtml}</div><button class="mc-add" type="button">+ Add option</button>`;}},
+  picturechoice:{render:(data)=>{const imgs=(data&&data.images)?data.images:[null,null,null];const itemHtml=imgs.map((src,i)=>`<div class="pc-item"><div class="pc-img-placeholder">${src?`<img src="${src}" alt="">`:''}</div><div class="pc-item-label"><input type="radio" disabled><span contenteditable="true">Option ${i+1}</span></div></div>`).join("");return `${makeQ("e.g. Choose the correct image.")}<div class="pc-grid">${itemHtml}</div><button class="pc-add-img" type="button" style="margin-top:8px;padding:7px 14px;border-radius:9px;border:1.5px dashed #d1d5db;background:transparent;color:#9ca3af;font-size:.78rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif">+ Add image</button>`;}},
+  dropdown:{render:(data)=>{const opts=(data&&data.options)?data.options:["Option 1","Option 2","Option 3"];const optHtml=opts.map(o=>`<option>${o}</option>`).join("");return `${makeQ("e.g. Select the correct answer.")}<select class="cb-select" disabled><option value="">Choose an option...</option>${optHtml}</select>`;}},
+  mediaanswer:{render:()=>`${makeQ("How would you like to answer?")}<div class="ma-btns"><button class="ma-btn" type="button"><svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0 1 21 8.723v6.554a1 1 0 0 1-1.447.894L15 14v-4z"/><rect x="2" y="6" width="13" height="12" rx="2"/></svg>VIDEO</button><button class="ma-btn" type="button"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>AUDIO</button><button class="ma-btn" type="button"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>SCREEN</button><button class="ma-btn" type="button"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>TEXT</button></div>`},
+  date:{render:()=>`${makeQ("e.g. What is the date?")}<input class="cb-date" type="text" placeholder="DD / MM / YYYY" readonly>`},
+  number:{render:()=>`${makeQ("e.g. How many?")}<input class="cb-number" type="text" placeholder="0" readonly>`},
+  website:{render:()=>`${makeQ("e.g. Share a link.")}<input class="cb-url" type="text" placeholder="https://" readonly>`},
+  fileupload:{render:()=>`${makeQ("Upload your file here.")}<div class="file-zone">Click or drag a file here</div>`},
+  signature:{render:()=>`${makeQ("Please sign below.")}<div class="sig-pad">Sign here</div>`}
+};
+function createBlock(type,data){
+  const tmpl=TEMPLATES[type];if(!tmpl)return null;
+  const block=document.createElement("div");block.className="c-block";block.setAttribute("data-type",type);block.setAttribute("draggable","true");
+  const actions=document.createElement("div");actions.className="block-actions";
+  actions.innerHTML='<button class="act-btn danger" data-act="del" title="Delete block"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>';
+
+  const inner=document.createElement("div");inner.className="c-block-inner";inner.innerHTML=tmpl.render(data);
+  block.appendChild(actions);block.appendChild(inner);bindBlock(block);return block;
+}
+function bindBlock(block){
+  const mediaEmpty   = block.querySelector(".cb-media-empty");
+  const mediaInput   = block.querySelector(".cb-media-input");
+  const mediaPreview = block.querySelector(".cb-media-preview");
+  const mediaReplace = block.querySelector(".cb-media-replace");
+
+  async function handleMediaFile(file){
+    if(!file) return;
+    const isVideo = file.type.startsWith("video/");
+
+    const localPreviewUrl = URL.createObjectURL(file);
+    mediaPreview.innerHTML = isVideo
+      ? `<video src="${localPreviewUrl}" controls></video>`
+      : `<img src="${localPreviewUrl}" alt="">`;
+    mediaPreview.classList.add("show");
+    if(mediaEmpty) mediaEmpty.style.display = "none";
+
+    let statusEl = block.querySelector(".cb-media-status");
+    if(!statusEl){
+      statusEl = document.createElement("div");
+      statusEl.className = "cb-media-status";
+      statusEl.style.cssText = "margin-top:8px;font-size:.76rem;font-weight:700;color:#9ca3af";
+      mediaPreview.after(statusEl);
+    }
+    statusEl.textContent = "Uploading...";
+
+    try{
+      const ext = file.name.split(".").pop() || (isVideo ? "mp4" : "jpg");
+      const path = `activityMedia/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const snap = await storage.ref(path).put(file);
+      const downloadUrl = await snap.ref.getDownloadURL();
+
+      block.dataset.mediaSrc  = downloadUrl;
+      block.dataset.mediaKind = isVideo ? "video" : "image";
+      statusEl.textContent = "";
+      statusEl.remove();
+
+      let replaceBtn = block.querySelector(".cb-media-replace");
+      if(!replaceBtn){
+        replaceBtn = document.createElement("button");
+        replaceBtn.type = "button";
+        replaceBtn.className = "cb-media-replace";
+        replaceBtn.textContent = "Replace file";
+        mediaPreview.after(replaceBtn);
+        replaceBtn.addEventListener("click", function(e){
+          e.stopPropagation();
+          mediaInput.click();
+        });
+      }
+    }catch(err){
+      console.error("Media upload failed:", err);
+      statusEl.textContent = "Upload failed - try again";
+      statusEl.style.color = "#dc2626";
+      toast("Could not upload file: " + err.message);
+    }
+  }
+
+  if(mediaEmpty && mediaInput){
+    mediaEmpty.addEventListener("click", function(e){
+      e.stopPropagation();
+      mediaInput.click();
+    });
+    mediaInput.addEventListener("click", function(e){ e.stopPropagation(); });
+    mediaInput.addEventListener("change", function(e){
+      e.stopPropagation();
+      handleMediaFile(mediaInput.files[0]);
+    });
+  }
+  if(mediaReplace && mediaInput){
+    mediaReplace.addEventListener("click", function(e){
+      e.stopPropagation();
+      mediaInput.click();
+    });
+  }
+  block.addEventListener("click",function(e){if(e.target.closest(".block-actions"))return;e.stopPropagation();selectBlock(block);});
+  block.querySelector(".block-actions").addEventListener("click",function(e){
+    e.stopPropagation();const btn=e.target.closest("[data-act]");if(!btn)return;const act=btn.dataset.act;
+    if(act==="del"){pushUndo();block.remove();selectedBlock=null;showEmpty();}
+    if(act==="up"){pushUndo();const prev=block.previousElementSibling;if(prev&&prev.classList.contains("c-block"))canvas.insertBefore(block,prev);}
+    if(act==="down"){pushUndo();const next=block.nextElementSibling;if(next&&next.classList.contains("c-block"))canvas.insertBefore(next,block);}
+    if(act==="dupe"){pushUndo();const dupe=createBlock(block.dataset.type,extractData(block));block.after(dupe);selectBlock(dupe);}
+  });
+  const mcAdd=block.querySelector(".mc-add");
+  if(mcAdd)mcAdd.addEventListener("click",function(e){e.stopPropagation();pushUndo();const grid=block.querySelector(".mc-options");const opt=document.createElement("div");opt.className="mc-option";opt.innerHTML=`<input type="radio" disabled><span class="mc-option-label" contenteditable="true">Option ${grid.children.length+1}</span>`;grid.appendChild(opt);});
+  const pcAdd=block.querySelector(".pc-add-img");
+  if(pcAdd)pcAdd.addEventListener("click",function(e){e.stopPropagation();pcImageInput.click();pcImageInput.onchange=function(){Array.from(pcImageInput.files).forEach(file=>{const reader=new FileReader();reader.onload=function(ev){const item=document.createElement("div");item.className="pc-item";item.innerHTML=`<div class="pc-img-placeholder"><img src="${ev.target.result}" alt=""></div><div class="pc-item-label"><input type="radio" disabled><span contenteditable="true">Option</span></div>`;block.querySelector(".pc-grid").appendChild(item);};reader.readAsDataURL(file);});pcImageInput.value="";};});
+  block.addEventListener("dragstart",function(e){dragSrc=block;e.dataTransfer.effectAllowed="move";setTimeout(()=>block.style.opacity=".4",0);});
+  block.addEventListener("dragend",function(){block.style.opacity="";allBlocks().forEach(b=>b.classList.remove("drag-over"));dragSrc=null;});
+  block.addEventListener("dragover",function(e){e.preventDefault();if(dragSrc&&dragSrc!==block)block.classList.add("drag-over");});
+  block.addEventListener("dragleave",function(){block.classList.remove("drag-over");});
+  block.addEventListener("drop",function(e){e.preventDefault();block.classList.remove("drag-over");if(!dragSrc||dragSrc===block)return;pushUndo();const rect=block.getBoundingClientRect();if(e.clientY<rect.top+rect.height/2)canvas.insertBefore(dragSrc,block);else block.after(dragSrc);});
+}
+document.querySelectorAll(".block-btn").forEach(btn=>{btn.addEventListener("click",function(){pushUndo();hideEmpty();const block=createBlock(btn.dataset.block);if(!block)return;if(selectedBlock&&canvas.contains(selectedBlock))selectedBlock.after(block);else canvas.appendChild(block);selectBlock(block);block.scrollIntoView({behavior:"smooth",block:"nearest"});});});
+document.getElementById("undoBtn").addEventListener("click",function(){if(!undoStack.length)return;rebuildFromBlocks(undoStack.pop());});
+document.getElementById("selectAllBtn").addEventListener("click",function(){allBlocks().forEach(b=>b.classList.add("selected"));});
+document.getElementById("clearBtn").addEventListener("click",function(){if(!confirm("Clear the entire canvas?"))return;pushUndo();allBlocks().forEach(b=>b.remove());selectedBlock=null;pageCount=1;showEmpty();});
+function extractData(block){
+  const type=block.dataset.type;const data={type};
+  if(type==="header"||type==="subheader"||type==="text"){data.content=block.querySelector("[contenteditable]").innerHTML;}
+  if(type==="pagebreak"){const wrap=block.querySelector(".page-break-wrap");data.pageNum=wrap?parseInt(wrap.dataset.page)||2:2;}
+  if(["shorttext","longtext","date","number","website","fileupload","signature","mediaanswer"].includes(type)){const lel=block.querySelector(".q-label-text");const hel=block.querySelector(".q-hint");data.label=lel?lel.innerHTML:"";data.hint=hel?hel.innerHTML:"";}
+  if(type==="multiplechoice"){const lel=block.querySelector(".q-label-text");const hel=block.querySelector(".q-hint");data.label=lel?lel.innerHTML:"";data.hint=hel?hel.innerHTML:"";data.options=Array.from(block.querySelectorAll(".mc-option-label")).map(el=>el.innerHTML);}
+  if(type==="picturechoice"){const lel=block.querySelector(".q-label-text");const hel=block.querySelector(".q-hint");data.label=lel?lel.innerHTML:"";data.hint=hel?hel.innerHTML:"";data.images=Array.from(block.querySelectorAll(".pc-img-placeholder img")).map(img=>img.src);}
+  if(type==="dropdown"){const lel=block.querySelector(".q-label-text");const hel=block.querySelector(".q-hint");data.label=lel?lel.innerHTML:"";data.hint=hel?hel.innerHTML:"";data.options=Array.from(block.querySelectorAll("select option")).slice(1).map(o=>o.textContent);}
+    // Persist media file data URL + block styling so it survives save/reload
+  if(type==="mediafile"){
+    data.src  = block.dataset.mediaSrc  || "";
+    data.kind = block.dataset.mediaKind || "";
+  }
+  const alignClass = ["align-left","align-center","align-right"].find(c=>block.classList.contains(c));
+  const sizeClass   = ["bw-small","bw-medium","bw-large"].find(c=>block.classList.contains(c));
+  data.align = alignClass ? alignClass.replace("align-","") : "center";
+  data.size  = sizeClass  ? sizeClass.replace("bw-","")     : "large";
+  return data;
+}
+function serializeBlocks(){return allBlocks().map(extractData);}
+function rebuildFromBlocks(blocks){
+  allBlocks().forEach(b=>b.remove());selectedBlock=null;pageCount=1;
+  if(!blocks||!blocks.length){showEmpty();return;}
+  hideEmpty();
+  blocks.forEach(data=>{const block=createBlock(data.type,data);if(!block)return;canvas.appendChild(block);if(data.content){const ce=block.querySelector("[contenteditable]");if(ce)ce.innerHTML=data.content;}if(data.label){const lel=block.querySelector(".q-label-text");if(lel)lel.innerHTML=data.label;}if(data.hint){const hel=block.querySelector(".q-hint");if(hel)hel.innerHTML=data.hint;}
+    if(data.align){
+      block.classList.remove("align-left","align-center","align-right");
+      block.classList.add("align-"+data.align);
+      const tb=block.querySelector(".block-toolbar");
+      if(tb){tb.querySelectorAll("[data-align]").forEach(b=>b.classList.toggle("active",b.dataset.align===data.align));}
+    }
+    if(data.size){
+      block.classList.remove("bw-small","bw-medium","bw-large");
+      block.classList.add("bw-"+data.size);
+      const tb=block.querySelector(".block-toolbar");
+      if(tb){tb.querySelectorAll("[data-size]").forEach(b=>b.classList.toggle("active",b.dataset.size===data.size));}
+    }
+    if(data.type==="mediafile" && data.src){
+      block.dataset.mediaSrc = data.src;
+      block.dataset.mediaKind = data.kind || "image";
+    }});
+}
+async function save(){
+  const blocks=serializeBlocks();
+  const payload={title:titleInput.value.trim()||"Untitled Activity",level:levelSelect.value,createdByTeacher:(sessionStorage.getItem("impactAccessName")||sessionStorage.getItem("impactPersonnelName")||""),blocks,version:2,updatedAt:new Date().toISOString()};if(!currentId){payload.status="draft";}
+  if(currentId){await db.collection(COLLECTION).doc(currentId).set(payload,{merge:true});}
+  else{const ref=await db.collection(COLLECTION).add(payload);currentId=ref.id;history.replaceState(null,"","/teacher/activity-builder.html?edit="+currentId);}
+  tick();return currentId;
+}
+document.getElementById("saveBtn").addEventListener("click",async function(e){e.preventDefault();await save();});
+document.getElementById("newBtn").addEventListener("click",function(e){e.preventDefault();currentId="";titleInput.value="";levelSelect.value="Absolute Beginner";allBlocks().forEach(b=>b.remove());selectedBlock=null;pageCount=1;showEmpty();history.replaceState(null,"","/teacher/activity-builder.html");});
+document.getElementById("viewBtn").addEventListener("click",async function(e){
+  e.preventDefault();
+  if(!titleInput.value.trim()){titleInput.focus();titleInput.style.border="1.5px solid #f87171";titleInput.placeholder="Please enter a title first";setTimeout(()=>{titleInput.style.border="";},2000);return;}
+  const id=await save();
+  if(id)window.open(VIEW_PAGE+"?id="+encodeURIComponent(id),"_blank");
+});
+let autoSaveTimer=null;
+function scheduleAutoSave(){
+  const hasTitle=titleInput.value.trim().length>0;
+  const hasBlocks=allBlocks().length>0;
+  const hasLevel=levelSelect.value.length>0;
+  if(!hasTitle||!hasBlocks||!hasLevel)return;
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer=setTimeout(async function(){await save();},1200);
+}
+titleInput.addEventListener("input",scheduleAutoSave);
+levelSelect.addEventListener("change",scheduleAutoSave);
+new MutationObserver(function(){scheduleAutoSave();}).observe(canvas,{childList:true,subtree:false});
+async function load(){
+  if(!currentId)return;
+  const doc=await db.collection(COLLECTION).doc(currentId).get();
+  if(!doc.exists)return;
+  const d=doc.data();
+  titleInput.value=d.title||"";
+  if(d.level)levelSelect.value=d.level;
+  if(d.version===2&&Array.isArray(d.blocks)){rebuildFromBlocks(d.blocks);return;}
+  if(d.content){hideEmpty();const notice=document.createElement("div");notice.className="legacy-notice";notice.innerHTML="⚠️ Legacy activity — read-only. Use New + to create a fresh one.";canvas.insertBefore(notice,canvas.firstChild);const wrapper=document.createElement("div");wrapper.style.cssText="padding:12px;border-radius:10px;border:1.5px solid #e0e3e8;background:#fafbfc;color:#374151;font-size:.88rem;line-height:1.7;pointer-events:none";wrapper.innerHTML=d.content;canvas.appendChild(wrapper);}
+}
+// ---- PUBLISH ----
+let currentStatus = "draft";
+
+function renderStatus(){
+  const pill = document.getElementById("statusPill");
+  const note = document.getElementById("statusNote");
+  const pubBtn = document.getElementById("publishBtn");
+  if(!pill) return;
+  if(currentStatus === "published"){
+    pill.textContent = "Published";
+    pill.className = "status-pill published";
+    note.textContent = "Live. Share it with learners from the Activities page.";
+    pubBtn.disabled = true;
+    pubBtn.textContent = "Published";
+  }else{
+    pill.textContent = "Draft";
+    pill.className = "status-pill draft";
+    note.textContent = "Not yet visible to learners.";
+    pubBtn.disabled = false;
+    pubBtn.textContent = "Publish";
+  }
+}
+
+document.getElementById("publishBtn").addEventListener("click", async function(e){
+  e.preventDefault();
+  if(!titleInput.value.trim()){
+    titleInput.focus();
+    titleInput.style.border = "1.5px solid #f87171";
+    setTimeout(function(){ titleInput.style.border = ""; }, 2000);
+    return;
+  }
+  if(!allBlocks().length){ alert("Add at least one block before publishing."); return; }
+  if(!confirm("Publish this activity? Once published, editing or deleting it will require your passkey and be logged.")) return;
+
+  const id = await save();
+  if(!id) return;
+
+  const who = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "";
+  await db.collection("activityPlans").doc(id).set({
+    status: "published",
+    publishedAt: new Date().toISOString(),
+    publishedBy: who
+  }, { merge:true });
+
+  currentStatus = "published";
+  renderStatus();
+
+  if(window.ImpactPublish){
+    window.ImpactPublish.logAction({
+      action: "publish",
+      itemType: "activity",
+      itemId: id,
+      itemTitle: titleInput.value.trim(),
+      performedBy: who
+    });
+  }
+  tick();
+});
+
+window.addEventListener("load", function(){
+  if(window.ImpactTextToolbar) window.ImpactTextToolbar.attach("#canvas");
+  else console.warn("ImpactTextToolbar failed to load");
+});
+renderStatus();
+
+load();
+});
+</script>
+<script src="/js/impact-publish.js"></script>
+<script src="/js/impact-text-toolbar.js"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: /js/impact-text-toolbar.js (DEPENDENCY)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\js\impact-text-toolbar.js
+CHARS:  11219
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+/* impact-text-toolbar.js
+   Fixed Google-Docs style formatting bar docked in the canvas header.
+   Applies text formatting to the last-focused contenteditable, and
+   align/size to the currently selected block.
+   Pure ASCII only. */
+(function(){
+
+  var lastEditable = null;
+
+  var FONTS = ["Inter","Arial","Georgia","Times New Roman","Courier New","Verdana","Trebuchet MS","Comic Sans MS"];
+  var SIZES = [
+    {label:"10", cmd:"1"}, {label:"13", cmd:"2"}, {label:"16", cmd:"3"},
+    {label:"18", cmd:"4"}, {label:"24", cmd:"5"}, {label:"32", cmd:"6"}, {label:"48", cmd:"7"}
+  ];
+  var TEXT_COLORS = ["#000000","#374151","#dc2626","#ea580c","#ca8a04","#16a34a","#0891b2","#2563eb","#7c3aed","#db2777","#ffffff"];
+  var HILITE_COLORS = ["transparent","#fef08a","#bbf7d0","#bfdbfe","#fbcfe8","#e9d5ff","#fed7aa","#e5e7eb"];
+
+  function injectStyles(){
+    if(document.getElementById("impact-fmtbar-styles")) return;
+    var s = document.createElement("style");
+    s.id = "impact-fmtbar-styles";
+    s.textContent = [
+      '.fmt-bar{display:flex;align-items:center;gap:3px;padding:7px 14px;background:#fff;border-bottom:1px solid #e4e7ec;flex-wrap:wrap;position:sticky;top:0;z-index:60}',
+      '.fmt-btn{min-width:30px;height:30px;border-radius:7px;border:1px solid transparent;background:transparent;color:#374151;cursor:pointer;font-family:Inter,sans-serif;font-size:.82rem;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;transition:.1s}',
+      '.fmt-btn:hover{background:#eef0f4}',
+      '.fmt-btn.active{background:#ede9fe;color:#6d28d9;border-color:#ddd6fe}',
+      '.fmt-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}',
+      '.fmt-sel{height:30px;border-radius:7px;border:1px solid #dde1e8;background:#fff;color:#374151;font-family:Inter,sans-serif;font-size:.76rem;font-weight:600;padding:0 6px;cursor:pointer;outline:none}',
+      '.fmt-sel.font{width:118px}',
+      '.fmt-sel.size{width:62px}',
+      '.fmt-div{width:1px;height:20px;background:#e4e7ec;margin:0 5px}',
+      '.fmt-pop{display:none;position:absolute;z-index:200;background:#fff;border:1px solid #e4e7ec;border-radius:10px;padding:8px;box-shadow:0 8px 28px rgba(0,0,0,.16);grid-template-columns:repeat(6,22px);gap:5px}',
+      '.fmt-pop.show{display:grid}',
+      '.fmt-swatch{width:22px;height:22px;border-radius:5px;border:1px solid rgba(0,0,0,.12);cursor:pointer}',
+      '.fmt-swatch:hover{transform:scale(1.12)}',
+      '.fmt-color-wrap{position:relative;display:inline-flex}',
+      '.fmt-bar .fmt-label{font-size:.66rem;font-weight:900;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin:0 4px 0 2px}'
+    ].join("");
+    document.head.appendChild(s);
+  }
+
+  function el(tag, cls, html){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(html !== undefined) e.innerHTML = html;
+    return e;
+  }
+
+  function exec(cmd, val){
+    if(lastEditable){ lastEditable.focus(); }
+    try{ document.execCommand(cmd, false, val === undefined ? null : val); }
+    catch(e){ /* execCommand is legacy but remains the practical option for contenteditable */ }
+    refreshActive();
+  }
+
+  var btnRefs = {};
+  function refreshActive(){
+    ["bold","italic","underline","strikeThrough"].forEach(function(c){
+      if(!btnRefs[c]) return;
+      var on = false;
+      try{ on = document.queryCommandState(c); }catch(e){}
+      btnRefs[c].classList.toggle("active", !!on);
+    });
+  }
+
+  function selectedBlock(){ return document.querySelector(".c-block.selected"); }
+
+  function buildBar(){
+    injectStyles();
+    var bar = el("div","fmt-bar");
+
+    // Font family
+    var fontSel = el("select","fmt-sel font");
+    FONTS.forEach(function(f){
+      var o = document.createElement("option");
+      o.value = f; o.textContent = f; o.style.fontFamily = f;
+      fontSel.appendChild(o);
+    });
+    fontSel.addEventListener("mousedown", function(){ /* keep selection */ });
+    fontSel.addEventListener("change", function(){ exec("fontName", fontSel.value); });
+    bar.appendChild(fontSel);
+
+    // Font size
+    var sizeSel = el("select","fmt-sel size");
+    SIZES.forEach(function(s){
+      var o = document.createElement("option");
+      o.value = s.cmd; o.textContent = s.label;
+      sizeSel.appendChild(o);
+    });
+    sizeSel.value = "3";
+    sizeSel.addEventListener("change", function(){ exec("fontSize", sizeSel.value); });
+    bar.appendChild(sizeSel);
+
+    bar.appendChild(el("div","fmt-div"));
+
+    // Bold / Italic / Underline / Strike
+    [
+      {cmd:"bold",          html:'<b>B</b>',              title:"Bold"},
+      {cmd:"italic",        html:'<i>I</i>',              title:"Italic"},
+      {cmd:"underline",     html:'<u>U</u>',              title:"Underline"},
+      {cmd:"strikeThrough", html:'<s>S</s>',              title:"Strikethrough"}
+    ].forEach(function(b){
+      var btn = el("button","fmt-btn", b.html);
+      btn.type = "button";
+      btn.title = b.title;
+      btn.addEventListener("mousedown", function(e){ e.preventDefault(); exec(b.cmd); });
+      btnRefs[b.cmd] = btn;
+      bar.appendChild(btn);
+    });
+
+    bar.appendChild(el("div","fmt-div"));
+
+    // Text colour
+    bar.appendChild(colorControl("Text colour",
+      '<svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 16L12 5l5 11"/><path d="M9 12h6"/></svg>',
+      TEXT_COLORS, "foreColor"));
+
+    // Highlight
+    bar.appendChild(colorControl("Highlight",
+      '<svg viewBox="0 0 24 24"><path d="M9 11l-4 4v3h3l4-4"/><path d="M14 6l4 4"/><path d="M12 8l4-4a2 2 0 0 1 3 3l-4 4"/></svg>',
+      HILITE_COLORS, "hiliteColor"));
+
+    bar.appendChild(el("div","fmt-div"));
+
+    // Alignment (text)
+    [
+      {cmd:"justifyLeft",   d:'<line x1="3" y1="6" x2="15" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="15" y2="18"/>', t:"Align left"},
+      {cmd:"justifyCenter", d:'<line x1="6" y1="6" x2="18" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="18" y2="18"/>', t:"Align centre"},
+      {cmd:"justifyRight",  d:'<line x1="9" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="9" y1="18" x2="21" y2="18"/>', t:"Align right"}
+    ].forEach(function(b){
+      var btn = el("button","fmt-btn", '<svg viewBox="0 0 24 24">' + b.d + '</svg>');
+      btn.type = "button"; btn.title = b.t;
+      btn.addEventListener("mousedown", function(e){ e.preventDefault(); exec(b.cmd); });
+      bar.appendChild(btn);
+    });
+
+    // Lists
+    [
+      {cmd:"insertUnorderedList", d:'<circle cx="4" cy="6" r="1.4"/><circle cx="4" cy="12" r="1.4"/><circle cx="4" cy="18" r="1.4"/><line x1="9" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="9" y1="18" x2="21" y2="18"/>', t:"Bulleted list"},
+      {cmd:"insertOrderedList",   d:'<line x1="9" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="9" y1="18" x2="21" y2="18"/><path d="M4 5h1v4"/><path d="M3.5 15.5h2v3h-2z"/>', t:"Numbered list"}
+    ].forEach(function(b){
+      var btn = el("button","fmt-btn", '<svg viewBox="0 0 24 24">' + b.d + '</svg>');
+      btn.type = "button"; btn.title = b.t;
+      btn.addEventListener("mousedown", function(e){ e.preventDefault(); exec(b.cmd); });
+      bar.appendChild(btn);
+    });
+
+    bar.appendChild(el("div","fmt-div"));
+
+    // Block width (applies to the selected block)
+    var wLabel = el("span","fmt-label","Block");
+    bar.appendChild(wLabel);
+    [
+      {size:"small",  label:"S", t:"Narrow block"},
+      {size:"medium", label:"M", t:"Medium block"},
+      {size:"large",  label:"L", t:"Full width block"}
+    ].forEach(function(b){
+      var btn = el("button","fmt-btn", b.label);
+      btn.type = "button"; btn.title = b.t;
+      btn.addEventListener("mousedown", function(e){
+        e.preventDefault();
+        var blk = selectedBlock();
+        if(!blk){ return; }
+        blk.classList.remove("bw-small","bw-medium","bw-large");
+        blk.classList.add("bw-" + b.size);
+      });
+      bar.appendChild(btn);
+    });
+
+    // Block alignment
+    [
+      {al:"left",   d:'<rect x="3" y="5" width="10" height="14" rx="1"/>', t:"Block left"},
+      {al:"center", d:'<rect x="7" y="5" width="10" height="14" rx="1"/>', t:"Block centre"},
+      {al:"right",  d:'<rect x="11" y="5" width="10" height="14" rx="1"/>', t:"Block right"}
+    ].forEach(function(b){
+      var btn = el("button","fmt-btn", '<svg viewBox="0 0 24 24">' + b.d + '</svg>');
+      btn.type = "button"; btn.title = b.t;
+      btn.addEventListener("mousedown", function(e){
+        e.preventDefault();
+        var blk = selectedBlock();
+        if(!blk){ return; }
+        blk.classList.remove("align-left","align-center","align-right");
+        blk.classList.add("align-" + b.al);
+      });
+      bar.appendChild(btn);
+    });
+
+    bar.appendChild(el("div","fmt-div"));
+
+    var clearBtn = el("button","fmt-btn",'<svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M10 4h4"/><path d="M6 7l1 13h10l1-13"/></svg>');
+    clearBtn.type = "button";
+    clearBtn.title = "Clear formatting";
+    clearBtn.addEventListener("mousedown", function(e){ e.preventDefault(); exec("removeFormat"); });
+    bar.appendChild(clearBtn);
+
+    return bar;
+  }
+
+  function colorControl(title, iconSvg, colors, cmd){
+    var wrap = el("div","fmt-color-wrap");
+    var btn = el("button","fmt-btn", iconSvg);
+    btn.type = "button";
+    btn.title = title;
+    var pop = el("div","fmt-pop");
+
+    colors.forEach(function(c){
+      var sw = el("div","fmt-swatch");
+      sw.style.background = (c === "transparent" ? "#fff" : c);
+      if(c === "transparent"){ sw.style.backgroundImage = "linear-gradient(45deg,#ddd 25%,transparent 25%,transparent 75%,#ddd 75%)"; }
+      sw.title = c;
+      sw.addEventListener("mousedown", function(e){
+        e.preventDefault();
+        exec(cmd, c === "transparent" ? "inherit" : c);
+        pop.classList.remove("show");
+      });
+      pop.appendChild(sw);
+    });
+
+    btn.addEventListener("mousedown", function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      document.querySelectorAll(".fmt-pop.show").forEach(function(p){ if(p !== pop) p.classList.remove("show"); });
+      pop.classList.toggle("show");
+      var r = btn.getBoundingClientRect();
+      pop.style.left = "0px";
+      pop.style.top  = (btn.offsetHeight + 5) + "px";
+    });
+
+    document.addEventListener("mousedown", function(e){
+      if(!wrap.contains(e.target)) pop.classList.remove("show");
+    });
+
+    wrap.appendChild(btn);
+    wrap.appendChild(pop);
+    return wrap;
+  }
+
+  /* Mount the bar directly above the canvas. */
+  function attach(canvasSelector){
+    var canvas = document.querySelector(canvasSelector);
+    if(!canvas){ console.warn("Text toolbar: canvas not found", canvasSelector); return; }
+
+    var host = canvas.parentNode;
+    var bar = buildBar();
+    host.insertBefore(bar, canvas);
+
+    canvas.addEventListener("focusin", function(e){
+      var ce = e.target.closest("[contenteditable]");
+      if(ce){ lastEditable = ce; refreshActive(); }
+    });
+    canvas.addEventListener("keyup", refreshActive);
+    canvas.addEventListener("mouseup", refreshActive);
+  }
+
+  window.ImpactTextToolbar = { attach: attach };
+})();
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\delf-mocks.html (MAIN FILE)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\delf-mocks.html
+CHARS:  14181
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DELF Exam Mocks | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/impact-page-nav.css">
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-height:100vh}
+.page{position:relative;z-index:2;width:min(1100px,92vw);margin:0 auto;padding:118px 0 80px}
+.hero{text-align:center;margin-bottom:36px}
+.eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.55);margin-bottom:12px}
+h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);font-weight:400;line-height:1}
+.hero p{margin-top:12px;color:rgba(255,255,255,.6);font-weight:700}
+
+/* TRACK TABS */
+.track-tabs{display:flex;gap:10px;justify-content:center;margin-bottom:36px;flex-wrap:wrap}
+.track-tab{padding:12px 24px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-family:Inter,sans-serif;font-weight:900;font-size:.86rem;cursor:pointer;transition:.18s ease}
+.track-tab:hover{background:rgba(255,255,255,.1);color:#fff}
+.track-tab.active{background:rgba(217,119,6,.22);border-color:rgba(217,119,6,.5);color:#fbbf24}
+
+.action-bar{display:flex;align-items:center;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+.new-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:18px;background:rgba(217,119,6,.18);border:1px solid rgba(217,119,6,.4);color:#fbbf24;font-family:Inter,sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;text-decoration:none;transition:.18s ease}
+.new-btn:hover{background:rgba(217,119,6,.3);transform:translateY(-2px)}
+.new-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;flex-shrink:0}
+.folder-count{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.45)}
+
+.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+
+.empty-state{text-align:center;padding:72px 40px;border:2px dashed rgba(255,255,255,.1);border-radius:28px;color:rgba(255,255,255,.35)}
+.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.5rem;font-weight:400;margin-bottom:10px;color:rgba(255,255,255,.5)}
+.empty-state p{font-size:.86rem;font-weight:700;line-height:1.6}
+
+.folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.folder-card{border-radius:24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);overflow:hidden;transition:.22s ease;cursor:pointer}
+.folder-card.open{border-color:rgba(217,119,6,.35);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.folder-head{display:flex;align-items:center;gap:14px;padding:20px;transition:.18s ease}
+.folder-card:hover .folder-head{background:rgba(255,255,255,.06)}
+.folder-icon{font-size:2rem;line-height:1;flex-shrink:0}
+.folder-meta{flex:1;min-width:0}
+.folder-name{font-family:"Sorts Mill Goudy",serif;font-size:1.4rem;font-weight:400}
+.folder-sub{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45);margin-top:3px}
+.folder-chevron{color:rgba(255,255,255,.3);font-size:.9rem;transition:transform .22s ease;flex-shrink:0}
+.folder-card.open .folder-chevron{transform:rotate(90deg)}
+.folder-body{max-height:0;overflow:hidden;transition:max-height .38s ease,padding .28s ease;padding:0 14px}
+.folder-card.open .folder-body{max-height:900px;padding:0 14px 14px}
+.plan-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
+.plan-row:last-child{margin-bottom:0}
+.plan-row:hover{background:rgba(255,255,255,.09)}
+.plan-name{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plan-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:.82rem;transition:.14s ease}
+.plan-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+.plan-btn.del:hover{background:rgba(255,60,60,.2);border-color:rgba(255,100,100,.3)}
+
+.del-popover{margin-top:6px;margin-bottom:2px;padding:12px 14px;border-radius:14px;background:rgba(30,10,10,.92);border:1px solid rgba(255,100,100,.35);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;gap:10px;animation:popIn .15s ease}
+@keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.del-popover-msg{font-size:.8rem;font-weight:800;color:rgba(255,255,255,.85);flex:1;line-height:1.35}
+.del-popover-actions{display:flex;gap:8px;flex-shrink:0}
+.del-popover-cancel{padding:7px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.09);color:#fff;font-size:.78rem;font-weight:800;cursor:pointer;font-family:Inter,sans-serif}
+.del-popover-ok{padding:7px 14px;border-radius:10px;border:1px solid rgba(255,100,100,.4);background:rgba(200,40,40,.28);color:#fca5a5;font-size:.78rem;font-weight:900;cursor:pointer;font-family:Inter,sans-serif}
+.del-popover-cancel:hover{background:rgba(255,255,255,.16)}
+.del-popover-ok:hover{background:rgba(200,40,40,.45)}
+
+@media(max-width:700px){.folders-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<script src="/js/impact-page-nav.js"></script>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow">Teacher Workspace</p>
+    <h1>DELF Exam Mocks</h1>
+    <p>Folders are created automatically when you save a mock exam from the builder.</p>
+  </section>
+
+  <div class="track-tabs" id="trackTabs">
+    <button class="track-tab active" data-track="Tout Public" type="button">DELF Tout Public</button>
+    <button class="track-tab" data-track="Junior" type="button">DELF Junior</button>
+    <button class="track-tab" data-track="Prim" type="button">DELF Prim</button>
+  </div>
+
+  <div class="action-bar">
+    <a class="new-btn" id="newMockBtn" href="/teacher/delf-mock-builder.html">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Mock Exam
+    </a>
+    <span class="folder-count" id="folderCount"></span>
+  </div>
+
+  <p class="section-label" id="sectionLabel">DELF Tout Public — Levels</p>
+  <div id="foldersWrap"><div class="empty-state"><h3>Loading...</h3></div></div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+  const wrap = document.getElementById("foldersWrap");
+  const folderCount = document.getElementById("folderCount");
+  const sectionLabel = document.getElementById("sectionLabel");
+  const newMockBtn = document.getElementById("newMockBtn");
+  let allMocks = [];
+  let openFolder = null;
+  let currentTrack = "Tout Public";
+  const LEVELS = ["A1","A2","B1","B2"];
+
+  function showDeletePopover(anchorRow, msg){
+    document.querySelectorAll(".del-popover").forEach(p=>p.remove());
+    return new Promise(resolve=>{
+      const pop = document.createElement("div");
+      pop.className = "del-popover";
+      pop.innerHTML = `<span class="del-popover-msg">${msg}</span>
+        <div class="del-popover-actions">
+          <button class="del-popover-cancel" type="button">Cancel</button>
+          <button class="del-popover-ok" type="button">Delete</button>
+        </div>`;
+      anchorRow.after(pop);
+      pop.scrollIntoView({behavior:"smooth",block:"nearest"});
+      const close = r=>{ pop.remove(); document.removeEventListener("click", outside); resolve(r); };
+      pop.querySelector(".del-popover-ok").onclick = e=>{ e.stopPropagation(); close(true); };
+      pop.querySelector(".del-popover-cancel").onclick = e=>{ e.stopPropagation(); close(false); };
+      const outside = e=>{ if(!pop.contains(e.target)) close(false); };
+      setTimeout(()=>document.addEventListener("click", outside), 50);
+    });
+  }
+
+  async function loadMocks(){
+    try{
+      const snap = await db.collection("delfMocks").orderBy("updatedAt","desc").get();
+      allMocks = snap.docs.map(d=>({id:d.id,...d.data()}));
+    }catch(e){
+      const snap = await db.collection("delfMocks").get();
+      allMocks = snap.docs.map(d=>({id:d.id,...d.data()}));
+    }
+    render();
+  }
+
+  function render(){
+    sectionLabel.textContent = `DELF ${currentTrack} — Levels`;
+    newMockBtn.href = `/teacher/delf-mock-builder.html?track=${encodeURIComponent(currentTrack)}`;
+
+    const trackMocks = allMocks.filter(m => (m.track||"Tout Public") === currentTrack);
+    const map = {};
+    trackMocks.forEach(m=>{
+      const lvl = (m.level||"A1").trim();
+      if(!map[lvl]) map[lvl] = [];
+      map[lvl].push(m);
+    });
+
+    const levelsPresent = LEVELS.filter(l => map[l] && map[l].length);
+    folderCount.textContent = levelsPresent.length ? levelsPresent.length + " level" + (levelsPresent.length===1?"":"s") : "";
+
+    if(!levelsPresent.length){
+      wrap.innerHTML = `<div class="empty-state">
+        <h3>No mock exams yet</h3>
+        <p>Create a DELF ${currentTrack} mock exam and select a level in the builder.<br>The folder will appear here automatically.</p>
+      </div>`;
+      return;
+    }
+
+    wrap.innerHTML = `<div class="folders-grid" id="grid"></div>`;
+    const grid = document.getElementById("grid");
+
+    LEVELS.forEach(level=>{
+      if(!map[level] || !map[level].length) return;
+      const mocks = map[level];
+      const card = document.createElement("div");
+      card.className = "folder-card" + (openFolder===level?" open":"");
+      card.dataset.level = level;
+
+      const rows = mocks.map(m=>`
+        <div class="plan-row">
+          <span class="plan-name">${m.title||"Untitled Mock Exam"}</span>
+          <button class="plan-btn view-btn" data-id="${m.id}" title="Preview">👁</button>
+          <button class="plan-btn edit-btn" data-id="${m.id}" title="Edit">✏️</button>
+          <button class="plan-btn del del-btn" data-id="${m.id}" data-title="${(m.title||"Untitled Mock Exam").replace(/"/g,"&quot;")}" title="Delete">✕</button>
+        </div>`).join("");
+
+      card.innerHTML = `
+        <div class="folder-head">
+          <span class="folder-icon">${openFolder===level?"📂":"📁"}</span>
+          <div class="folder-meta">
+            <div class="folder-name">DELF ${level}</div>
+            <div class="folder-sub">${mocks.length} mock exam${mocks.length===1?"":"s"}</div>
+          </div>
+          <span class="folder-chevron">›</span>
+        </div>
+        <div class="folder-body">${rows}</div>`;
+      grid.appendChild(card);
+    });
+
+    bindEvents();
+  }
+
+  function bindEvents(){
+    const grid = document.getElementById("grid");
+    if(!grid) return;
+
+    grid.addEventListener("click", async function(e){
+      const delBtn = e.target.closest(".del-btn");
+      if(delBtn){
+        e.stopPropagation();
+        const anchorRow = delBtn.closest(".plan-row");
+        const ok = await showDeletePopover(anchorRow, `Delete &ldquo;${delBtn.dataset.title}&rdquo;?`);
+        if(!ok) return;
+        await db.collection("delfMocks").doc(delBtn.dataset.id).delete();
+        allMocks = allMocks.filter(m=>m.id!==delBtn.dataset.id);
+        const cardLevel = delBtn.closest(".folder-card").dataset.level;
+        const remaining = allMocks.filter(m=>(m.level||"A1")===cardLevel && (m.track||"Tout Public")===currentTrack);
+        if(!remaining.length) openFolder = null;
+        render();
+        return;
+      }
+      const viewBtn = e.target.closest(".view-btn");
+      if(viewBtn){ e.stopPropagation(); location.href = "/teacher/delf-mock-view.html?id="+encodeURIComponent(viewBtn.dataset.id); return; }
+      const editBtn = e.target.closest(".edit-btn");
+      if(editBtn){ e.stopPropagation(); location.href = "/teacher/delf-mock-builder.html?edit="+encodeURIComponent(editBtn.dataset.id); return; }
+      const card = e.target.closest(".folder-card");
+      if(card){
+        const level = card.dataset.level;
+        if(openFolder===level){
+          openFolder = null; card.classList.remove("open"); card.querySelector(".folder-icon").textContent="📁";
+        } else {
+          document.querySelectorAll(".folder-card.open").forEach(c=>{c.classList.remove("open");c.querySelector(".folder-icon").textContent="📁";});
+          openFolder = level; card.classList.add("open"); card.querySelector(".folder-icon").textContent="📂";
+        }
+      }
+    });
+
+    document.addEventListener("click", function(e){
+      if(!e.target.closest(".folder-card") && !e.target.closest(".del-popover")){
+        document.querySelectorAll(".folder-card.open").forEach(c=>{
+          c.classList.remove("open");
+          const fi=c.querySelector(".folder-icon"); if(fi) fi.textContent="📁";
+        });
+        openFolder = null;
+      }
+    });
+  }
+
+  document.getElementById("trackTabs").addEventListener("click", function(e){
+    const tab = e.target.closest(".track-tab");
+    if(!tab) return;
+    document.querySelectorAll(".track-tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    currentTrack = tab.dataset.track;
+    openFolder = null;
+    render();
+  });
+
+  await loadMocks();
+});
+</script>
+<script src="/js/impact-round-icons.js?v=001"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\delf-mock-builder.html (MAIN FILE)
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\delf-mock-builder.html
+CHARS:  39874
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DELF Mock Builder | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;overflow-x:hidden}
+body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
+.lp-nav{position:fixed;top:24px;left:28px;z-index:99999;display:flex;gap:12px}
+.lp-icon-btn{width:46px;height:46px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px)}
+.lp-icon-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.page{position:relative;z-index:20;width:min(1320px,96vw);margin:0 auto;padding:108px 0 80px}
+.workspace{display:grid;grid-template-columns:270px minmax(0,1fr) 250px;gap:18px;height:calc(100vh - 108px)}
+.panel{border-radius:28px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.28)}
+.blocks-panel{padding:18px;height:100%;overflow-y:auto;align-self:start}
+.settings-panel{padding:22px;height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:16px;align-self:start}
+.panel-title{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:8px;margin-top:18px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,.08)}
+.panel-title:first-child{margin-top:0}
+.block-group{display:flex;flex-direction:column;gap:5px}
+.block-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;transition:.15s ease;text-align:left}
+.block-btn:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.22);transform:translateX(3px)}
+.block-icon{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:rgba(217,119,6,.18);flex-shrink:0;font-size:.68rem;font-weight:900;color:#fbbf24}
+.block-icon svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2}
+.canvas-panel{background:#fff;border-radius:24px;box-shadow:0 8px 40px rgba(0,0,0,.22);height:100%;display:flex;flex-direction:column;overflow:hidden}
+.canvas-toolbar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#f4f6f9;border-bottom:1px solid #e4e7ec;flex-wrap:wrap}
+.tbtn{padding:6px 12px;border-radius:9px;border:1px solid #dde1e8;background:#fff;color:#374151;font-size:.76rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:.12s}
+.tbtn:hover{background:#eef0f4}
+.canvas{padding:28px 32px;flex:1;overflow-y:auto;color:#374151}
+.canvas-empty{text-align:center;padding:80px 40px;color:#b0b8c8;font-size:.92rem;font-weight:600;border:2px dashed #e4e7ec;border-radius:16px}
+.c-block{position:relative;margin-bottom:14px;border-radius:12px;border:2px solid transparent;transition:.15s ease;cursor:pointer}
+.c-block:hover{border-color:#e8ebf0}
+.c-block.selected{border-color:#d97706 !important;background:#fffbeb !important}
+.c-block-inner{padding:18px 20px}
+.block-actions{display:none;position:absolute;top:-16px;left:50%;transform:translateX(-50%);background:#1e293b;border-radius:10px;padding:4px 6px;gap:2px;z-index:200;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.c-block.selected .block-actions{display:flex}
+.act-btn{width:26px;height:26px;border-radius:7px;border:none;background:transparent;color:#cbd5e1;cursor:pointer;display:grid;place-items:center;font-size:.72rem;transition:.1s}
+.act-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.act-btn.danger:hover{background:rgba(239,68,68,.3);color:#fca5a5}
+.act-divider{width:1px;background:rgba(255,255,255,.12);height:16px;margin:0 3px;align-self:center}
+
+.delf-section-header{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid #d97706;margin-bottom:4px}
+.delf-section-icon{width:40px;height:40px;border-radius:10px;background:#fef3c7;color:#b45309;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.delf-section-icon svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8}
+.delf-section-title{font-size:1.4rem;font-weight:800;color:#78350f;outline:none;flex:1}
+.delf-section-points{font-size:.8rem;font-weight:800;color:#b45309;background:#fef3c7;padding:5px 12px;border-radius:999px}
+
+.delf-audio-zone{border:2px dashed #d1d5db;border-radius:12px;padding:24px;text-align:center;color:#9ca3af;cursor:pointer;transition:.15s;margin-top:10px}
+.delf-audio-zone:hover{border-color:#d97706;color:#d97706}
+.delf-audio-player{display:none;margin-top:10px}
+.delf-audio-player.show{display:block}
+.delf-audio-player audio{width:100%}
+.delf-audio-status{font-size:.76rem;font-weight:700;color:#9ca3af;margin-top:6px}
+
+.delf-passage-box{border:1.5px solid #e0e3e8;border-radius:10px;padding:16px;background:#fafbfc;margin-top:10px;min-height:120px;outline:none;font-size:.9rem;line-height:1.7;color:#374151}
+.delf-passage-box:empty:before{content:attr(data-ph);color:#b0b8c8}
+
+.delf-question-row{border:1.5px solid #e0e3e8;border-radius:10px;padding:14px;margin-top:10px;background:#fff}
+.delf-question-text{font-size:.9rem;font-weight:700;color:#0f172a;outline:none;margin-bottom:8px}
+.delf-answer-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.delf-answer-opt{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;border:1.5px solid #e0e3e8;font-size:.84rem;color:#374151}
+.delf-answer-opt input{accent-color:#d97706}
+.delf-answer-opt span{outline:none;flex:1}
+.delf-add-question{margin-top:10px;padding:8px 14px;border-radius:9px;border:1.5px dashed #d1d5db;background:transparent;color:#9ca3af;font-size:.8rem;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;width:100%}
+.delf-add-question:hover{border-color:#d97706;color:#d97706}
+.delf-remove-question{background:transparent;border:none;color:#dc2626;cursor:pointer;font-size:.72rem;font-weight:800;float:right}
+
+.delf-prompt-box{border:1.5px solid #e0e3e8;border-radius:10px;padding:16px;background:#fafbfc;margin-top:10px;outline:none;font-size:.9rem;line-height:1.7;color:#374151;min-height:80px}
+.delf-prompt-box:empty:before{content:attr(data-ph);color:#b0b8c8}
+.delf-meta-row{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+.delf-meta-field{flex:1;min-width:140px}
+.delf-meta-field label{display:block;font-size:.7rem;font-weight:900;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.delf-meta-field input{width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid #e0e3e8;font-family:Inter,sans-serif;font-size:.84rem;color:#374151}
+
+.cb-header{font-size:2rem;font-weight:800;color:#0f172a;line-height:1.2;outline:none;min-width:10px}
+.cb-text{font-size:.93rem;color:#4b5563;line-height:1.7;outline:none;min-width:10px}
+
+.settings-label{font-size:.72rem;font-weight:900;color:rgba(255,255,255,.55);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.05em}
+.settings-input{width:100%;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.88rem;outline:none}
+.settings-select{width:100%;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.88rem;outline:none}
+.settings-select option{color:#111}
+.settings-divider{height:1px;background:rgba(255,255,255,.09);margin:4px 0}
+.ctrl-btn{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.86rem;cursor:pointer;transition:.15s}
+.ctrl-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+.ctrl-btn.primary{background:rgba(217,119,6,.22);border-color:rgba(217,119,6,.45);color:#fbbf24}
+.ctrl-btn.primary:hover{background:rgba(217,119,6,.32)}
+.save-tick{text-align:center;color:#86efac;font-weight:900;height:22px;opacity:0;transition:.2s;font-size:1rem}
+.save-tick.show{opacity:1}
+.panel-heading{font-family:"Sorts Mill Goudy",serif;font-size:1.05rem;font-weight:400;color:rgba(255,255,255,.88);margin-bottom:2px}
+
+@media(max-width:1024px){.workspace{grid-template-columns:230px 1fr 210px}}
+@media(max-width:800px){.workspace{grid-template-columns:1fr;height:auto}.blocks-panel,.settings-panel{height:auto;max-height:400px}}
+
+.assign-levels-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.assign-level-chip{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-size:.8rem;font-weight:800;color:rgba(255,255,255,.7);transition:.15s}
+.assign-level-chip:hover{background:rgba(255,255,255,.13)}
+.assign-level-chip.checked{background:rgba(217,119,6,.22);border-color:rgba(217,119,6,.5);color:#fff}
+.assign-level-chip input{display:none}
+
+.learner-picker-list{max-height:160px;overflow-y:auto;margin-top:6px;border-radius:10px;background:rgba(255,255,255,.04);display:none}
+.learner-picker-list.show{display:block}
+.learner-picker-row{padding:9px 12px;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer;transition:.12s}
+.learner-picker-row:hover{background:rgba(255,255,255,.1)}
+.assign-learners-selected{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.assigned-learner-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);font-size:.76rem;font-weight:700;color:#fff}
+.assigned-learner-chip button{background:transparent;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:.8rem;padding:0;line-height:1}
+.assigned-learner-chip button:hover{color:#fca5a5}
+.ctrl-btn.publish{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.42);color:#6ee7b7}
+.ctrl-btn.publish:hover{background:rgba(16,185,129,.3)}
+.ctrl-btn.publish[disabled]{opacity:.45;cursor:default;transform:none}
+.status-pill-wrap{display:flex;flex-direction:column;gap:5px}
+.status-pill{align-self:flex-start;padding:5px 13px;border-radius:999px;font-size:.7rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+.status-pill.draft{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.status-pill.published{background:rgba(16,185,129,.2);color:#6ee7b7}
+.status-note{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.4);line-height:1.5}
+.act-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+<nav class="lp-nav">
+  <a class="lp-icon-btn" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+  <a class="lp-icon-btn" href="/teacher/delf-mocks.html" title="Back">
+    <svg viewBox="0 0 24 24"><path d="M15 5.5 8.5 12 15 18.5"/><path d="M9 12h11"/></svg>
+  </a>
+</nav>
+<main class="page">
+<section class="workspace">
+<aside class="panel blocks-panel">
+  <p class="panel-title">Structure</p>
+  <div class="block-group">
+    <button class="block-btn" data-block="sectionheader" type="button"><span class="block-icon">&sect;</span>Section Header</button>
+    <button class="block-btn" data-block="header" type="button"><span class="block-icon">H1</span>Header</button>
+    <button class="block-btn" data-block="text" type="button"><span class="block-icon">T</span>Instructions Text</button>
+  </div>
+  <p class="panel-title">Comprehension Orale</p>
+  <div class="block-group">
+    <button class="block-btn" data-block="listening" type="button">
+      <span class="block-icon"><svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></span>
+      Listening + Audio
+    </button>
+  </div>
+  <p class="panel-title">Comprehension Ecrite</p>
+  <div class="block-group">
+    <button class="block-btn" data-block="reading" type="button">
+      <span class="block-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+      Reading Passage
+    </button>
+  </div>
+  <p class="panel-title">Production Ecrite</p>
+  <div class="block-group">
+    <button class="block-btn" data-block="writing" type="button">
+      <span class="block-icon"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></span>
+      Written Production
+    </button>
+  </div>
+  <p class="panel-title">Production Orale</p>
+  <div class="block-group">
+    <button class="block-btn" data-block="speaking" type="button">
+      <span class="block-icon"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
+      Oral Production
+    </button>
+  </div>
+</aside>
+
+<section class="canvas-panel">
+  <div class="canvas-toolbar">
+    <button class="tbtn" id="undoBtn" type="button">Undo</button>
+    <button class="tbtn" id="clearBtn" type="button">Clear Canvas</button>
+  </div>
+  <div class="canvas" id="canvas">
+    <div class="canvas-empty" id="canvasEmpty">Build the mock exam by adding sections from the left.</div>
+  </div>
+</section>
+
+<aside class="panel settings-panel">
+  <p class="panel-heading">DELF Mock Builder</p>
+  <div class="settings-divider"></div>
+  <div>
+    <label class="settings-label">Exam Title</label>
+    <input class="settings-input" id="mockTitle" type="text" placeholder="e.g. DELF A2 Mock Exam #1">
+  </div>
+  <div>
+    <label class="settings-label">Track</label>
+    <select class="settings-select" id="mockTrack">
+      <option>Tout Public</option>
+      <option>Junior</option>
+      <option>Prim</option>
+    </select>
+  </div>
+  <div>
+    <label class="settings-label">Level</label>
+    <select class="settings-select" id="mockLevel">
+      <option>Absolute Beginner</option>
+      <option>A0</option><option>A1</option><option>A1.1</option>
+      <option>A2</option><option>B1</option><option>B2</option>
+    </select>
+  </div>
+  <div class="status-pill-wrap">
+    <span class="status-pill draft" id="statusPill">Draft</span>
+    <span class="status-note" id="statusNote">Not yet visible to learners.</span>
+  </div>
+  <div class="settings-divider"></div>
+  <button class="ctrl-btn primary" id="saveBtn" type="button">Save Draft</button>
+  <button class="ctrl-btn publish" id="publishBtn" type="button">Publish</button>
+  <button class="ctrl-btn" id="newBtn" type="button">New Exam</button>
+  <button class="ctrl-btn" id="viewBtn" type="button">Preview</button>
+  <span class="save-tick" id="saveTick">Saved</span>
+</aside>
+</section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+const db = firebase.firestore();
+const storage = firebase.storage();
+const canvas = document.getElementById("canvas");
+const canvasEmpty = document.getElementById("canvasEmpty");
+const titleInput = document.getElementById("mockTitle");
+const trackSelect = document.getElementById("mockTrack");
+const levelSelect = document.getElementById("mockLevel");
+const saveTick = document.getElementById("saveTick");
+
+const params = new URLSearchParams(location.search);
+let currentId = params.get("edit") || "";
+if(params.get("track")) trackSelect.value = params.get("track");
+
+let selectedBlock = null;
+let undoStack = [];
+
+function showEmpty(){ if(!canvas.querySelector(".c-block")) canvasEmpty.style.display=""; }
+function hideEmpty(){ canvasEmpty.style.display="none"; }
+function allBlocks(){ return Array.from(canvas.querySelectorAll(".c-block")); }
+function tick(){ saveTick.classList.add("show"); setTimeout(function(){saveTick.classList.remove("show");},1600); }
+function pushUndo(){ undoStack.push(serializeBlocks()); if(undoStack.length>40) undoStack.shift(); }
+
+function selectBlock(block){
+  allBlocks().forEach(function(b){ b.classList.remove("selected"); });
+  if(block){ block.classList.add("selected"); selectedBlock=block; } else { selectedBlock=null; }
+}
+canvas.addEventListener("click", function(e){ if(e.target===canvas||e.target===canvasEmpty) selectBlock(null); });
+
+const assignLevelsGroup = document.getElementById("assignLevelsGroup");
+if(assignLevelsGroup){
+  assignLevelsGroup.addEventListener("change", function(e){
+    const chip = e.target.closest(".assign-level-chip");
+    if(chip) chip.classList.toggle("checked", e.target.checked);
+  });
+}
+
+let allLearners = [];
+let selectedLearners = [];
+const learnerSearchInput = document.getElementById("learnerSearchInput");
+const learnerPickerList = document.getElementById("learnerPickerList");
+const assignLearnersSelected = document.getElementById("assignLearnersSelected");
+
+async function loadLearnersList(){
+  try{
+    const snap = await db.collection("impactPasskeys").where("role","==","Learner").get();
+    allLearners = snap.docs.map(function(d){
+      return { name: d.data().name || "Unnamed", level: d.data().level || "" };
+    });
+  }catch(e){ console.warn("Could not load learners list:", e); }
+}
+
+function renderSelectedLearnerChips(){
+  if(!assignLearnersSelected) return;
+  assignLearnersSelected.innerHTML = selectedLearners.map(function(name){
+    return "<span class=\"assigned-learner-chip\">" + name + "<button type=\"button\" data-remove-learner=\"" + name + "\">x</button></span>";
+  }).join("");
+}
+
+if(learnerSearchInput){
+  loadLearnersList();
+
+  learnerSearchInput.addEventListener("input", function(){
+    const q = learnerSearchInput.value.trim().toLowerCase();
+    if(!q){ learnerPickerList.classList.remove("show"); learnerPickerList.innerHTML=""; return; }
+    const matches = allLearners.filter(function(l){
+      return l.name.toLowerCase().includes(q) && !selectedLearners.includes(l.name);
+    });
+    if(!matches.length){ learnerPickerList.classList.remove("show"); learnerPickerList.innerHTML=""; return; }
+    learnerPickerList.innerHTML = matches.map(function(l){
+      return "<div class=\"learner-picker-row\" data-pick-learner=\"" + l.name + "\">" + l.name + " <span style=\"opacity:.5\">(" + (l.level||"no level") + ")</span></div>";
+    }).join("");
+    learnerPickerList.classList.add("show");
+  });
+
+  learnerPickerList.addEventListener("click", function(e){
+    const row = e.target.closest("[data-pick-learner]");
+    if(!row) return;
+    const name = row.dataset.pickLearner;
+    if(!selectedLearners.includes(name)) selectedLearners.push(name);
+    renderSelectedLearnerChips();
+    learnerSearchInput.value = "";
+    learnerPickerList.classList.remove("show");
+    learnerPickerList.innerHTML = "";
+  });
+
+  assignLearnersSelected.addEventListener("click", function(e){
+    const btn = e.target.closest("[data-remove-learner]");
+    if(!btn) return;
+    selectedLearners = selectedLearners.filter(function(n){ return n !== btn.dataset.removeLearner; });
+    renderSelectedLearnerChips();
+  });
+}
+
+function questionRowHtml(qid, data){
+  const opts = (data && data.options) ? data.options : ["Option A","Option B","Option C","Option D"];
+  const correctIdx = data && typeof data.correct === "number" ? data.correct : 0;
+  let optsHtml = "";
+  opts.forEach(function(o, i){
+    optsHtml += '<label class="delf-answer-opt"><input type="radio" name="correct_' + qid + '" data-qid="' + qid + '" data-optidx="' + i + '"' + (i===correctIdx?" checked":"") + '><span contenteditable="true">' + o + '</span></label>';
+  });
+  const questionText = (data && data.question) ? data.question : "";
+  return '<div class="delf-question-row" data-qid="' + qid + '">' +
+    '<button type="button" class="delf-remove-question" data-qid="' + qid + '">Remove</button>' +
+    '<div class="delf-question-text" contenteditable="true" data-ph="Type the question here...">' + questionText + '</div>' +
+    '<div class="delf-answer-options">' + optsHtml + '</div>' +
+  '</div>';
+}
+
+const TEMPLATES = {
+  sectionheader: { render: function(data){
+    const title = (data && data.title) ? data.title : "Comprehension Orale";
+    const points = (data && data.points) ? data.points : "25 points";
+    return '<div class="delf-section-header">' +
+      '<div class="delf-section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/></svg></div>' +
+      '<div class="delf-section-title" contenteditable="true">' + title + '</div>' +
+      '<div class="delf-section-points" contenteditable="true">' + points + '</div>' +
+    '</div>';
+  }},
+  header: { render: function(){ return '<div class="cb-header" contenteditable="true">Exam Title</div>'; }},
+  text: { render: function(){ return '<div class="cb-text" contenteditable="true">Instructions for this section...</div>'; }},
+  listening: { render: function(data){
+    const src = (data && data.audioSrc) ? data.audioSrc : "";
+    const questions = (data && data.questions) ? data.questions : [{question:"",options:["Option A","Option B","Option C","Option D"],correct:0}];
+    let qHtml = "";
+    questions.forEach(function(q, i){ qHtml += questionRowHtml("q"+Date.now()+"_"+i, q); });
+    const audioZoneStyle = src ? 'style="display:none"' : "";
+    const playerShowClass = src ? " show" : "";
+    return '<div class="delf-section-header">' +
+        '<div class="delf-section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></div>' +
+        '<div class="delf-section-title" contenteditable="true">Comprehension Orale - Exercice</div>' +
+        '<div class="delf-section-points" contenteditable="true">Points</div>' +
+      '</div>' +
+      '<div class="delf-audio-zone" ' + audioZoneStyle + '>Click to upload listening audio</div>' +
+      '<input type="file" class="delf-audio-input" accept="audio/*" style="display:none">' +
+      '<div class="delf-audio-player' + playerShowClass + '"><audio src="' + src + '" controls></audio></div>' +
+      '<div class="delf-audio-status"></div>' +
+      '<div class="delf-questions-wrap">' + qHtml + '</div>' +
+      '<button type="button" class="delf-add-question">+ Add question</button>';
+  }},
+  reading: { render: function(data){
+    const passage = (data && data.passage) ? data.passage : "";
+    const questions = (data && data.questions) ? data.questions : [{question:"",options:["Option A","Option B","Option C","Option D"],correct:0}];
+    let qHtml = "";
+    questions.forEach(function(q, i){ qHtml += questionRowHtml("q"+Date.now()+"_"+i, q); });
+    return '<div class="delf-section-header">' +
+        '<div class="delf-section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>' +
+        '<div class="delf-section-title" contenteditable="true">Comprehension Ecrite - Exercice</div>' +
+        '<div class="delf-section-points" contenteditable="true">Points</div>' +
+      '</div>' +
+      '<div class="delf-passage-box" contenteditable="true" data-ph="Paste or type the reading passage here...">' + passage + '</div>' +
+      '<div class="delf-questions-wrap">' + qHtml + '</div>' +
+      '<button type="button" class="delf-add-question">+ Add question</button>';
+  }},
+  writing: { render: function(data){
+    const prompt = (data && data.prompt) ? data.prompt : "";
+    const wordCount = (data && data.wordCount) ? data.wordCount : "";
+    const timeLimit = (data && data.timeLimit) ? data.timeLimit : "";
+    return '<div class="delf-section-header">' +
+        '<div class="delf-section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div>' +
+        '<div class="delf-section-title" contenteditable="true">Production Ecrite</div>' +
+        '<div class="delf-section-points" contenteditable="true">Points</div>' +
+      '</div>' +
+      '<div class="delf-prompt-box" contenteditable="true" data-ph="Write the essay/letter prompt here...">' + prompt + '</div>' +
+      '<div class="delf-meta-row">' +
+        '<div class="delf-meta-field"><label>Word Count Target</label><input type="text" class="delf-wordcount" placeholder="e.g. 160-180 words" value="' + wordCount + '"></div>' +
+        '<div class="delf-meta-field"><label>Time Limit (minutes)</label><input type="text" class="delf-timelimit" placeholder="e.g. 45" value="' + timeLimit + '"></div>' +
+      '</div>';
+  }},
+  speaking: { render: function(data){
+    const prompt = (data && data.prompt) ? data.prompt : "";
+    const prepTime = (data && data.prepTime) ? data.prepTime : "";
+    const speakTime = (data && data.speakTime) ? data.speakTime : "";
+    return '<div class="delf-section-header">' +
+        '<div class="delf-section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>' +
+        '<div class="delf-section-title" contenteditable="true">Production Orale</div>' +
+        '<div class="delf-section-points" contenteditable="true">Points</div>' +
+      '</div>' +
+      '<div class="delf-prompt-box" contenteditable="true" data-ph="Write the speaking prompt / topic here...">' + prompt + '</div>' +
+      '<div class="delf-meta-row">' +
+        '<div class="delf-meta-field"><label>Preparation Time (min)</label><input type="text" class="delf-preptime" placeholder="e.g. 10" value="' + prepTime + '"></div>' +
+        '<div class="delf-meta-field"><label>Speaking Time (min)</label><input type="text" class="delf-speaktime" placeholder="e.g. 5" value="' + speakTime + '"></div>' +
+      '</div>';
+  }}
+};
+
+function createBlock(type, data){
+  const tmpl = TEMPLATES[type];
+  if(!tmpl) return null;
+  const block = document.createElement("div");
+  block.className = "c-block";
+  block.setAttribute("data-type", type);
+  const actions = document.createElement("div");
+  actions.className = "block-actions";
+  actions.innerHTML = '<button class="act-btn danger" data-act="del" title="Delete block"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>';
+  const inner = document.createElement("div");
+  inner.className = "c-block-inner";
+  inner.innerHTML = tmpl.render(data);
+  block.appendChild(actions);
+  block.appendChild(inner);
+  bindBlock(block);
+  return block;
+}
+
+function bindBlock(block){
+  block.addEventListener("click", function(e){
+    if(e.target.closest(".block-actions")) return;
+    e.stopPropagation();
+    selectBlock(block);
+  });
+
+  block.querySelector(".block-actions").addEventListener("click", function(e){
+    e.stopPropagation();
+    const btn = e.target.closest("[data-act]"); if(!btn) return;
+    const act = btn.dataset.act;
+    if(act==="del"){ pushUndo(); block.remove(); selectedBlock=null; showEmpty(); }
+    if(act==="up"){ pushUndo(); const p=block.previousElementSibling; if(p&&p.classList.contains("c-block")) canvas.insertBefore(block,p); }
+    if(act==="down"){ pushUndo(); const n=block.nextElementSibling; if(n&&n.classList.contains("c-block")) canvas.insertBefore(n,block); }
+    if(act==="dupe"){ pushUndo(); const d=createBlock(block.dataset.type, extractData(block)); block.after(d); selectBlock(d); }
+  });
+
+  const audioZone = block.querySelector(".delf-audio-zone");
+  const audioInput = block.querySelector(".delf-audio-input");
+  const audioPlayer = block.querySelector(".delf-audio-player");
+  const audioStatus = block.querySelector(".delf-audio-status");
+
+  if(audioZone && audioInput){
+    audioZone.addEventListener("click", function(e){ e.stopPropagation(); audioInput.click(); });
+    audioInput.addEventListener("click", function(e){ e.stopPropagation(); });
+    audioInput.addEventListener("change", async function(e){
+      e.stopPropagation();
+      const file = audioInput.files[0];
+      if(!file) return;
+      audioStatus.textContent = "Uploading...";
+      try{
+        const ext = file.name.split(".").pop() || "mp3";
+        const path = "delfAudio/" + Date.now() + "_" + Math.random().toString(36).slice(2,8) + "." + ext;
+        const snap = await storage.ref(path).put(file);
+        const url = await snap.ref.getDownloadURL();
+        block.dataset.audioSrc = url;
+        audioPlayer.innerHTML = '<audio src="' + url + '" controls></audio>';
+        audioPlayer.classList.add("show");
+        audioZone.style.display = "none";
+        audioStatus.textContent = "";
+      }catch(err){
+        audioStatus.textContent = "Upload failed: " + err.message;
+      }
+    });
+  }
+
+  const addQBtn = block.querySelector(".delf-add-question");
+  if(addQBtn){
+    addQBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      pushUndo();
+      const wrap = block.querySelector(".delf-questions-wrap");
+      const qid = "q"+Date.now()+"_"+Math.random().toString(36).slice(2,6);
+      const div = document.createElement("div");
+      div.innerHTML = questionRowHtml(qid, {question:"",options:["Option A","Option B","Option C","Option D"],correct:0});
+      wrap.appendChild(div.firstElementChild);
+    });
+  }
+  const qWrap = block.querySelector(".delf-questions-wrap");
+  if(qWrap){
+    qWrap.addEventListener("click", function(e){
+      const rmBtn = e.target.closest(".delf-remove-question");
+      if(rmBtn){
+        e.stopPropagation();
+        pushUndo();
+        rmBtn.closest(".delf-question-row").remove();
+      }
+    });
+  }
+}
+
+document.querySelectorAll(".block-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    pushUndo();
+    hideEmpty();
+    const block = createBlock(btn.dataset.block);
+    if(!block) return;
+    if(selectedBlock && canvas.contains(selectedBlock)) selectedBlock.after(block);
+    else canvas.appendChild(block);
+    selectBlock(block);
+    block.scrollIntoView({behavior:"smooth",block:"nearest"});
+  });
+});
+
+document.getElementById("undoBtn").addEventListener("click", function(){
+  if(!undoStack.length) return;
+  rebuildFromBlocks(undoStack.pop());
+});
+document.getElementById("clearBtn").addEventListener("click", function(){
+  if(!confirm("Clear the entire exam canvas?")) return;
+  pushUndo();
+  allBlocks().forEach(function(b){ b.remove(); });
+  selectedBlock = null;
+  showEmpty();
+});
+
+function extractData(block){
+  const type = block.dataset.type;
+  const data = { type: type };
+
+  if(type==="sectionheader"){
+    data.title = block.querySelector(".delf-section-title").innerHTML;
+    data.points = block.querySelector(".delf-section-points").innerHTML;
+  }
+  if(type==="header"||type==="text"){
+    data.content = block.querySelector("[contenteditable]").innerHTML;
+  }
+  if(type==="listening"||type==="reading"){
+    const questions = Array.from(block.querySelectorAll(".delf-question-row")).map(function(row){
+      const question = row.querySelector(".delf-question-text").innerHTML;
+      const opts = Array.from(row.querySelectorAll(".delf-answer-opt"));
+      const options = opts.map(function(o){ return o.querySelector("span").innerHTML; });
+      let correct = 0;
+      opts.forEach(function(o, i){ if(o.querySelector("input").checked) correct = i; });
+      return { question: question, options: options, correct: correct };
+    });
+    data.questions = questions;
+    if(type==="listening") data.audioSrc = block.dataset.audioSrc || "";
+    if(type==="reading") data.passage = block.querySelector(".delf-passage-box").innerHTML;
+  }
+  if(type==="writing"){
+    data.prompt = block.querySelector(".delf-prompt-box").innerHTML;
+    data.wordCount = block.querySelector(".delf-wordcount").value;
+    data.timeLimit = block.querySelector(".delf-timelimit").value;
+  }
+  if(type==="speaking"){
+    data.prompt = block.querySelector(".delf-prompt-box").innerHTML;
+    data.prepTime = block.querySelector(".delf-preptime").value;
+    data.speakTime = block.querySelector(".delf-speaktime").value;
+  }
+  return data;
+}
+
+function serializeBlocks(){ return allBlocks().map(extractData); }
+
+function rebuildFromBlocks(blocks){
+  allBlocks().forEach(function(b){ b.remove(); });
+  selectedBlock = null;
+  if(!blocks || !blocks.length){ showEmpty(); return; }
+  hideEmpty();
+  blocks.forEach(function(data){
+    const block = createBlock(data.type, data);
+    if(!block) return;
+    canvas.appendChild(block);
+    if(data.type==="header"||data.type==="text"){
+      const ce = block.querySelector("[contenteditable]");
+      if(ce && data.content) ce.innerHTML = data.content;
+    }
+    if(data.type==="listening" && data.audioSrc){
+      block.dataset.audioSrc = data.audioSrc;
+    }
+  });
+}
+
+async function save(){
+  try{
+    const blocks = serializeBlocks();
+    const assignedLevels = Array.from(document.querySelectorAll("#assignLevelsGroup input:checked")).map(function(c){ return c.value; });
+    const payload = {
+      createdByTeacher: (sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || ""),
+      title: titleInput.value.trim() || "Untitled Mock Exam",
+      track: trackSelect.value,
+      level: levelSelect.value,
+      blocks: blocks,
+      version: 1,
+      updatedAt: new Date().toISOString()
+    };
+    if(!currentId){ payload.status = "draft"; }
+    if(currentId){
+      await db.collection("delfMocks").doc(currentId).set(payload, {merge:true});
+    } else {
+      const ref = await db.collection("delfMocks").add(payload);
+      currentId = ref.id;
+      history.replaceState(null,"","/teacher/delf-mock-builder.html?edit="+currentId);
+    }
+    tick();
+    return currentId;
+  }catch(err){
+    console.error("Save failed:", err);
+    alert("Save failed: " + err.message);
+    return null;
+  }
+}
+
+document.getElementById("saveBtn").addEventListener("click", async function(e){ e.preventDefault(); await save(); });
+document.getElementById("newBtn").addEventListener("click", function(e){
+  e.preventDefault();
+  currentId="";
+  titleInput.value="";
+  levelSelect.value="Absolute Beginner";
+  allBlocks().forEach(function(b){ b.remove(); });
+  selectedBlock=null;
+  showEmpty();
+  history.replaceState(null,"","/teacher/delf-mock-builder.html");
+});
+document.getElementById("viewBtn").addEventListener("click", async function(e){
+  e.preventDefault();
+  if(!titleInput.value.trim()){
+    titleInput.focus(); titleInput.style.border="1.5px solid #f87171";
+    setTimeout(function(){titleInput.style.border="";},2000);
+    return;
+  }
+  const id = await save();
+  if(id) window.open("/teacher/delf-mock-view.html?id="+encodeURIComponent(id),"_blank");
+});
+
+let autoSaveTimer = null;
+function scheduleAutoSave(){
+  const hasTitle = titleInput.value.trim().length > 0;
+  const hasBlocks = allBlocks().length > 0;
+  if(!hasTitle || !hasBlocks) return;
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(async function(){ await save(); }, 1500);
+}
+titleInput.addEventListener("input", scheduleAutoSave);
+trackSelect.addEventListener("change", scheduleAutoSave);
+levelSelect.addEventListener("change", scheduleAutoSave);
+new MutationObserver(function(){ scheduleAutoSave(); }).observe(canvas, {childList:true,subtree:false});
+
+async function load(){
+  if(!currentId) return;
+  const doc = await db.collection("delfMocks").doc(currentId).get();
+  if(!doc.exists) return;
+  const d = doc.data();
+  titleInput.value = d.title || "";
+  if(d.track) trackSelect.value = d.track;
+  if(d.level) levelSelect.value = d.level;
+  if(Array.isArray(d.assignedLevels)){
+    d.assignedLevels.forEach(function(lvl){
+      const cb = document.querySelector('#assignLevelsGroup input[value="' + lvl + '"]');
+      if(cb){ cb.checked = true; cb.closest(".assign-level-chip").classList.add("checked"); }
+    });
+  }
+  if(Array.isArray(d.assignedLearners)){
+    selectedLearners = d.assignedLearners.slice();
+    renderSelectedLearnerChips();
+  }
+  currentStatus = d.status || "draft";
+  renderStatus();
+  if(Array.isArray(d.blocks)) rebuildFromBlocks(d.blocks);
+}
+
+// ---- PUBLISH ----
+let currentStatus = "draft";
+
+function renderStatus(){
+  const pill = document.getElementById("statusPill");
+  const note = document.getElementById("statusNote");
+  const pubBtn = document.getElementById("publishBtn");
+  if(!pill || !pubBtn) return;
+  if(currentStatus === "published"){
+    pill.textContent = "Published";
+    pill.className = "status-pill published";
+    note.textContent = "Live. Share it with learners from the list page.";
+    pubBtn.disabled = true;
+    pubBtn.textContent = "Published";
+  }else{
+    pill.textContent = "Draft";
+    pill.className = "status-pill draft";
+    note.textContent = "Not yet visible to learners.";
+    pubBtn.disabled = false;
+    pubBtn.textContent = "Publish";
+  }
+}
+
+const _pubBtn = document.getElementById("publishBtn");
+if(_pubBtn){
+  _pubBtn.addEventListener("click", async function(e){
+    e.preventDefault();
+    if(!titleInput.value.trim()){
+      titleInput.focus();
+      titleInput.style.border = "1.5px solid #f87171";
+      setTimeout(function(){ titleInput.style.border = ""; }, 2000);
+      return;
+    }
+    if(!allBlocks().length){ alert("Add at least one block before publishing."); return; }
+    if(!confirm("Publish this DELF mock? Once published, editing or deleting it will require your passkey and be logged.")) return;
+
+    const id = await save();
+    if(!id) return;
+
+    const who = sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || "";
+    await db.collection("delfMocks").doc(id).set({
+      status: "published",
+      publishedAt: new Date().toISOString(),
+      publishedBy: who
+    }, { merge:true });
+
+    currentStatus = "published";
+    renderStatus();
+
+    if(window.ImpactPublish){
+      window.ImpactPublish.logAction({
+        action: "publish",
+        itemType: "delfMock",
+        itemId: id,
+        itemTitle: titleInput.value.trim(),
+        performedBy: who
+      });
+    }
+    tick();
+  });
+}
+
+window.addEventListener("load", function(){
+  if(window.ImpactTextToolbar) window.ImpactTextToolbar.attach("#canvas");
+  else console.warn("ImpactTextToolbar failed to load");
+});
+renderStatus();
+
+load();
+});
+</script>
+<script src="/js/impact-publish.js"></script>
+<script src="/js/impact-text-toolbar.js"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
