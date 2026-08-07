@@ -1,13 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Lesson Plans | Impact</title>
-<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
 <link rel="stylesheet" href="/css/impact-page-nav.css">
-<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-height:100vh}
@@ -16,38 +15,39 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b;min-he
 .eyebrow{text-transform:uppercase;letter-spacing:.34em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.55);margin-bottom:12px}
 h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);font-weight:400;line-height:1}
 .hero p{margin-top:12px;color:rgba(255,255,255,.6);font-weight:700}
-.action-bar{display:flex;align-items:center;gap:12px;margin-bottom:36px;flex-wrap:wrap}
+.action-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;gap:16px;flex-wrap:wrap}
 .new-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;text-decoration:none;transition:.18s ease;backdrop-filter:blur(12px)}
 .new-btn:hover{background:rgba(255,255,255,.17);transform:translateY(-2px)}
-.new-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;flex-shrink:0}
 .folder-count{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.45)}
 .section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
 .empty-state{text-align:center;padding:72px 40px;border:2px dashed rgba(255,255,255,.1);border-radius:28px;color:rgba(255,255,255,.35)}
 .empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.5rem;font-weight:400;margin-bottom:10px;color:rgba(255,255,255,.5)}
 .empty-state p{font-size:.86rem;font-weight:700;line-height:1.6}
-.folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 .folder-card{border-radius:24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);overflow:hidden;transition:.22s ease;cursor:pointer}
 .folder-card.open{border-color:rgba(255,255,255,.22);box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .folder-head{display:flex;align-items:center;gap:14px;padding:20px;transition:.18s ease}
 .folder-card:hover .folder-head{background:rgba(255,255,255,.06)}
 .folder-icon{font-size:2rem;line-height:1;flex-shrink:0}
 .folder-meta{flex:1;min-width:0}
-.folder-name{font-family:"Sorts Mill Goudy",serif;font-size:1.4rem;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.folder-name{font-family:"Sorts Mill Goudy",serif;font-size:1.35rem;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .folder-sub{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45);margin-top:3px}
-.folder-chevron{color:rgba(255,255,255,.3);font-size:.9rem;transition:transform .22s ease;flex-shrink:0}
+.folder-chevron{color:rgba(255,255,255,.3);font-size:.85rem;transition:transform .22s ease;flex-shrink:0}
 .folder-card.open .folder-chevron{transform:rotate(90deg)}
 .folder-body{max-height:0;overflow:hidden;transition:max-height .38s ease,padding .28s ease;padding:0 14px}
-.folder-card.open .folder-body{max-height:900px;padding:0 14px 14px}
-.plan-row{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
+.folder-card.open .folder-body{max-height:800px;padding:0 14px 14px}
+.plan-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
 .plan-row:last-child{margin-bottom:0}
 .plan-row:hover{background:rgba(255,255,255,.09)}
-.plan-name{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
-.plan-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;display:grid;place-items:center;font-size:.82rem;transition:.14s ease;flex-shrink:0}
-.plan-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
-.plan-btn.del:hover{background:rgba(255,60,60,.2);border-color:rgba(255,100,100,.3)}
-.loading{text-align:center;padding:48px;color:rgba(255,255,255,.4);font-weight:700}
+.plan-title{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plan-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.plan-icon-btn{width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.06);color:rgba(255,255,255,.72);cursor:pointer;display:grid;place-items:center;transition:.16s ease;flex-shrink:0}
+.plan-icon-btn svg{width:16px;height:16px}
+.plan-icon-btn:hover{background:rgba(255,255,255,.15);transform:translateY(-1px);color:#fff}
+.plan-icon-btn.open:hover{background:rgba(99,179,237,.22);border-color:rgba(99,179,237,.4);color:#bfe3ff}
+.plan-icon-btn.share:hover{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.4);color:#c4b5fd}
+.plan-icon-btn.delete:hover{background:rgba(255,80,80,.2);border-color:rgba(255,100,100,.4);color:#fca5a5}
 
-@media(max-width:700px){.folders-grid{grid-template-columns:1fr}}
 .del-popover{
   margin-top:6px;
   margin-bottom:2px;
@@ -95,9 +95,33 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 }
 .del-popover-cancel:hover{background:rgba(255,255,255,.16)}
 .del-popover-ok:hover{background:rgba(200,40,40,.45)}
+.row-badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;vertical-align:middle}
+.row-badge.pub{background:rgba(16,185,129,.2);color:#6ee7b7}
+.row-badge.dr{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
+.row-badge.shared{background:rgba(99,179,237,.18);color:#90cdf4}
+.share-overlay{display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:20px}
+.share-overlay.show{display:flex}
+.share-card{width:min(460px,100%);max-height:88vh;overflow-y:auto;background:#12151f;border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:26px}
+.share-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400;font-size:1.3rem;color:#fff;margin-bottom:16px}
+.share-label{display:block;font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);margin-bottom:7px}
+.share-input{width:100%;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.86rem;outline:none}
+.assign-levels-group{display:flex;flex-wrap:wrap;gap:8px}
+.assign-level-chip{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-size:.78rem;font-weight:800;color:rgba(255,255,255,.7)}
+.assign-level-chip.checked{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.5);color:#fff}
+.assign-level-chip input{display:none}
+.learner-picker-list{max-height:150px;overflow-y:auto;margin-top:6px;border-radius:10px;background:rgba(255,255,255,.04);display:none}
+.learner-picker-list.show{display:block}
+.learner-picker-row{padding:9px 12px;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer}
+.learner-picker-row:hover{background:rgba(255,255,255,.1)}
+.assign-learners-selected{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.assigned-learner-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);font-size:.75rem;font-weight:700;color:#fff}
+.assigned-learner-chip button{background:transparent;border:none;color:rgba(255,255,255,.5);cursor:pointer;padding:0}
+.share-actions{display:flex;gap:10px;margin-top:20px}
+.share-btn-ctl{flex:1;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.84rem;cursor:pointer}
+.share-btn-ctl.primary{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.45);color:#c4b5fd}
 </style>
+<link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
 </head>
-
 <body>
 <script src="/js/impact-global-bg.js"></script>
 <script src="/js/impact-page-nav.js"></script>
@@ -106,19 +130,19 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
   <section class="hero">
     <p class="eyebrow">Teacher Workspace</p>
     <h1>Lesson Plans</h1>
-    <p>Folders are created automatically when you save a lesson plan from the builder.</p>
+    <p>Folders are created automatically when you save a lesson from the builder.</p>
   </section>
-
   <div class="action-bar">
-    <a class="new-btn" href="/teacher/lesson-builder.html">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      New Lesson Plan
-    </a>
-    <span class="folder-count" id="folderCount"></span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a class="new-btn" href="/teacher/lesson-builder.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Lesson
+      </a>
+      <span class="folder-count" id="folderCount"></span>
+    </div>
   </div>
-
-  <p class="section-label">Folders</p>
-  <div id="foldersWrap"><div class="loading">Loading folders...</div></div>
+  <p class="section-label">Lesson Plan Logs</p>
+  <div id="foldersWrap"><div style="text-align:center;padding:48px;color:rgba(255,255,255,.4);font-weight:700">Loading folders...</div></div>
 </main>
 
 
@@ -126,7 +150,6 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
 <script src="/__/firebase/init.js"></script>
-
 <script>
 document.addEventListener("DOMContentLoaded", async function(){
   const db = firebase.firestore();
@@ -136,7 +159,6 @@ document.addEventListener("DOMContentLoaded", async function(){
   let openFolder = null;
 
   function showDeletePopover(anchorRow, msg){
-    // Remove any existing popover first
     document.querySelectorAll(".del-popover").forEach(p=>p.remove());
 
     return new Promise(resolve=>{
@@ -149,7 +171,6 @@ document.addEventListener("DOMContentLoaded", async function(){
           <button class="del-popover-ok" type="button">Delete</button>
         </div>`;
 
-      // Insert after the row that was clicked
       anchorRow.after(pop);
       pop.scrollIntoView({behavior:"smooth", block:"nearest"});
 
@@ -162,7 +183,6 @@ document.addEventListener("DOMContentLoaded", async function(){
       pop.querySelector(".del-popover-ok").onclick     = e=>{ e.stopPropagation(); close(true); };
       pop.querySelector(".del-popover-cancel").onclick = e=>{ e.stopPropagation(); close(false); };
 
-      // Click outside dismisses
       const outside = e=>{
         if(!pop.contains(e.target)) close(false);
       };
@@ -170,7 +190,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     });
   }
 
-  async function load(){
+  async function loadPlans(){
     try{
       const snap = await db.collection("lessonPlans").orderBy("updatedAt","desc").get();
       allPlans = snap.docs.map(d=>({id:d.id,...d.data()}));
@@ -182,136 +202,248 @@ document.addEventListener("DOMContentLoaded", async function(){
   }
 
   function render(){
-    // Group by level — each unique level = one folder
-    const map = {};
-    allPlans.forEach(p=>{
-      const lvl = (p.level||"Uncategorised").trim();
-      if(!map[lvl]) map[lvl]=[];
-      map[lvl].push(p);
+    const folderMap = {};
+    allPlans.forEach(plan=>{
+      const lvl = (plan.level || "Uncategorised").trim();
+      if(!folderMap[lvl]) folderMap[lvl] = [];
+      folderMap[lvl].push(plan);
     });
-    const levels = Object.keys(map).sort();
-
-    folderCount.textContent = levels.length
-      ? levels.length + " folder" + (levels.length===1?"":"s")
-      : "";
+    const levels = Object.keys(folderMap).sort();
+    folderCount.textContent = levels.length ? `${levels.length} folder${levels.length===1?"":"s"}` : "";
 
     if(!levels.length){
-      wrap.innerHTML = `<div class="empty-state">
-        <h3>No folders yet</h3>
-        <p>Create a lesson plan in the builder and select a level.<br>The folder will appear here automatically.</p>
-      </div>`;
+      wrap.innerHTML = `<div class="empty-state"><h3>No folders yet</h3><p>Create a lesson and select a level in the builder.<br>The folder will appear here automatically.</p></div>`;
       return;
     }
 
-    wrap.innerHTML = `<div class="folders-grid" id="grid"></div>`;
-    const grid = document.getElementById("grid");
+    wrap.innerHTML = `<div class="folders-grid" id="foldersGrid"></div>`;
+    const grid = document.getElementById("foldersGrid");
 
     levels.forEach(level=>{
-      const plans = map[level];
+      const plans = folderMap[level];
       const card = document.createElement("div");
       card.className = "folder-card" + (openFolder===level?" open":"");
       card.dataset.level = level;
-
-      const rows = plans.map(p=>`
-        <div class="plan-row">
-          <span class="plan-name">${p.title||p.name||"Untitled Lesson"}</span>
-          <button class="plan-btn view-btn" data-id="${p.id}" title="Preview">👁</button>
-          <button class="plan-btn edit-btn" data-id="${p.id}" title="Edit">✏️</button>
-          <button class="plan-btn del del-btn" data-id="${p.id}" data-title="${(p.title||p.name||"Untitled Lesson").replace(/"/g,"&quot;")}" title="Delete">✕</button>
-        </div>`).join("");
-
+      const planRows = plans.map(function(plan){
+        const isPub = (plan.status === "published");
+        const safeTitle = (plan.title||"Untitled Lesson").replace(/"/g,"&quot;");
+        const shared = ((plan.assignedLevels&&plan.assignedLevels.length)||(plan.assignedLearners&&plan.assignedLearners.length));
+        return '<div class="plan-row">'
+          + '<span class="plan-title">' + (plan.title||"Untitled Lesson")
+          + (isPub ? '<span class="row-badge pub">Published</span>' : '<span class="row-badge dr">Draft</span>')
+          + (isPub && shared ? '<span class="row-badge shared">Shared</span>' : '')
+          + '</span>'
+          + '<div class="plan-actions">'
+          + '<button class="plan-icon-btn open view-btn" data-id="' + plan.id + '" title="' + (isPub?'Open':'Preview') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>'
+          + (isPub ? '<button class="plan-icon-btn share share-btn" data-id="' + plan.id + '" data-title="' + safeTitle + '" title="Share with learners"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg></button>' : '')
+          + '<button class="plan-icon-btn edit edit-btn" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'
+          + '<button class="plan-icon-btn delete del" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>'
+          + '</div>'
+          + '</div>';
+      }).join("");
       card.innerHTML = `
         <div class="folder-head">
           <span class="folder-icon">${openFolder===level?"📂":"📁"}</span>
           <div class="folder-meta">
             <div class="folder-name">${level}</div>
-            <div class="folder-sub">${plans.length} lesson plan${plans.length===1?"":"s"}</div>
+            <div class="folder-sub">${plans.length} lesson${plans.length===1?"":"s"}</div>
           </div>
           <span class="folder-chevron">›</span>
         </div>
-        <div class="folder-body">${rows}</div>`;
-
+        <div class="folder-body">${planRows}</div>`;
       grid.appendChild(card);
     });
-
     bindEvents();
   }
 
   function bindEvents(){
-    const grid = document.getElementById("grid");
+    const grid = document.getElementById("foldersGrid");
     if(!grid) return;
-
     grid.addEventListener("click", async function(e){
-
-      // Delete
-      const delBtn = e.target.closest(".del-btn");
+      const shareBtn = e.target.closest(".share-btn");
+      if(shareBtn){
+        e.stopPropagation();
+        openShareDialog(shareBtn.dataset.id, shareBtn.dataset.title);
+        return;
+      }
+      const delBtn = e.target.closest(".del");
       if(delBtn){
         e.stopPropagation();
-        const anchorRow = delBtn.closest(".plan-row");
-        const ok = await showDeletePopover(anchorRow, `Delete &ldquo;${delBtn.dataset.title}&rdquo;?`);
-        if(!ok) return;
+        if(delBtn.dataset.pub === "1"){
+          const auth = await window.ImpactPublish.requirePasskey("Delete published lesson", true);
+          if(!auth) return;
+          await window.ImpactPublish.logAction({
+            action:"delete", itemType:"lesson", itemId:delBtn.dataset.id,
+            itemTitle:delBtn.dataset.title, performedBy:auth.name, performedRole:auth.role
+          });
+        }else{
+          const anchorRow = delBtn.closest(".plan-row");
+          const ok = await showDeletePopover(anchorRow, `Delete &ldquo;${delBtn.dataset.title||"this lesson"}&rdquo;?`);
+          if(!ok) return;
+        }
         await db.collection("lessonPlans").doc(delBtn.dataset.id).delete();
         allPlans = allPlans.filter(p=>p.id!==delBtn.dataset.id);
-        const cardLevel = delBtn.closest(".folder-card").dataset.level;
-        if(!allPlans.find(p=>(p.level||"Uncategorised")===cardLevel)) openFolder=null;
-        render();
-        return;
+        const level = delBtn.closest(".folder-card").dataset.level;
+        if(!allPlans.filter(p=>(p.level||"Uncategorised")===level).length) openFolder=null;
+        render(); return;
       }
-
-      // Preview
       const viewBtn = e.target.closest(".view-btn");
-      if(viewBtn){
-        e.stopPropagation();
-        location.href = "/teacher/lesson-view.html?id=" + encodeURIComponent(viewBtn.dataset.id);
-        return;
-      }
-
-      // Edit
+      if(viewBtn){ e.stopPropagation(); location.href="/teacher/lesson-view.html?id="+encodeURIComponent(viewBtn.dataset.id); return; }
       const editBtn = e.target.closest(".edit-btn");
       if(editBtn){
         e.stopPropagation();
-        location.href = "/teacher/lesson-builder.html?edit=" + encodeURIComponent(editBtn.dataset.id);
+        if(editBtn.dataset.pub === "1"){
+          const auth = await window.ImpactPublish.requirePasskey("Edit published lesson", false);
+          if(!auth) return;
+          await window.ImpactPublish.logAction({
+            action:"edit", itemType:"lesson", itemId:editBtn.dataset.id,
+            itemTitle:editBtn.dataset.title, performedBy:auth.name, performedRole:auth.role
+          });
+        }
+        location.href="/teacher/lesson-builder.html?edit="+encodeURIComponent(editBtn.dataset.id);
         return;
       }
-
-      // Toggle folder
       const card = e.target.closest(".folder-card");
       if(card){
         const level = card.dataset.level;
-        if(openFolder===level){
-          openFolder = null;
-          card.classList.remove("open");
-          card.querySelector(".folder-icon").textContent = "📁";
-        } else {
-          document.querySelectorAll(".folder-card.open").forEach(c=>{
-            c.classList.remove("open");
-            c.querySelector(".folder-icon").textContent = "📁";
-          });
-          openFolder = level;
-          card.classList.add("open");
-          card.querySelector(".folder-icon").textContent = "📂";
+        if(openFolder===level){ openFolder=null; card.classList.remove("open"); card.querySelector(".folder-icon").textContent="📁"; }
+        else {
+          document.querySelectorAll(".folder-card.open").forEach(c=>{ c.classList.remove("open"); c.querySelector(".folder-icon").textContent="📁"; });
+          openFolder=level; card.classList.add("open"); card.querySelector(".folder-icon").textContent="📂";
         }
-      }
-    });
-
-    // Click outside closes folders
-    document.addEventListener("click", function(e){
-      if(!e.target.closest(".folder-card") && !e.target.closest(".confirm-card")){
-        document.querySelectorAll(".folder-card.open").forEach(c=>{
-          c.classList.remove("open");
-          const fi = c.querySelector(".folder-icon");
-          if(fi) fi.textContent = "📁";
-        });
-        openFolder = null;
       }
     });
   }
 
-  await load();
+  await loadPlans();
+
+let shareId = null;
+let shareLearners = [];
+let allLearnersCache = [];
+
+async function loadLearnersOnce(){
+  if(allLearnersCache.length) return;
+  try{
+    const snap = await db.collection("impactPasskeys").where("role","==","Learner").get();
+    allLearnersCache = snap.docs.map(function(d){
+      return { name: d.data().name || "Unnamed", level: d.data().level || "" };
+    });
+  }catch(e){ console.warn("learners load:", e); }
+}
+
+function renderShareChips(){
+  const wrap = document.getElementById("shareSelected");
+  if(!wrap) return;
+  wrap.innerHTML = shareLearners.map(function(n){
+    return '<span class="assigned-learner-chip">' + n + '<button type="button" data-rm="' + n + '">x</button></span>';
+  }).join("");
+}
+
+async function openShareDialog(id, title){
+  shareId = id;
+  await loadLearnersOnce();
+  const doc = await db.collection("lessonPlans").doc(id).get();
+  const d = doc.exists ? doc.data() : {};
+  shareLearners = Array.isArray(d.assignedLearners) ? d.assignedLearners.slice() : [];
+
+  document.getElementById("shareTitle").textContent = "Share: " + (title || "Lesson");
+  document.querySelectorAll("#shareLevels input").forEach(function(cb){
+    cb.checked = Array.isArray(d.assignedLevels) && d.assignedLevels.indexOf(cb.value) >= 0;
+    cb.closest(".assign-level-chip").classList.toggle("checked", cb.checked);
+  });
+  document.getElementById("shareSearch").value = "";
+  document.getElementById("sharePicker").classList.remove("show");
+  renderShareChips();
+  document.getElementById("shareOverlay").classList.add("show");
+}
+
+document.getElementById("shareLevels").addEventListener("change", function(e){
+  const chip = e.target.closest(".assign-level-chip");
+  if(chip) chip.classList.toggle("checked", e.target.checked);
+});
+
+document.getElementById("shareSearch").addEventListener("input", function(){
+  const q = this.value.trim().toLowerCase();
+  const list = document.getElementById("sharePicker");
+  if(!q){ list.classList.remove("show"); list.innerHTML=""; return; }
+  const matches = allLearnersCache.filter(function(l){
+    return l.name.toLowerCase().indexOf(q) >= 0 && shareLearners.indexOf(l.name) < 0;
+  });
+  if(!matches.length){ list.classList.remove("show"); list.innerHTML=""; return; }
+  list.innerHTML = matches.map(function(l){
+    return '<div class="learner-picker-row" data-pick="' + l.name + '">' + l.name + ' <span style="opacity:.5">(' + (l.level||"no level") + ')</span></div>';
+  }).join("");
+  list.classList.add("show");
+});
+
+document.getElementById("sharePicker").addEventListener("click", function(e){
+  const row = e.target.closest("[data-pick]");
+  if(!row) return;
+  if(shareLearners.indexOf(row.dataset.pick) < 0) shareLearners.push(row.dataset.pick);
+  renderShareChips();
+  document.getElementById("shareSearch").value = "";
+  this.classList.remove("show");
+  this.innerHTML = "";
+});
+
+document.getElementById("shareSelected").addEventListener("click", function(e){
+  const btn = e.target.closest("[data-rm]");
+  if(!btn) return;
+  shareLearners = shareLearners.filter(function(n){ return n !== btn.dataset.rm; });
+  renderShareChips();
+});
+
+document.getElementById("shareCancel").addEventListener("click", function(){
+  document.getElementById("shareOverlay").classList.remove("show");
+});
+
+document.getElementById("shareSave").addEventListener("click", async function(){
+  if(!shareId) return;
+  const levels = Array.from(document.querySelectorAll("#shareLevels input:checked")).map(function(c){ return c.value; });
+  const btn = this;
+  btn.disabled = true; btn.textContent = "Saving...";
+  try{
+    await db.collection("lessonPlans").doc(shareId).set({
+      assignedLevels: levels,
+      assignedLearners: shareLearners,
+      sharedAt: new Date().toISOString(),
+      sharedBy: sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || ""
+    }, { merge:true });
+    document.getElementById("shareOverlay").classList.remove("show");
+    await load();
+  }catch(e){
+    alert("Could not save sharing: " + e.message);
+  }finally{
+    btn.disabled = false; btn.textContent = "Save Sharing";
+  }
+});
 });
 </script>
-
 <script src="/js/impact-round-icons.js?v=001"></script>
+<div class="share-overlay" id="shareOverlay">
+  <div class="share-card">
+    <div class="share-title" id="shareTitle">Share with learners</div>
+    <label class="share-label">Learner Level(s)</label>
+    <div class="assign-levels-group" id="shareLevels">
+      <label class="assign-level-chip"><input type="checkbox" value="Absolute Beginner">Abs. Beginner</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A0">A0</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A1">A1</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A1.1">A1.1</label>
+      <label class="assign-level-chip"><input type="checkbox" value="A2">A2</label>
+      <label class="assign-level-chip"><input type="checkbox" value="B1">B1</label>
+      <label class="assign-level-chip"><input type="checkbox" value="B2">B2</label>
+    </div>
+    <label class="share-label" style="margin-top:14px">Specific Learner(s)</label>
+    <input type="text" class="share-input" id="shareSearch" placeholder="Search learner by name..." autocomplete="off">
+    <div class="learner-picker-list" id="sharePicker"></div>
+    <div class="assign-learners-selected" id="shareSelected"></div>
+    <div class="share-actions">
+      <button class="share-btn-ctl" id="shareCancel" type="button">Cancel</button>
+      <button class="share-btn-ctl primary" id="shareSave" type="button">Save Sharing</button>
+    </div>
+  </div>
+</div>
+<script src="/js/impact-publish.js"></script>
 <script src="/js/impact-recycle-bin.js"></script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>

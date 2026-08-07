@@ -1,9 +1,20 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/learner/activities.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\learner\activities.html
+CHARS:  10363
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Lessons | Impact Learner Hub</title>
+<title>Activities | Impact Learner Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/impact-global-bg.css">
 <style>
@@ -91,8 +102,8 @@ body{min-height:100vh;background:#0d0a1f;color:#fff;font-family:Inter,system-ui,
 <main class="page">
   <section class="hero">
     <p class="eyebrow">Learner Hub</p>
-    <h1>Lessons</h1>
-    <p>Your assigned lessons and class resources.</p>
+    <h1>Activities</h1>
+    <p>Complete your assigned activities and exercises.</p>
   </section>
 
   <p class="section-label pending-label">🔴 Pending</p>
@@ -122,9 +133,9 @@ document.addEventListener("DOMContentLoaded", async function(){
 
   try{
     const [byLevel, byName, completedSnap] = await Promise.all([
-      level ? db.collection("lessonPlans").where("assignedLevels","array-contains",level).get() : Promise.resolve({docs:[]}),
-      db.collection("lessonPlans").where("assignedLearners","array-contains",name).get(),
-      db.collection("learnerCompletions").where("learnerName","==",name).where("itemType","==","lesson").get()
+      level ? db.collection("activityPlans").where("assignedLevels","array-contains",level).get() : Promise.resolve({docs:[]}),
+      db.collection("activityPlans").where("assignedLearners","array-contains",name).get(),
+      db.collection("learnerCompletions").where("learnerName","==",name).where("itemType","==","activity").get()
     ]);
 
     const completedIds = new Set();
@@ -142,16 +153,16 @@ document.addEventListener("DOMContentLoaded", async function(){
     if(!pending.length){
       pendingWrap.innerHTML = '<div class="empty-pending">✨ Nothing pending right now — you're all caught up!</div>';
     }else{
-      pendingWrap.innerHTML = pending.map(function(it){
-        return '<a class="pending-card" href="/teacher/lesson-view.html?id=' + it.id + '">'
-          + '<div class="pending-icon">📚</div>'
-          + '<div class="pending-info">'
-          + '<div class="pending-title">' + (it.title||"Untitled") + '</div>'
-          + '<div class="pending-meta">' + (it.level?"Level "+it.level:"") + '</div>'
-          + '</div>'
-          + '<div class="pending-arrow">→</div>'
-          + '</a>';
-      }).join("");
+      pendingWrap.innerHTML = pending.map(it=>`
+        <a class="pending-card" href="/teacher/=+it.id+">
+          <div class="pending-icon">🎨</div>
+          <div class="pending-info">
+            <div class="pending-title">+(it.title||"Untitled")+</div>
+            <div class="pending-meta">+(it.level?"Level "+it.level:"")+</div>
+          </div>
+          <div class="pending-arrow">→</div>
+        </a>
+      `).join("");
     }
 
     // ── COMPLETED — grouped into folders by level ──
@@ -175,21 +186,23 @@ document.addEventListener("DOMContentLoaded", async function(){
         card.className = "folder-card";
         card.dataset.level = lvl;
 
-        const rows = items.map(function(it){
-          return '<a class="completed-row" href="/teacher/lesson-view.html?id=' + it.id + '">'
-            + '<span class="completed-check">✓</span>' + (it.title||"Untitled")
-            + '</a>';
-        }).join("");
+        const rows = items.map(it=>`
+          <a class="completed-row" href="/teacher/=+it.id+">
+            <span class="completed-check">✓</span>+(it.title||"Untitled")+
+          </a>
+        `).join("");
 
-        card.innerHTML = '<div class="folder-head">'
-          + '<span class="folder-icon">📁</span>'
-          + '<div class="folder-meta">'
-          + '<div class="folder-name">' + lvl + '</div>'
-          + '<div class="folder-sub">' + items.length + ' completed</div>'
-          + '</div>'
-          + '<span class="folder-chevron">›</span>'
-          + '</div>'
-          + '<div class="folder-body">' + rows + '</div>';
+        card.innerHTML = `
+          <div class="folder-head">
+            <span class="folder-icon">📁</span>
+            <div class="folder-meta">
+              <div class="folder-name">+lvl+</div>
+              <div class="folder-sub">+items.length+ completed</div>
+            </div>
+            <span class="folder-chevron">›</span>
+          </div>
+          <div class="folder-body">+rows+</div>
+        `;
 
         card.querySelector(".folder-head").addEventListener("click", function(){
           const wasOpen = card.classList.contains("open");
