@@ -27,6 +27,7 @@ button:hover{transform:translateY(-2px) scale(1.02);background:rgba(255,255,255,
 button:active{transform:scale(.95);opacity:.8}
 .add{background:rgba(139,92,246,.2);border-color:rgba(139,92,246,.4)}
 .deliverable-hint{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:-4px;margin-bottom:12px;padding-left:4px}
+.qty-hint{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:-4px;margin-bottom:12px;padding-left:4px}
 
 .filter-row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
 .filter-chip{padding:9px 16px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:.82rem;font-weight:800;cursor:pointer;transition:.15s}
@@ -92,6 +93,20 @@ button:active{transform:scale(.95);opacity:.8}
         </select>
       </div>
       <p class="deliverable-hint" id="deliverableHint">Tasks with a linked deliverable auto-complete when the real thing is created in the platform — no need to tick manually.</p>
+      <div class="form-row">
+        <input id="expectedQty" type="number" min="1" max="999" placeholder="Expected quantity" value="1">
+        <select id="expectedLevel">
+          <option value="">Any level</option>
+          <option value="Absolute Beginner">Absolute Beginner</option>
+          <option value="A0">A0</option>
+          <option value="A1">A1</option>
+          <option value="A1.1">A1.1</option>
+          <option value="A2">A2</option>
+          <option value="B1">B1</option>
+          <option value="B2">B2</option>
+        </select>
+      </div>
+      <p class="qty-hint">For auto-tracked deliverables only: set exactly how many are needed and, optionally, restrict to one level. Leave quantity at 1 and level on "Any" to fall back to reading these from the title instead.</p>
       <div class="form-row2">
         <select id="assignedTo" required>
           <option value="">Assign to...</option>
@@ -129,6 +144,8 @@ document.addEventListener("DOMContentLoaded", async()=>{
   const assignedTo=document.getElementById("assignedTo");
   const dueDate=document.getElementById("dueDate");
   const taskNotes=document.getElementById("taskNotes");
+  const expectedQty=document.getElementById("expectedQty");
+  const expectedLevel=document.getElementById("expectedLevel");
   const list=document.getElementById("taskList");
   const filterRow=document.getElementById("filterRow");
 
@@ -235,8 +252,8 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
     for(const t of autoTasks){
       const taskCreated = new Date(t.createdAt || 0);
-      const target = parseTargetQty(t.title);
-      const targetLevel = parseTargetLevel(t.title);
+      const target = (t.expectedQty && t.expectedQty > 0) ? t.expectedQty : parseTargetQty(t.title);
+      const targetLevel = t.expectedLevel || parseTargetLevel(t.title);
       let count = 0;
 
       if(t.deliverableType === "lessonPlan"){
@@ -338,7 +355,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
           <div class="meta">Due: ${fmtDate(t.dueDate)}</div>
           ${t.notes?`<div class="meta">${t.notes}</div>`:""}
           ${t.completedAtText?`<div class="meta">Completed: ${t.completedAtText}${t.completedVia==='auto'?' (auto)':t.completedVia==='calendar'?' (via calendar)':''}</div>`:""}
-          ${(!done && t._autoProgress && t._autoProgress.target > 1) ? `<div class="meta">Progress: ${t._autoProgress.count} of ${t._autoProgress.target} done — ${t._autoProgress.target - t._autoProgress.count} more to go</div>` : ""}
+          ${(!done && t._autoProgress && (t._autoProgress.target > 1 || t.expectedLevel)) ? `<div class="meta">Progress: ${t._autoProgress.count} of ${t._autoProgress.target} done${t.expectedLevel?' ('+t.expectedLevel+')':''} — ${t._autoProgress.target - t._autoProgress.count} more to go</div>` : ""}
           ${timelinessInfo
             ? `<span class="badge ${timelinessInfo.cls}">${timelinessInfo.label}</span>`
             : `<span class="badge ${overdue?'overdue-badge':''}">${done?'Completed':overdue?'Overdue':'Pending'}</span>`}
@@ -374,6 +391,8 @@ document.addEventListener("DOMContentLoaded", async()=>{
         assignedTo.value=t.assignedTo||"";
         dueDate.value=t.dueDate||"";
         taskNotes.value=t.notes||"";
+        expectedQty.value=t.expectedQty||1;
+        expectedLevel.value=t.expectedLevel||"";
         form.dataset.editing=t.id;
         taskTitle.focus();
       };
@@ -408,6 +427,8 @@ document.addEventListener("DOMContentLoaded", async()=>{
       assignedTo:assignedTo.value,
       dueDate:dueDate.value,
       notes:taskNotes.value.trim(),
+      expectedQty: parseInt(expectedQty.value, 10) || 1,
+      expectedLevel: expectedLevel.value || "",
       completed:false,
       updatedAt:now.toISOString(),
       updatedAtText:now.toLocaleString()
