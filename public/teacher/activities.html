@@ -65,10 +65,8 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 .row-badge.pub{background:rgba(16,185,129,.2);color:#6ee7b7}
 .row-badge.dr{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
 .row-badge.shared{background:rgba(99,179,237,.18);color:#90cdf4}
-.share-overlay{display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:20px}
-.share-overlay.show{display:flex}
-.share-card{width:min(460px,100%);max-height:88vh;overflow-y:auto;background:#12151f;border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:26px}
-.share-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400;font-size:1.3rem;color:#fff;margin-bottom:16px}
+.share-popover{margin-top:6px;margin-bottom:2px;padding:18px;border-radius:18px;background:#12151f;border:1px solid rgba(139,92,246,.35);backdrop-filter:blur(12px);animation:popIn .15s ease}
+.share-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400;font-size:1.15rem;color:#fff;margin-bottom:16px}
 .share-label{display:block;font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);margin-bottom:7px}
 .share-input{width:100%;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.86rem;outline:none}
 .assign-levels-group{display:flex;flex-wrap:wrap;gap:8px}
@@ -262,7 +260,8 @@ document.addEventListener("DOMContentLoaded", async function(){
     const shareBtn = e.target.closest(".share-btn");
     if(shareBtn){
       e.stopPropagation();
-      openShareDialog(shareBtn.dataset.id, shareBtn.dataset.title);
+      const anchorRow = shareBtn.closest(".plan-row");
+      openShareDialog(anchorRow, shareBtn.dataset.id, shareBtn.dataset.title);
       return;
     }
     const delBtn = e.target.closest(".del");
@@ -326,8 +325,6 @@ document.addEventListener("DOMContentLoaded", async function(){
 
   await loadPlans();
 
-  let shareId = null;
-  let shareLearners = [];
   let allLearnersCache = [];
 
   async function loadLearnersOnce(){
@@ -340,123 +337,129 @@ document.addEventListener("DOMContentLoaded", async function(){
     }catch(e){ console.warn("learners load:", e); }
   }
 
-  function renderShareChips(){
-    const wrap = document.getElementById("shareSelected");
-    if(!wrap) return;
-    wrap.innerHTML = shareLearners.map(function(n){
-      return '<span class="assigned-learner-chip">' + n + '<button type="button" data-rm="' + n + '">x</button></span>';
-    }).join("");
-  }
+  async function openShareDialog(anchorRow, id, title){
+    document.querySelectorAll(".share-popover").forEach(function(p){ p.remove(); });
 
-  async function openShareDialog(id, title){
-    shareId = id;
     try{
       await loadLearnersOnce();
       const doc = await db.collection("activityPlans").doc(id).get();
       const d = doc.exists ? doc.data() : {};
-      shareLearners = Array.isArray(d.assignedLearners) ? d.assignedLearners.slice() : [];
+      let shareLearners = Array.isArray(d.assignedLearners) ? d.assignedLearners.slice() : [];
+      const checkedLevels = Array.isArray(d.assignedLevels) ? d.assignedLevels : [];
+      const LEVELS = ["Absolute Beginner","A0","A1","A1.1","A2","B1","B2"];
 
-      document.getElementById("shareTitle").textContent = "Share: " + (title || "Activity");
-      document.querySelectorAll("#shareLevels input").forEach(function(cb){
-        cb.checked = Array.isArray(d.assignedLevels) && d.assignedLevels.indexOf(cb.value) >= 0;
-        cb.closest(".assign-level-chip").classList.toggle("checked", cb.checked);
+      const pop = document.createElement("div");
+      pop.className = "share-popover";
+      pop.innerHTML = '<div class="share-title">Share: ' + (title || "Activity") + '</div>'
+        + '<label class="share-label">Learner Level(s)</label>'
+        + '<div class="assign-levels-group" data-role="levels">'
+        + LEVELS.map(function(l){
+            const isChecked = checkedLevels.indexOf(l) >= 0;
+            return '<label class="assign-level-chip' + (isChecked?' checked':'') + '"><input type="checkbox" value="' + l + '"' + (isChecked?' checked':'') + '>' + (l==="Absolute Beginner"?"Abs. Beginner":l) + '</label>';
+          }).join("")
+        + '</div>'
+        + '<label class="share-label" style="margin-top:14px">Specific Learner(s)</label>'
+        + '<input type="text" class="share-input" data-role="search" placeholder="Search learner by name..." autocomplete="off">'
+        + '<div class="learner-picker-list" data-role="picker"></div>'
+        + '<div class="assign-learners-selected" data-role="selected"></div>'
+        + '<div class="share-actions">'
+        + '<button class="share-btn-ctl" data-role="cancel" type="button">Cancel</button>'
+        + '<button class="share-btn-ctl primary" data-role="save" type="button">Save Sharing</button>'
+        + '</div>';
+
+      anchorRow.after(pop);
+      pop.scrollIntoView({behavior:"smooth", block:"nearest"});
+
+      const levelsGroup = pop.querySelector('[data-role="levels"]');
+      const searchInput = pop.querySelector('[data-role="search"]');
+      const pickerList   = pop.querySelector('[data-role="picker"]');
+      const selectedWrap = pop.querySelector('[data-role="selected"]');
+      const cancelBtn    = pop.querySelector('[data-role="cancel"]');
+      const saveBtn      = pop.querySelector('[data-role="save"]');
+
+      function renderChips(){
+        selectedWrap.innerHTML = shareLearners.map(function(n){
+          return '<span class="assigned-learner-chip">' + n + '<button type="button" data-rm="' + n + '">x</button></span>';
+        }).join("");
+      }
+      renderChips();
+
+      levelsGroup.addEventListener("change", function(e){
+        const chip = e.target.closest(".assign-level-chip");
+        if(chip) chip.classList.toggle("checked", e.target.checked);
       });
-      document.getElementById("shareSearch").value = "";
-      document.getElementById("sharePicker").classList.remove("show");
-      renderShareChips();
-      document.getElementById("shareOverlay").classList.add("show");
+
+      searchInput.addEventListener("input", function(){
+        const q = this.value.trim().toLowerCase();
+        if(!q){ pickerList.classList.remove("show"); pickerList.innerHTML=""; return; }
+        const matches = allLearnersCache.filter(function(l){
+          return l.name.toLowerCase().indexOf(q) >= 0 && shareLearners.indexOf(l.name) < 0;
+        });
+        if(!matches.length){ pickerList.classList.remove("show"); pickerList.innerHTML=""; return; }
+        pickerList.innerHTML = matches.map(function(l){
+          return '<div class="learner-picker-row" data-pick="' + l.name + '">' + l.name + ' <span style="opacity:.5">(' + (l.level||"no level") + ')</span></div>';
+        }).join("");
+        pickerList.classList.add("show");
+      });
+
+      pickerList.addEventListener("click", function(e){
+        const row = e.target.closest("[data-pick]");
+        if(!row) return;
+        if(shareLearners.indexOf(row.dataset.pick) < 0) shareLearners.push(row.dataset.pick);
+        renderChips();
+        searchInput.value = "";
+        pickerList.classList.remove("show");
+        pickerList.innerHTML = "";
+      });
+
+      selectedWrap.addEventListener("click", function(e){
+        const btn = e.target.closest("[data-rm]");
+        if(!btn) return;
+        shareLearners = shareLearners.filter(function(n){ return n !== btn.dataset.rm; });
+        renderChips();
+      });
+
+      cancelBtn.addEventListener("click", function(){
+        pop.remove();
+        document.removeEventListener("click", outside);
+      });
+
+      saveBtn.addEventListener("click", async function(){
+        const levels = Array.from(levelsGroup.querySelectorAll("input:checked")).map(function(c){ return c.value; });
+        saveBtn.disabled = true; saveBtn.textContent = "Saving...";
+        try{
+          await db.collection("activityPlans").doc(id).set({
+            assignedLevels: levels,
+            assignedLearners: shareLearners,
+            sharedAt: new Date().toISOString(),
+            sharedBy: sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || ""
+          }, { merge:true });
+          pop.remove();
+          document.removeEventListener("click", outside);
+          await loadPlans();
+        }catch(e){
+          alert("Could not save sharing: " + e.message);
+        }finally{
+          saveBtn.disabled = false; saveBtn.textContent = "Save Sharing";
+        }
+      });
+
+      var outside = function(e){
+        if(!pop.contains(e.target) && !e.target.closest(".share-btn")){
+          pop.remove();
+          document.removeEventListener("click", outside);
+        }
+      };
+      setTimeout(function(){ document.addEventListener("click", outside); }, 50);
+
     }catch(e){
       console.error("openShareDialog failed:", e);
       alert("Could not open sharing options: " + e.message);
     }
   }
-
-  document.getElementById("shareLevels").addEventListener("change", function(e){
-    const chip = e.target.closest(".assign-level-chip");
-    if(chip) chip.classList.toggle("checked", e.target.checked);
-  });
-
-  document.getElementById("shareSearch").addEventListener("input", function(){
-    const q = this.value.trim().toLowerCase();
-    const list = document.getElementById("sharePicker");
-    if(!q){ list.classList.remove("show"); list.innerHTML=""; return; }
-    const matches = allLearnersCache.filter(function(l){
-      return l.name.toLowerCase().indexOf(q) >= 0 && shareLearners.indexOf(l.name) < 0;
-    });
-    if(!matches.length){ list.classList.remove("show"); list.innerHTML=""; return; }
-    list.innerHTML = matches.map(function(l){
-      return '<div class="learner-picker-row" data-pick="' + l.name + '">' + l.name + ' <span style="opacity:.5">(' + (l.level||"no level") + ')</span></div>';
-    }).join("");
-    list.classList.add("show");
-  });
-
-  document.getElementById("sharePicker").addEventListener("click", function(e){
-    const row = e.target.closest("[data-pick]");
-    if(!row) return;
-    if(shareLearners.indexOf(row.dataset.pick) < 0) shareLearners.push(row.dataset.pick);
-    renderShareChips();
-    document.getElementById("shareSearch").value = "";
-    this.classList.remove("show");
-    this.innerHTML = "";
-  });
-
-  document.getElementById("shareSelected").addEventListener("click", function(e){
-    const btn = e.target.closest("[data-rm]");
-    if(!btn) return;
-    shareLearners = shareLearners.filter(function(n){ return n !== btn.dataset.rm; });
-    renderShareChips();
-  });
-
-  document.getElementById("shareCancel").addEventListener("click", function(){
-    document.getElementById("shareOverlay").classList.remove("show");
-  });
-
-  document.getElementById("shareSave").addEventListener("click", async function(){
-    if(!shareId) return;
-    const levels = Array.from(document.querySelectorAll("#shareLevels input:checked")).map(function(c){ return c.value; });
-    const btn = this;
-    btn.disabled = true; btn.textContent = "Saving...";
-    try{
-      await db.collection("activityPlans").doc(shareId).set({
-        assignedLevels: levels,
-        assignedLearners: shareLearners,
-        sharedAt: new Date().toISOString(),
-        sharedBy: sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || ""
-      }, { merge:true });
-      document.getElementById("shareOverlay").classList.remove("show");
-      await loadPlans();
-    }catch(e){
-      alert("Could not save sharing: " + e.message);
-    }finally{
-      btn.disabled = false; btn.textContent = "Save Sharing";
-    }
-  });
 });
 </script>
 <script src="/js/impact-round-icons.js?v=001"></script>
-<div class="share-overlay" id="shareOverlay">
-  <div class="share-card">
-    <div class="share-title" id="shareTitle">Share with learners</div>
-    <label class="share-label">Learner Level(s)</label>
-    <div class="assign-levels-group" id="shareLevels">
-      <label class="assign-level-chip"><input type="checkbox" value="Absolute Beginner">Abs. Beginner</label>
-      <label class="assign-level-chip"><input type="checkbox" value="A0">A0</label>
-      <label class="assign-level-chip"><input type="checkbox" value="A1">A1</label>
-      <label class="assign-level-chip"><input type="checkbox" value="A1.1">A1.1</label>
-      <label class="assign-level-chip"><input type="checkbox" value="A2">A2</label>
-      <label class="assign-level-chip"><input type="checkbox" value="B1">B1</label>
-      <label class="assign-level-chip"><input type="checkbox" value="B2">B2</label>
-    </div>
-    <label class="share-label" style="margin-top:14px">Specific Learner(s)</label>
-    <input type="text" class="share-input" id="shareSearch" placeholder="Search learner by name..." autocomplete="off">
-    <div class="learner-picker-list" id="sharePicker"></div>
-    <div class="assign-learners-selected" id="shareSelected"></div>
-    <div class="share-actions">
-      <button class="share-btn-ctl" id="shareCancel" type="button">Cancel</button>
-      <button class="share-btn-ctl primary" id="shareSave" type="button">Save Sharing</button>
-    </div>
-  </div>
-</div>
 <script src="/js/impact-publish.js"></script>
 <script src="/js/impact-recycle-bin.js"></script>
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
