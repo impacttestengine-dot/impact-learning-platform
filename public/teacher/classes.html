@@ -250,6 +250,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if(!active){
       const meetingId = await ensureMeetingId(item);
       const now = new Date();
+      const currentUserName = sessionStorage.getItem("impactAccessName") ||
+        sessionStorage.getItem("impactPersonnelName") || item.teacher || "Teacher";
 
       await db.collection("meetings").doc(meetingId).set({
         meetingId,
@@ -258,11 +260,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         startedAt:new Date().toISOString(),
         endedAt:"",
         status:"active",
-        hostName:item.teacher || "Teacher"
+        hostName:currentUserName
       }, { merge:true });
 
       const meetUrl = location.origin + "/teacher/live-room.html?id=" + meetingId +
-        "&name=" + encodeURIComponent(item.teacher || "Teacher") + "&host=true";
+        "&name=" + encodeURIComponent(currentUserName) + "&host=true";
 
       const logRef = await db.collection("classTracker").add({
         classId:item.id,
