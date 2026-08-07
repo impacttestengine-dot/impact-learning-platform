@@ -595,6 +595,14 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
     if(!stream) return;
     setTileStream(otherId, stream);
     setCamOff(otherId, stream.getVideoTracks().length === 0 || !stream.getVideoTracks()[0].enabled);
+
+    // If this peer is currently marked as screen-sharing, also refresh the
+    // big-screen view directly from this track event. Reading a tile's
+    // srcObject separately (elsewhere) is racy against WebRTC renegotiation
+    // timing and can bind a stale/dead stream that never updates again.
+    if(peerMeta[otherId] && peerMeta[otherId].screenSharing){
+      enterScreenshareLayout(otherId, stream, peerMeta[otherId].name);
+    }
   };
 
   pc.onicecandidate = (event) => {
@@ -710,10 +718,15 @@ function watchParticipants(){
             setMicIcon(rid, data.micEnabled);
             renderParticipantList();
 
+            peerMeta[rid].screenSharing = !!data.screenSharing;
+
             if(data.screenSharing && currentScreenSharerId !== rid){
               const remoteTile = document.getElementById("tile-"+rid);
               const remoteVid = remoteTile ? remoteTile.querySelector("video") : null;
               if(remoteVid && remoteVid.srcObject) enterScreenshareLayout(rid, remoteVid.srcObject, peerMeta[rid].name);
+              // If the renegotiation hasn't completed yet, the srcObject read
+              // above may be stale -- ontrack (added above) will correctly
+              // re-bind once the real screen-share frames actually arrive.
             }
             if(!data.screenSharing && currentScreenSharerId === rid){
               exitScreenshareLayout();
