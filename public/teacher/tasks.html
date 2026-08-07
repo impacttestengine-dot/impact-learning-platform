@@ -27,7 +27,12 @@ button:hover{transform:translateY(-2px) scale(1.02);background:rgba(255,255,255,
 button:active{transform:scale(.95);opacity:.8}
 .add{background:rgba(139,92,246,.2);border-color:rgba(139,92,246,.4)}
 .deliverable-hint{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:-4px;margin-bottom:12px;padding-left:4px}
-.qty-hint{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:-4px;margin-bottom:12px;padding-left:4px}
+.qty-row{display:none;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px;align-items:end}
+.qty-row.show{display:grid}
+.qty-field label{display:block;font-size:.66rem;font-weight:800;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;padding-left:2px}
+.qty-field input,.qty-field select{width:100%}
+.qty-hint{display:none;font-size:.7rem;font-weight:600;color:rgba(255,255,255,.35);margin-top:-2px;margin-bottom:12px;padding-left:2px}
+.qty-hint.show{display:block}
 
 .filter-row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
 .filter-chip{padding:9px 16px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:.82rem;font-weight:800;cursor:pointer;transition:.15s}
@@ -93,20 +98,26 @@ button:active{transform:scale(.95);opacity:.8}
         </select>
       </div>
       <p class="deliverable-hint" id="deliverableHint">Tasks with a linked deliverable auto-complete when the real thing is created in the platform — no need to tick manually.</p>
-      <div class="form-row">
-        <input id="expectedQty" type="number" min="1" max="999" placeholder="Expected quantity" value="1">
-        <select id="expectedLevel">
-          <option value="">Any level</option>
-          <option value="Absolute Beginner">Absolute Beginner</option>
-          <option value="A0">A0</option>
-          <option value="A1">A1</option>
-          <option value="A1.1">A1.1</option>
-          <option value="A2">A2</option>
-          <option value="B1">B1</option>
-          <option value="B2">B2</option>
-        </select>
+      <div class="qty-row" id="qtyRow">
+        <div class="qty-field">
+          <label for="expectedQty">Quantity needed</label>
+          <input id="expectedQty" type="number" min="1" max="999" placeholder="1">
+        </div>
+        <div class="qty-field">
+          <label for="expectedLevel">Level (optional)</label>
+          <select id="expectedLevel">
+            <option value="">Any level</option>
+            <option value="Absolute Beginner">Absolute Beginner</option>
+            <option value="A0">A0</option>
+            <option value="A1">A1</option>
+            <option value="A1.1">A1.1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+          </select>
+        </div>
       </div>
-      <p class="qty-hint">For auto-tracked deliverables only: set exactly how many are needed and, optionally, restrict to one level. Leave quantity at 1 and level on "Any" to fall back to reading these from the title instead.</p>
+      <p class="qty-hint" id="qtyHint">Leave blank to read these from the title instead.</p>
       <div class="form-row2">
         <select id="assignedTo" required>
           <option value="">Assign to...</option>
@@ -146,6 +157,8 @@ document.addEventListener("DOMContentLoaded", async()=>{
   const taskNotes=document.getElementById("taskNotes");
   const expectedQty=document.getElementById("expectedQty");
   const expectedLevel=document.getElementById("expectedLevel");
+  const qtyRow=document.getElementById("qtyRow");
+  const qtyHint=document.getElementById("qtyHint");
   const list=document.getElementById("taskList");
   const filterRow=document.getElementById("filterRow");
 
@@ -176,6 +189,13 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const n = m ? parseInt(m[1], 10) : 1;
     return (n > 0 && n < 1000) ? n : 1;
   }
+
+  function updateQtyRowVisibility(){
+    const show = AUTO_TYPES.has(deliverableType.value);
+    qtyRow.classList.toggle("show", show);
+    qtyHint.classList.toggle("show", show);
+  }
+  deliverableType.addEventListener("change", updateQtyRowVisibility);
 
   let tasks=[];
   let currentFilter="all";
@@ -391,8 +411,9 @@ document.addEventListener("DOMContentLoaded", async()=>{
         assignedTo.value=t.assignedTo||"";
         dueDate.value=t.dueDate||"";
         taskNotes.value=t.notes||"";
-        expectedQty.value=t.expectedQty||1;
+        expectedQty.value=t.expectedQty||"";
         expectedLevel.value=t.expectedLevel||"";
+        updateQtyRowVisibility();
         form.dataset.editing=t.id;
         taskTitle.focus();
       };
@@ -448,6 +469,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     }
 
     form.reset();
+    updateQtyRowVisibility();
     await load();
   };
 
