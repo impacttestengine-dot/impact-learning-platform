@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -38,9 +38,11 @@ select option{color:#111827}
 .class-card{border-radius:24px;padding:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
 .class-card h3{font-size:1rem;font-weight:900;margin-bottom:8px}
 .class-meta{font-size:.78rem;color:rgba(255,255,255,.58);font-weight:700;line-height:1.7}
+.class-meta.room-id{color:#bfe3ff;font-weight:900;letter-spacing:.04em}
 .class-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .class-actions button{border:none;cursor:pointer;color:white;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);padding:10px 13px;border-radius:14px;font-size:.76rem;font-weight:900}
 .open-meet-btn.running{background:rgba(255,80,80,.18)!important}
+.copy-link-btn.copied{background:rgba(132,204,22,.22)!important;border-color:rgba(132,204,22,.4)!important}
 .empty{border-radius:22px;padding:26px;background:rgba(255,255,255,.05);text-align:center;color:rgba(255,255,255,.55);font-weight:800}
 .early-box{grid-column:1/-1;margin-top:12px;padding:13px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
 .early-box h4{font-size:.82rem;margin-bottom:8px}
@@ -71,7 +73,7 @@ button:active{transform:scale(.94)!important;opacity:.82!important}
   <section class="layout">
     <section class="panel">
       <h2 class="panel-title">Schedule Class</h2>
-      <p class="panel-sub">Create an upcoming online class session.</p>
+      <p class="panel-sub">Create an upcoming online class session. Each class gets its own private meeting room automatically.</p>
 
       <form id="classForm">
         <div class="form-grid">
@@ -90,20 +92,7 @@ button:active{transform:scale(.94)!important;opacity:.82!important}
           <div class="field"><label>Time</label><input id="time" type="time" required></div>
           <div class="field"><label>Duration</label><input id="duration" type="text" placeholder="1 hour"></div>
 
-          <div class="field full">
-            <label>Google Meet Room</label>
-            <select id="meetRoom" required>
-              <option value="">Select Google Meet Room</option>
-              <option value="Impact Meet Room 1" data-url="https://meet.google.com/qpc-biix-whj">Impact Meet Room 1</option>
-              <option value="Impact Meet Room 2" data-url="https://meet.google.com/gmh-yodr-tjf">Impact Meet Room 2</option>
-              <option value="Impact Meet Room 3" data-url="https://meet.google.com/hxm-snci-jub">Impact Meet Room 3</option>
-              <option value="Impact Meet Room 4" data-url="https://meet.google.com/yya-pzhm-ses">Impact Meet Room 4</option>
-              <option value="Impact Meet Room 5" data-url="https://meet.google.com/cig-yfqh-xbz">Impact Meet Room 5</option>
-              <option value="Impact Meet Room 6" data-url="https://meet.google.com/vwe-pxhu-egh">Impact Meet Room 6</option>
-            </select>
-          </div>
-
-          <div class="room-note" id="roomNote">Select a day and time to see unavailable meet rooms.</div>
+          <div class="room-note" id="roomNote">A private meeting room is generated automatically for each class — no need to pick one.</div>
 
           <div class="field">
             <label>Status</label>
@@ -146,10 +135,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const day = document.getElementById("day");
   const time = document.getElementById("time");
   const duration = document.getElementById("duration");
-  const meetRoom = document.getElementById("meetRoom");
   const status = document.getElementById("status");
   const notes = document.getElementById("notes");
-  const roomNote = document.getElementById("roomNote");
   const saveStatus = document.getElementById("saveStatus");
   const classList = document.getElementById("classList");
   const classCount = document.getElementById("classCount");
@@ -165,9 +152,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   function setActive(id, data){ localStorage.setItem(activeKey(id), JSON.stringify(data)); }
   function clearActive(id){ localStorage.removeItem(activeKey(id)); }
 
-  function getRoomURL(){
-    const option = meetRoom.options[meetRoom.selectedIndex];
-    return option?.dataset?.url || "";
+  function genId(){
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let id = "";
+    for(let i=0;i<3;i++){
+      for(let j=0;j<3;j++) id += chars[Math.floor(Math.random()*chars.length)];
+      if(i<2) id += "-";
+    }
+    return id;
+  }
+
+  async function ensureMeetingId(item){
+    if(item.meetingId) return item.meetingId;
+    const newId = genId();
+    await db.collection("classes").doc(item.id).set({ meetingId:newId }, { merge:true });
+    item.meetingId = newId;
+    return newId;
+  }
+
+  function joinLinkFor(item){
+    const id = item.meetingId || "";
+    return location.origin + "/teacher/live-join.html?id=" + id +
+      "&name=" + encodeURIComponent(item.learner || "") + "&host=false";
   }
 
   async function loadClasses(){
@@ -178,7 +184,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     allClasses = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data() }));
 
     renderClasses();
-    refreshRoomAvailability();
   }
 
   function renderClasses(){
@@ -201,7 +206,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         <div>
           <h3>${item.learner || "Unnamed Learner"} — ${item.level || "No level"}</h3>
           <div class="class-meta">${item.day || ""} · ${item.time || ""} · ${item.duration || ""}</div>
-          <div class="class-meta">${item.teacher || ""} · ${item.meetRoom || ""} · ${item.status || ""}</div>
+          <div class="class-meta">${item.teacher || ""} · ${item.status || ""}</div>
+          <div class="class-meta room-id">Room: ${item.meetingId || "generated on first start"}</div>
           ${active ? '<div class="class-meta" style="color:#d9f99d;font-weight:900;">Class in progress — started ' + (active.startedAtText || "") + '</div>' : ""}
         </div>
 
@@ -209,12 +215,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           <button type="button" class="open-meet-btn ${active ? "running" : ""}">
             ${active ? "End Class" : "Open Meet"}
           </button>
+          <button type="button" class="copy-link-btn">Copy Student Link</button>
           <button type="button" data-edit="${item.id}">Edit</button>
           <button type="button" data-delete="${item.id}">Delete</button>
         </div>
       `;
 
       card.querySelector(".open-meet-btn").onclick = () => handleClassStartEnd(item, card);
+      card.querySelector(".copy-link-btn").onclick = (e) => copyStudentLink(item, e.currentTarget);
       card.querySelector("[data-edit]").onclick = () => editClass(item);
       card.querySelector("[data-delete]").onclick = () => deleteClass(item);
 
@@ -222,16 +230,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  async function copyStudentLink(item, btn){
+    await ensureMeetingId(item);
+    const link = joinLinkFor(item);
+    try{
+      await navigator.clipboard.writeText(link);
+      const original = btn.textContent;
+      btn.textContent = "Copied!";
+      btn.classList.add("copied");
+      setTimeout(() => { btn.textContent = original; btn.classList.remove("copied"); }, 1600);
+    }catch(e){
+      prompt("Copy this link:", link);
+    }
+  }
+
   async function handleClassStartEnd(item, card){
     const active = getActive(item.id);
 
     if(!active){
-      if(!item.meetUrl){
-        alert("No Meet link saved.");
-        return;
-      }
-
+      const meetingId = await ensureMeetingId(item);
       const now = new Date();
+
+      await db.collection("meetings").doc(meetingId).set({
+        meetingId,
+        title:(item.learner || "Class") + " — " + (item.level || ""),
+        createdAt:new Date().toISOString(),
+        startedAt:new Date().toISOString(),
+        endedAt:"",
+        status:"active",
+        hostName:item.teacher || "Teacher"
+      }, { merge:true });
+
+      const meetUrl = location.origin + "/teacher/live-room.html?id=" + meetingId +
+        "&name=" + encodeURIComponent(item.teacher || "Teacher") + "&host=true";
 
       const logRef = await db.collection("classTracker").add({
         classId:item.id,
@@ -241,8 +272,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         day:item.day || "",
         time:item.time || "",
         duration:item.duration || "",
-        meetRoom:item.meetRoom || "",
-        meetUrl:item.meetUrl || "",
+        meetRoom:meetingId,
+        meetUrl:meetUrl,
         startedAt:now.toISOString(),
         startedAtText:now.toLocaleString(),
         endedAt:"",
@@ -260,7 +291,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         startedAtText:now.toLocaleString()
       });
 
-      window.open(item.meetUrl, "_blank");
+      window.open(meetUrl, "_blank");
       renderClasses();
       return;
     }
@@ -351,10 +382,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     day.value = item.day || "";
     time.value = item.time || "";
     duration.value = item.duration || "";
-    meetRoom.value = item.meetRoom || "";
     status.value = item.status || "Scheduled";
     notes.value = item.notes || "";
-    saveStatus.textContent = "Editing selected class";
+    saveStatus.textContent = "Editing selected class — its meeting room stays the same.";
   }
 
   async function deleteClass(item){
@@ -364,51 +394,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadClasses();
   }
 
-  function refreshRoomAvailability(){
-    const selectedDay = day.value;
-    const selectedTime = time.value;
-
-    Array.from(meetRoom.options).forEach(option => {
-      if(!option.value) return;
-
-      option.disabled = false;
-      option.textContent = option.value;
-
-      if(!selectedDay || !selectedTime) return;
-
-      const unavailable = allClasses.some(classItem =>
-        classItem.id !== editingId &&
-        classItem.day === selectedDay &&
-        classItem.time === selectedTime &&
-        classItem.meetRoom === option.value &&
-        classItem.status !== "Cancelled"
-      );
-
-      if(unavailable){
-        option.disabled = true;
-        option.textContent = option.value + " — unavailable at selected day and time";
-      }
-    });
-
-    roomNote.textContent = selectedDay && selectedTime
-      ? "Unavailable rooms are greyed out for the selected day and time."
-      : "Select a day and time to see unavailable meet rooms.";
-  }
-
   async function saveClass(event){
     event.preventDefault();
-
-    const selectedOption = meetRoom.options[meetRoom.selectedIndex];
-
-    if(!selectedOption || !meetRoom.value){
-      saveStatus.textContent = "Please select a Google Meet room.";
-      return;
-    }
-
-    if(selectedOption.disabled){
-      saveStatus.textContent = "This room is unavailable at the selected day and time.";
-      return;
-    }
 
     const now = new Date();
 
@@ -419,8 +406,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       day:day.value,
       time:time.value,
       duration:duration.value.trim(),
-      meetRoom:meetRoom.value,
-      meetUrl:getRoomURL(),
       status:status.value,
       notes:notes.value.trim(),
       updatedAt:now.toISOString(),
@@ -432,6 +417,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }else{
       await db.collection("classes").add({
         ...data,
+        meetingId:genId(),
         createdAt:now.toISOString(),
         createdAtText:now.toLocaleString()
       });
@@ -446,9 +432,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   form.addEventListener("submit", saveClass);
-  day.addEventListener("change", refreshRoomAvailability);
-  time.addEventListener("change", refreshRoomAvailability);
-  meetRoom.addEventListener("focus", refreshRoomAvailability);
 
   await loadClasses();
 });
@@ -551,8 +534,3 @@ document.addEventListener("click", function(e){
 <script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
 </body>
 </html>
-
-
-
-
-

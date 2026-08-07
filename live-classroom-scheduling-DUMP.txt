@@ -1,0 +1,1314 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\classes.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\classes.html
+CHARS:  21424
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Classes | Impact</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Sorts+Mill+Goudy&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif;overflow-x:hidden}
+.page{width:min(1180px,92vw);margin:auto;padding:110px 0 80px;position:relative;z-index:2}
+.top-nav{position:fixed;top:22px;left:24px;z-index:1000}
+.top-nav a{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;color:white;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
+.hero{text-align:center;margin-bottom:34px}
+.hero-tag{text-transform:uppercase;letter-spacing:.35em;font-size:.72rem;font-weight:800;color:rgba(255,255,255,.6);margin-bottom:14px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3.5rem,6vw,5.8rem);font-weight:400;line-height:1}
+.tracker-link{display:inline-block;margin-top:12px;color:#dbeafe;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(219,234,254,.4)}
+.layout{display:grid;grid-template-columns:1fr 1.08fr;gap:22px;align-items:start}
+.panel{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:34px;padding:26px;backdrop-filter:blur(24px);box-shadow:0 24px 80px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.05)}
+.panel-title{font-family:"Sorts Mill Goudy",serif;font-size:2.1rem;margin-bottom:8px}
+.panel-sub{font-size:.83rem;color:rgba(255,255,255,.65);font-weight:700;margin-bottom:22px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field.full{grid-column:1/-1}
+.field label{font-size:.82rem;font-weight:800;color:rgba(255,255,255,.8)}
+input,select,textarea{width:100%;border:none;outline:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:white;border-radius:18px;padding:14px 15px;font-size:.94rem;font-weight:700}
+textarea{min-height:100px;resize:vertical}
+select option{color:#111827}
+.room-note{grid-column:1/-1;margin-top:-3px;color:rgba(255,255,255,.45);font-size:.73rem;font-weight:700}
+.save-btn{grid-column:1/-1;border:none;cursor:pointer;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.12);min-height:54px;border-radius:18px;color:white;font-weight:900;font-size:.94rem}
+.save-status{grid-column:1/-1;text-align:center;min-height:22px;color:#d9f99d;font-weight:800;font-size:.82rem}
+.list-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
+.class-count{color:rgba(255,255,255,.72);font-size:.82rem;font-weight:900}
+.class-list{display:grid;gap:14px}
+.class-card{border-radius:24px;padding:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+.class-card h3{font-size:1rem;font-weight:900;margin-bottom:8px}
+.class-meta{font-size:.78rem;color:rgba(255,255,255,.58);font-weight:700;line-height:1.7}
+.class-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.class-actions button{border:none;cursor:pointer;color:white;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);padding:10px 13px;border-radius:14px;font-size:.76rem;font-weight:900}
+.open-meet-btn.running{background:rgba(255,80,80,.18)!important}
+.empty{border-radius:22px;padding:26px;background:rgba(255,255,255,.05);text-align:center;color:rgba(255,255,255,.55);font-weight:800}
+.early-box{grid-column:1/-1;margin-top:12px;padding:13px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.early-box h4{font-size:.82rem;margin-bottom:8px}
+.early-box label{font-size:.72rem;font-weight:800;color:rgba(255,255,255,.68)}
+.early-box select,.early-box textarea{margin-top:6px;margin-bottom:9px;border-radius:13px;padding:10px 11px;font-size:.76rem}
+.early-box textarea{min-height:62px}
+.early-save{min-width:130px}
+button{transition:transform .15s ease,background .18s ease,box-shadow .18s ease,opacity .15s ease!important}
+button:hover{transform:translateY(-2px) scale(1.03)!important;background:rgba(255,255,255,.18)!important;box-shadow:0 14px 34px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.16)!important}
+button:active{transform:scale(.94)!important;opacity:.82!important}
+@media(max-width:980px){.layout{grid-template-columns:1fr}}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<div class="top-nav"><a href="/teacher/dashboard.html">⌘</a></div>
+
+<main class="page">
+  <section class="hero">
+    <div class="hero-tag">TEACHER WORKSPACE</div>
+    <h1>Classes</h1>
+    <a class="tracker-link" href="/teacher/class-logger.html">Class Tracker</a>
+  </section>
+
+  <section class="layout">
+    <section class="panel">
+      <h2 class="panel-title">Schedule Class</h2>
+      <p class="panel-sub">Create an upcoming online class session.</p>
+
+      <form id="classForm">
+        <div class="form-grid">
+          <div class="field"><label>Level</label><input id="level" type="text" placeholder="A0"></div>
+          <div class="field"><label>Learner</label><input id="learner" type="text" placeholder="Learner name"></div>
+          <div class="field"><label>Teacher</label><input id="teacher" type="text" placeholder="Teacher name"></div>
+
+          <div class="field">
+            <label>Day</label>
+            <select id="day" required>
+              <option value="">Select Day</option>
+              <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+            </select>
+          </div>
+
+          <div class="field"><label>Time</label><input id="time" type="time" required></div>
+          <div class="field"><label>Duration</label><input id="duration" type="text" placeholder="1 hour"></div>
+
+          <div class="field full">
+            <label>Google Meet Room</label>
+            <select id="meetRoom" required>
+              <option value="">Select Google Meet Room</option>
+              <option value="Impact Meet Room 1" data-url="https://meet.google.com/qpc-biix-whj">Impact Meet Room 1</option>
+              <option value="Impact Meet Room 2" data-url="https://meet.google.com/gmh-yodr-tjf">Impact Meet Room 2</option>
+              <option value="Impact Meet Room 3" data-url="https://meet.google.com/hxm-snci-jub">Impact Meet Room 3</option>
+              <option value="Impact Meet Room 4" data-url="https://meet.google.com/yya-pzhm-ses">Impact Meet Room 4</option>
+              <option value="Impact Meet Room 5" data-url="https://meet.google.com/cig-yfqh-xbz">Impact Meet Room 5</option>
+              <option value="Impact Meet Room 6" data-url="https://meet.google.com/vwe-pxhu-egh">Impact Meet Room 6</option>
+            </select>
+          </div>
+
+          <div class="room-note" id="roomNote">Select a day and time to see unavailable meet rooms.</div>
+
+          <div class="field">
+            <label>Status</label>
+            <select id="status"><option>Scheduled</option><option>Completed</option><option>Cancelled</option></select>
+          </div>
+
+          <div class="field full"><label>Class Notes</label><textarea id="notes" placeholder="Optional notes"></textarea></div>
+
+          <button class="save-btn" type="submit">Save Class</button>
+          <div class="save-status" id="saveStatus"></div>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="list-top">
+        <div>
+          <h2 class="panel-title">Scheduled Classes</h2>
+          <p class="panel-sub">All saved classes appear here.</p>
+        </div>
+        <div class="class-count" id="classCount">0 classes</div>
+      </div>
+      <div class="class-list" id="classList"><div class="empty">Loading classes...</div></div>
+    </section>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const db = firebase.firestore();
+
+  const form = document.getElementById("classForm");
+  const level = document.getElementById("level");
+  const learner = document.getElementById("learner");
+  const teacher = document.getElementById("teacher");
+  const day = document.getElementById("day");
+  const time = document.getElementById("time");
+  const duration = document.getElementById("duration");
+  const meetRoom = document.getElementById("meetRoom");
+  const status = document.getElementById("status");
+  const notes = document.getElementById("notes");
+  const roomNote = document.getElementById("roomNote");
+  const saveStatus = document.getElementById("saveStatus");
+  const classList = document.getElementById("classList");
+  const classCount = document.getElementById("classCount");
+
+  let allClasses = [];
+  let editingId = null;
+
+  function activeKey(id){ return "impactActiveClass_" + id; }
+  function getActive(id){
+    try { return JSON.parse(localStorage.getItem(activeKey(id)) || "null"); }
+    catch(e){ return null; }
+  }
+  function setActive(id, data){ localStorage.setItem(activeKey(id), JSON.stringify(data)); }
+  function clearActive(id){ localStorage.removeItem(activeKey(id)); }
+
+  function getRoomURL(){
+    const option = meetRoom.options[meetRoom.selectedIndex];
+    return option?.dataset?.url || "";
+  }
+
+  async function loadClasses(){
+    classList.innerHTML = '<div class="empty">Loading classes...</div>';
+
+    const snapshot = await db.collection("classes").orderBy("createdAt","desc").get();
+
+    allClasses = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data() }));
+
+    renderClasses();
+    refreshRoomAvailability();
+  }
+
+  function renderClasses(){
+    classCount.textContent = allClasses.length + (allClasses.length === 1 ? " class" : " classes");
+
+    if(!allClasses.length){
+      classList.innerHTML = '<div class="empty">No classes scheduled yet.</div>';
+      return;
+    }
+
+    classList.innerHTML = "";
+
+    allClasses.forEach(item => {
+      const active = getActive(item.id);
+      const card = document.createElement("div");
+      card.className = "class-card";
+      card.dataset.classId = item.id;
+
+      card.innerHTML = `
+        <div>
+          <h3>${item.learner || "Unnamed Learner"} — ${item.level || "No level"}</h3>
+          <div class="class-meta">${item.day || ""} · ${item.time || ""} · ${item.duration || ""}</div>
+          <div class="class-meta">${item.teacher || ""} · ${item.meetRoom || ""} · ${item.status || ""}</div>
+          ${active ? '<div class="class-meta" style="color:#d9f99d;font-weight:900;">Class in progress — started ' + (active.startedAtText || "") + '</div>' : ""}
+        </div>
+
+        <div class="class-actions">
+          <button type="button" class="open-meet-btn ${active ? "running" : ""}">
+            ${active ? "End Class" : "Open Meet"}
+          </button>
+          <button type="button" data-edit="${item.id}">Edit</button>
+          <button type="button" data-delete="${item.id}">Delete</button>
+        </div>
+      `;
+
+      card.querySelector(".open-meet-btn").onclick = () => handleClassStartEnd(item, card);
+      card.querySelector("[data-edit]").onclick = () => editClass(item);
+      card.querySelector("[data-delete]").onclick = () => deleteClass(item);
+
+      classList.appendChild(card);
+    });
+  }
+
+  async function handleClassStartEnd(item, card){
+    const active = getActive(item.id);
+
+    if(!active){
+      if(!item.meetUrl){
+        alert("No Meet link saved.");
+        return;
+      }
+
+      const now = new Date();
+
+      const logRef = await db.collection("classTracker").add({
+        classId:item.id,
+        learner:item.learner || "",
+        teacher:item.teacher || "",
+        level:item.level || "",
+        day:item.day || "",
+        time:item.time || "",
+        duration:item.duration || "",
+        meetRoom:item.meetRoom || "",
+        meetUrl:item.meetUrl || "",
+        startedAt:now.toISOString(),
+        startedAtText:now.toLocaleString(),
+        endedAt:"",
+        endedAtText:"",
+        minutesSpent:0,
+        earlyEnd:false,
+        earlyEndReason:"",
+        earlyEndRemark:"",
+        status:"Started"
+      });
+
+      setActive(item.id, {
+        logId:logRef.id,
+        startedAt:now.toISOString(),
+        startedAtText:now.toLocaleString()
+      });
+
+      window.open(item.meetUrl, "_blank");
+      renderClasses();
+      return;
+    }
+
+    const startedAt = new Date(active.startedAt);
+    const endedAt = new Date();
+    const minutesSpent = Math.round((endedAt - startedAt) / 60000);
+
+    if(minutesSpent < 40){
+      showEarlyBox(item, card, active, minutesSpent);
+      return;
+    }
+
+    await finishClass(item, active, minutesSpent, "", "");
+    clearActive(item.id);
+    renderClasses();
+  }
+
+  function showEarlyBox(item, card, active, minutesSpent){
+    const old = card.querySelector(".early-box");
+    if(old) old.remove();
+
+    const box = document.createElement("div");
+    box.className = "early-box";
+    box.innerHTML = `
+      <h4>Class ended before 40 minutes.</h4>
+      <label>Reason</label>
+      <select class="early-reason">
+        <option value="">Select reason</option>
+        <option>Learner did not join</option>
+        <option>Internet issue</option>
+        <option>Power outage</option>
+        <option>Technical issue</option>
+        <option>Teacher emergency</option>
+        <option>Learner emergency</option>
+        <option>Rescheduled</option>
+        <option>Other</option>
+      </select>
+      <textarea class="early-remark" placeholder="Add remark if needed..."></textarea>
+      <button type="button" class="early-save">Save Reason & End Class</button>
+    `;
+
+    card.appendChild(box);
+
+    box.querySelector(".early-save").onclick = async () => {
+      const reason = box.querySelector(".early-reason").value;
+      const remark = box.querySelector(".early-remark").value.trim();
+
+      if(!reason){
+        alert("Please select a reason.");
+        return;
+      }
+
+      await finishClass(item, active, minutesSpent, reason, remark);
+      clearActive(item.id);
+      renderClasses();
+    };
+  }
+
+  async function finishClass(item, active, minutesSpent, reason, remark){
+    const endedAt = new Date();
+
+    await db.collection("classTracker").doc(active.logId).set({
+      endedAt:endedAt.toISOString(),
+      endedAtText:endedAt.toLocaleString(),
+      minutesSpent,
+      earlyEnd:minutesSpent < 40,
+      earlyEndReason:reason || "",
+      earlyEndRemark:remark || "",
+      status:"Ended"
+    }, { merge:true });
+
+    await db.collection("classes").doc(item.id).set({
+      lastClassStatus:minutesSpent < 40 ? "Ended Early" : "Completed",
+      lastClassStartedAt:active.startedAt,
+      lastClassEndedAt:endedAt.toISOString(),
+      lastClassMinutes:minutesSpent,
+      lastEarlyEndReason:reason || "",
+      lastEarlyEndRemark:remark || ""
+    }, { merge:true });
+  }
+
+  function editClass(item){
+    editingId = item.id;
+    level.value = item.level || "";
+    learner.value = item.learner || "";
+    teacher.value = item.teacher || "";
+    day.value = item.day || "";
+    time.value = item.time || "";
+    duration.value = item.duration || "";
+    meetRoom.value = item.meetRoom || "";
+    status.value = item.status || "Scheduled";
+    notes.value = item.notes || "";
+    saveStatus.textContent = "Editing selected class";
+  }
+
+  async function deleteClass(item){
+    if(!confirm("Delete this scheduled class?")) return;
+    clearActive(item.id);
+    await db.collection("classes").doc(item.id).delete();
+    await loadClasses();
+  }
+
+  function refreshRoomAvailability(){
+    const selectedDay = day.value;
+    const selectedTime = time.value;
+
+    Array.from(meetRoom.options).forEach(option => {
+      if(!option.value) return;
+
+      option.disabled = false;
+      option.textContent = option.value;
+
+      if(!selectedDay || !selectedTime) return;
+
+      const unavailable = allClasses.some(classItem =>
+        classItem.id !== editingId &&
+        classItem.day === selectedDay &&
+        classItem.time === selectedTime &&
+        classItem.meetRoom === option.value &&
+        classItem.status !== "Cancelled"
+      );
+
+      if(unavailable){
+        option.disabled = true;
+        option.textContent = option.value + " — unavailable at selected day and time";
+      }
+    });
+
+    roomNote.textContent = selectedDay && selectedTime
+      ? "Unavailable rooms are greyed out for the selected day and time."
+      : "Select a day and time to see unavailable meet rooms.";
+  }
+
+  async function saveClass(event){
+    event.preventDefault();
+
+    const selectedOption = meetRoom.options[meetRoom.selectedIndex];
+
+    if(!selectedOption || !meetRoom.value){
+      saveStatus.textContent = "Please select a Google Meet room.";
+      return;
+    }
+
+    if(selectedOption.disabled){
+      saveStatus.textContent = "This room is unavailable at the selected day and time.";
+      return;
+    }
+
+    const now = new Date();
+
+    const data = {
+      level:level.value.trim(),
+      learner:learner.value.trim(),
+      teacher:teacher.value.trim(),
+      day:day.value,
+      time:time.value,
+      duration:duration.value.trim(),
+      meetRoom:meetRoom.value,
+      meetUrl:getRoomURL(),
+      status:status.value,
+      notes:notes.value.trim(),
+      updatedAt:now.toISOString(),
+      updatedAtText:now.toLocaleString()
+    };
+
+    if(editingId){
+      await db.collection("classes").doc(editingId).set(data,{ merge:true });
+    }else{
+      await db.collection("classes").add({
+        ...data,
+        createdAt:now.toISOString(),
+        createdAtText:now.toLocaleString()
+      });
+    }
+
+    form.reset();
+    editingId = null;
+    saveStatus.textContent = "Saved ✓";
+    await loadClasses();
+
+    setTimeout(() => saveStatus.textContent = "", 1400);
+  }
+
+  form.addEventListener("submit", saveClass);
+  day.addEventListener("change", refreshRoomAvailability);
+  time.addEventListener("change", refreshRoomAvailability);
+  meetRoom.addEventListener("focus", refreshRoomAvailability);
+
+  await loadClasses();
+});
+</script>
+
+
+<script id="class-end-questionnaire-fix">
+document.addEventListener("click", function(e){
+  const btn = e.target.closest("button");
+  if(!btn) return;
+  if((btn.textContent || "").trim().toLowerCase() !== "end class") return;
+
+  const card = btn.closest(".class-card");
+  if(!card) return;
+
+  const classId = card.dataset.classId;
+  if(!classId) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+
+  if(card.querySelector(".class-end-questionnaire")) return;
+
+  const box = document.createElement("div");
+  box.className = "class-end-questionnaire";
+  box.innerHTML = `
+    <h4>End Class Report</h4>
+
+    <label>Lesson completed?</label>
+    <select class="q-completed">
+      <option>Yes</option>
+      <option>No</option>
+    </select>
+
+    <label>Lesson canceled?</label>
+    <select class="q-cancelled">
+      <option>No</option>
+      <option>Yes</option>
+    </select>
+
+    <label>Student Participation?</label>
+    <select class="q-participation">
+      <option>100%</option>
+      <option>83%</option>
+      <option>67%</option>
+      <option>50%</option>
+      <option>33%</option>
+      <option>0%</option>
+    </select>
+
+    <label>Remarks</label>
+    <textarea class="q-remarks" placeholder="Add teacher remarks..."></textarea>
+
+    <button type="button" class="q-submit">Submit & End Class</button>
+  `;
+
+  card.appendChild(box);
+
+  box.querySelector(".q-submit").onclick = async function(){
+    const active = JSON.parse(localStorage.getItem("impactActiveClass_" + classId) || "null");
+    const endedAt = new Date();
+    const startedAt = active?.startedAt ? new Date(active.startedAt) : endedAt;
+    const minutesSpent = Math.round((endedAt - startedAt) / 60000);
+
+    const report = {
+      lessonCompleted: box.querySelector(".q-completed").value,
+      lessonCanceled: box.querySelector(".q-cancelled").value,
+      studentParticipation: box.querySelector(".q-participation").value,
+      teacherRemarks: box.querySelector(".q-remarks").value.trim()
+    };
+
+    const db = firebase.firestore();
+
+    if(active?.logId){
+      await db.collection("classTracker").doc(active.logId).set({
+        endedAt: endedAt.toISOString(),
+        endedAtText: endedAt.toLocaleString(),
+        minutesSpent,
+        status: "Ended",
+        ...report
+      }, { merge:true });
+    }else{
+      await db.collection("classTracker").add({
+        classId,
+        endedAt: endedAt.toISOString(),
+        endedAtText: endedAt.toLocaleString(),
+        minutesSpent,
+        status: "Ended",
+        ...report
+      });
+    }
+
+    localStorage.removeItem("impactActiveClass_" + classId);
+    alert("Class report submitted and tracked.");
+    location.reload();
+  };
+}, true);
+</script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\live-classroom.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-classroom.html
+CHARS:  10822
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Live Classroom | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+
+.lc-nav{position:fixed;top:24px;left:28px;z-index:999}
+.lc-nav-btn{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);transition:.2s ease}
+.lc-nav-btn:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+.lc-nav-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8}
+
+.lobby{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 60px}
+
+.lobby-eyebrow{text-transform:uppercase;letter-spacing:.32em;font-size:.66rem;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:18px}
+.lobby h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.6rem,5.6vw,4.4rem);font-weight:400;line-height:1.04;letter-spacing:-.01em}
+.lobby-sub{margin-top:14px;color:rgba(255,255,255,.48);font-weight:500;font-size:.94rem;max-width:420px;text-align:center;line-height:1.6}
+
+.lobby-cards{display:grid;grid-template-columns:1fr 1fr;gap:1px;width:min(760px,92vw);margin:56px 0 40px;border-radius:28px;overflow:hidden;background:rgba(255,255,255,.09);box-shadow:0 40px 100px rgba(0,0,0,.4)}
+@media(max-width:640px){.lobby-cards{grid-template-columns:1fr}}
+
+.lc-card{background:rgba(11,13,20,.92);padding:38px 34px;text-align:left;position:relative}
+
+.lc-card-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.lc-card-icon svg{width:20px;height:20px;fill:none;stroke:rgba(255,255,255,.85);stroke-width:1.6}
+
+.lc-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.5rem;font-weight:400;margin-bottom:10px;letter-spacing:-.01em}
+.lc-card p{font-size:.8rem;font-weight:500;color:rgba(255,255,255,.42);line-height:1.6;margin-bottom:24px;min-height:58px}
+
+.lc-input{width:100%;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);color:#fff;font-family:Inter,sans-serif;font-weight:500;font-size:.86rem;outline:none;margin-bottom:10px;transition:.18s ease}
+.lc-input:focus{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.07)}
+.lc-input::placeholder{color:rgba(255,255,255,.28)}
+
+.lc-btn{width:100%;padding:13px;border-radius:12px;border:none;font-family:Inter,sans-serif;font-weight:700;font-size:.84rem;cursor:pointer;transition:.2s ease;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
+.lc-btn svg{width:15px;height:15px;stroke-width:2}
+.lc-btn:hover{transform:translateY(-1px)}
+.lc-btn:active{transform:scale(.98)}
+.lc-btn-primary{background:#fff;color:#0a0c14}
+.lc-btn-primary:hover{background:rgba(255,255,255,.9)}
+.lc-btn-success{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.22)}
+.lc-btn-success:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.32)}
+
+.error-msg{color:#f0a5a5;font-size:.74rem;font-weight:600;margin-top:8px;min-height:16px}
+
+.lobby-links{display:flex;align-items:center;gap:20px;margin-top:6px}
+.lobby-link{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.4);font-size:.78rem;font-weight:600;text-decoration:none;transition:.18s ease}
+.lobby-link:hover{color:rgba(255,255,255,.75)}
+.lobby-link svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none}
+.lobby-divider{width:1px;height:14px;background:rgba(255,255,255,.15)}
+
+.lc-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:9999;background:rgba(16,18,26,.95);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);padding:11px 20px;border-radius:13px;font-size:.8rem;font-weight:600;color:#fff;opacity:0;transition:.25s ease;pointer-events:none;white-space:nowrap}
+.lc-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="lc-nav">
+  <a class="lc-nav-btn" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+</nav>
+
+<main class="lobby">
+  <p class="lobby-eyebrow">Impact Platform</p>
+  <h1>Live Classroom</h1>
+  <p class="lobby-sub">Start or join a live video class, hosted directly inside your workspace.</p>
+
+  <div class="lobby-cards">
+    <div class="lc-card">
+      <div class="lc-card-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><polygon points="16,10 22,7 22,17 16,14"/></svg>
+      </div>
+      <h2>Start a Class</h2>
+      <p>Create a new meeting room and share the Meeting ID with your learners so they can join.</p>
+      <input class="lc-input" id="createName" type="text" placeholder="Your display name" maxlength="40">
+      <input class="lc-input" id="meetingTitle" type="text" placeholder="Meeting title (optional)" maxlength="60">
+      <button class="lc-btn lc-btn-primary" id="createBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Create Meeting
+      </button>
+      <div class="error-msg" id="createErr"></div>
+    </div>
+
+    <div class="lc-card">
+      <div class="lc-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      </div>
+      <h2>Join a Class</h2>
+      <p>Enter the Meeting ID shared by your teacher to join an existing live class.</p>
+      <input class="lc-input" id="joinName" type="text" placeholder="Your display name" maxlength="40">
+      <input class="lc-input" id="joinId" type="text" placeholder="Meeting ID" maxlength="20" style="text-transform:uppercase;letter-spacing:.08em">
+      <button class="lc-btn lc-btn-success" id="joinBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Join Meeting
+      </button>
+      <div class="error-msg" id="joinErr"></div>
+    </div>
+  </div>
+
+  <div class="lobby-links">
+    <a class="lobby-link" href="/teacher/recordings.html">
+      <svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><polygon points="16,10 22,7 22,17 16,14"/></svg>
+      Recordings
+    </a>
+    <div class="lobby-divider"></div>
+    <a class="lobby-link" href="/teacher/live-classroom-data.html">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Data Centre
+    </a>
+  </div>
+</main>
+
+<div class="lc-toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const db = firebase.firestore();
+
+  function toast(msg, dur=2800){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), dur);
+  }
+
+  function genId(){
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let id = "";
+    for(let i=0;i<3;i++){
+      for(let j=0;j<3;j++) id += chars[Math.floor(Math.random()*chars.length)];
+      if(i<2) id += "-";
+    }
+    return id;
+  }
+
+  document.getElementById("createBtn").onclick = async function(){
+    const name  = document.getElementById("createName").value.trim();
+    const title = document.getElementById("meetingTitle").value.trim() || "Impact Live Class";
+    const err   = document.getElementById("createErr");
+
+    if(!name){ err.textContent = "Please enter your display name."; return; }
+    err.textContent = "";
+
+    const meetingId = genId();
+
+    await db.collection("meetings").doc(meetingId).set({
+      meetingId,
+      title,
+      createdAt:  new Date().toISOString(),
+      startedAt:  new Date().toISOString(),
+      endedAt:    "",
+      status:     "active",
+      hostName:   name
+    });
+
+    toast("Meeting created — redirecting");
+    setTimeout(function(){
+      location.href = "/teacher/live-room.html?id=" + meetingId + "&name=" + encodeURIComponent(name) + "&host=true";
+    }, 600);
+  };
+
+  document.getElementById("joinBtn").onclick = async function(){
+    const name = document.getElementById("joinName").value.trim();
+    const id   = document.getElementById("joinId").value.trim().toUpperCase().replace(/\s/g,"");
+    const err  = document.getElementById("joinErr");
+
+    if(!name){ err.textContent = "Please enter your display name."; return; }
+    if(!id)  { err.textContent = "Please enter a Meeting ID."; return; }
+    err.textContent = "";
+
+    try{
+      const snap = await db.collection("meetings").doc(id).get();
+      if(!snap.exists || snap.data().status !== "active"){
+        err.textContent = "Meeting not found or has ended."; return;
+      }
+      toast("Joining meeting");
+      setTimeout(function(){
+        location.href = "/teacher/live-join.html?id=" + id + "&name=" + encodeURIComponent(name) + "&host=false";
+      }, 400);
+    }catch(e){
+      err.textContent = "Could not reach the meeting. Check your connection.";
+    }
+  };
+
+  document.getElementById("joinId").addEventListener("keydown", function(e){
+    if(e.key === "Enter") document.getElementById("joinBtn").click();
+  });
+
+  const params = new URLSearchParams(location.search);
+  if(params.get("join")){
+    document.getElementById("joinId").value = params.get("join");
+    document.getElementById("joinName").focus();
+  }
+});
+</script>
+
+<script src="/js/impact-page-nav.js"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\live-join.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-join.html
+CHARS:  8880
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Join Class | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/live-classroom.css">
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<div class="join-page">
+  <div class="join-card">
+    <div class="meeting-badge" id="meetingBadge">Loading...</div>
+    <h1 id="meetingTitle">Impact Live Class</h1>
+    <p class="join-sub" id="hostLine">Hosted by —</p>
+
+    <div class="join-preview">
+      <video id="previewVideo" autoplay playsinline muted></video>
+      <div class="join-preview-placeholder" id="previewPlaceholder">
+        <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <span id="previewText">Requesting camera access...</span>
+      </div>
+    </div>
+
+    <p class="perm-note" id="permNote">Your browser will ask for camera and microphone permission. Please click <b>Allow</b>.</p>
+
+    <div class="join-controls-row">
+      <button class="join-ctrl" id="prevCamBtn" type="button">
+        <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Camera On
+      </button>
+      <button class="join-ctrl" id="prevMicBtn" type="button">
+        <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        Mic On
+      </button>
+    </div>
+
+    <input class="lc-input" id="nameInput" type="text" placeholder="Your name" maxlength="40" autocomplete="name">
+    <button class="lc-btn lc-btn-success" id="joinBtn" type="button" style="margin-top:4px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Join Class
+    </button>
+    <div class="error-msg" id="errMsg"></div>
+  </div>
+</div>
+
+<div class="lc-toast-wrap"><div class="lc-toast" id="toast"></div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+  const params = new URLSearchParams(location.search);
+  const MEETING_ID = (params.get("id") || params.get("join") || "").toUpperCase();
+  const IS_HOST = params.get("host") === "true";
+  const PRESET_NAME = params.get("name") ? decodeURIComponent(params.get("name")) : "";
+
+  if(!MEETING_ID){ location.href = "/teacher/live-classroom.html"; return; }
+
+  function toast(msg){
+    const t=document.getElementById("toast");
+    t.textContent=msg;t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"),3200);
+  }
+
+  // Load meeting info
+  try{
+    const snap = await db.collection("meetings").doc(MEETING_ID).get();
+    if(!snap.exists || snap.data().status === "ended"){
+      document.getElementById("meetingTitle").textContent = "Meeting Not Found";
+      document.getElementById("hostLine").textContent = "This meeting has ended or does not exist.";
+      document.getElementById("joinBtn").disabled = true;
+      document.getElementById("permNote").style.display = "none";
+      return;
+    }
+    const d = snap.data();
+    document.getElementById("meetingBadge").textContent = MEETING_ID;
+    document.getElementById("meetingTitle").textContent = d.title || "Impact Live Class";
+    document.getElementById("hostLine").textContent = IS_HOST
+      ? "You are the host"
+      : "Hosted by " + (d.hostName || "Your teacher");
+    document.title = (d.title || "Join Class") + " | Impact";
+  }catch(e){
+    document.getElementById("hostLine").textContent = "Could not load meeting details.";
+  }
+
+  if(PRESET_NAME) document.getElementById("nameInput").value = PRESET_NAME;
+
+  // ── Camera/mic preview with correct permission handling ────
+  let previewStream = null;
+  let camOn = true;
+  let micOn = true;
+  const previewText = document.getElementById("previewText");
+  const permNote     = document.getElementById("permNote");
+
+  async function startPreview(){
+    try{
+      previewStream = await navigator.mediaDevices.getUserMedia({
+        video:{ facingMode:"user", width:{ideal:1280}, height:{ideal:720} },
+        audio:{ echoCancellation:true, noiseSuppression:true }
+      });
+      const vid = document.getElementById("previewVideo");
+      vid.srcObject = previewStream;
+      vid.style.display = "block";
+      document.getElementById("previewPlaceholder").style.display = "none";
+      permNote.style.display = "none";
+    }catch(err){
+      console.warn("getUserMedia (video+audio) failed:", err.name);
+      // Try audio only
+      try{
+        previewStream = await navigator.mediaDevices.getUserMedia({ audio:true });
+        camOn = false;
+        document.getElementById("prevCamBtn").classList.add("off");
+        previewText.textContent = "Camera unavailable";
+        toast("Camera not available — joining with mic only.");
+      }catch(err2){
+        camOn = false; micOn = false;
+        document.getElementById("prevCamBtn").classList.add("off");
+        document.getElementById("prevMicBtn").classList.add("off");
+        if(err.name === "NotAllowedError" || err2.name === "NotAllowedError"){
+          previewText.textContent = "Permission denied";
+          permNote.innerHTML = "⚠️ Camera/mic access was blocked. Click the 🔒 icon in your address bar and allow access, then reload this page.";
+          permNote.style.color = "#feb2b2";
+          permNote.style.display = "block";
+        }else{
+          previewText.textContent = "No camera or mic found";
+        }
+      }
+      permNote.style.display = permNote.innerHTML.includes("blocked") ? "block" : "none";
+    }
+  }
+
+  await startPreview();
+
+  document.getElementById("prevCamBtn").onclick = function(){
+    camOn = !camOn;
+    if(previewStream) previewStream.getVideoTracks().forEach(t=>t.enabled=camOn);
+    this.classList.toggle("off",!camOn);
+    this.innerHTML = camOn
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Camera On`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 0 1-2-2V8"/><path d="M16 13l7 4V7l-7 4"/></svg> Camera Off`;
+  };
+
+  document.getElementById("prevMicBtn").onclick = function(){
+    micOn = !micOn;
+    if(previewStream) previewStream.getAudioTracks().forEach(t=>t.enabled=micOn);
+    this.classList.toggle("off",!micOn);
+    this.innerHTML = micOn
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> Mic On`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> Mic Off`;
+  };
+
+  if(!PRESET_NAME) document.getElementById("nameInput").focus();
+  document.getElementById("nameInput").addEventListener("keydown", function(e){
+    if(e.key === "Enter") document.getElementById("joinBtn").click();
+  });
+
+  document.getElementById("joinBtn").onclick = function(){
+    const name = document.getElementById("nameInput").value.trim();
+    const err  = document.getElementById("errMsg");
+    if(!name){ err.textContent = "Please enter your name."; return; }
+    err.textContent = "";
+
+    if(previewStream) previewStream.getTracks().forEach(t=>t.stop());
+
+    toast("Joining...");
+    setTimeout(()=>{
+      location.href = `/teacher/live-room.html?id=${MEETING_ID}&name=${encodeURIComponent(name)}&host=${IS_HOST}&cam=${camOn}&mic=${micOn}`;
+    }, 350);
+  };
+});
+</script>
+</body>
+</html>
+
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\js\impact-class-meet-tracker.js
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\js\impact-class-meet-tracker.js
+CHARS:  7625
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
+(function () {
+
+  function injectButtonEffects() {
+
+    if (document.getElementById("impact-global-button-effects")) return;
+
+    const style = document.createElement("style");
+    style.id = "impact-global-button-effects";
+
+    style.innerHTML = `
+      button,
+      .button,
+      .btn,
+      a.button,
+      [role="button"]{
+        transition:
+          transform .14s ease,
+          opacity .14s ease,
+          background .18s ease,
+          border-color .18s ease,
+          box-shadow .18s ease !important;
+      }
+
+      button:hover,
+      .button:hover,
+      .btn:hover,
+      a.button:hover,
+      [role="button"]:hover{
+        transform:translateY(-2px) scale(1.02);
+        opacity:1 !important;
+        box-shadow:
+          0 12px 30px rgba(0,0,0,.28),
+          0 0 0 1px rgba(255,255,255,.10) inset !important;
+        cursor:pointer;
+      }
+
+      button:active,
+      .button:active,
+      .btn:active,
+      a.button:active,
+      [role="button"]:active{
+        transform:scale(.96);
+        opacity:.86 !important;
+      }
+
+      button:disabled{
+        opacity:.45 !important;
+        cursor:not-allowed !important;
+        transform:none !important;
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function initMeetTracking(){
+
+    if(
+      !window.firebase ||
+      !firebase.firestore ||
+      !document.querySelector(".scheduled-class-card")
+    ){
+      setTimeout(initMeetTracking,600);
+      return;
+    }
+
+    injectButtonEffects();
+
+    const db = firebase.firestore();
+    const MINUTES_LIMIT = 40;
+
+    async function startLog(item){
+
+      const startedAt = new Date();
+
+      const ref = await db.collection("classTracker").add({
+        classId:item.id || "",
+        learner:item.learner || "",
+        teacher:item.teacher || "",
+        level:item.level || "",
+        meetRoom:item.meetRoom || "",
+        meetUrl:item.meetUrl || "",
+        startedAt:startedAt.toISOString(),
+        startedAtText:startedAt.toLocaleString(),
+        endedAt:"",
+        endedAtText:"",
+        minutesSpent:0,
+        earlyEnd:false,
+        earlyEndReason:"",
+        earlyEndRemark:"",
+        entryType:"auto",
+        billable:false,
+        status:"Started"
+      });
+
+      return {
+        logId:ref.id,
+        startedAt
+      };
+    }
+
+    async function finishLog(logId, startedAt, item, reason="", remark=""){
+
+      const endedAt = new Date();
+      const minutesSpent = Math.round((endedAt - startedAt) / 60000);
+      const completed = minutesSpent >= MINUTES_LIMIT;
+
+      await db.collection("classTracker").doc(logId).set({
+        endedAt:endedAt.toISOString(),
+        endedAtText:endedAt.toLocaleString(),
+        minutesSpent,
+        earlyEnd:!completed,
+        earlyEndReason:reason,
+        earlyEndRemark:remark,
+        billable:completed,
+        status:completed ? "Completed" : "Ended Early"
+      }, { merge:true });
+
+      await db.collection("classes").doc(item.id).set({
+        lastMinutesSpent:minutesSpent,
+        lastEndedAt:endedAt.toISOString(),
+        lastEarlyEndReason:reason,
+        lastEarlyEndRemark:remark,
+        lastStatus:completed ? "Completed" : "Ended Early"
+      }, { merge:true });
+    }
+
+    function showEarlyPrompt(card, callback){
+
+      if(card.querySelector(".early-end-box")) return;
+
+      const wrap = document.createElement("div");
+
+      wrap.className = "early-end-box";
+
+      wrap.style.cssText = `
+        margin-top:14px;
+        padding:18px;
+        border-radius:22px;
+        background:rgba(255,255,255,.08);
+        border:1px solid rgba(255,255,255,.12);
+      `;
+
+      wrap.innerHTML = `
+        <div style="
+          font-size:.95rem;
+          font-weight:900;
+          margin-bottom:12px;
+        ">
+          Why did the class end early?
+        </div>
+
+        <select class="early-select" style="
+          width:100%;
+          margin-bottom:12px;
+          border:none;
+          border-radius:16px;
+          padding:14px;
+          background:rgba(255,255,255,.10);
+          color:white;
+          font-weight:800;
+        ">
+          <option>Learner did not join</option>
+          <option>Internet issue</option>
+          <option>Teacher emergency</option>
+          <option>Learner emergency</option>
+          <option>Rescheduled</option>
+          <option>Other</option>
+        </select>
+
+        <textarea class="early-remark" placeholder="Add remark..." style="
+          width:100%;
+          min-height:80px;
+          border:none;
+          border-radius:16px;
+          padding:14px;
+          background:rgba(255,255,255,.10);
+          color:white;
+          font-weight:700;
+          resize:vertical;
+        "></textarea>
+
+        <button class="save-early-btn" type="button" style="
+          margin-top:12px;
+          border:none;
+          border-radius:16px;
+          padding:12px 18px;
+          background:rgba(255,255,255,.12);
+          color:white;
+          font-weight:900;
+        ">
+          Save Reason
+        </button>
+      `;
+
+      card.appendChild(wrap);
+
+      wrap.querySelector(".save-early-btn").onclick = async () => {
+
+        const reason = wrap.querySelector(".early-select").value;
+        const remark = wrap.querySelector(".early-remark").value.trim();
+
+        await callback(reason, remark);
+
+        wrap.innerHTML = `
+          <div style="
+            font-weight:900;
+            color:#bbf7d0;
+          ">
+            Early-end reason saved ✓
+          </div>
+        `;
+      };
+    }
+
+    document.addEventListener("click", async function(e){
+
+      const btn = e.target.closest("[data-open-meet]");
+      if(!btn) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const encoded = btn.getAttribute("data-open-meet");
+
+      if(!encoded) return;
+
+      let item;
+
+      try{
+        item = JSON.parse(decodeURIComponent(encoded));
+      }catch(err){
+        console.error(err);
+        alert("Could not open class data.");
+        return;
+      }
+
+      if(!item.meetUrl){
+        alert("No Google Meet link found.");
+        return;
+      }
+
+      btn.innerText = "Opening...";
+      btn.disabled = true;
+
+      const tracker = await startLog(item);
+
+      const win = window.open(
+        item.meetUrl,
+        "_blank",
+        "noopener,noreferrer"
+      );
+
+      if(!win){
+        btn.disabled = false;
+        btn.innerText = "Open Meet";
+        alert("Popup blocked. Allow popups for this site.");
+        return;
+      }
+
+      btn.innerText = "Class Running";
+
+      const card = btn.closest(".scheduled-class-card") || btn.closest(".class-card");
+
+      const watch = setInterval(async () => {
+
+        if(win.closed){
+
+          clearInterval(watch);
+
+          const minutesSpent = Math.round(
+            (new Date() - tracker.startedAt) / 60000
+          );
+
+          if(minutesSpent < MINUTES_LIMIT){
+
+            showEarlyPrompt(card, async (reason, remark) => {
+
+              await finishLog(
+                tracker.logId,
+                tracker.startedAt,
+                item,
+                reason,
+                remark
+              );
+
+              btn.disabled = false;
+              btn.innerText = "Open Meet";
+            });
+
+          } else {
+
+            await finishLog(
+              tracker.logId,
+              tracker.startedAt,
+              item
+            );
+
+            btn.disabled = false;
+            btn.innerText = "Open Meet";
+          }
+        }
+
+      }, 3000);
+
+    }, true);
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initMeetTracking);
+  }else{
+    initMeetTracking();
+  }
+
+})();
+
+
