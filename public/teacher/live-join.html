@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -169,9 +169,9 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     if(previewStream) previewStream.getTracks().forEach(t=>t.stop());
 
-    toast("Joining...");
+    toast("Opening class in a new tab...");
     setTimeout(()=>{
-      location.href = `/teacher/live-room.html?id=${MEETING_ID}&name=${encodeURIComponent(name)}&host=${IS_HOST}&cam=${camOn}&mic=${micOn}`;
+      window.open(`/teacher/live-room.html?id=${MEETING_ID}&name=${encodeURIComponent(name)}&host=${IS_HOST}&cam=${camOn}&mic=${micOn}`, "_blank");
     }, 350);
   };
 });

@@ -163,9 +163,9 @@ document.addEventListener("DOMContentLoaded", function(){
       hostName:   name
     });
 
-    toast("Meeting created — redirecting");
+    toast("Meeting created — opening in a new tab");
     setTimeout(function(){
-      location.href = "/teacher/live-room.html?id=" + meetingId + "&name=" + encodeURIComponent(name) + "&host=true";
+      window.open("/teacher/live-room.html?id=" + meetingId + "&name=" + encodeURIComponent(name) + "&host=true", "_blank");
     }, 600);
   };
 
@@ -183,9 +183,9 @@ document.addEventListener("DOMContentLoaded", function(){
       if(!snap.exists || snap.data().status !== "active"){
         err.textContent = "Meeting not found or has ended."; return;
       }
-      toast("Joining meeting");
+      toast("Opening meeting in a new tab");
       setTimeout(function(){
-        location.href = "/teacher/live-join.html?id=" + id + "&name=" + encodeURIComponent(name) + "&host=false";
+        window.open("/teacher/live-join.html?id=" + id + "&name=" + encodeURIComponent(name) + "&host=false", "_blank");
       }, 400);
     }catch(e){
       err.textContent = "Could not reach the meeting. Check your connection.";
