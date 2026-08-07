@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public\teacher\live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  60798
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -178,15 +189,7 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
 const params     = new URLSearchParams(location.search);
 const MEETING_ID = (params.get("id") || "").toUpperCase();
 const MY_NAME    = decodeURIComponent(params.get("name") || "Guest");
-
-// Any logged-in staff member (not just whoever happened to create this
-// specific meeting) gets full host-level functions -- moderation,
-// Present Lesson, recording. Checks both plausible session keys used
-// across the platform's personnel-side vs learner-side logins.
-const myRole   = (sessionStorage.getItem("impactPersonnelRole") || sessionStorage.getItem("impactAccessRole") || "").trim().toLowerCase();
-const IS_STAFF = !!myRole && myRole !== "learner";
-const IS_HOST    = params.get("host") === "true" || IS_STAFF;
-
+const IS_HOST    = params.get("host") === "true";
 const INIT_CAM   = params.get("cam") !== "false";
 const INIT_MIC   = params.get("mic") !== "false";
 const MY_ID      = "u_" + Math.random().toString(36).slice(2,10);
@@ -735,21 +738,6 @@ function watchParticipants(){
 }
 
 async function registerSelf(){
-  // If a previous tab/session under this same name is still sitting in
-  // the participant list (its cleanup on close may not have completed --
-  // beforeunload/pagehide are not fully reliable), replace it instead of
-  // adding a duplicate. This is what makes leave-and-rejoin result in
-  // exactly one entry instead of two.
-  try{
-    const dupSnap = await db.collection("meetings").doc(MEETING_ID)
-      .collection("participants")
-      .where("displayName","==",MY_NAME)
-      .get();
-    await Promise.all(dupSnap.docs.map(d => d.ref.delete()));
-  }catch(e){
-    console.warn("Could not clear stale participant entries:", e);
-  }
-
   await db.collection("meetings").doc(MEETING_ID)
     .collection("participants").doc(MY_ID).set({
       participantId: MY_ID, displayName: MY_NAME, isHost: IS_HOST,
@@ -763,14 +751,6 @@ async function registerSelf(){
   const unsubSelf = db.collection("meetings").doc(MEETING_ID)
     .collection("participants").doc(MY_ID)
     .onSnapshot((snap) => {
-      // If this doc vanished entirely (not just a flag change), another
-      // tab/device rejoined under the same name and took over -- leave
-      // gracefully instead of silently going dark for everyone else.
-      if(!snap.exists){
-        toast("You joined this meeting from another tab or device.");
-        setTimeout(()=>{ cleanup(); location.href = "/teacher/live-ended.html?reason=duplicate"; }, 1200);
-        return;
-      }
       const data = snap.data();
       if(!data) return;
 
@@ -922,17 +902,10 @@ screenBtn.onclick = async function(){
 
     const screenTrack = screenStream.getVideoTracks()[0];
 
-    // Force a full renegotiation instead of a silent replaceTrack() --
-    // replaceTrack alone is a known source of frozen/black remote video
-    // on camera-to-screenshare swaps in Chrome. removeTrack+addTrack
-    // routes this through the same tested perfect-negotiation pipeline
-    // already used for the initial connection.
+    // Replace outgoing video track on every peer connection
     await Promise.all(Object.values(peerConns).map(async pc => {
       const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
-      if(sender){
-        pc.removeTrack(sender);
-        pc.addTrack(screenTrack, screenStream);
-      }
+      if(sender) await sender.replaceTrack(screenTrack);
     }));
 
     // Show the screen share in the LOCAL tile
@@ -963,10 +936,7 @@ async function stopScreenShare(){
     if(camTrack){
       await Promise.all(Object.values(peerConns).map(async pc => {
         const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
-        if(sender){
-          pc.removeTrack(sender);
-          pc.addTrack(camTrack, localStream);
-        }
+        if(sender) await sender.replaceTrack(camTrack);
       }));
     }
     setTileStream(MY_ID, localStream);
@@ -1039,11 +1009,8 @@ document.getElementById("inviteClose").onclick = () => document.getElementById("
 
   async function loadTeacherLessons(){
     try{
-      // Show every published lesson plan from the whole team, not just
-      // ones this specific person personally authored -- otherwise
-      // whoever is hosting sees an empty picker if a colleague made it.
       const snap = await db.collection("lessonPlans")
-        .where("status","==","published")
+        .where("createdByTeacher","==",MY_NAME)
         .get();
       const plans = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       lessonPicker.innerHTML = '<option value="">Select a lesson plan...</option>' +
