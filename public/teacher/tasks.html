@@ -8,96 +8,134 @@
 <link rel="stylesheet" href="/css/impact-global-bg.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:#05060b;color:white;font-family:Inter,sans-serif;overflow-x:hidden}
-.page{position:relative;z-index:2;width:min(1080px,92vw);margin:auto;padding:110px 0 90px}
-.nav{position:fixed;top:24px;left:28px;z-index:50;display:flex;gap:12px}
-.nav a{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:white;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
-.hero{text-align:center;margin-bottom:34px}
-.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3rem,6vw,5.7rem);font-weight:400}
-.hero p{font-weight:800;color:rgba(255,255,255,.65)}
-.panel{border-radius:32px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(22px);box-shadow:0 24px 70px rgba(0,0,0,.28);padding:24px;margin-bottom:22px}
-.form-row{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-bottom:12px}
-.form-row2{display:grid;grid-template-columns:1fr 1fr 160px auto;gap:12px}
-input,select,button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.09);color:white;border-radius:18px;padding:14px 15px;font-weight:800;font-family:Inter,sans-serif}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+.page{position:relative;z-index:2;width:min(880px,92vw);margin:0 auto;padding:100px 0 80px}
+.nav{position:fixed;top:20px;left:24px;z-index:50;display:flex;gap:10px}
+.nav a{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(18px)}
+.nav a svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.2}
+
+.hero{text-align:center;margin-bottom:24px}
+.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(2.2rem,4.4vw,3.2rem);font-weight:400}
+.hero p{font-weight:700;color:rgba(255,255,255,.5);font-size:.82rem;margin-top:4px}
+
+.panel{border-radius:22px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px);padding:16px;margin-bottom:16px}
+
+.form-row{display:grid;grid-template-columns:1.3fr 1fr;gap:10px;margin-bottom:10px}
+.form-row2{display:grid;grid-template-columns:1fr 130px auto;gap:10px}
+input,select,button{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;border-radius:12px;padding:10px 12px;font-weight:700;font-family:Inter,sans-serif;font-size:.82rem}
 select option{color:#111}
-input::placeholder{color:rgba(255,255,255,.42)}
+input::placeholder{color:rgba(255,255,255,.35)}
 input[type="date"]{color-scheme:dark}
 button{cursor:pointer;transition:.15s ease}
-button:hover{transform:translateY(-2px) scale(1.02);background:rgba(255,255,255,.15)}
-button:active{transform:scale(.95);opacity:.8}
-.add{background:rgba(139,92,246,.2);border-color:rgba(139,92,246,.4)}
-.deliverable-hint{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:-4px;margin-bottom:12px;padding-left:4px}
-.qty-row{display:none;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px;align-items:end}
+button:hover{background:rgba(255,255,255,.12)}
+button:active{transform:scale(.96)}
+.add-btn{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.42);color:#c4b5fd;font-weight:800}
+.deliverable-hint{font-size:.68rem;font-weight:600;color:rgba(255,255,255,.35);margin-top:-3px;margin-bottom:10px;padding-left:2px}
+
+.qty-row{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
 .qty-row.show{display:grid}
-.qty-field label{display:block;font-size:.66rem;font-weight:800;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;padding-left:2px}
+.qty-field label{display:block;font-size:.62rem;font-weight:800;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;padding-left:2px}
 .qty-field input,.qty-field select{width:100%}
-.qty-hint{display:none;font-size:.7rem;font-weight:600;color:rgba(255,255,255,.35);margin-top:-2px;margin-bottom:12px;padding-left:2px}
+.qty-hint{display:none;font-size:.66rem;font-weight:600;color:rgba(255,255,255,.32);margin-top:-2px;margin-bottom:10px;padding-left:2px}
 .qty-hint.show{display:block}
 
-.filter-row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.filter-chip{padding:9px 16px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:.82rem;font-weight:800;cursor:pointer;transition:.15s}
-.filter-chip.active{background:rgba(99,179,237,.2);border-color:rgba(99,179,237,.4);color:#90cdf4}
+.filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.filter-chip{padding:6px 13px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-size:.72rem;font-weight:800;cursor:pointer;transition:.15s}
+.filter-chip.active{background:rgba(99,179,237,.18);border-color:rgba(99,179,237,.38);color:#90cdf4}
 
-.list{display:grid;gap:14px}
-.task{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:start;padding:18px;border-radius:24px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
-.task.overdue{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.06)}
-.task.auto{border-color:rgba(139,92,246,.3)}
-.check{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);cursor:pointer;font-weight:900}
-.check.done{background:rgba(132,204,22,.22);border-color:rgba(132,204,22,.45)}
-.check.auto-locked{cursor:default;opacity:.85}
-.title{font-weight:900;font-size:1rem;margin-bottom:6px}
-.meta{font-size:.78rem;color:rgba(255,255,255,.62);font-weight:800;line-height:1.7}
-.badge{display:inline-block;margin-top:8px;margin-right:6px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.1);font-size:.72rem;font-weight:900}
-.badge.overdue-badge{background:rgba(239,68,68,.2);color:#fca5a5}
-.badge.auto-badge{background:rgba(139,92,246,.2);color:#c4b5fd}
-.deliverable-link{display:inline-block;margin-top:10px;font-size:.78rem;font-weight:900;color:#90cdf4;text-decoration:none;border-bottom:1px solid rgba(144,205,244,.4)}
-.deliverable-link:hover{color:#bfe3ff}
-.calendar-link{display:inline-block;margin-top:10px;font-size:.78rem;font-weight:900;color:#90cdf4;text-decoration:none;border-bottom:1px solid rgba(144,205,244,.4)}
-.calendar-link:hover{color:#bfe3ff}
-.badge.timeliness-early{background:rgba(34,197,94,.2);color:#86efac}
-.badge.timeliness-ontime{background:rgba(99,179,237,.2);color:#93c5fd}
-.badge.timeliness-late{background:rgba(251,191,36,.2);color:#fde68a}
-.badge.timeliness-never{background:rgba(239,68,68,.2);color:#fca5a5}
-.task.calendar-sourced{border-color:rgba(99,179,237,.35);background:rgba(99,179,237,.05)}
-.actions{display:flex;gap:8px}
-.small{padding:10px 12px;border-radius:14px;font-size:.76rem}
-.delete{background:rgba(255,80,80,.14)}
-.empty{text-align:center;color:rgba(255,255,255,.55);font-weight:800;padding:24px}
-@media(max-width:850px){
-  .form-row,.form-row2{grid-template-columns:1fr}
-  .task{grid-template-columns:1fr}
-  .actions{justify-content:flex-start}
+.list{display:flex;flex-direction:column;gap:8px}
+
+.task-row{border-radius:14px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);overflow:hidden;transition:background .15s ease,border-color .15s ease;cursor:pointer}
+.task-row:hover{background:rgba(255,255,255,.07)}
+.task-row.overdue{border-color:rgba(239,68,68,.32)}
+.task-row.auto{border-left:2px solid rgba(139,92,246,.45)}
+.task-row.calendar-sourced{border-left:2px solid rgba(99,179,237,.45)}
+
+.task-summary{display:flex;align-items:center;gap:9px;padding:11px 13px}
+.task-check{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);cursor:pointer;flex-shrink:0}
+.task-check svg{width:12px;height:12px;fill:none;stroke:#fff;stroke-width:3;opacity:0}
+.task-check.done{background:rgba(132,204,22,.25);border-color:rgba(132,204,22,.5)}
+.task-check.done svg{opacity:1}
+.task-check.auto-locked{cursor:default;opacity:.75}
+
+.task-summary-title{flex:1;min-width:0;font-weight:800;font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.mini-badge{flex-shrink:0;padding:3px 9px;border-radius:999px;font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.02em}
+.mini-badge.pending{background:rgba(255,255,255,.09);color:rgba(255,255,255,.55)}
+.mini-badge.completed{background:rgba(132,204,22,.2);color:#bef264}
+.mini-badge.overdue{background:rgba(239,68,68,.2);color:#fca5a5}
+.mini-badge.early{background:rgba(34,197,94,.2);color:#86efac}
+.mini-badge.ontime{background:rgba(99,179,237,.2);color:#93c5fd}
+.mini-badge.late{background:rgba(251,191,36,.2);color:#fde68a}
+.mini-badge.never{background:rgba(239,68,68,.2);color:#fca5a5}
+
+.task-summary-due{flex-shrink:0;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.4)}
+
+.chevron{flex-shrink:0;width:14px;height:14px;fill:none;stroke:rgba(255,255,255,.3);stroke-width:2.2;transition:transform .25s ease}
+.task-row.pinned .chevron{transform:rotate(180deg)}
+@media (hover:hover){
+  .task-row:hover .chevron{transform:rotate(180deg)}
+}
+
+.task-details{max-height:0;overflow:hidden;opacity:0;transition:max-height .32s ease,opacity .22s ease;padding:0 13px}
+.task-row.pinned .task-details{max-height:700px;opacity:1;padding:0 13px 14px}
+@media (hover:hover){
+  .task-row:hover .task-details{max-height:700px;opacity:1;padding:0 13px 14px}
+}
+
+.meta{font-size:.74rem;color:rgba(255,255,255,.55);font-weight:700;line-height:1.7}
+.badges-row{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.badge{padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.08);font-size:.66rem;font-weight:900}
+.badge.auto-badge{background:rgba(139,92,246,.18);color:#c4b5fd}
+
+.deliverable-link,.calendar-link{display:inline-block;margin-top:8px;font-size:.72rem;font-weight:800;color:#90cdf4;text-decoration:none;border-bottom:1px solid rgba(144,205,244,.35)}
+.deliverable-link:hover,.calendar-link:hover{color:#bfe3ff}
+
+.task-actions{display:flex;gap:6px;margin-top:10px}
+.icon-btn{width:30px;height:30px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.65);display:grid;place-items:center;cursor:pointer;transition:.15s ease}
+.icon-btn svg{width:13px;height:13px}
+.icon-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.icon-btn.delete:hover{background:rgba(255,80,80,.18);border-color:rgba(255,100,100,.35);color:#fca5a5}
+
+.empty{text-align:center;color:rgba(255,255,255,.45);font-weight:700;padding:26px;font-size:.84rem}
+
+@media(max-width:700px){
+  .form-row,.form-row2,.qty-row{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
-<nav class="nav"><a href="/teacher/dashboard.html">⌘</a></nav>
+<nav class="nav">
+  <a href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+  </a>
+</nav>
 
 <main class="page">
   <section class="hero">
     <h1>Team Tasks</h1>
-    <p>Assign real platform deliverables. They tick themselves off when done.</p>
+    <p>Real platform deliverables. They tick themselves off when done.</p>
   </section>
 
   <section class="panel">
     <form id="taskForm">
       <div class="form-row">
-        <input id="taskTitle" placeholder="Task title (e.g. 'A1 Lesson Plan for September')" required>
+        <input id="taskTitle" placeholder="Task title" required>
         <select id="deliverableType">
           <option value="">No linked deliverable (manual tick)</option>
-          <option value="lessonPlan">📚 Create a Lesson Plan</option>
-          <option value="activity">🎨 Create an Activity</option>
-          <option value="delfMock">📝 Create a DELF Mock</option>
-          <option value="marking">✓ Clear Marking Queue</option>
-          <option value="classLogged">🎥 Log a Class</option>
-          <option value="teamDoc">📄 Upload a Team Document</option>
-          <option value="recording">📹 Upload/Review a Recording (manual)</option>
-          <option value="kpi">📊 Review KPIs (manual)</option>
-          <option value="other">✎ Other (manual)</option>
+          <option value="lessonPlan">Create a Lesson Plan</option>
+          <option value="activity">Create an Activity</option>
+          <option value="delfMock">Create a DELF Mock</option>
+          <option value="marking">Clear Marking Queue</option>
+          <option value="classLogged">Log a Class</option>
+          <option value="teamDoc">Upload a Team Document</option>
+          <option value="recording">Upload/Review a Recording (manual)</option>
+          <option value="kpi">Review KPIs (manual)</option>
+          <option value="other">Other (manual)</option>
         </select>
       </div>
-      <p class="deliverable-hint" id="deliverableHint">Tasks with a linked deliverable auto-complete when the real thing is created in the platform — no need to tick manually.</p>
+      <p class="deliverable-hint" id="deliverableHint">Linked deliverables auto-complete when the real thing is created — no manual tick needed.</p>
       <div class="qty-row" id="qtyRow">
         <div class="qty-field">
           <label for="expectedQty">Quantity needed</label>
@@ -123,9 +161,9 @@ button:active{transform:scale(.95);opacity:.8}
           <option value="">Assign to...</option>
         </select>
         <input id="dueDate" type="date" required>
-        <input id="taskNotes" placeholder="Notes (optional)">
-        <button class="add" type="submit">Add Task</button>
+        <button class="add-btn" type="submit">Add Task</button>
       </div>
+      <input id="taskNotes" placeholder="Notes (optional)" style="width:100%;margin-top:10px">
     </form>
   </section>
 
@@ -146,7 +184,7 @@ button:active{transform:scale(.95);opacity:.8}
 <script src="/__/firebase/init.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", async()=>{
+document.addEventListener("DOMContentLoaded", async function(){
   const db=firebase.firestore();
 
   const form=document.getElementById("taskForm");
@@ -163,9 +201,9 @@ document.addEventListener("DOMContentLoaded", async()=>{
   const filterRow=document.getElementById("filterRow");
 
   const DELIVERABLE_LABELS = {
-    lessonPlan:"📚 Lesson Plan", activity:"🎨 Activity", delfMock:"📝 DELF Mock",
-    marking:"✓ Marking Queue", classLogged:"🎥 Logged Class", teamDoc:"📄 Team Document",
-    recording:"📹 Recording", kpi:"📊 KPI Review", other:"✎ Other"
+    lessonPlan:"Lesson Plan", activity:"Activity", delfMock:"DELF Mock",
+    marking:"Marking Queue", classLogged:"Logged Class", teamDoc:"Team Document",
+    recording:"Recording", kpi:"KPI Review", other:"Other"
   };
   const DELIVERABLE_LINKS = {
     lessonPlan:"/teacher/lesson-builder.html", activity:"/teacher/activity-builder.html",
@@ -175,19 +213,27 @@ document.addEventListener("DOMContentLoaded", async()=>{
   };
   const AUTO_TYPES = new Set(["lessonPlan","activity","delfMock","marking","classLogged","teamDoc"]);
   const TIMELINESS_INFO = {
-    early:{label:"Early", cls:"timeliness-early"},
-    ontime:{label:"On time", cls:"timeliness-ontime"},
-    late:{label:"Late", cls:"timeliness-late"},
-    never:{label:"Never Completed", cls:"timeliness-never"}
+    early:{label:"Early", cls:"early"},
+    ontime:{label:"On time", cls:"ontime"},
+    late:{label:"Late", cls:"late"},
+    never:{label:"Never Completed", cls:"never"}
   };
 
-  // Reads a leading quantity off a task title ("3 A0 lesson plans" -> 3).
-  // Defaults to 1 when no number is present, so ordinary single-item
-  // tasks behave exactly as before.
   function parseTargetQty(title){
     const m = String(title || "").match(/^(\d+)\b/);
     const n = m ? parseInt(m[1], 10) : 1;
     return (n > 0 && n < 1000) ? n : 1;
+  }
+
+  const KNOWN_LEVELS = ["Absolute Beginner","A1.1","A0","A1","A2","B1","B2"];
+  function parseTargetLevel(title){
+    const t = String(title || "");
+    for(const lvl of KNOWN_LEVELS){
+      const escaped = lvl.replace(/\./g, "\\.");
+      const re = new RegExp("(^|[^A-Za-z0-9])" + escaped + "([^A-Za-z0-9]|$)", "i");
+      if(re.test(t)) return lvl;
+    }
+    return null;
   }
 
   function updateQtyRowVisibility(){
@@ -215,6 +261,13 @@ document.addEventListener("DOMContentLoaded", async()=>{
     return d.toLocaleDateString();
   }
 
+  function fmtDateCompact(v){
+    if(!v) return "";
+    const d=new Date(v);
+    if(isNaN(d)) return "";
+    return d.toLocaleDateString(undefined,{day:"2-digit",month:"short"});
+  }
+
   function isOverdue(t){
     if(t.completed || !t.dueDate) return false;
     const due = new Date(t.dueDate);
@@ -228,24 +281,6 @@ document.addEventListener("DOMContentLoaded", async()=>{
       const names = snap.docs.map(d=>d.data().name).filter(Boolean).sort();
       assignedTo.innerHTML = '<option value="">Assign to...</option>' + names.map(n=>`<option value="${n}">${n}</option>`).join("");
     }catch(e){ console.warn("Could not load personnel list:", e); }
-  }
-
-  // ── AUTO-COMPLETION CHECKS ──────────────────────────────────
-  // For each auto-tracked task, check whether the real deliverable
-  // now exists in the platform, created by the assignee, at or
-  // after the task was created. Runs once on page load.
-  const KNOWN_LEVELS = ["Absolute Beginner","A1.1","A0","A1","A2","B1","B2"];
-
-  // Reads a level off a task title ("3 A0 lesson plans" -> "A0"). Checked
-  // longest-first so "A1.1" matches before the shorter "A1" would.
-  function parseTargetLevel(title){
-    const t = String(title || "");
-    for(const lvl of KNOWN_LEVELS){
-      const escaped = lvl.replace(/\./g, "\\.");
-      const re = new RegExp("(^|[^A-Za-z0-9])" + escaped + "([^A-Za-z0-9]|$)", "i");
-      if(re.test(t)) return lvl;
-    }
-    return null;
   }
 
   async function checkAutoCompletions(taskList){
@@ -359,40 +394,64 @@ document.addEventListener("DOMContentLoaded", async()=>{
       const overdue=isOverdue(t);
       const isAuto = AUTO_TYPES.has(t.deliverableType);
       const isCalendarSourced = t.source === "academicCalendar";
-      const card=document.createElement("article");
-      card.className="task" + (overdue?" overdue":"") + (isAuto?" auto":"") + (isCalendarSourced?" calendar-sourced":"");
+      const isLocked = isAuto || isCalendarSourced;
+
+      const row=document.createElement("article");
+      row.className="task-row" + (overdue?" overdue":"") + (isAuto?" auto":"") + (isCalendarSourced?" calendar-sourced":"");
 
       const deliverableLabel = DELIVERABLE_LABELS[t.deliverableType] || "";
       const deliverableLink = DELIVERABLE_LINKS[t.deliverableType] || "";
       const timelinessInfo = isCalendarSourced ? TIMELINESS_INFO[t.timeliness] : null;
-      const isLocked = isAuto || isCalendarSourced;
 
-      card.innerHTML=`
-        <button class="check ${done?'done':''} ${isLocked?'auto-locked':''}" title="${isAuto?'Auto-tracked — ticks itself when the deliverable is created':isCalendarSourced?'Set from Academic Calendar — edit status there':'Mark complete'}">${done?'✓':''}</button>
-        <div>
-          <div class="title">${t.title||"Untitled Task"}</div>
+      let summaryBadge = "";
+      if(timelinessInfo){
+        summaryBadge = `<span class="mini-badge ${timelinessInfo.cls}">${timelinessInfo.label}</span>`;
+      }else if(done){
+        summaryBadge = `<span class="mini-badge completed">Done</span>`;
+      }else if(overdue){
+        summaryBadge = `<span class="mini-badge overdue">Overdue</span>`;
+      }else{
+        summaryBadge = `<span class="mini-badge pending">Pending</span>`;
+      }
+
+      row.innerHTML = `
+        <div class="task-summary">
+          <button class="task-check ${done?'done':''} ${isLocked?'auto-locked':''}" title="${isAuto?'Auto-tracked':isCalendarSourced?'Set from Academic Calendar':'Mark complete'}">
+            <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          </button>
+          <span class="task-summary-title">${t.title||"Untitled Task"}</span>
+          ${summaryBadge}
+          <span class="task-summary-due">${fmtDateCompact(t.dueDate)}</span>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="task-details">
           <div class="meta">Assigned to: ${t.assignedTo||"Unassigned"}</div>
           <div class="meta">Due: ${fmtDate(t.dueDate)}</div>
           ${t.notes?`<div class="meta">${t.notes}</div>`:""}
           ${t.completedAtText?`<div class="meta">Completed: ${t.completedAtText}${t.completedVia==='auto'?' (auto)':t.completedVia==='calendar'?' (via calendar)':''}</div>`:""}
           ${(!done && t._autoProgress && (t._autoProgress.target > 1 || t.expectedLevel)) ? `<div class="meta">Progress: ${t._autoProgress.count} of ${t._autoProgress.target} done${t.expectedLevel?' ('+t.expectedLevel+')':''} — ${t._autoProgress.target - t._autoProgress.count} more to go</div>` : ""}
-          ${timelinessInfo
-            ? `<span class="badge ${timelinessInfo.cls}">${timelinessInfo.label}</span>`
-            : `<span class="badge ${overdue?'overdue-badge':''}">${done?'Completed':overdue?'Overdue':'Pending'}</span>`}
-          ${isAuto?`<span class="badge auto-badge">${deliverableLabel}</span>`:""}
+          <div class="badges-row">
+            ${isAuto?`<span class="badge auto-badge">${deliverableLabel}</span>`:""}
+          </div>
           ${isCalendarSourced
-            ? `<br><a class="calendar-link" href="/teacher/academic-calendar.html">Edit on Academic Calendar →</a>`
-            : (deliverableLink && !done ? `<br><a class="deliverable-link" href="${deliverableLink}">Go do this →</a>` : "")}
-        </div>
-        <div class="actions">
-          <button class="small edit">Edit</button>
-          <button class="small delete">Delete</button>
+            ? `<a class="calendar-link" href="/teacher/academic-calendar.html">Edit on Academic Calendar →</a>`
+            : (deliverableLink && !done ? `<a class="deliverable-link" href="${deliverableLink}">Go do this →</a>` : "")}
+          <div class="task-actions">
+            <button class="icon-btn edit" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+            <button class="icon-btn delete" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+          </div>
         </div>
       `;
 
-      const checkBtn = card.querySelector(".check");
+      row.addEventListener("click", function(e){
+        if(e.target.closest(".task-check") || e.target.closest(".icon-btn")) return;
+        row.classList.toggle("pinned");
+      });
+
+      const checkBtn = row.querySelector(".task-check");
       if(!isLocked){
-        checkBtn.onclick=async()=>{
+        checkBtn.onclick=async(e)=>{
+          e.stopPropagation();
           const now=new Date();
           await db.collection("tasks").doc(t.id).set({
             completed:!done,
@@ -403,9 +462,12 @@ document.addEventListener("DOMContentLoaded", async()=>{
           },{merge:true});
           await load();
         };
+      }else{
+        checkBtn.onclick=(e)=>{ e.stopPropagation(); };
       }
 
-      card.querySelector(".edit").onclick=()=>{
+      row.querySelector(".edit").onclick=(e)=>{
+        e.stopPropagation();
         taskTitle.value=t.title||"";
         deliverableType.value=t.deliverableType||"";
         assignedTo.value=t.assignedTo||"";
@@ -418,14 +480,15 @@ document.addEventListener("DOMContentLoaded", async()=>{
         taskTitle.focus();
       };
 
-      card.querySelector(".delete").onclick=async()=>{
+      row.querySelector(".delete").onclick=async(e)=>{
+        e.stopPropagation();
         if(confirm("Delete this task?")){
           await db.collection("tasks").doc(t.id).delete();
           await load();
         }
       };
 
-      list.appendChild(card);
+      list.appendChild(row);
     });
   }
 
