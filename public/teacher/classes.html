@@ -4,121 +4,200 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Classes | Impact</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Sorts+Mill+Goudy&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/impact-global-bg.css">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sorts+Mill+Goudy&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,sans-serif;overflow-x:hidden}
-.page{width:min(1180px,92vw);margin:auto;padding:110px 0 80px;position:relative;z-index:2}
-.top-nav{position:fixed;top:22px;left:24px;z-index:1000}
-.top-nav a{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;color:white;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)}
-.hero{text-align:center;margin-bottom:34px}
-.hero-tag{text-transform:uppercase;letter-spacing:.35em;font-size:.72rem;font-weight:800;color:rgba(255,255,255,.6);margin-bottom:14px}
-.hero h1{font-family:"Sorts Mill Goudy",serif;font-size:clamp(3.5rem,6vw,5.8rem);font-weight:400;line-height:1}
-.tracker-link{display:inline-block;margin-top:12px;color:#dbeafe;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(219,234,254,.4)}
-.layout{display:grid;grid-template-columns:1fr 1.08fr;gap:22px;align-items:start}
-.panel{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:34px;padding:26px;backdrop-filter:blur(24px);box-shadow:0 24px 80px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.05)}
-.panel-title{font-family:"Sorts Mill Goudy",serif;font-size:2.1rem;margin-bottom:8px}
-.panel-sub{font-size:.83rem;color:rgba(255,255,255,.65);font-weight:700;margin-bottom:22px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-.field{display:flex;flex-direction:column;gap:8px}
-.field.full{grid-column:1/-1}
-.field label{font-size:.82rem;font-weight:800;color:rgba(255,255,255,.8)}
-input,select,textarea{width:100%;border:none;outline:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:white;border-radius:18px;padding:14px 15px;font-size:.94rem;font-weight:700}
-textarea{min-height:100px;resize:vertical}
-select option{color:#111827}
-.room-note{grid-column:1/-1;margin-top:-3px;color:rgba(255,255,255,.45);font-size:.73rem;font-weight:700}
-.save-btn{grid-column:1/-1;border:none;cursor:pointer;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.12);min-height:54px;border-radius:18px;color:white;font-weight:900;font-size:.94rem}
-.save-status{grid-column:1/-1;text-align:center;min-height:22px;color:#d9f99d;font-weight:800;font-size:.82rem}
-.list-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
-.class-count{color:rgba(255,255,255,.72);font-size:.82rem;font-weight:900}
-.class-list{display:grid;gap:14px}
-.class-card{border-radius:24px;padding:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
-.class-card h3{font-size:1rem;font-weight:900;margin-bottom:8px}
-.class-meta{font-size:.78rem;color:rgba(255,255,255,.58);font-weight:700;line-height:1.7}
-.class-meta.room-id{color:#bfe3ff;font-weight:900;letter-spacing:.04em}
-.class-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.class-actions button{border:none;cursor:pointer;color:white;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);padding:10px 13px;border-radius:14px;font-size:.76rem;font-weight:900}
-.open-meet-btn.running{background:rgba(255,80,80,.18)!important}
-.copy-link-btn.copied{background:rgba(132,204,22,.22)!important;border-color:rgba(132,204,22,.4)!important}
-.empty{border-radius:22px;padding:26px;background:rgba(255,255,255,.05);text-align:center;color:rgba(255,255,255,.55);font-weight:800}
-.early-box{grid-column:1/-1;margin-top:12px;padding:13px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
-.early-box h4{font-size:.82rem;margin-bottom:8px}
-.early-box label{font-size:.72rem;font-weight:800;color:rgba(255,255,255,.68)}
-.early-box select,.early-box textarea{margin-top:6px;margin-bottom:9px;border-radius:13px;padding:10px 11px;font-size:.76rem}
-.early-box textarea{min-height:62px}
-.early-save{min-width:130px}
-button{transition:transform .15s ease,background .18s ease,box-shadow .18s ease,opacity .15s ease!important}
-button:hover{transform:translateY(-2px) scale(1.03)!important;background:rgba(255,255,255,.18)!important;box-shadow:0 14px 34px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.16)!important}
-button:active{transform:scale(.94)!important;opacity:.82!important}
-@media(max-width:980px){.layout{grid-template-columns:1fr}}
-@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+  :root{
+    --bg:#0B0E13; --surface:#12151C; --surface-hover:#161A23;
+    --border:#1F2430; --border-soft:#191D27;
+    --text:#E7E9EE; --text-dim:#8B92A3; --text-faint:#565D6E;
+    --accent:#6C7CF7; --accent-dim:rgba(108,124,247,0.14);
+    --amber:#E8A33D; --amber-dim:rgba(232,163,61,0.14);
+    --green:#4ADE9E; --green-dim:rgba(74,222,158,0.14);
+    --danger:#F16B6B; --danger-dim:rgba(241,107,107,0.12);
+    --radius:10px; --radius-sm:7px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,sans-serif;padding:32px 20px 80px;min-height:100vh;-webkit-font-smoothing:antialiased}
+  .page{max-width:960px;margin:0 auto}
+  .nav-back{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text-dim);text-decoration:none;margin-bottom:18px}
+  .nav-back svg{width:15px;height:15px}
+  .page-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--border-soft);flex-wrap:wrap;gap:8px}
+  .page-header h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.9rem;font-weight:400;color:var(--text)}
+  .page-header p{font-size:12.5px;color:var(--text-faint);margin-top:5px}
+  .tracker-link{font-size:12px;color:var(--accent);text-decoration:none;font-weight:700}
+  .tracker-link:hover{text-decoration:underline}
+  .header-meta{font-size:12px;color:var(--text-dim);text-align:right}
+
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:16px}
+  .panel-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.3rem;font-weight:400;margin-bottom:4px}
+  .panel-sub{font-size:11.5px;color:var(--text-faint);font-weight:600;margin-bottom:14px}
+
+  .field-label{font-size:10.5px;font-weight:700;color:var(--text-faint);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;display:block}
+  input,select,textarea{background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:12.5px;font-family:inherit;padding:9px 11px;border-radius:var(--radius-sm);outline:none;width:100%}
+  input::placeholder{color:var(--text-faint)}
+  select option{color:#111}
+  textarea{min-height:64px;resize:vertical}
+
+  .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+  .form-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+  .room-note{font-size:11px;font-weight:600;color:var(--text-faint);margin:-2px 0 10px 2px}
+
+  .add-btn{background:var(--accent);color:#0B0E13;border:none;font-size:12.5px;font-weight:700;padding:10px 16px;border-radius:var(--radius-sm);cursor:pointer;transition:opacity .15s ease;width:100%}
+  .add-btn:hover{opacity:.88}
+  .save-status{text-align:center;min-height:18px;color:var(--green);font-weight:700;font-size:11.5px;margin-top:8px}
+
+  .class-list{display:flex;flex-direction:column;gap:6px}
+  .class-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .15s ease,background .15s ease}
+  .class-card:hover{border-color:#2A3040;background:var(--surface-hover)}
+  .class-card.open{border-color:var(--accent)}
+
+  .class-row{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;min-height:46px}
+
+  .status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .status-dot.scheduled{background:var(--text-faint)}
+  .status-dot.live{background:var(--accent);animation:pulseDot 1.6s ease-in-out infinite}
+  .status-dot.completed{background:var(--green)}
+  .status-dot.cancelled{background:var(--danger)}
+  @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.35}}
+
+  .class-title{font-size:13.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1;min-width:70px}
+
+  .class-meta-inline{display:flex;align-items:center;gap:14px;margin-left:auto;flex-shrink:0}
+  .meta-chip{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-dim);white-space:nowrap}
+  .meta-chip svg{width:12px;height:12px;opacity:.7;flex-shrink:0}
+  .meta-chip.room-chip{color:#93b8e8;font-weight:700;letter-spacing:.03em}
+
+  .chevron{width:13px;height:13px;color:var(--text-faint);flex-shrink:0;transition:transform .18s ease}
+  .class-card.open .chevron{transform:rotate(90deg);color:var(--accent)}
+
+  .class-detail{max-height:0;opacity:0;overflow:hidden;transition:max-height .22s ease,opacity .18s ease,padding .22s ease;padding:0 14px}
+  .class-card.open .class-detail,.class-card:hover .class-detail{max-height:520px;opacity:1;padding:0 14px 14px 14px}
+  @media (hover:none){
+    .class-detail{max-height:0;opacity:0;padding:0 14px}
+    .class-card.open .class-detail{max-height:520px;opacity:1;padding:0 14px 14px 14px}
+  }
+
+  .detail-inner{border-top:1px solid var(--border-soft);padding-top:12px;margin-left:19px;display:flex;flex-direction:column;gap:10px}
+  .detail-row{display:flex;flex-wrap:wrap;gap:18px;font-size:12px}
+  .detail-item{display:flex;flex-direction:column;gap:3px}
+  .detail-label{color:var(--text-faint);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
+  .detail-value{color:var(--text-dim)}
+  .detail-value.live-flag{color:var(--green);font-weight:700}
+
+  .detail-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .action-btn{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:7px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg);color:var(--text-dim);cursor:pointer;transition:all .15s ease;font-family:inherit}
+  .action-btn svg{width:12px;height:12px}
+  .action-btn.primary{color:var(--green);border-color:rgba(74,222,158,.35);background:var(--green-dim)}
+  .action-btn.primary.running{color:var(--danger);border-color:rgba(241,107,107,.35);background:var(--danger-dim)}
+  .action-btn.copy:hover{border-color:var(--accent);color:var(--accent)}
+  .action-btn.copy.copied{color:var(--green);border-color:rgba(74,222,158,.4);background:var(--green-dim)}
+  .action-btn.edit:hover{border-color:var(--accent);color:var(--accent)}
+  .action-btn.delete:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-dim)}
+
+  .early-box{margin-top:6px;padding:13px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--border-soft)}
+  .early-box h4{font-size:.82rem;margin-bottom:8px;color:var(--text);font-weight:700}
+  .early-box label{font-size:.72rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:4px}
+  .early-box select,.early-box textarea{margin-bottom:9px;font-size:.76rem}
+  .early-box textarea{min-height:62px}
+  .early-save{width:100%;padding:9px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--accent-dim);color:var(--accent);font-weight:700;cursor:pointer;font-family:inherit;font-size:.78rem}
+
+  .class-end-questionnaire{margin-top:6px;padding:13px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--border-soft)}
+  .class-end-questionnaire h4{font-size:.82rem;margin-bottom:8px;color:var(--text);font-weight:700}
+  .class-end-questionnaire label{font-size:.72rem;font-weight:700;color:var(--text-dim);display:block;margin-bottom:4px;margin-top:8px}
+  .class-end-questionnaire select,.class-end-questionnaire textarea{font-size:.76rem}
+  .q-submit{margin-top:10px;width:100%;padding:9px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--accent-dim);color:var(--accent);font-weight:700;cursor:pointer;font-family:inherit;font-size:.78rem}
+
+  .empty{text-align:center;color:var(--text-faint);font-weight:600;padding:26px;font-size:.84rem}
+
+  @media (max-width:640px){
+    body{padding:20px 12px 60px}
+    .form-grid,.form-grid2{grid-template-columns:1fr 1fr}
+    .class-meta-inline{gap:8px}
+    .meta-chip span.chip-label{display:none}
+  }
+  ::-webkit-scrollbar{width:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 </style>
 </head>
 
 <body>
-<script src="/js/impact-global-bg.js"></script>
+<div class="page">
+  <a class="nav-back" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+  </a>
 
-<div class="top-nav"><a href="/teacher/dashboard.html">⌘</a></div>
+  <div class="page-header">
+    <div>
+      <h1>Classes</h1>
+      <p>Each class gets its own private meeting room automatically &middot; <a class="tracker-link" href="/teacher/class-logger.html">Class Tracker</a></p>
+    </div>
+    <div class="header-meta" id="classCount">0 classes</div>
+  </div>
 
-<main class="page">
-  <section class="hero">
-    <div class="hero-tag">TEACHER WORKSPACE</div>
-    <h1>Classes</h1>
-    <a class="tracker-link" href="/teacher/class-logger.html">Class Tracker</a>
-  </section>
+  <section class="panel">
+    <h2 class="panel-title">Schedule Class</h2>
+    <p class="panel-sub">Create an upcoming online class session.</p>
 
-  <section class="layout">
-    <section class="panel">
-      <h2 class="panel-title">Schedule Class</h2>
-      <p class="panel-sub">Create an upcoming online class session. Each class gets its own private meeting room automatically.</p>
-
-      <form id="classForm">
-        <div class="form-grid">
-          <div class="field"><label>Level</label><input id="level" type="text" placeholder="A0"></div>
-          <div class="field"><label>Learner</label><input id="learner" type="text" placeholder="Learner name"></div>
-          <div class="field"><label>Teacher</label><input id="teacher" type="text" placeholder="Teacher name"></div>
-
-          <div class="field">
-            <label>Day</label>
-            <select id="day" required>
-              <option value="">Select Day</option>
-              <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
-            </select>
-          </div>
-
-          <div class="field"><label>Time</label><input id="time" type="time" required></div>
-          <div class="field"><label>Duration</label><input id="duration" type="text" placeholder="1 hour"></div>
-
-          <div class="room-note" id="roomNote">A private meeting room is generated automatically for each class — no need to pick one.</div>
-
-          <div class="field">
-            <label>Status</label>
-            <select id="status"><option>Scheduled</option><option>Completed</option><option>Cancelled</option></select>
-          </div>
-
-          <div class="field full"><label>Class Notes</label><textarea id="notes" placeholder="Optional notes"></textarea></div>
-
-          <button class="save-btn" type="submit">Save Class</button>
-          <div class="save-status" id="saveStatus"></div>
-        </div>
-      </form>
-    </section>
-
-    <section class="panel">
-      <div class="list-top">
+    <form id="classForm">
+      <div class="form-grid">
         <div>
-          <h2 class="panel-title">Scheduled Classes</h2>
-          <p class="panel-sub">All saved classes appear here.</p>
+          <span class="field-label">Level</span>
+          <input id="level" type="text" placeholder="A0">
         </div>
-        <div class="class-count" id="classCount">0 classes</div>
+        <div>
+          <span class="field-label">Learner</span>
+          <input id="learner" type="text" placeholder="Learner name">
+        </div>
+        <div>
+          <span class="field-label">Teacher</span>
+          <input id="teacher" type="text" placeholder="Teacher name">
+        </div>
       </div>
-      <div class="class-list" id="classList"><div class="empty">Loading classes...</div></div>
-    </section>
+
+      <div class="form-grid">
+        <div>
+          <span class="field-label">Day</span>
+          <select id="day" required>
+            <option value="">Select Day</option>
+            <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+          </select>
+        </div>
+        <div>
+          <span class="field-label">Time</span>
+          <input id="time" type="time" required>
+        </div>
+        <div>
+          <span class="field-label">Duration</span>
+          <input id="duration" type="text" placeholder="1 hour">
+        </div>
+      </div>
+
+      <p class="room-note" id="roomNote">A private meeting room is generated automatically for each class.</p>
+
+      <div class="form-grid2">
+        <div>
+          <span class="field-label">Status</span>
+          <select id="status"><option>Scheduled</option><option>Completed</option><option>Cancelled</option></select>
+        </div>
+        <div></div>
+      </div>
+
+      <div style="margin-bottom:10px">
+        <span class="field-label">Class Notes</span>
+        <textarea id="notes" placeholder="Optional notes"></textarea>
+      </div>
+
+      <button class="add-btn" type="submit">Save Class</button>
+      <div class="save-status" id="saveStatus"></div>
+    </form>
   </section>
-</main>
+
+  <div class="class-list" id="classList"><div class="empty">Loading classes...</div></div>
+</div>
+
+<script src="/js/impact-global-bg.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
@@ -127,6 +206,17 @@ button:active{transform:scale(.94)!important;opacity:.82!important}
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
   const db = firebase.firestore();
+
+  const ICONS = {
+    user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>',
+    calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.5.4l2-2a5 5 0 00-7-7l-1.1 1.1"/><path d="M14 11a5 5 0 00-7.5-.4l-2 2a5 5 0 007 7l1.1-1.1"/></svg>',
+    video: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="14" height="12" rx="2"/><polygon points="16,10 22,7 22,17 16,14"/></svg>',
+    stop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>',
+    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg>'
+  };
 
   const form = document.getElementById("classForm");
   const level = document.getElementById("level");
@@ -178,12 +268,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function loadClasses(){
     classList.innerHTML = '<div class="empty">Loading classes...</div>';
-
     const snapshot = await db.collection("classes").orderBy("createdAt","desc").get();
-
     allClasses = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data() }));
-
     renderClasses();
+  }
+
+  function statusDotClass(item, active){
+    if(active) return "live";
+    if(item.status === "Completed") return "completed";
+    if(item.status === "Cancelled") return "cancelled";
+    return "scheduled";
   }
 
   function renderClasses(){
@@ -202,29 +296,59 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.className = "class-card";
       card.dataset.classId = item.id;
 
-      card.innerHTML = `
-        <div>
-          <h3>${item.learner || "Unnamed Learner"} — ${item.level || "No level"}</h3>
-          <div class="class-meta">${item.day || ""} · ${item.time || ""} · ${item.duration || ""}</div>
-          <div class="class-meta">${item.teacher || ""} · ${item.status || ""}</div>
-          <div class="class-meta room-id">Room: ${item.meetingId || "generated on first start"}</div>
-          ${active ? '<div class="class-meta" style="color:#d9f99d;font-weight:900;">Class in progress — started ' + (active.startedAtText || "") + '</div>' : ""}
-        </div>
+      const dotClass = statusDotClass(item, active);
 
-        <div class="class-actions">
-          <button type="button" class="open-meet-btn ${active ? "running" : ""}">
-            ${active ? "End Class" : "Open Meet"}
-          </button>
-          <button type="button" class="copy-link-btn">Copy Student Link</button>
-          <button type="button" data-edit="${item.id}">Edit</button>
-          <button type="button" data-delete="${item.id}">Delete</button>
-        </div>
-      `;
+      card.innerHTML =
+        '<div class="class-row">' +
+          '<div class="status-dot ' + dotClass + '"></div>' +
+          '<div class="class-title">' + (item.learner || "Unnamed Learner") + ' \u2014 ' + (item.level || "No level") + '</div>' +
+          '<div class="class-meta-inline">' +
+            '<span class="meta-chip">' + ICONS.user + '<span class="chip-label">' + (item.teacher || "") + '</span></span>' +
+            '<span class="meta-chip">' + ICONS.calendar + '<span class="chip-label">' + (item.day || "") + ' ' + (item.time || "") + '</span></span>' +
+            '<span class="meta-chip room-chip">' + ICONS.link + '<span class="chip-label">' + (item.meetingId || "auto") + '</span></span>' +
+          '</div>' +
+          '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>' +
+        '</div>' +
+        '<div class="class-detail">' +
+          '<div class="detail-inner">' +
+            '<div class="detail-row">' +
+              '<div class="detail-item"><span class="detail-label">Duration</span><span class="detail-value">' + (item.duration || "") + '</span></div>' +
+              '<div class="detail-item"><span class="detail-label">Status</span><span class="detail-value">' + (item.status || "Scheduled") + '</span></div>' +
+              '<div class="detail-item"><span class="detail-label">Room</span><span class="detail-value">' + (item.meetingId || "generated on first start") + '</span></div>' +
+              (active ? '<div class="detail-item"><span class="detail-label">Live</span><span class="detail-value live-flag">Started ' + (active.startedAtText || "") + '</span></div>' : '') +
+              (item.notes ? '<div class="detail-item"><span class="detail-label">Notes</span><span class="detail-value">' + item.notes + '</span></div>' : '') +
+            '</div>' +
+            '<div class="detail-actions">' +
+              '<button type="button" class="action-btn primary open-meet-btn ' + (active ? "running" : "") + '">' + (active ? ICONS.stop + " End Class" : ICONS.video + " Open Meet") + '</button>' +
+              '<button type="button" class="action-btn copy copy-link-btn">' + ICONS.copy + ' Copy Student Link</button>' +
+              '<button type="button" class="action-btn edit" data-edit="' + item.id + '">' + ICONS.edit + ' Edit</button>' +
+              '<button type="button" class="action-btn delete" data-delete="' + item.id + '">' + ICONS.trash + ' Delete</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
 
-      card.querySelector(".open-meet-btn").onclick = () => handleClassStartEnd(item, card);
-      card.querySelector(".copy-link-btn").onclick = (e) => copyStudentLink(item, e.currentTarget);
-      card.querySelector("[data-edit]").onclick = () => editClass(item);
-      card.querySelector("[data-delete]").onclick = () => deleteClass(item);
+      card.querySelector(".class-row").addEventListener("click", function(){
+        const isOpen = card.classList.contains("open");
+        document.querySelectorAll(".class-card.open").forEach(function(el){ el.classList.remove("open"); });
+        if(!isOpen) card.classList.add("open");
+      });
+
+      card.querySelector(".open-meet-btn").addEventListener("click", function(e){
+        e.stopPropagation();
+        handleClassStartEnd(item, card);
+      });
+      card.querySelector(".copy-link-btn").addEventListener("click", function(e){
+        e.stopPropagation();
+        copyStudentLink(item, e.currentTarget);
+      });
+      card.querySelector("[data-edit]").addEventListener("click", function(e){
+        e.stopPropagation();
+        editClass(item);
+      });
+      card.querySelector("[data-delete]").addEventListener("click", function(e){
+        e.stopPropagation();
+        deleteClass(item);
+      });
 
       classList.appendChild(card);
     });
@@ -235,10 +359,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const link = joinLinkFor(item);
     try{
       await navigator.clipboard.writeText(link);
-      const original = btn.textContent;
-      btn.textContent = "Copied!";
+      const original = btn.innerHTML;
+      btn.innerHTML = "Copied!";
       btn.classList.add("copied");
-      setTimeout(() => { btn.textContent = original; btn.classList.remove("copied"); }, 1600);
+      setTimeout(() => { btn.innerHTML = original; btn.classList.remove("copied"); }, 1600);
     }catch(e){
       prompt("Copy this link:", link);
     }
@@ -255,7 +379,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       await db.collection("meetings").doc(meetingId).set({
         meetingId,
-        title:(item.learner || "Class") + " — " + (item.level || ""),
+        title:(item.learner || "Class") + " \u2014 " + (item.level || ""),
         createdAt:new Date().toISOString(),
         startedAt:new Date().toISOString(),
         endedAt:"",
@@ -316,6 +440,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const old = card.querySelector(".early-box");
     if(old) old.remove();
 
+    card.classList.add("open");
+
+    const detailInner = card.querySelector(".detail-inner");
+
     const box = document.createElement("div");
     box.className = "early-box";
     box.innerHTML = `
@@ -336,9 +464,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       <button type="button" class="early-save">Save Reason & End Class</button>
     `;
 
-    card.appendChild(box);
+    detailInner.appendChild(box);
 
-    box.querySelector(".early-save").onclick = async () => {
+    box.querySelector(".early-save").onclick = async (e) => {
+      e.stopPropagation();
       const reason = box.querySelector(".early-reason").value;
       const remark = box.querySelector(".early-remark").value.trim();
 
@@ -386,7 +515,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     duration.value = item.duration || "";
     status.value = item.status || "Scheduled";
     notes.value = item.notes || "";
-    saveStatus.textContent = "Editing selected class — its meeting room stays the same.";
+    saveStatus.textContent = "Editing selected class \u2014 its meeting room stays the same.";
+    window.scrollTo({top:0, behavior:"smooth"});
   }
 
   async function deleteClass(item){
@@ -427,7 +557,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     form.reset();
     editingId = null;
-    saveStatus.textContent = "Saved ✓";
+    saveStatus.textContent = "Saved \u2713";
     await loadClasses();
 
     setTimeout(() => saveStatus.textContent = "", 1400);
@@ -438,7 +568,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadClasses();
 });
 </script>
-
 
 <script id="class-end-questionnaire-fix">
 document.addEventListener("click", function(e){
@@ -456,7 +585,11 @@ document.addEventListener("click", function(e){
   e.stopPropagation();
   e.stopImmediatePropagation();
 
-  if(card.querySelector(".class-end-questionnaire")) return;
+  card.classList.add("open");
+
+  const detailInner = card.querySelector(".detail-inner");
+  if(detailInner.querySelector(".class-end-questionnaire")) return;
+  if(detailInner.querySelector(".early-box")) return;
 
   const box = document.createElement("div");
   box.className = "class-end-questionnaire";
@@ -491,9 +624,10 @@ document.addEventListener("click", function(e){
     <button type="button" class="q-submit">Submit & End Class</button>
   `;
 
-  card.appendChild(box);
+  detailInner.appendChild(box);
 
-  box.querySelector(".q-submit").onclick = async function(){
+  box.querySelector(".q-submit").onclick = async function(e2){
+    e2.stopPropagation();
     const active = JSON.parse(localStorage.getItem("impactActiveClass_" + classId) || "null");
     const endedAt = new Date();
     const startedAt = active?.startedAt ? new Date(active.startedAt) : endedAt;
