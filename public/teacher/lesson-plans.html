@@ -18,11 +18,14 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 .action-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;gap:16px;flex-wrap:wrap}
 .new-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;text-decoration:none;transition:.18s ease;backdrop-filter:blur(12px)}
 .new-btn:hover{background:rgba(255,255,255,.17);transform:translateY(-2px)}
+.new-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;flex-shrink:0}
 .folder-count{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.45)}
-.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
-.empty-state{text-align:center;padding:72px 40px;border:2px dashed rgba(255,255,255,.1);border-radius:28px;color:rgba(255,255,255,.35)}
-.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.5rem;font-weight:400;margin-bottom:10px;color:rgba(255,255,255,.5)}
-.empty-state p{font-size:.86rem;font-weight:700;line-height:1.6}
+.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
+.section-label .count-pill{background:rgba(255,255,255,.08);padding:2px 9px;border-radius:999px;font-size:.66rem;color:rgba(255,255,255,.55)}
+.empty-state{text-align:center;padding:56px 40px;border:2px dashed rgba(255,255,255,.1);border-radius:28px;color:rgba(255,255,255,.35)}
+.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.4rem;font-weight:400;margin-bottom:8px;color:rgba(255,255,255,.5)}
+.empty-state p{font-size:.84rem;font-weight:700;line-height:1.6}
+.drafts-panel{border-radius:22px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);padding:12px;margin-bottom:44px}
 .folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 .folder-card{border-radius:24px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);overflow:hidden;transition:.22s ease;cursor:pointer}
 .folder-card.open{border-color:rgba(255,255,255,.22);box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -35,64 +38,27 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 .folder-chevron{color:rgba(255,255,255,.3);font-size:.85rem;transition:transform .22s ease;flex-shrink:0}
 .folder-card.open .folder-chevron{transform:rotate(90deg)}
 .folder-body{max-height:0;overflow:hidden;transition:max-height .38s ease,padding .28s ease;padding:0 14px}
-.folder-card.open .folder-body{max-height:800px;padding:0 14px 14px}
-.plan-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
+.folder-card.open .folder-body{max-height:1400px;padding:0 14px 14px}
+.plan-row{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);margin-bottom:8px;transition:.15s ease}
 .plan-row:last-child{margin-bottom:0}
 .plan-row:hover{background:rgba(255,255,255,.09)}
+.plan-row-top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
 .plan-title{font-size:.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plan-meta-line{font-size:.66rem;color:rgba(255,255,255,.42);font-weight:600;line-height:1.5}
 .plan-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.plan-icon-btn{width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.06);color:rgba(255,255,255,.72);cursor:pointer;display:grid;place-items:center;transition:.16s ease;flex-shrink:0}
-.plan-icon-btn svg{width:16px;height:16px}
+.plan-icon-btn{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.06);color:rgba(255,255,255,.72);cursor:pointer;display:grid;place-items:center;transition:.16s ease;flex-shrink:0}
+.plan-icon-btn svg{width:15px;height:15px}
 .plan-icon-btn:hover{background:rgba(255,255,255,.15);transform:translateY(-1px);color:#fff}
 .plan-icon-btn.open:hover{background:rgba(99,179,237,.22);border-color:rgba(99,179,237,.4);color:#bfe3ff}
 .plan-icon-btn.share:hover{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.4);color:#c4b5fd}
 .plan-icon-btn.delete:hover{background:rgba(255,80,80,.2);border-color:rgba(255,100,100,.4);color:#fca5a5}
 
-.del-popover{
-  margin-top:6px;
-  margin-bottom:2px;
-  padding:12px 14px;
-  border-radius:14px;
-  background:rgba(30,10,10,.92);
-  border:1px solid rgba(255,100,100,.35);
-  backdrop-filter:blur(12px);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  animation:popIn .15s ease;
-}
+.del-popover{margin-top:6px;margin-bottom:2px;padding:12px 14px;border-radius:14px;background:rgba(30,10,10,.92);border:1px solid rgba(255,100,100,.35);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;gap:10px;animation:popIn .15s ease}
 @keyframes popIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.del-popover-msg{
-  font-size:.8rem;
-  font-weight:800;
-  color:rgba(255,255,255,.85);
-  flex:1;
-  line-height:1.35;
-}
+.del-popover-msg{font-size:.8rem;font-weight:800;color:rgba(255,255,255,.85);flex:1;line-height:1.35}
 .del-popover-actions{display:flex;gap:8px;flex-shrink:0}
-.del-popover-cancel{
-  padding:7px 14px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.16);
-  background:rgba(255,255,255,.09);
-  color:#fff;
-  font-size:.78rem;
-  font-weight:800;
-  cursor:pointer;
-  font-family:Inter,sans-serif;
-}
-.del-popover-ok{
-  padding:7px 14px;
-  border-radius:10px;
-  border:1px solid rgba(255,100,100,.4);
-  background:rgba(200,40,40,.28);
-  color:#fca5a5;
-  font-size:.78rem;
-  font-weight:900;
-  cursor:pointer;
-  font-family:Inter,sans-serif;
-}
+.del-popover-cancel{padding:7px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.09);color:#fff;font-size:.78rem;font-weight:800;cursor:pointer;font-family:Inter,sans-serif}
+.del-popover-ok{padding:7px 14px;border-radius:10px;border:1px solid rgba(255,100,100,.4);background:rgba(200,40,40,.28);color:#fca5a5;font-size:.78rem;font-weight:900;cursor:pointer;font-family:Inter,sans-serif}
 .del-popover-cancel:hover{background:rgba(255,255,255,.16)}
 .del-popover-ok:hover{background:rgba(200,40,40,.45)}
 .row-badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;vertical-align:middle}
@@ -119,6 +85,7 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 .share-actions{display:flex;gap:10px;margin-top:20px}
 .share-btn-ctl{flex:1;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.84rem;cursor:pointer}
 .share-btn-ctl.primary{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.45);color:#c4b5fd}
+@media(max-width:700px){.folders-grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="/css/impact-round-icons.css?v=001">
 </head>
@@ -132,20 +99,21 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
     <h1>Lesson Plans</h1>
     <p>Folders are created automatically when you save a lesson from the builder.</p>
   </section>
+
   <div class="action-bar">
-    <div style="display:flex;align-items:center;gap:10px">
-      <a class="new-btn" href="/teacher/lesson-builder.html">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        New Lesson
-      </a>
-      <span class="folder-count" id="folderCount"></span>
-    </div>
+    <a class="new-btn" href="/teacher/lesson-builder.html">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Lesson
+    </a>
+    <span class="folder-count" id="folderCount"></span>
   </div>
-  <p class="section-label">Lesson Plan Logs</p>
-  <div id="foldersWrap"><div style="text-align:center;padding:48px;color:rgba(255,255,255,.4);font-weight:700">Loading folders...</div></div>
+
+  <p class="section-label">Drafts <span class="count-pill" id="draftCount">0</span></p>
+  <div id="draftsWrap"><div style="text-align:center;padding:32px;color:rgba(255,255,255,.4);font-weight:700">Loading...</div></div>
+
+  <p class="section-label">Published</p>
+  <div id="foldersWrap"><div style="text-align:center;padding:32px;color:rgba(255,255,255,.4);font-weight:700">Loading...</div></div>
 </main>
-
-
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
@@ -153,14 +121,36 @@ h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(3rem,6vw,5rem);f
 <script>
 document.addEventListener("DOMContentLoaded", async function(){
   const db = firebase.firestore();
-  const wrap = document.getElementById("foldersWrap");
+  const draftsWrap = document.getElementById("draftsWrap");
+  const draftCount = document.getElementById("draftCount");
+  const foldersWrap = document.getElementById("foldersWrap");
   const folderCount = document.getElementById("folderCount");
   let allPlans = [];
   let openFolder = null;
 
+  function fmtDT(iso){
+    if(!iso) return "";
+    const d = new Date(iso);
+    if(isNaN(d.getTime())) return "";
+    return d.toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"}) + ", " + d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
+  }
+
+  function buildMetaLine(plan){
+    const parts = [];
+    if(plan.createdByTeacher && plan.createdAt){
+      parts.push("Created by " + plan.createdByTeacher + " &middot; " + fmtDT(plan.createdAt));
+    }
+    if(plan.status === "published" && plan.publishedBy && plan.publishedAt){
+      parts.push("Published by " + plan.publishedBy + " &middot; " + fmtDT(plan.publishedAt));
+    }
+    if(plan.updatedBy && plan.updatedAt && plan.updatedAt !== plan.createdAt){
+      parts.push("Last edited by " + plan.updatedBy + " &middot; " + fmtDT(plan.updatedAt));
+    }
+    return parts.join(" &nbsp;&bull;&nbsp; ");
+  }
+
   function showDeletePopover(anchorRow, msg){
     document.querySelectorAll(".del-popover").forEach(p=>p.remove());
-
     return new Promise(resolve=>{
       const pop = document.createElement("div");
       pop.className = "del-popover";
@@ -170,22 +160,12 @@ document.addEventListener("DOMContentLoaded", async function(){
           <button class="del-popover-cancel" type="button">Cancel</button>
           <button class="del-popover-ok" type="button">Delete</button>
         </div>`;
-
       anchorRow.after(pop);
       pop.scrollIntoView({behavior:"smooth", block:"nearest"});
-
-      const close = r=>{
-        pop.remove();
-        document.removeEventListener("click", outside);
-        resolve(r);
-      };
-
+      const close = r=>{ pop.remove(); document.removeEventListener("click", outside); resolve(r); };
       pop.querySelector(".del-popover-ok").onclick     = e=>{ e.stopPropagation(); close(true); };
       pop.querySelector(".del-popover-cancel").onclick = e=>{ e.stopPropagation(); close(false); };
-
-      const outside = e=>{
-        if(!pop.contains(e.target)) close(false);
-      };
+      const outside = e=>{ if(!pop.contains(e.target)) close(false); };
       setTimeout(()=>document.addEventListener("click", outside), 50);
     });
   }
@@ -201,9 +181,46 @@ document.addEventListener("DOMContentLoaded", async function(){
     render();
   }
 
+  function buildRowHTML(plan){
+    const isPub = (plan.status === "published");
+    const safeTitle = (plan.title||"Untitled Lesson").replace(/"/g,"&quot;");
+    const shared = ((plan.assignedLevels&&plan.assignedLevels.length)||(plan.assignedLearners&&plan.assignedLearners.length));
+    const metaLine = buildMetaLine(plan);
+    return '<div class="plan-row">'
+      + '<div class="plan-row-top">'
+      + '<span class="plan-title">' + (plan.title||"Untitled Lesson")
+      + (isPub ? '<span class="row-badge pub">Published</span>' : '<span class="row-badge dr">Draft</span>')
+      + (isPub && shared ? '<span class="row-badge shared">Shared</span>' : '')
+      + '</span>'
+      + '<div class="plan-actions">'
+      + '<button class="plan-icon-btn open view-btn" data-id="' + plan.id + '" title="' + (isPub?'Open':'Preview') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>'
+      + (isPub ? '<button class="plan-icon-btn share share-btn" data-id="' + plan.id + '" data-title="' + safeTitle + '" title="Share with learners"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg></button>' : '')
+      + '<button class="plan-icon-btn edit edit-btn" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'
+      + '<button class="plan-icon-btn delete del" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>'
+      + '</div>'
+      + '</div>'
+      + (metaLine ? '<div class="plan-meta-line">' + metaLine + '</div>' : '')
+      + '</div>';
+  }
+
+  function renderDrafts(){
+    const drafts = allPlans.filter(p => p.status !== "published");
+    draftCount.textContent = drafts.length;
+
+    if(!drafts.length){
+      draftsWrap.innerHTML = `<div class="empty-state"><h3>No drafts</h3><p>New lessons you haven't published yet will show up here.</p></div>`;
+      return;
+    }
+
+    draftsWrap.innerHTML = '<div class="drafts-panel" id="draftsPanel">' + drafts.map(buildRowHTML).join("") + '</div>';
+  }
+
   function render(){
+    renderDrafts();
+
+    const published = allPlans.filter(p => p.status === "published");
     const folderMap = {};
-    allPlans.forEach(plan=>{
+    published.forEach(plan=>{
       const lvl = (plan.level || "Uncategorised").trim();
       if(!folderMap[lvl]) folderMap[lvl] = [];
       folderMap[lvl].push(plan);
@@ -212,11 +229,12 @@ document.addEventListener("DOMContentLoaded", async function(){
     folderCount.textContent = levels.length ? `${levels.length} folder${levels.length===1?"":"s"}` : "";
 
     if(!levels.length){
-      wrap.innerHTML = `<div class="empty-state"><h3>No folders yet</h3><p>Create a lesson and select a level in the builder.<br>The folder will appear here automatically.</p></div>`;
+      foldersWrap.innerHTML = `<div class="empty-state"><h3>No published lessons yet</h3><p>Publish a lesson from the builder and it'll show up here, grouped by level.</p></div>`;
+      bindEvents();
       return;
     }
 
-    wrap.innerHTML = `<div class="folders-grid" id="foldersGrid"></div>`;
+    foldersWrap.innerHTML = `<div class="folders-grid" id="foldersGrid"></div>`;
     const grid = document.getElementById("foldersGrid");
 
     levels.forEach(level=>{
@@ -224,23 +242,7 @@ document.addEventListener("DOMContentLoaded", async function(){
       const card = document.createElement("div");
       card.className = "folder-card" + (openFolder===level?" open":"");
       card.dataset.level = level;
-      const planRows = plans.map(function(plan){
-        const isPub = (plan.status === "published");
-        const safeTitle = (plan.title||"Untitled Lesson").replace(/"/g,"&quot;");
-        const shared = ((plan.assignedLevels&&plan.assignedLevels.length)||(plan.assignedLearners&&plan.assignedLearners.length));
-        return '<div class="plan-row">'
-          + '<span class="plan-title">' + (plan.title||"Untitled Lesson")
-          + (isPub ? '<span class="row-badge pub">Published</span>' : '<span class="row-badge dr">Draft</span>')
-          + (isPub && shared ? '<span class="row-badge shared">Shared</span>' : '')
-          + '</span>'
-          + '<div class="plan-actions">'
-          + '<button class="plan-icon-btn open view-btn" data-id="' + plan.id + '" title="' + (isPub?'Open':'Preview') + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>'
-          + (isPub ? '<button class="plan-icon-btn share share-btn" data-id="' + plan.id + '" data-title="' + safeTitle + '" title="Share with learners"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg></button>' : '')
-          + '<button class="plan-icon-btn edit edit-btn" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'
-          + '<button class="plan-icon-btn delete del" data-id="' + plan.id + '" data-pub="' + (isPub?'1':'0') + '" data-title="' + safeTitle + '" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>'
-          + '</div>'
-          + '</div>';
-      }).join("");
+      const planRows = plans.map(buildRowHTML).join("");
       card.innerHTML = `
         <div class="folder-head">
           <span class="folder-icon">${openFolder===level?"📂":"📁"}</span>
@@ -256,172 +258,179 @@ document.addEventListener("DOMContentLoaded", async function(){
     bindEvents();
   }
 
+  async function handleRowClick(e){
+    const shareBtn = e.target.closest(".share-btn");
+    if(shareBtn){
+      e.stopPropagation();
+      openShareDialog(shareBtn.dataset.id, shareBtn.dataset.title);
+      return;
+    }
+    const delBtn = e.target.closest(".del");
+    if(delBtn){
+      e.stopPropagation();
+      if(delBtn.dataset.pub === "1"){
+        const auth = await window.ImpactPublish.requirePasskey("Delete published lesson", true);
+        if(!auth) return;
+        await window.ImpactPublish.logAction({
+          action:"delete", itemType:"lesson", itemId:delBtn.dataset.id,
+          itemTitle:delBtn.dataset.title, performedBy:auth.name, performedRole:auth.role
+        });
+      }else{
+        const anchorRow = delBtn.closest(".plan-row");
+        const ok = await showDeletePopover(anchorRow, `Delete &ldquo;${delBtn.dataset.title||"this lesson"}&rdquo;?`);
+        if(!ok) return;
+      }
+      await db.collection("lessonPlans").doc(delBtn.dataset.id).delete();
+      allPlans = allPlans.filter(p=>p.id!==delBtn.dataset.id);
+      const folderCard = delBtn.closest(".folder-card");
+      if(folderCard){
+        const level = folderCard.dataset.level;
+        if(!allPlans.filter(p=>p.status==="published" && (p.level||"Uncategorised")===level).length) openFolder=null;
+      }
+      render();
+      return;
+    }
+    const viewBtn = e.target.closest(".view-btn");
+    if(viewBtn){ e.stopPropagation(); location.href="/teacher/lesson-view.html?id="+encodeURIComponent(viewBtn.dataset.id); return; }
+    const editBtn = e.target.closest(".edit-btn");
+    if(editBtn){
+      e.stopPropagation();
+      if(editBtn.dataset.pub === "1"){
+        const auth = await window.ImpactPublish.requirePasskey("Edit published lesson", false);
+        if(!auth) return;
+        await window.ImpactPublish.logAction({
+          action:"edit", itemType:"lesson", itemId:editBtn.dataset.id,
+          itemTitle:editBtn.dataset.title, performedBy:auth.name, performedRole:auth.role
+        });
+      }
+      location.href="/teacher/lesson-builder.html?edit="+encodeURIComponent(editBtn.dataset.id);
+      return;
+    }
+    const card = e.target.closest(".folder-card");
+    if(card){
+      const level = card.dataset.level;
+      if(openFolder===level){ openFolder=null; card.classList.remove("open"); card.querySelector(".folder-icon").textContent="📁"; }
+      else {
+        document.querySelectorAll(".folder-card.open").forEach(c=>{ c.classList.remove("open"); c.querySelector(".folder-icon").textContent="📁"; });
+        openFolder=level; card.classList.add("open"); card.querySelector(".folder-icon").textContent="📂";
+      }
+    }
+  }
+
   function bindEvents(){
     const grid = document.getElementById("foldersGrid");
-    if(!grid) return;
-    grid.addEventListener("click", async function(e){
-      const shareBtn = e.target.closest(".share-btn");
-      if(shareBtn){
-        e.stopPropagation();
-        openShareDialog(shareBtn.dataset.id, shareBtn.dataset.title);
-        return;
-      }
-      const delBtn = e.target.closest(".del");
-      if(delBtn){
-        e.stopPropagation();
-        if(delBtn.dataset.pub === "1"){
-          const auth = await window.ImpactPublish.requirePasskey("Delete published lesson", true);
-          if(!auth) return;
-          await window.ImpactPublish.logAction({
-            action:"delete", itemType:"lesson", itemId:delBtn.dataset.id,
-            itemTitle:delBtn.dataset.title, performedBy:auth.name, performedRole:auth.role
-          });
-        }else{
-          const anchorRow = delBtn.closest(".plan-row");
-          const ok = await showDeletePopover(anchorRow, `Delete &ldquo;${delBtn.dataset.title||"this lesson"}&rdquo;?`);
-          if(!ok) return;
-        }
-        await db.collection("lessonPlans").doc(delBtn.dataset.id).delete();
-        allPlans = allPlans.filter(p=>p.id!==delBtn.dataset.id);
-        const level = delBtn.closest(".folder-card").dataset.level;
-        if(!allPlans.filter(p=>(p.level||"Uncategorised")===level).length) openFolder=null;
-        render(); return;
-      }
-      const viewBtn = e.target.closest(".view-btn");
-      if(viewBtn){ e.stopPropagation(); location.href="/teacher/lesson-view.html?id="+encodeURIComponent(viewBtn.dataset.id); return; }
-      const editBtn = e.target.closest(".edit-btn");
-      if(editBtn){
-        e.stopPropagation();
-        if(editBtn.dataset.pub === "1"){
-          const auth = await window.ImpactPublish.requirePasskey("Edit published lesson", false);
-          if(!auth) return;
-          await window.ImpactPublish.logAction({
-            action:"edit", itemType:"lesson", itemId:editBtn.dataset.id,
-            itemTitle:editBtn.dataset.title, performedBy:auth.name, performedRole:auth.role
-          });
-        }
-        location.href="/teacher/lesson-builder.html?edit="+encodeURIComponent(editBtn.dataset.id);
-        return;
-      }
-      const card = e.target.closest(".folder-card");
-      if(card){
-        const level = card.dataset.level;
-        if(openFolder===level){ openFolder=null; card.classList.remove("open"); card.querySelector(".folder-icon").textContent="📁"; }
-        else {
-          document.querySelectorAll(".folder-card.open").forEach(c=>{ c.classList.remove("open"); c.querySelector(".folder-icon").textContent="📁"; });
-          openFolder=level; card.classList.add("open"); card.querySelector(".folder-icon").textContent="📂";
-        }
-      }
-    });
+    if(grid) grid.addEventListener("click", handleRowClick);
+    const draftsPanel = document.getElementById("draftsPanel");
+    if(draftsPanel) draftsPanel.addEventListener("click", handleRowClick);
   }
 
   await loadPlans();
 
-let shareId = null;
-let shareLearners = [];
-let allLearnersCache = [];
+  let shareId = null;
+  let shareLearners = [];
+  let allLearnersCache = [];
 
-async function loadLearnersOnce(){
-  if(allLearnersCache.length) return;
-  try{
-    const snap = await db.collection("impactPasskeys").where("role","==","Learner").get();
-    allLearnersCache = snap.docs.map(function(d){
-      return { name: d.data().name || "Unnamed", level: d.data().level || "" };
-    });
-  }catch(e){ console.warn("learners load:", e); }
-}
-
-function renderShareChips(){
-  const wrap = document.getElementById("shareSelected");
-  if(!wrap) return;
-  wrap.innerHTML = shareLearners.map(function(n){
-    return '<span class="assigned-learner-chip">' + n + '<button type="button" data-rm="' + n + '">x</button></span>';
-  }).join("");
-}
-
-async function openShareDialog(id, title){
-  shareId = id;
-  try{
-    await loadLearnersOnce();
-    const doc = await db.collection("lessonPlans").doc(id).get();
-    const d = doc.exists ? doc.data() : {};
-    shareLearners = Array.isArray(d.assignedLearners) ? d.assignedLearners.slice() : [];
-
-    document.getElementById("shareTitle").textContent = "Share: " + (title || "Lesson");
-    document.querySelectorAll("#shareLevels input").forEach(function(cb){
-      cb.checked = Array.isArray(d.assignedLevels) && d.assignedLevels.indexOf(cb.value) >= 0;
-      cb.closest(".assign-level-chip").classList.toggle("checked", cb.checked);
-    });
-    document.getElementById("shareSearch").value = "";
-    document.getElementById("sharePicker").classList.remove("show");
-    renderShareChips();
-    document.getElementById("shareOverlay").classList.add("show");
-  }catch(e){
-    console.error("openShareDialog failed:", e);
-    alert("Could not open sharing options: " + e.message);
+  async function loadLearnersOnce(){
+    if(allLearnersCache.length) return;
+    try{
+      const snap = await db.collection("impactPasskeys").where("role","==","Learner").get();
+      allLearnersCache = snap.docs.map(function(d){
+        return { name: d.data().name || "Unnamed", level: d.data().level || "" };
+      });
+    }catch(e){ console.warn("learners load:", e); }
   }
-}
 
-document.getElementById("shareLevels").addEventListener("change", function(e){
-  const chip = e.target.closest(".assign-level-chip");
-  if(chip) chip.classList.toggle("checked", e.target.checked);
-});
+  function renderShareChips(){
+    const wrap = document.getElementById("shareSelected");
+    if(!wrap) return;
+    wrap.innerHTML = shareLearners.map(function(n){
+      return '<span class="assigned-learner-chip">' + n + '<button type="button" data-rm="' + n + '">x</button></span>';
+    }).join("");
+  }
 
-document.getElementById("shareSearch").addEventListener("input", function(){
-  const q = this.value.trim().toLowerCase();
-  const list = document.getElementById("sharePicker");
-  if(!q){ list.classList.remove("show"); list.innerHTML=""; return; }
-  const matches = allLearnersCache.filter(function(l){
-    return l.name.toLowerCase().indexOf(q) >= 0 && shareLearners.indexOf(l.name) < 0;
+  async function openShareDialog(id, title){
+    shareId = id;
+    try{
+      await loadLearnersOnce();
+      const doc = await db.collection("lessonPlans").doc(id).get();
+      const d = doc.exists ? doc.data() : {};
+      shareLearners = Array.isArray(d.assignedLearners) ? d.assignedLearners.slice() : [];
+
+      document.getElementById("shareTitle").textContent = "Share: " + (title || "Lesson");
+      document.querySelectorAll("#shareLevels input").forEach(function(cb){
+        cb.checked = Array.isArray(d.assignedLevels) && d.assignedLevels.indexOf(cb.value) >= 0;
+        cb.closest(".assign-level-chip").classList.toggle("checked", cb.checked);
+      });
+      document.getElementById("shareSearch").value = "";
+      document.getElementById("sharePicker").classList.remove("show");
+      renderShareChips();
+      document.getElementById("shareOverlay").classList.add("show");
+    }catch(e){
+      console.error("openShareDialog failed:", e);
+      alert("Could not open sharing options: " + e.message);
+    }
+  }
+
+  document.getElementById("shareLevels").addEventListener("change", function(e){
+    const chip = e.target.closest(".assign-level-chip");
+    if(chip) chip.classList.toggle("checked", e.target.checked);
   });
-  if(!matches.length){ list.classList.remove("show"); list.innerHTML=""; return; }
-  list.innerHTML = matches.map(function(l){
-    return '<div class="learner-picker-row" data-pick="' + l.name + '">' + l.name + ' <span style="opacity:.5">(' + (l.level||"no level") + ')</span></div>';
-  }).join("");
-  list.classList.add("show");
-});
 
-document.getElementById("sharePicker").addEventListener("click", function(e){
-  const row = e.target.closest("[data-pick]");
-  if(!row) return;
-  if(shareLearners.indexOf(row.dataset.pick) < 0) shareLearners.push(row.dataset.pick);
-  renderShareChips();
-  document.getElementById("shareSearch").value = "";
-  this.classList.remove("show");
-  this.innerHTML = "";
-});
+  document.getElementById("shareSearch").addEventListener("input", function(){
+    const q = this.value.trim().toLowerCase();
+    const list = document.getElementById("sharePicker");
+    if(!q){ list.classList.remove("show"); list.innerHTML=""; return; }
+    const matches = allLearnersCache.filter(function(l){
+      return l.name.toLowerCase().indexOf(q) >= 0 && shareLearners.indexOf(l.name) < 0;
+    });
+    if(!matches.length){ list.classList.remove("show"); list.innerHTML=""; return; }
+    list.innerHTML = matches.map(function(l){
+      return '<div class="learner-picker-row" data-pick="' + l.name + '">' + l.name + ' <span style="opacity:.5">(' + (l.level||"no level") + ')</span></div>';
+    }).join("");
+    list.classList.add("show");
+  });
 
-document.getElementById("shareSelected").addEventListener("click", function(e){
-  const btn = e.target.closest("[data-rm]");
-  if(!btn) return;
-  shareLearners = shareLearners.filter(function(n){ return n !== btn.dataset.rm; });
-  renderShareChips();
-});
+  document.getElementById("sharePicker").addEventListener("click", function(e){
+    const row = e.target.closest("[data-pick]");
+    if(!row) return;
+    if(shareLearners.indexOf(row.dataset.pick) < 0) shareLearners.push(row.dataset.pick);
+    renderShareChips();
+    document.getElementById("shareSearch").value = "";
+    this.classList.remove("show");
+    this.innerHTML = "";
+  });
 
-document.getElementById("shareCancel").addEventListener("click", function(){
-  document.getElementById("shareOverlay").classList.remove("show");
-});
+  document.getElementById("shareSelected").addEventListener("click", function(e){
+    const btn = e.target.closest("[data-rm]");
+    if(!btn) return;
+    shareLearners = shareLearners.filter(function(n){ return n !== btn.dataset.rm; });
+    renderShareChips();
+  });
 
-document.getElementById("shareSave").addEventListener("click", async function(){
-  if(!shareId) return;
-  const levels = Array.from(document.querySelectorAll("#shareLevels input:checked")).map(function(c){ return c.value; });
-  const btn = this;
-  btn.disabled = true; btn.textContent = "Saving...";
-  try{
-    await db.collection("lessonPlans").doc(shareId).set({
-      assignedLevels: levels,
-      assignedLearners: shareLearners,
-      sharedAt: new Date().toISOString(),
-      sharedBy: sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || ""
-    }, { merge:true });
+  document.getElementById("shareCancel").addEventListener("click", function(){
     document.getElementById("shareOverlay").classList.remove("show");
-    await loadPlans();
-  }catch(e){
-    alert("Could not save sharing: " + e.message);
-  }finally{
-    btn.disabled = false; btn.textContent = "Save Sharing";
-  }
-});
+  });
+
+  document.getElementById("shareSave").addEventListener("click", async function(){
+    if(!shareId) return;
+    const levels = Array.from(document.querySelectorAll("#shareLevels input:checked")).map(function(c){ return c.value; });
+    const btn = this;
+    btn.disabled = true; btn.textContent = "Saving...";
+    try{
+      await db.collection("lessonPlans").doc(shareId).set({
+        assignedLevels: levels,
+        assignedLearners: shareLearners,
+        sharedAt: new Date().toISOString(),
+        sharedBy: sessionStorage.getItem("impactAccessName") || sessionStorage.getItem("impactPersonnelName") || ""
+      }, { merge:true });
+      document.getElementById("shareOverlay").classList.remove("show");
+      await loadPlans();
+    }catch(e){
+      alert("Could not save sharing: " + e.message);
+    }finally{
+      btn.disabled = false; btn.textContent = "Save Sharing";
+    }
+  });
 });
 </script>
 <script src="/js/impact-round-icons.js?v=001"></script>
