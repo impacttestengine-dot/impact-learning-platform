@@ -678,17 +678,25 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
     // which throws "wrong state: stable" and blocks the connection.
     if(lastAppliedSdp[otherId] === remoteSdp.sdp) return;
 
+    if(remoteSdp.type === "offer"){
+      screenshareStatus("SDP offer received from " + otherId + " -- checking for collision...");
+    }
+
     try{
       const offerCollision = remoteSdp.type === "offer" &&
         (makingOffer[otherId] || pc.signalingState !== "stable");
 
       const ignoreOffer = !isPolite && offerCollision;
-      if(ignoreOffer) return;
+      if(ignoreOffer){
+        screenshareStatus("SDP offer from " + otherId + " IGNORED due to collision (impolite peer)", true);
+        return;
+      }
 
       await pc.setRemoteDescription(new RTCSessionDescription(remoteSdp));
       lastAppliedSdp[otherId] = remoteSdp.sdp;
 
       if(remoteSdp.type === "offer"){
+        screenshareStatus("SDP offer from " + otherId + " applied successfully, sending answer back...");
         await pc.setLocalDescription();
         await sigRef(otherId).set({
           [`sdp_${MY_ID}`]: { type: pc.localDescription.type, sdp: pc.localDescription.sdp }
@@ -696,6 +704,7 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
       }
     }catch(e){
       console.error("SDP handling error:", e);
+      screenshareStatus("SDP handling ERROR: " + e.name + " -- " + e.message, true);
     }
   });
   unsubs.push(unsubSdp);
