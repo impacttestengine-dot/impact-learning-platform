@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  70421
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -255,6 +266,20 @@ const peerConns = {};   // peerId -> RTCPeerConnection
 // independent async events.
 const peerVideoTracks = {};   // peerId -> MediaStreamTrack
 
+// Small, unobtrusive confirmation banner -- shows the actual outcome of a
+// screen share bind attempt without cluttering the screen like the earlier
+// full diagnostic log did.
+function screenshareStatus(msg, isError){
+  let el = document.getElementById("screenshareStatus");
+  if(!el){
+    el = document.createElement("div");
+    el.id = "screenshareStatus";
+    el.style.cssText = "position:fixed;top:60px;left:8px;right:8px;z-index:999999;background:rgba(0,0,0,.9);color:#4ade80;font-family:monospace;font-size:.66rem;padding:8px 12px;border-radius:8px;text-align:center";
+    document.body.appendChild(el);
+  }
+  el.style.color = isError ? "#f87171" : "#4ade80";
+  el.textContent = msg;
+}
 const peerMeta  = {};   // peerId -> { name, isHost, camOn, micOn }
 // Most recent video MediaStreamTrack received per peer, cached the instant
 // ontrack fires regardless of whether the Firestore screenSharing flag has
@@ -615,6 +640,7 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
         const currentVid = mainEl ? mainEl.querySelector("video") : null;
         const currentTrack = currentVid && currentVid.srcObject ? currentVid.srcObject.getVideoTracks()[0] : null;
         if(!currentTrack || currentTrack.id !== event.track.id){
+          screenshareStatus("Video track arrived and bound successfully (via ontrack).");
           enterScreenshareLayout(otherId, new MediaStream([event.track]), peerMeta[otherId].name);
         }
       }
@@ -663,17 +689,25 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
     // which throws "wrong state: stable" and blocks the connection.
     if(lastAppliedSdp[otherId] === remoteSdp.sdp) return;
 
+    if(remoteSdp.type === "offer"){
+      screenshareStatus("SDP offer received from " + otherId + " -- checking for collision...");
+    }
+
     try{
       const offerCollision = remoteSdp.type === "offer" &&
         (makingOffer[otherId] || pc.signalingState !== "stable");
 
       const ignoreOffer = !isPolite && offerCollision;
-      if(ignoreOffer) return;
+      if(ignoreOffer){
+        screenshareStatus("SDP offer from " + otherId + " IGNORED due to collision (impolite peer)", true);
+        return;
+      }
 
       await pc.setRemoteDescription(new RTCSessionDescription(remoteSdp));
       lastAppliedSdp[otherId] = remoteSdp.sdp;
 
       if(remoteSdp.type === "offer"){
+        screenshareStatus("SDP offer from " + otherId + " applied successfully, sending answer back...");
         await pc.setLocalDescription();
         await sigRef(otherId).set({
           [`sdp_${MY_ID}`]: { type: pc.localDescription.type, sdp: pc.localDescription.sdp }
@@ -681,6 +715,7 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
       }
     }catch(e){
       console.error("SDP handling error:", e);
+      screenshareStatus("SDP handling ERROR: " + e.name + " -- " + e.message, true);
     }
   });
   unsubs.push(unsubSdp);
@@ -760,7 +795,10 @@ function watchParticipants(){
               // immediately instead of waiting for an ontrack event that
               // already happened and won't fire again for this same track.
               if(peerVideoTracks[rid]){
+                screenshareStatus("Screen share flag received -- binding from already-cached video track.");
                 enterScreenshareLayout(rid, new MediaStream([peerVideoTracks[rid]]), peerMeta[rid].name);
+              }else{
+                screenshareStatus("Screen share flag received -- waiting for the video track to arrive...");
               }
             }
             if(!data.screenSharing && currentScreenSharerId === rid){
@@ -993,9 +1031,17 @@ async function ensureNegotiationCompletes(pc, otherId, label){
   const timeoutMs = 4000;
   const start = Date.now();
   while(Date.now() - start < timeoutMs){
-    if(pc.signalingState === "stable") return;
+    if(pc.signalingState === "stable"){
+      // The negotiation itself succeeded (an answer was received and
+      // applied). This does NOT necessarily mean the video track actually
+      // arrived via ontrack -- that's a separate thing -- but it tells us
+      // definitively that the SDP exchange was not dropped by a collision.
+      screenshareStatus((label || "Renegotiation") + " with " + otherId + " CONFIRMED complete (signaling stable). If the video still isn't showing, the SDP exchange succeeded but ontrack itself did not fire.");
+      return;
+    }
     await new Promise(r => setTimeout(r, 250));
   }
+  screenshareStatus((label || "Renegotiation") + " with " + otherId + " may have been dropped by a collision -- retrying...", true);
   try{ pc.restartIce(); }catch(e){}
 }
 
@@ -1037,6 +1083,7 @@ screenBtn.onclick = async function(){
     // originally negotiated (camera resolution/frame-rate vs. screen
     // capture), with no error thrown anywhere. removeTrack+addTrack forces
     // a fresh SDP exchange that correctly re-describes the new track.
+    screenshareStatus("Starting screen share renegotiation...");
     await Promise.all(Object.entries(peerConns).map(async ([otherId, pc]) => {
       await waitForStable(pc);
       // Always add the screen track. If a video sender already exists
@@ -1049,6 +1096,7 @@ screenBtn.onclick = async function(){
       pc.addTrack(screenTrack, screenStream);
       ensureNegotiationCompletes(pc, otherId, "Screen share start");
     }));
+    screenshareStatus("Renegotiation sent -- waiting for it to be applied on the other end...");
 
     // Show the screen share in the LOCAL tile
     setTileStream(MY_ID, screenStream);
