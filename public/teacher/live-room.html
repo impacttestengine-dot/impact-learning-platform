@@ -593,6 +593,7 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
   pc.ontrack = (event) => {
     const stream = event.streams[0];
     if(!stream) return;
+    console.log("[SCREENSHARE DEBUG] ontrack fired for", otherId, "kind=", event.track.kind, "trackReadyState=", event.track.readyState, "streamId=", stream.id, "screenSharingFlag=", peerMeta[otherId] && peerMeta[otherId].screenSharing);
     setTileStream(otherId, stream);
     setCamOff(otherId, stream.getVideoTracks().length === 0 || !stream.getVideoTracks()[0].enabled);
 
@@ -723,6 +724,7 @@ function watchParticipants(){
             if(data.screenSharing && currentScreenSharerId !== rid){
               const remoteTile = document.getElementById("tile-"+rid);
               const remoteVid = remoteTile ? remoteTile.querySelector("video") : null;
+              console.log("[SCREENSHARE DEBUG] Firestore flag says", rid, "is sharing. remoteVid found=", !!remoteVid, "srcObject=", remoteVid && remoteVid.srcObject, "videoTracks=", remoteVid && remoteVid.srcObject ? remoteVid.srcObject.getVideoTracks().map(t=>({readyState:t.readyState,muted:t.muted})) : "n/a");
               if(remoteVid && remoteVid.srcObject) enterScreenshareLayout(rid, remoteVid.srcObject, peerMeta[rid].name);
               // If the renegotiation hasn't completed yet, the srcObject read
               // above may be stale -- ontrack (added above) will correctly
@@ -903,7 +905,18 @@ function enterScreenshareLayout(sharerId, stream, sharerName){
   }
 
   const vidEl = mainEl.querySelector("video");
-  if(vidEl.srcObject !== stream){ vidEl.srcObject = stream; vidEl.play().catch(()=>{}); }
+  if(vidEl.srcObject !== stream){
+    console.log("[SCREENSHARE DEBUG] binding stream to main video. isMe=", isMe, "streamId=", stream.id, "videoTracks=", stream.getVideoTracks().map(t=>({label:t.label, readyState:t.readyState, enabled:t.enabled, muted:t.muted})));
+    vidEl.srcObject = stream;
+    vidEl.play().then(()=>{
+      console.log("[SCREENSHARE DEBUG] play() resolved. paused=", vidEl.paused, "muted=", vidEl.muted);
+    }).catch((err)=>{
+      console.log("[SCREENSHARE DEBUG] play() REJECTED:", err.name, err.message);
+    });
+    setTimeout(()=>{
+      console.log("[SCREENSHARE DEBUG] 2s check -- videoWidth=", vidEl.videoWidth, "videoHeight=", vidEl.videoHeight, "readyState=", vidEl.readyState, "paused=", vidEl.paused, "currentTime=", vidEl.currentTime, "muted=", vidEl.muted, "clientWidth=", vidEl.clientWidth, "clientHeight=", vidEl.clientHeight, "mainElDisplay=", getComputedStyle(mainEl).display, "mainElHeight=", getComputedStyle(mainEl).height);
+    }, 2000);
+  }
 
   let stripEl = document.getElementById("screenshareStrip");
   if(!stripEl){
