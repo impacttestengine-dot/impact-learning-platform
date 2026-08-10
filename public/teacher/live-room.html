@@ -869,16 +869,39 @@ function enterScreenshareLayout(sharerId, stream, sharerName){
   currentScreenSharerId = sharerId;
   videoGrid.classList.add("screenshare-active");
 
+  const isMe = (sharerId === MY_ID);
+
   let mainEl = document.getElementById("screenshareMain");
   if(!mainEl){
     mainEl = document.createElement("div");
     mainEl.className = "screenshare-main";
     mainEl.id = "screenshareMain";
+
     const v = document.createElement("video");
-    v.autoplay = true; v.playsInline = true; v.muted = (sharerId === MY_ID);
+    v.autoplay = true; v.playsInline = true;
+    // Always start muted. Browsers reliably allow muted autoplay with no
+    // user gesture, but silently block UNMUTED autoplay for anyone who
+    // isn't the presenter -- that (not the stream or the layout) is what
+    // was leaving remote viewers with a black/paused video the whole time.
+    v.muted = true;
     mainEl.appendChild(v);
+
+    if(!isMe){
+      const unmuteHint = document.createElement("button");
+      unmuteHint.type = "button";
+      unmuteHint.className = "screenshare-unmute-hint";
+      unmuteHint.innerHTML = "\uD83D\uDD07 Tap to unmute";
+      unmuteHint.onclick = () => {
+        v.muted = false;
+        v.play().catch(()=>{});
+        unmuteHint.style.display = "none";
+      };
+      mainEl.appendChild(unmuteHint);
+    }
+
     videoGrid.insertBefore(mainEl, videoGrid.firstChild);
   }
+
   const vidEl = mainEl.querySelector("video");
   if(vidEl.srcObject !== stream){ vidEl.srcObject = stream; vidEl.play().catch(()=>{}); }
 
