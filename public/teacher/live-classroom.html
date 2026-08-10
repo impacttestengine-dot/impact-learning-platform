@@ -153,6 +153,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
     const meetingId = genId();
 
+    // Mobile Safari only allows window.open() to succeed when it runs
+    // synchronously, still directly inside the click's execution -- an
+    // await BEFORE it (even one) breaks that chain and gets silently
+    // blocked. So we open the tab immediately to a blank placeholder,
+    // then redirect that already-open window once the async write finishes.
+    const newTab = window.open("", "_blank");
+    if(newTab){
+      newTab.document.write("<!DOCTYPE html><html><head><title>Impact Live Class</title></head><body style=\"background:#05060b;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0\">Creating your class...</body></html>");
+    }
+
     await db.collection("meetings").doc(meetingId).set({
       meetingId,
       title,
@@ -163,10 +173,14 @@ document.addEventListener("DOMContentLoaded", function(){
       hostName:   name
     });
 
-    // window.open() must run synchronously inside the click handler --
-    // mobile Safari blocks popups opened from inside a setTimeout, even a
-    // short one, since it breaks the direct user-gesture chain it requires.
-    window.open("/teacher/live-room.html?id=" + meetingId + "&name=" + encodeURIComponent(name) + "&host=true", "_blank");
+    const roomUrl = "/teacher/live-room.html?id=" + meetingId + "&name=" + encodeURIComponent(name) + "&host=true";
+    if(newTab){
+      newTab.location.href = roomUrl;
+    }else{
+      // Popup blocked entirely (rare, but possible) -- fall back to
+      // navigating this same tab so the user isn't left stuck.
+      location.href = roomUrl;
+    }
     toast("Meeting created — opening in a new tab");
   };
 
@@ -179,15 +193,30 @@ document.addEventListener("DOMContentLoaded", function(){
     if(!id)  { err.textContent = "Please enter a Meeting ID."; return; }
     err.textContent = "";
 
+    // Open synchronously first (see createBtn above for why), then redirect
+    // once we've confirmed the meeting actually exists.
+    const newTab = window.open("", "_blank");
+    if(newTab){
+      newTab.document.write("<!DOCTYPE html><html><head><title>Impact Live Class</title></head><body style=\"background:#05060b;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0\">Joining class...</body></html>");
+    }
+
     try{
       const snap = await db.collection("meetings").doc(id).get();
       if(!snap.exists || snap.data().status !== "active"){
-        err.textContent = "Meeting not found or has ended."; return;
+        err.textContent = "Meeting not found or has ended.";
+        if(newTab) newTab.close();
+        return;
       }
-      window.open("/teacher/live-join.html?id=" + id + "&name=" + encodeURIComponent(name) + "&host=false", "_blank");
+      const joinUrl = "/teacher/live-join.html?id=" + id + "&name=" + encodeURIComponent(name) + "&host=false";
+      if(newTab){
+        newTab.location.href = joinUrl;
+      }else{
+        location.href = joinUrl;
+      }
       toast("Opening meeting in a new tab");
     }catch(e){
       err.textContent = "Could not reach the meeting. Check your connection.";
+      if(newTab) newTab.close();
     }
   };
 
