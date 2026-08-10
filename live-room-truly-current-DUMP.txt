@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  65937
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -905,18 +916,6 @@ function enterScreenshareLayout(sharerId, stream, sharerName){
   }
 
   const vidEl = mainEl.querySelector("video");
-
-  // On-screen diagnostic readout -- readable directly from a screenshot,
-  // no DevTools/console access required. Temporary, for debugging the
-  // black-video issue; safe to remove once resolved.
-  let debugOverlay = mainEl.querySelector(".screenshare-debug-overlay");
-  if(!debugOverlay){
-    debugOverlay = document.createElement("div");
-    debugOverlay.className = "screenshare-debug-overlay";
-    debugOverlay.textContent = "Loading diagnostics...";
-    mainEl.appendChild(debugOverlay);
-  }
-
   if(vidEl.srcObject !== stream){
     console.log("[SCREENSHARE DEBUG] binding stream to main video. isMe=", isMe, "streamId=", stream.id, "videoTracks=", stream.getVideoTracks().map(t=>({label:t.label, readyState:t.readyState, enabled:t.enabled, muted:t.muted})));
     vidEl.srcObject = stream;
@@ -924,28 +923,10 @@ function enterScreenshareLayout(sharerId, stream, sharerName){
       console.log("[SCREENSHARE DEBUG] play() resolved. paused=", vidEl.paused, "muted=", vidEl.muted);
     }).catch((err)=>{
       console.log("[SCREENSHARE DEBUG] play() REJECTED:", err.name, err.message);
-      debugOverlay.textContent = "play() REJECTED: " + err.name + " -- " + err.message;
     });
-
-    let checkCount = 0;
-    const diagInterval = setInterval(() => {
-      checkCount++;
-      const vt = stream.getVideoTracks()[0];
-      const txt = "isMe=" + isMe +
-        " | check#" + checkCount +
-        " | vidW=" + vidEl.videoWidth + " vidH=" + vidEl.videoHeight +
-        " | readyState=" + vidEl.readyState +
-        " | paused=" + vidEl.paused +
-        " | t=" + vidEl.currentTime.toFixed(1) +
-        " | muted=" + vidEl.muted +
-        " | trackState=" + (vt ? vt.readyState : "none") +
-        " | trackEnabled=" + (vt ? vt.enabled : "none") +
-        " | trackMuted=" + (vt ? vt.muted : "none") +
-        " | boxSize=" + vidEl.clientWidth + "x" + vidEl.clientHeight;
-      debugOverlay.textContent = txt;
-      console.log("[SCREENSHARE DEBUG]", txt);
-      if(checkCount >= 10) clearInterval(diagInterval);
-    }, 1000);
+    setTimeout(()=>{
+      console.log("[SCREENSHARE DEBUG] 2s check -- videoWidth=", vidEl.videoWidth, "videoHeight=", vidEl.videoHeight, "readyState=", vidEl.readyState, "paused=", vidEl.paused, "currentTime=", vidEl.currentTime, "muted=", vidEl.muted, "clientWidth=", vidEl.clientWidth, "clientHeight=", vidEl.clientHeight, "mainElDisplay=", getComputedStyle(mainEl).display, "mainElHeight=", getComputedStyle(mainEl).height);
+    }, 2000);
   }
 
   let stripEl = document.getElementById("screenshareStrip");
