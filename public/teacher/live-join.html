@@ -167,12 +167,13 @@ document.addEventListener("DOMContentLoaded", async function(){
     if(!name){ err.textContent = "Please enter your name."; return; }
     err.textContent = "";
 
-    if(previewStream) previewStream.getTracks().forEach(t=>t.stop());
+    // window.open() must be the first thing that runs here, synchronously,
+    // for mobile Safari to allow it -- any delay (even stopping media
+    // tracks first) risks breaking the direct user-gesture chain.
+    window.open(`/teacher/live-room.html?id=${MEETING_ID}&name=${encodeURIComponent(name)}&host=${IS_HOST}&cam=${camOn}&mic=${micOn}`, "_blank");
 
+    if(previewStream) previewStream.getTracks().forEach(t=>t.stop());
     toast("Opening class in a new tab...");
-    setTimeout(()=>{
-      window.open(`/teacher/live-room.html?id=${MEETING_ID}&name=${encodeURIComponent(name)}&host=${IS_HOST}&cam=${camOn}&mic=${micOn}`, "_blank");
-    }, 350);
   };
 });
 </script>

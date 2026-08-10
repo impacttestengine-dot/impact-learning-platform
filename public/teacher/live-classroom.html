@@ -163,10 +163,11 @@ document.addEventListener("DOMContentLoaded", function(){
       hostName:   name
     });
 
+    // window.open() must run synchronously inside the click handler --
+    // mobile Safari blocks popups opened from inside a setTimeout, even a
+    // short one, since it breaks the direct user-gesture chain it requires.
+    window.open("/teacher/live-room.html?id=" + meetingId + "&name=" + encodeURIComponent(name) + "&host=true", "_blank");
     toast("Meeting created — opening in a new tab");
-    setTimeout(function(){
-      window.open("/teacher/live-room.html?id=" + meetingId + "&name=" + encodeURIComponent(name) + "&host=true", "_blank");
-    }, 600);
   };
 
   document.getElementById("joinBtn").onclick = async function(){
@@ -183,10 +184,8 @@ document.addEventListener("DOMContentLoaded", function(){
       if(!snap.exists || snap.data().status !== "active"){
         err.textContent = "Meeting not found or has ended."; return;
       }
+      window.open("/teacher/live-join.html?id=" + id + "&name=" + encodeURIComponent(name) + "&host=false", "_blank");
       toast("Opening meeting in a new tab");
-      setTimeout(function(){
-        window.open("/teacher/live-join.html?id=" + id + "&name=" + encodeURIComponent(name) + "&host=false", "_blank");
-      }, 400);
     }catch(e){
       err.textContent = "Could not reach the meeting. Check your connection.";
     }
