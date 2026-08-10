@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  70233
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -585,16 +596,7 @@ function screenshareDebugLog(msg){
   if(!logEl){
     logEl = document.createElement("div");
     logEl.id = "screenshareDebugLog";
-    // Positioned at the TOP (below the 56px header, above the video area)
-    // and small/collapsed by default -- the previous bottom placement
-    // covered the actual call controls, making the app unusable while
-    // debugging. Tap the log to expand/collapse it.
-    logEl.style.cssText = "position:fixed;top:60px;left:8px;right:8px;z-index:999999;background:rgba(0,0,0,.94);color:#4ade80;font-family:monospace;font-size:.56rem;line-height:1.5;padding:6px 10px;border-radius:8px;max-height:15vh;overflow-y:auto;white-space:pre-wrap;word-break:break-word;cursor:pointer";
-    logEl.title = "Tap to expand/collapse";
-    logEl.addEventListener("click", function(){
-      const isExpanded = logEl.style.maxHeight === "70vh";
-      logEl.style.maxHeight = isExpanded ? "15vh" : "70vh";
-    });
+    logEl.style.cssText = "position:fixed;bottom:8px;left:8px;right:8px;z-index:999999;background:rgba(0,0,0,.94);color:#4ade80;font-family:monospace;font-size:.56rem;line-height:1.5;padding:8px 10px;border-radius:8px;max-height:38vh;overflow-y:auto;white-space:pre-wrap;word-break:break-word";
     document.body.appendChild(logEl);
   }
   const line = document.createElement("div");
