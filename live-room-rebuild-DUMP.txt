@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  72336
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -255,7 +266,7 @@ const peerMeta  = {};   // peerId -> { name, isHost, camOn, micOn }
 // arrived yet. ontrack and that Firestore update are two independent async
 // events with no guaranteed order -- whichever one completes SECOND uses
 // this cache to finish the big-screen bind, so neither ordering is missed.
-
+const peerVideoTracks = {};   // peerId -> MediaStreamTrack
 const unsubs    = [];
 const politeMap = {};   // peerId -> bool (am I polite toward this peer?)
 const makingOffer = {};
@@ -576,6 +587,36 @@ function sigRef(otherId){
 function iceOutRef(otherId){ return sigRef(otherId).collection("ice_"+MY_ID); }
 function iceInRef(otherId){ return sigRef(otherId).collection("ice_"+otherId); }
 
+// Persistent, viewport-pinned diagnostic log -- unlike the overlay inside
+// the screenshare video itself, this exists independently of whether
+// enterScreenshareLayout ever runs, so it can show us WHERE the pipeline
+// breaks even if the video element never gets created at all.
+function screenshareDebugLog(msg){
+  let logEl = document.getElementById("screenshareDebugLog");
+  if(!logEl){
+    logEl = document.createElement("div");
+    logEl.id = "screenshareDebugLog";
+    // Positioned at the TOP (below the 56px header, above the video area)
+    // and small/collapsed by default -- the previous bottom placement
+    // covered the actual call controls, making the app unusable while
+    // debugging. Tap the log to expand/collapse it.
+    logEl.style.cssText = "position:fixed;top:60px;left:8px;right:8px;z-index:999999;background:rgba(0,0,0,.94);color:#4ade80;font-family:monospace;font-size:.56rem;line-height:1.5;padding:6px 10px;border-radius:8px;max-height:15vh;overflow-y:auto;white-space:pre-wrap;word-break:break-word;cursor:pointer";
+    logEl.title = "Tap to expand/collapse";
+    logEl.addEventListener("click", function(){
+      const isExpanded = logEl.style.maxHeight === "70vh";
+      logEl.style.maxHeight = isExpanded ? "15vh" : "70vh";
+    });
+    document.body.appendChild(logEl);
+  }
+  const line = document.createElement("div");
+  const t = new Date();
+  const stamp = String(t.getMinutes()).padStart(2,"0") + ":" + String(t.getSeconds()).padStart(2,"0") + "." + String(t.getMilliseconds()).padStart(3,"0");
+  line.textContent = stamp + " " + msg;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+  console.log("[SCREENSHARE DEBUG]", msg);
+}
+
 async function createPeerConnection(otherId, otherName, otherIsHost){
   if(peerConns[otherId]) return peerConns[otherId];
 
@@ -588,6 +629,7 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
   const pc = new RTCPeerConnection(ICE_CONFIG);
   peerConns[otherId] = pc;
   peerMeta[otherId]  = { name: otherName, isHost: otherIsHost, camOn:true, micOn:true };
+  screenshareDebugLog("createPeerConnection: otherId=" + otherId + " name=" + otherName);
 
   // Add local tracks BEFORE any negotiation — critical for SDP to include media
   if(localStream){
@@ -598,9 +640,29 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
 
   pc.ontrack = (event) => {
     const stream = event.streams[0];
+    screenshareDebugLog("ontrack: otherId=" + otherId + " kind=" + event.track.kind + " hasStream=" + !!stream + " trackReadyState=" + event.track.readyState + " screenSharingFlag=" + (peerMeta[otherId] && peerMeta[otherId].screenSharing));
     if(!stream) return;
     setTileStream(otherId, stream);
     setCamOff(otherId, stream.getVideoTracks().length === 0 || !stream.getVideoTracks()[0].enabled);
+
+    if(event.track.kind === "video"){
+      // Always cache the most recent video track for this peer, regardless
+      // of whether the screenSharing flag has arrived yet -- this event and
+      // that Firestore update have no guaranteed order relative to each
+      // other, and this cache lets whichever finishes second complete the
+      // bind using the other one's result.
+      peerVideoTracks[otherId] = event.track;
+
+      if(peerMeta[otherId] && peerMeta[otherId].screenSharing){
+        const mainEl = document.getElementById("screenshareMain");
+        const currentVid = mainEl ? mainEl.querySelector("video") : null;
+        const currentTrack = currentVid && currentVid.srcObject ? currentVid.srcObject.getVideoTracks()[0] : null;
+        if(!currentTrack || currentTrack.id !== event.track.id){
+          console.log("[SCREENSHARE DEBUG] binding big-screen from ontrack video-only stream, trackId=", event.track.id);
+          enterScreenshareLayout(otherId, new MediaStream([event.track]), peerMeta[otherId].name);
+        }
+      }
+    }
   };
 
   pc.onicecandidate = (event) => {
@@ -609,14 +671,17 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
   };
 
   pc.onnegotiationneeded = async () => {
+    screenshareDebugLog("onnegotiationneeded FIRED for otherId=" + otherId + " signalingState=" + pc.signalingState);
     try{
       makingOffer[otherId] = true;
       await pc.setLocalDescription();
       await sigRef(otherId).set({
         [`sdp_${MY_ID}`]: { type: pc.localDescription.type, sdp: pc.localDescription.sdp }
       }, { merge:true });
+      screenshareDebugLog("onnegotiationneeded SUCCESS -- offer sent to otherId=" + otherId);
     }catch(e){
       console.error("onnegotiationneeded error:", e);
+      screenshareDebugLog("onnegotiationneeded ERROR: " + e.name + " -- " + e.message);
     }finally{
       makingOffer[otherId] = false;
     }
@@ -643,17 +708,26 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
     // CRITICAL: this snapshot also fires when WE write our own SDP into the
     // same doc. Without this guard we re-apply the same remote SDP forever,
     // which throws "wrong state: stable" and blocks the connection.
-    if(lastAppliedSdp[otherId] === remoteSdp.sdp) return;
+    if(lastAppliedSdp[otherId] === remoteSdp.sdp){
+      screenshareDebugLog("SDP snapshot: otherId=" + otherId + " type=" + remoteSdp.type + " SKIPPED (already applied)");
+      return;
+    }
+
+    screenshareDebugLog("SDP snapshot: otherId=" + otherId + " type=" + remoteSdp.type + " NEW -- signalingState=" + pc.signalingState + " makingOffer=" + makingOffer[otherId] + " isPolite=" + isPolite);
 
     try{
       const offerCollision = remoteSdp.type === "offer" &&
         (makingOffer[otherId] || pc.signalingState !== "stable");
 
       const ignoreOffer = !isPolite && offerCollision;
-      if(ignoreOffer) return;
+      if(ignoreOffer){
+        screenshareDebugLog("SDP snapshot: otherId=" + otherId + " IGNORED offer due to collision (impolite peer)");
+        return;
+      }
 
       await pc.setRemoteDescription(new RTCSessionDescription(remoteSdp));
       lastAppliedSdp[otherId] = remoteSdp.sdp;
+      screenshareDebugLog("SDP snapshot: otherId=" + otherId + " APPLIED " + remoteSdp.type);
 
       if(remoteSdp.type === "offer"){
         await pc.setLocalDescription();
@@ -709,6 +783,7 @@ function watchParticipants(){
         }
 
         if(change.type === "modified"){
+          screenshareDebugLog("Firestore modified: rid=" + rid + " peerMetaExists=" + !!peerMeta[rid] + " dataScreenSharing=" + data.screenSharing);
           if(peerMeta[rid]){
             peerMeta[rid].camOn = data.cameraEnabled;
             peerMeta[rid].micOn = data.micEnabled;
@@ -737,14 +812,15 @@ function watchParticipants(){
                 presentingBar.style.display = "flex";
               }
 
-              // With replaceTrack (see screenBtn.onclick), the sender's
-              // video track object never changes identity -- only its
-              // content does -- so the tile's existing srcObject is always
-              // the right stream to bind here, with no race to worry about.
-              const remoteTile = document.getElementById("tile-"+rid);
-              const remoteVid = remoteTile ? remoteTile.querySelector("video") : null;
-              if(remoteVid && remoteVid.srcObject){
-                enterScreenshareLayout(rid, remoteVid.srcObject, peerMeta[rid].name);
+              // If ontrack already delivered the video track before this
+              // Firestore update arrived, it's sitting in the cache -- bind
+              // immediately instead of waiting for an ontrack event that
+              // already happened and will never fire again for this track.
+              if(peerVideoTracks[rid]){
+                console.log("[SCREENSHARE DEBUG] Firestore flag arrived AFTER ontrack -- binding from cached video track, trackId=", peerVideoTracks[rid].id);
+                enterScreenshareLayout(rid, new MediaStream([peerVideoTracks[rid]]), peerMeta[rid].name);
+              }else{
+                console.log("[SCREENSHARE DEBUG] Firestore flag says", rid, "is sharing -- no cached video track yet, waiting for ontrack.");
               }
             }
             if(!data.screenSharing && currentScreenSharerId === rid){
@@ -922,9 +998,47 @@ function enterScreenshareLayout(sharerId, stream, sharerName){
   }
 
   const vidEl = mainEl.querySelector("video");
+
+  // On-screen diagnostic readout -- readable directly from a screenshot,
+  // no DevTools/console access required. Temporary, for debugging the
+  // black-video issue; safe to remove once resolved.
+  let debugOverlay = mainEl.querySelector(".screenshare-debug-overlay");
+  if(!debugOverlay){
+    debugOverlay = document.createElement("div");
+    debugOverlay.className = "screenshare-debug-overlay";
+    debugOverlay.textContent = "Loading diagnostics...";
+    mainEl.appendChild(debugOverlay);
+  }
+
   if(vidEl.srcObject !== stream){
+    console.log("[SCREENSHARE DEBUG] binding stream to main video. isMe=", isMe, "streamId=", stream.id, "videoTracks=", stream.getVideoTracks().map(t=>({label:t.label, readyState:t.readyState, enabled:t.enabled, muted:t.muted})));
     vidEl.srcObject = stream;
-    vidEl.play().catch(()=>{});
+    vidEl.play().then(()=>{
+      console.log("[SCREENSHARE DEBUG] play() resolved. paused=", vidEl.paused, "muted=", vidEl.muted);
+    }).catch((err)=>{
+      console.log("[SCREENSHARE DEBUG] play() REJECTED:", err.name, err.message);
+      debugOverlay.textContent = "play() REJECTED: " + err.name + " -- " + err.message;
+    });
+
+    let checkCount = 0;
+    const diagInterval = setInterval(() => {
+      checkCount++;
+      const vt = stream.getVideoTracks()[0];
+      const txt = "isMe=" + isMe +
+        " | check#" + checkCount +
+        " | vidW=" + vidEl.videoWidth + " vidH=" + vidEl.videoHeight +
+        " | readyState=" + vidEl.readyState +
+        " | paused=" + vidEl.paused +
+        " | t=" + vidEl.currentTime.toFixed(1) +
+        " | muted=" + vidEl.muted +
+        " | trackState=" + (vt ? vt.readyState : "none") +
+        " | trackEnabled=" + (vt ? vt.enabled : "none") +
+        " | trackMuted=" + (vt ? vt.muted : "none") +
+        " | boxSize=" + vidEl.clientWidth + "x" + vidEl.clientHeight;
+      debugOverlay.textContent = txt;
+      console.log("[SCREENSHARE DEBUG]", txt);
+      if(checkCount >= 10) clearInterval(diagInterval);
+    }, 1000);
   }
 
   let stripEl = document.getElementById("screenshareStrip");
@@ -963,6 +1077,26 @@ function exitScreenshareLayout(){
   renderParticipantList();
 }
 
+// Waits until a peer connection's signaling has settled to "stable" before
+// allowing a new renegotiation to start, so it never collides with the
+// very first connection handshake (which can still be in progress if
+// screen share is started right after joining).
+function waitForStable(pc, timeoutMs){
+  timeoutMs = timeoutMs || 5000;
+  return new Promise((resolve) => {
+    if(pc.signalingState === "stable"){ resolve(); return; }
+    const start = Date.now();
+    const check = () => {
+      if(pc.signalingState === "stable" || Date.now() - start > timeoutMs){
+        resolve();
+      }else{
+        setTimeout(check, 150);
+      }
+    };
+    check();
+  });
+}
+
 screenBtn.onclick = async function(){
   if(!SCREEN_SHARE_SUPPORTED){
     toast("📵 Screen sharing isn't supported on this device. Try from a desktop browser.");
@@ -980,13 +1114,18 @@ screenBtn.onclick = async function(){
 
     const screenTrack = screenStream.getVideoTracks()[0];
 
-    // replaceTrack keeps the exact same transceiver/connection -- no
-    // renegotiation, no signaling round-trip, no collision risk with any
-    // other negotiation in progress. The video simply starts carrying
-    // different content through the same already-working connection.
+    // Force a full renegotiation instead of a silent replaceTrack() --
+    // replaceTrack alone is a known source of frozen/black remote video
+    // on camera-to-screenshare swaps in Chrome. removeTrack+addTrack
+    // routes this through the same tested perfect-negotiation pipeline
+    // already used for the initial connection.
     await Promise.all(Object.values(peerConns).map(async pc => {
+      await waitForStable(pc);
       const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
-      if(sender) await sender.replaceTrack(screenTrack);
+      if(sender){
+        pc.removeTrack(sender);
+        pc.addTrack(screenTrack, screenStream);
+      }
     }));
 
     // Show the screen share in the LOCAL tile
@@ -1016,8 +1155,12 @@ async function stopScreenShare(){
     const camTrack = localStream.getVideoTracks()[0];
     if(camTrack){
       await Promise.all(Object.values(peerConns).map(async pc => {
+        await waitForStable(pc);
         const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
-        if(sender) await sender.replaceTrack(camTrack);
+        if(sender){
+          pc.removeTrack(sender);
+          pc.addTrack(camTrack, localStream);
+        }
       }));
     }
     setTileStream(MY_ID, localStream);
