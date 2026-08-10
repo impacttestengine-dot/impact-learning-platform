@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  65240
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -249,26 +260,6 @@ let startTime        = Date.now();
 let elapsedInterval  = null;
 
 const peerConns = {};   // peerId -> RTCPeerConnection
-// Most recent video MediaStreamTrack received per peer, cached the instant
-// ontrack fires regardless of whether the Firestore screenSharing flag has
-// arrived yet -- covers both possible orderings between those two
-// independent async events.
-const peerVideoTracks = {};   // peerId -> MediaStreamTrack
-
-// Small, unobtrusive confirmation banner -- shows the actual outcome of a
-// screen share bind attempt without cluttering the screen like the earlier
-// full diagnostic log did.
-function screenshareStatus(msg, isError){
-  let el = document.getElementById("screenshareStatus");
-  if(!el){
-    el = document.createElement("div");
-    el.id = "screenshareStatus";
-    el.style.cssText = "position:fixed;top:60px;left:8px;right:8px;z-index:999999;background:rgba(0,0,0,.9);color:#4ade80;font-family:monospace;font-size:.66rem;padding:8px 12px;border-radius:8px;text-align:center";
-    document.body.appendChild(el);
-  }
-  el.style.color = isError ? "#f87171" : "#4ade80";
-  el.textContent = msg;
-}
 const peerMeta  = {};   // peerId -> { name, isHost, camOn, micOn }
 // Most recent video MediaStreamTrack received per peer, cached the instant
 // ontrack fires regardless of whether the Firestore screenSharing flag has
@@ -621,19 +612,6 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
     if(!stream) return;
     setTileStream(otherId, stream);
     setCamOff(otherId, stream.getVideoTracks().length === 0 || !stream.getVideoTracks()[0].enabled);
-
-    if(event.track.kind === "video"){
-      peerVideoTracks[otherId] = event.track;
-      if(peerMeta[otherId] && peerMeta[otherId].screenSharing){
-        const mainEl = document.getElementById("screenshareMain");
-        const currentVid = mainEl ? mainEl.querySelector("video") : null;
-        const currentTrack = currentVid && currentVid.srcObject ? currentVid.srcObject.getVideoTracks()[0] : null;
-        if(!currentTrack || currentTrack.id !== event.track.id){
-          screenshareStatus("Video track arrived and bound successfully (via ontrack).");
-          enterScreenshareLayout(otherId, new MediaStream([event.track]), peerMeta[otherId].name);
-        }
-      }
-    }
   };
 
   pc.onicecandidate = (event) => {
@@ -770,15 +748,14 @@ function watchParticipants(){
                 presentingBar.style.display = "flex";
               }
 
-              // If ontrack already delivered the video track before this
-              // Firestore update arrived, it's sitting in the cache -- bind
-              // immediately instead of waiting for an ontrack event that
-              // already happened and won't fire again for this same track.
-              if(peerVideoTracks[rid]){
-                screenshareStatus("Screen share flag received -- binding from already-cached video track.");
-                enterScreenshareLayout(rid, new MediaStream([peerVideoTracks[rid]]), peerMeta[rid].name);
-              }else{
-                screenshareStatus("Screen share flag received -- waiting for the video track to arrive...");
+              // With replaceTrack (see screenBtn.onclick), the sender's
+              // video track object never changes identity -- only its
+              // content does -- so the tile's existing srcObject is always
+              // the right stream to bind here, with no race to worry about.
+              const remoteTile = document.getElementById("tile-"+rid);
+              const remoteVid = remoteTile ? remoteTile.querySelector("video") : null;
+              if(remoteVid && remoteVid.srcObject){
+                enterScreenshareLayout(rid, remoteVid.srcObject, peerMeta[rid].name);
               }
             }
             if(!data.screenSharing && currentScreenSharerId === rid){
@@ -997,26 +974,6 @@ function exitScreenshareLayout(){
   renderParticipantList();
 }
 
-// Waits until a peer connection's signaling has settled to "stable" before
-// allowing a new renegotiation to start, so it never collides with the
-// very first connection handshake (which can still be in progress if
-// screen share is started right after joining).
-function waitForStable(pc, timeoutMs){
-  timeoutMs = timeoutMs || 5000;
-  return new Promise((resolve) => {
-    if(pc.signalingState === "stable"){ resolve(); return; }
-    const start = Date.now();
-    const check = () => {
-      if(pc.signalingState === "stable" || Date.now() - start > timeoutMs){
-        resolve();
-      }else{
-        setTimeout(check, 150);
-      }
-    };
-    check();
-  });
-}
-
 screenBtn.onclick = async function(){
   if(!SCREEN_SHARE_SUPPORTED){
     toast("📵 Screen sharing isn't supported on this device. Try from a desktop browser.");
@@ -1034,21 +991,14 @@ screenBtn.onclick = async function(){
 
     const screenTrack = screenStream.getVideoTracks()[0];
 
-    // Full renegotiation instead of replaceTrack -- replaceTrack alone can
-    // silently fail to properly encode a track very different from what was
-    // originally negotiated (camera resolution/frame-rate vs. screen
-    // capture), with no error thrown anywhere. removeTrack+addTrack forces
-    // a fresh SDP exchange that correctly re-describes the new track.
-    screenshareStatus("Starting screen share renegotiation...");
+    // replaceTrack keeps the exact same transceiver/connection -- no
+    // renegotiation, no signaling round-trip, no collision risk with any
+    // other negotiation in progress. The video simply starts carrying
+    // different content through the same already-working connection.
     await Promise.all(Object.values(peerConns).map(async pc => {
-      await waitForStable(pc);
       const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
-      if(sender){
-        pc.removeTrack(sender);
-        pc.addTrack(screenTrack, screenStream);
-      }
+      if(sender) await sender.replaceTrack(screenTrack);
     }));
-    screenshareStatus("Renegotiation sent -- waiting for it to be applied on the other end...");
 
     // Show the screen share in the LOCAL tile
     setTileStream(MY_ID, screenStream);
@@ -1077,12 +1027,8 @@ async function stopScreenShare(){
     const camTrack = localStream.getVideoTracks()[0];
     if(camTrack){
       await Promise.all(Object.values(peerConns).map(async pc => {
-        await waitForStable(pc);
         const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
-        if(sender){
-          pc.removeTrack(sender);
-          pc.addTrack(camTrack, localStream);
-        }
+        if(sender) await sender.replaceTrack(camTrack);
       }));
     }
     setTileStream(MY_ID, localStream);
