@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  70735
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -660,17 +671,14 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
   };
 
   pc.onnegotiationneeded = async () => {
-    screenshareDebugLog("onnegotiationneeded FIRED for otherId=" + otherId + " signalingState=" + pc.signalingState);
     try{
       makingOffer[otherId] = true;
       await pc.setLocalDescription();
       await sigRef(otherId).set({
         [`sdp_${MY_ID}`]: { type: pc.localDescription.type, sdp: pc.localDescription.sdp }
       }, { merge:true });
-      screenshareDebugLog("onnegotiationneeded SUCCESS -- offer sent to otherId=" + otherId);
     }catch(e){
       console.error("onnegotiationneeded error:", e);
-      screenshareDebugLog("onnegotiationneeded ERROR: " + e.name + " -- " + e.message);
     }finally{
       makingOffer[otherId] = false;
     }
@@ -697,26 +705,17 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
     // CRITICAL: this snapshot also fires when WE write our own SDP into the
     // same doc. Without this guard we re-apply the same remote SDP forever,
     // which throws "wrong state: stable" and blocks the connection.
-    if(lastAppliedSdp[otherId] === remoteSdp.sdp){
-      screenshareDebugLog("SDP snapshot: otherId=" + otherId + " type=" + remoteSdp.type + " SKIPPED (already applied)");
-      return;
-    }
-
-    screenshareDebugLog("SDP snapshot: otherId=" + otherId + " type=" + remoteSdp.type + " NEW -- signalingState=" + pc.signalingState + " makingOffer=" + makingOffer[otherId] + " isPolite=" + isPolite);
+    if(lastAppliedSdp[otherId] === remoteSdp.sdp) return;
 
     try{
       const offerCollision = remoteSdp.type === "offer" &&
         (makingOffer[otherId] || pc.signalingState !== "stable");
 
       const ignoreOffer = !isPolite && offerCollision;
-      if(ignoreOffer){
-        screenshareDebugLog("SDP snapshot: otherId=" + otherId + " IGNORED offer due to collision (impolite peer)");
-        return;
-      }
+      if(ignoreOffer) return;
 
       await pc.setRemoteDescription(new RTCSessionDescription(remoteSdp));
       lastAppliedSdp[otherId] = remoteSdp.sdp;
-      screenshareDebugLog("SDP snapshot: otherId=" + otherId + " APPLIED " + remoteSdp.type);
 
       if(remoteSdp.type === "offer"){
         await pc.setLocalDescription();
