@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  69589
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1020,14 +1031,7 @@ async function ensureNegotiationCompletes(pc, otherId, label){
   const timeoutMs = 4000;
   const start = Date.now();
   while(Date.now() - start < timeoutMs){
-    if(pc.signalingState === "stable"){
-      // The negotiation itself succeeded (an answer was received and
-      // applied). This does NOT necessarily mean the video track actually
-      // arrived via ontrack -- that's a separate thing -- but it tells us
-      // definitively that the SDP exchange was not dropped by a collision.
-      screenshareStatus((label || "Renegotiation") + " with " + otherId + " CONFIRMED complete (signaling stable). If the video still isn't showing, the SDP exchange succeeded but ontrack itself did not fire.");
-      return;
-    }
+    if(pc.signalingState === "stable") return;
     await new Promise(r => setTimeout(r, 250));
   }
   screenshareStatus((label || "Renegotiation") + " with " + otherId + " may have been dropped by a collision -- retrying...", true);
