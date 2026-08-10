@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  68559
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1010,23 +1021,6 @@ function exitScreenshareLayout(){
 // allowing a new renegotiation to start, so it never collides with the
 // very first connection handshake (which can still be in progress if
 // screen share is started right after joining).
-// After a renegotiation offer is sent, confirms it actually completed
-// (signalingState returns to "stable", meaning an answer was received and
-// applied). If a colliding offer got silently ignored on the other end,
-// nothing else would ever retry it on its own -- this detects that and
-// forces a fresh attempt via restartIce(), which is guaranteed to trigger
-// onnegotiationneeded again even with no other change pending.
-async function ensureNegotiationCompletes(pc, otherId, label){
-  const timeoutMs = 4000;
-  const start = Date.now();
-  while(Date.now() - start < timeoutMs){
-    if(pc.signalingState === "stable") return;
-    await new Promise(r => setTimeout(r, 250));
-  }
-  screenshareStatus((label || "Renegotiation") + " with " + otherId + " may have been dropped by a collision -- retrying...", true);
-  try{ pc.restartIce(); }catch(e){}
-}
-
 function waitForStable(pc, timeoutMs){
   timeoutMs = timeoutMs || 5000;
   return new Promise((resolve) => {
@@ -1066,13 +1060,12 @@ screenBtn.onclick = async function(){
     // capture), with no error thrown anywhere. removeTrack+addTrack forces
     // a fresh SDP exchange that correctly re-describes the new track.
     screenshareStatus("Starting screen share renegotiation...");
-    await Promise.all(Object.entries(peerConns).map(async ([otherId, pc]) => {
+    await Promise.all(Object.values(peerConns).map(async pc => {
       await waitForStable(pc);
       const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
       if(sender){
         pc.removeTrack(sender);
         pc.addTrack(screenTrack, screenStream);
-        ensureNegotiationCompletes(pc, otherId, "Screen share start");
       }
     }));
     screenshareStatus("Renegotiation sent -- waiting for it to be applied on the other end...");
@@ -1103,13 +1096,12 @@ async function stopScreenShare(){
   if(localStream){
     const camTrack = localStream.getVideoTracks()[0];
     if(camTrack){
-      await Promise.all(Object.entries(peerConns).map(async ([otherId, pc]) => {
+      await Promise.all(Object.values(peerConns).map(async pc => {
         await waitForStable(pc);
         const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
         if(sender){
           pc.removeTrack(sender);
           pc.addTrack(camTrack, localStream);
-          ensureNegotiationCompletes(pc, otherId, "Screen share stop");
         }
       }));
     }
