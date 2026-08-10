@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  70110
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1075,15 +1086,12 @@ screenBtn.onclick = async function(){
     screenshareStatus("Starting screen share renegotiation...");
     await Promise.all(Object.entries(peerConns).map(async ([otherId, pc]) => {
       await waitForStable(pc);
-      // Always add the screen track. If a video sender already exists
-      // (camera was on), remove it first -- but if not (camera was off or
-      // faulty when this connection was made, so no video track was ever
-      // sent), there's nothing to remove, and skipping straight to
-      // addTrack still correctly creates a fresh video transceiver.
       const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
-      if(sender) pc.removeTrack(sender);
-      pc.addTrack(screenTrack, screenStream);
-      ensureNegotiationCompletes(pc, otherId, "Screen share start");
+      if(sender){
+        pc.removeTrack(sender);
+        pc.addTrack(screenTrack, screenStream);
+        ensureNegotiationCompletes(pc, otherId, "Screen share start");
+      }
     }));
     screenshareStatus("Renegotiation sent -- waiting for it to be applied on the other end...");
 
@@ -1116,9 +1124,11 @@ async function stopScreenShare(){
       await Promise.all(Object.entries(peerConns).map(async ([otherId, pc]) => {
         await waitForStable(pc);
         const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
-        if(sender) pc.removeTrack(sender);
-        pc.addTrack(camTrack, localStream);
-        ensureNegotiationCompletes(pc, otherId, "Screen share stop");
+        if(sender){
+          pc.removeTrack(sender);
+          pc.addTrack(camTrack, localStream);
+          ensureNegotiationCompletes(pc, otherId, "Screen share stop");
+        }
       }));
     }
     setTileStream(MY_ID, localStream);
