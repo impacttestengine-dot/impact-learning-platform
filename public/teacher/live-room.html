@@ -576,6 +576,27 @@ function sigRef(otherId){
 function iceOutRef(otherId){ return sigRef(otherId).collection("ice_"+MY_ID); }
 function iceInRef(otherId){ return sigRef(otherId).collection("ice_"+otherId); }
 
+// Persistent, viewport-pinned diagnostic log -- unlike the overlay inside
+// the screenshare video itself, this exists independently of whether
+// enterScreenshareLayout ever runs, so it can show us WHERE the pipeline
+// breaks even if the video element never gets created at all.
+function screenshareDebugLog(msg){
+  let logEl = document.getElementById("screenshareDebugLog");
+  if(!logEl){
+    logEl = document.createElement("div");
+    logEl.id = "screenshareDebugLog";
+    logEl.style.cssText = "position:fixed;bottom:8px;left:8px;right:8px;z-index:999999;background:rgba(0,0,0,.94);color:#4ade80;font-family:monospace;font-size:.56rem;line-height:1.5;padding:8px 10px;border-radius:8px;max-height:38vh;overflow-y:auto;white-space:pre-wrap;word-break:break-word";
+    document.body.appendChild(logEl);
+  }
+  const line = document.createElement("div");
+  const t = new Date();
+  const stamp = String(t.getMinutes()).padStart(2,"0") + ":" + String(t.getSeconds()).padStart(2,"0") + "." + String(t.getMilliseconds()).padStart(3,"0");
+  line.textContent = stamp + " " + msg;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+  console.log("[SCREENSHARE DEBUG]", msg);
+}
+
 async function createPeerConnection(otherId, otherName, otherIsHost){
   if(peerConns[otherId]) return peerConns[otherId];
 
@@ -588,6 +609,7 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
   const pc = new RTCPeerConnection(ICE_CONFIG);
   peerConns[otherId] = pc;
   peerMeta[otherId]  = { name: otherName, isHost: otherIsHost, camOn:true, micOn:true };
+  screenshareDebugLog("createPeerConnection: otherId=" + otherId + " name=" + otherName);
 
   // Add local tracks BEFORE any negotiation — critical for SDP to include media
   if(localStream){
@@ -598,8 +620,8 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
 
   pc.ontrack = (event) => {
     const stream = event.streams[0];
+    screenshareDebugLog("ontrack: otherId=" + otherId + " kind=" + event.track.kind + " hasStream=" + !!stream + " trackReadyState=" + event.track.readyState + " screenSharingFlag=" + (peerMeta[otherId] && peerMeta[otherId].screenSharing));
     if(!stream) return;
-    console.log("[SCREENSHARE DEBUG] ontrack fired for", otherId, "kind=", event.track.kind, "trackReadyState=", event.track.readyState, "streamId=", stream.id, "streamVideoTracks=", stream.getVideoTracks().length, "streamAudioTracks=", stream.getAudioTracks().length, "screenSharingFlag=", peerMeta[otherId] && peerMeta[otherId].screenSharing);
     setTileStream(otherId, stream);
     setCamOff(otherId, stream.getVideoTracks().length === 0 || !stream.getVideoTracks()[0].enabled);
 
@@ -729,6 +751,7 @@ function watchParticipants(){
         }
 
         if(change.type === "modified"){
+          screenshareDebugLog("Firestore modified: rid=" + rid + " peerMetaExists=" + !!peerMeta[rid] + " dataScreenSharing=" + data.screenSharing);
           if(peerMeta[rid]){
             peerMeta[rid].camOn = data.cameraEnabled;
             peerMeta[rid].micOn = data.micEnabled;

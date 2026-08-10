@@ -1,301 +1,9 @@
 ════════════════════════════════════════════════════════════════
-FILE DUMP: public\css\live-classroom.css
-════════════════════════════════════════════════════════════════
-
-PATH:   C:\impact-test-platform\public\css\live-classroom.css
-CHARS:  23815
-
-════════════════════════════════════════════════════════════════
-FULL CONTENTS
-════════════════════════════════════════════════════════════════
-
-/* ── IMPACT LIVE CLASSROOM — SHARED STYLES v3 ── */
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,sans-serif;background:#05060b;color:#fff;min-height:100vh}
-
-/* NAV */
-.lc-nav{position:fixed;top:24px;left:28px;z-index:99999;display:flex;gap:12px}
-.lc-nav-btn{width:46px;height:46px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px);cursor:pointer;transition:.15s}
-.lc-nav-btn:hover{background:rgba(255,255,255,.15)}
-.lc-nav-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-/* LOBBY */
-.lobby{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;text-align:center}
-.lobby-eyebrow{text-transform:uppercase;letter-spacing:.3em;font-size:.68rem;font-weight:900;color:rgba(235,240,255,.5);margin-bottom:14px}
-.lobby h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.8rem,6vw,4.8rem);font-weight:400;margin-bottom:12px;line-height:1.05}
-.lobby-sub{color:rgba(255,255,255,.55);font-weight:700;margin-bottom:48px;font-size:.95rem}
-.lobby-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:min(700px,90vw);margin-bottom:40px}
-@media(max-width:600px){.lobby-cards{grid-template-columns:1fr}}
-.lc-card{border-radius:28px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);padding:32px;text-align:left;transition:.2s ease}
-.lc-card:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-2px)}
-.lc-card-icon{font-size:2rem;margin-bottom:14px;display:block}
-.lc-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.6rem;font-weight:400;margin-bottom:8px}
-.lc-card p{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:20px}
-.lc-input{width:100%;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#fff;font-family:Inter,sans-serif;font-weight:700;font-size:.92rem;outline:none;margin-bottom:12px;transition:.15s}
-.lc-input:focus{border-color:rgba(99,179,237,.6);background:rgba(255,255,255,.11)}
-.lc-input::placeholder{color:rgba(255,255,255,.35)}
-.lc-btn{width:100%;padding:13px;border-radius:14px;border:none;font-family:Inter,sans-serif;font-weight:900;font-size:.9rem;cursor:pointer;transition:.18s ease;display:flex;align-items:center;justify-content:center;gap:8px}
-.lc-btn:hover{transform:translateY(-1px)}
-.lc-btn:active{transform:scale(.97)}
-.lc-btn-primary{background:rgba(99,179,237,.22);border:1px solid rgba(99,179,237,.45);color:#90cdf4}
-.lc-btn-primary:hover{background:rgba(99,179,237,.32)}
-.lc-btn-success{background:rgba(72,187,120,.2);border:1px solid rgba(72,187,120,.4);color:#9ae6b4}
-.lc-btn-success:hover{background:rgba(72,187,120,.3)}
-.lc-btn-danger{background:rgba(245,101,101,.18);border:1px solid rgba(245,101,101,.35);color:#feb2b2}
-.lc-btn-danger:hover{background:rgba(245,101,101,.28)}
-.lc-btn-ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff}
-.lc-btn-ghost:hover{background:rgba(255,255,255,.14)}
-.error-msg{color:#feb2b2;font-size:.8rem;font-weight:800;margin-top:8px;min-height:20px}
-.lobby-recordings-link{color:rgba(255,255,255,.4);font-size:.8rem;font-weight:800;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:2px;transition:.15s}
-.lobby-recordings-link:hover{color:rgba(255,255,255,.7)}
-
-/* JOIN PAGE */
-.join-page{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px}
-.join-card{width:min(460px,92vw);border-radius:32px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px);padding:40px;box-shadow:0 28px 80px rgba(0,0,0,.4)}
-.join-card .meeting-badge{display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(99,179,237,.15);border:1px solid rgba(99,179,237,.3);color:#90cdf4;font-size:.78rem;font-weight:900;letter-spacing:.08em;margin-bottom:20px}
-.join-card h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2.2rem;font-weight:400;margin-bottom:8px}
-.join-card .join-sub{color:rgba(255,255,255,.5);font-weight:700;font-size:.88rem;margin-bottom:28px;line-height:1.5}
-.join-preview{width:100%;aspect-ratio:16/9;border-radius:16px;background:#131722;overflow:hidden;margin-bottom:20px;position:relative}
-.join-preview video{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1)}
-.join-preview-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:rgba(255,255,255,.35);font-size:.82rem;font-weight:700}
-.join-preview-placeholder svg{width:40px;height:40px;stroke:rgba(255,255,255,.2);fill:none;stroke-width:1.5}
-.join-controls-row{display:flex;gap:10px;margin-bottom:20px}
-.join-ctrl{flex:1;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:Inter,sans-serif;font-weight:800;font-size:.78rem;transition:.15s}
-.join-ctrl:hover{background:rgba(255,255,255,.13)}
-.join-ctrl.off{background:rgba(245,101,101,.15);border-color:rgba(245,101,101,.3);color:#feb2b2}
-.join-ctrl svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.perm-note{font-size:.74rem;color:rgba(255,255,255,.4);font-weight:700;text-align:center;margin-bottom:16px;line-height:1.5}
-
-/* ENDED PAGE */
-.ended-page{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:40px}
-.ended-card{width:min(480px,92vw);text-align:center;border-radius:32px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(22px);padding:48px 40px;box-shadow:0 28px 80px rgba(0,0,0,.4)}
-.ended-icon{font-size:3rem;margin-bottom:20px}
-.ended-card h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2.4rem;font-weight:400;margin-bottom:10px}
-.ended-card p{color:rgba(255,255,255,.55);font-weight:700;line-height:1.6;margin-bottom:28px}
-.ended-actions{display:flex;flex-direction:column;gap:12px}
-
-/* ═══════════════ ROOM v3 — Google Meet style ═══════════════ */
-
-.room-shell{position:fixed;inset:0;background:#0a0c14;display:flex;flex-direction:column;overflow:hidden}
-
-/* HEADER */
-.room-header{height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(14,17,28,.95);border-bottom:1px solid rgba(255,255,255,.06);z-index:50}
-.room-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.05rem;font-weight:400;color:rgba(255,255,255,.85);max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.room-id-badge{font-size:.72rem;font-weight:900;color:rgba(255,255,255,.4);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px 10px;cursor:pointer;transition:.15s;letter-spacing:.06em}
-.room-id-badge:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
-.room-status{display:flex;align-items:center;gap:8px;font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45)}
-.status-dot{width:8px;height:8px;border-radius:50%;background:#68d391;flex-shrink:0}
-.status-dot.connecting{background:#f6ad55;animation:pulse-dot 1s infinite}
-@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.35}}
-.header-right{display:flex;align-items:center;gap:14px}
-
-/* BODY = video area + optional sidebar */
-.room-body{flex:1;display:flex;min-height:0;position:relative}
-
-/* VIDEO STAGE */
-.video-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:14px;min-width:0;overflow:hidden}
-.video-grid{display:grid;gap:10px;width:100%;height:100%;max-width:100%;max-height:100%}
-.video-grid.p1{grid-template-columns:1fr}
-.video-grid.p2{grid-template-columns:1fr 1fr}
-.video-grid.p3{grid-template-columns:1fr 1fr}
-.video-grid.p3 .video-tile:first-child{grid-column:1/3}
-.video-grid.p4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
-
-/* SCREEN SHARE MODE — one big tile + strip of small tiles */
-.video-grid.screenshare-active{display:flex;flex-direction:column;gap:10px}
-.screenshare-main{flex:1;min-height:0;border-radius:14px;overflow:hidden;background:#000;position:relative}
-.screenshare-main video{width:100%;height:100%;object-fit:contain;background:#000}
-.screenshare-strip{display:flex;gap:8px;height:110px;flex-shrink:0;overflow-x:auto}
-.screenshare-strip .video-tile{flex:0 0 160px;height:100%}
-
-.video-tile{position:relative;border-radius:14px;overflow:hidden;background:#161b28;width:100%;height:100%;min-height:0;border:2px solid transparent;transition:border-color .2s}
-.video-tile.speaking{border-color:#68d391}
-.video-tile video{width:100%;height:100%;object-fit:cover;display:block;background:#161b28}
-.video-tile.mirrored video{transform:scaleX(-1)}
-
-.tile-label{position:absolute;bottom:10px;left:10px;display:flex;align-items:center;gap:6px;font-size:.76rem;font-weight:800;color:#fff;background:rgba(0,0,0,.55);padding:5px 10px;border-radius:8px;backdrop-filter:blur(8px);max-width:calc(100% - 20px);pointer-events:none}
-.tile-label .name-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tile-mic-icon{width:13px;height:13px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2.4}
-.tile-mic-icon.muted{color:#fca5a5}
-
-.tile-cam-off{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#1a1f2e;flex-direction:column;gap:10px}
-.tile-cam-off.show{display:flex}
-.avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:900;color:#fff}
-.cam-name{font-size:.82rem;font-weight:800;color:rgba(255,255,255,.65)}
-
-.host-crown{position:absolute;top:10px;left:10px;background:rgba(251,191,36,.9);color:#78350f;border-radius:6px;padding:3px 7px;font-size:.62rem;font-weight:900;display:none;align-items:center;gap:3px}
-.host-crown.show{display:flex}
-
-/* SIDEBAR (participants / chat placeholder) */
-.room-sidebar{width:300px;flex-shrink:0;background:rgba(14,17,28,.97);border-left:1px solid rgba(255,255,255,.07);display:none;flex-direction:column}
-.room-sidebar.show{display:flex}
-.sidebar-header{padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between}
-.sidebar-header h3{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.1rem;font-weight:400}
-.sidebar-close{background:transparent;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:1.1rem;padding:4px}
-.sidebar-close:hover{color:#fff}
-.sidebar-body{flex:1;overflow-y:auto;padding:10px}
-.participant-row{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:12px;transition:.12s}
-.participant-row:hover{background:rgba(255,255,255,.04)}
-.p-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#fff;flex-shrink:0}
-.p-info{flex:1;min-width:0}
-.p-name{font-size:.85rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
-.p-name .you-tag{font-size:.68rem;color:rgba(255,255,255,.4);font-weight:700}
-.p-badge{font-size:.62rem;font-weight:900;color:#fbbf24;background:rgba(251,191,36,.15);padding:2px 6px;border-radius:5px}
-.p-icons{display:flex;gap:6px;align-items:center;flex-shrink:0}
-.p-icons svg{width:14px;height:14px;stroke:rgba(255,255,255,.35);fill:none;stroke-width:2.2}
-.p-icons svg.active{stroke:#68d391}
-.p-icons svg.inactive{stroke:#fca5a5}
-
-/* CONTROLS BAR */
-.room-controls{height:80px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(14,17,28,.97);border-top:1px solid rgba(255,255,255,.06);z-index:50}
-.controls-left,.controls-center,.controls-right{display:flex;align-items:center;gap:10px}
-.controls-left{flex:1}
-.controls-right{flex:1;justify-content:flex-end}
-.elapsed-time{font-size:.78rem;font-weight:800;color:rgba(255,255,255,.45);font-variant-numeric:tabular-nums}
-
-.ctrl-btn{width:50px;height:50px;border-radius:14px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;transition:.15s ease;position:relative;flex-shrink:0}
-.ctrl-btn:hover{filter:brightness(1.15)}
-.ctrl-btn:active{transform:scale(.93)}
-.ctrl-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
-.ctrl-btn-round{background:rgba(255,255,255,.1)}
-.ctrl-btn-round.off{background:rgba(245,101,101,.85);color:#fff}
-.ctrl-btn-screen{background:rgba(255,255,255,.1)}
-.ctrl-btn-screen.active{background:rgba(99,179,237,.85);color:#fff}
-.ctrl-btn-people{background:rgba(255,255,255,.1)}
-.ctrl-btn-people.active{background:rgba(255,255,255,.22)}
-.ctrl-btn-rec{background:rgba(255,255,255,.1)}
-.ctrl-btn-rec.recording{background:rgba(245,101,101,.9);animation:pulse-rec 1.6s infinite}
-@keyframes pulse-rec{0%,100%{opacity:1}50%{opacity:.65}}
-.ctrl-badge{position:absolute;top:-3px;right:-3px;background:#6366f1;color:#fff;font-size:.6rem;font-weight:900;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px}
-.ctrl-btn-leave{width:auto;padding:0 22px;border-radius:14px;background:#dc2626;font-weight:900;font-size:.85rem;gap:8px}
-.ctrl-btn-leave:hover{background:#b91c1c}
-
-/* PERMISSION BANNER */
-.perm-banner{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:600;background:rgba(30,20,10,.96);border:1px solid rgba(251,191,36,.4);border-radius:14px;padding:12px 18px;font-size:.8rem;font-weight:800;color:#fde68a;display:none;align-items:center;gap:10px;max-width:min(420px,90vw);backdrop-filter:blur(18px)}
-.perm-banner.show{display:flex}
-
-/* INVITE PANEL */
-.invite-panel{position:fixed;top:64px;right:16px;width:min(320px,90vw);background:rgba(14,17,28,.97);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:22px;z-index:500;backdrop-filter:blur(20px);box-shadow:0 24px 70px rgba(0,0,0,.5);display:none;animation:slideDown .18s ease}
-@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.invite-panel.show{display:block}
-.invite-panel h3{font-family:"Sorts Mill Goudy",serif;font-size:1.15rem;font-weight:400;margin-bottom:14px}
-.invite-row{display:flex;gap:8px;margin-bottom:12px}
-.invite-field{flex:1;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:800;font-size:.82rem;outline:none;letter-spacing:.06em}
-.invite-link-row{display:flex;gap:8px;margin-bottom:8px}
-.invite-link-field{flex:1;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);font-family:Inter,sans-serif;font-size:.72rem;font-weight:700;outline:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.invite-copy-btn{padding:10px 14px;border-radius:10px;border:1px solid rgba(99,179,237,.4);background:rgba(99,179,237,.15);color:#90cdf4;font-family:Inter,sans-serif;font-weight:900;font-size:.76rem;cursor:pointer;white-space:nowrap;transition:.15s}
-.invite-copy-btn:hover{background:rgba(99,179,237,.28)}
-.invite-note{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.35);line-height:1.5}
-.invite-close{position:absolute;top:12px;right:14px;background:transparent;border:none;color:rgba(255,255,255,.4);font-size:1.1rem;cursor:pointer;line-height:1;padding:2px 6px}
-.invite-close:hover{color:#fff}
-
-/* TOAST */
-.lc-toast-wrap{position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
-.lc-toast{background:rgba(20,24,38,.96);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px);padding:10px 18px;border-radius:14px;font-size:.8rem;font-weight:800;color:#fff;opacity:0;transform:translateY(-6px);transition:.25s ease;max-width:90vw;text-align:center}
-.lc-toast.show{opacity:1;transform:translateY(0)}
-
-@media(max-width:760px){
-  .room-sidebar{position:fixed;top:56px;right:0;bottom:80px;z-index:400;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
-  .room-title{max-width:120px}
-  .ctrl-btn{width:44px;height:44px}
-  .ctrl-btn-leave{padding:0 14px;font-size:.78rem}
-  .elapsed-time{display:none}
-}
-
-/* RECORDINGS PAGE */
-.recordings-page{position:relative;z-index:2;width:min(980px,92vw);margin:0 auto;padding:110px 0 80px}
-.recordings-page h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:400;margin-bottom:8px}
-.recordings-page .sub{color:rgba(255,255,255,.5);font-weight:700;margin-bottom:36px}
-.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.rec-card{border-radius:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:22px;transition:.18s}
-.rec-card:hover{background:rgba(255,255,255,.1)}
-.rec-card-title{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.2rem;font-weight:400;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rec-card-meta{font-size:.76rem;font-weight:800;color:rgba(255,255,255,.45);line-height:1.8;margin-bottom:14px}
-.rec-actions{display:flex;gap:10px}
-.rec-btn{flex:1;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:#fff;font-family:Inter,sans-serif;font-weight:800;font-size:.8rem;cursor:pointer;transition:.14s;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px}
-.rec-btn:hover{background:rgba(255,255,255,.14)}
-.empty-state{text-align:center;padding:80px 40px;color:rgba(255,255,255,.3);font-weight:700}
-.empty-state h3{font-family:"Sorts Mill Goudy",serif;font-size:1.6rem;font-weight:400;margin-bottom:10px;color:rgba(255,255,255,.4)}
-
-/* DATA CENTRE */
-.data-page{position:relative;z-index:2;width:min(1080px,92vw);margin:0 auto;padding:110px 0 80px}
-.data-page h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:400;margin-bottom:6px}
-.data-page .sub{color:rgba(255,255,255,.5);font-weight:700;margin-bottom:40px;font-size:.9rem}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:36px}
-.stat-card{border-radius:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:22px;backdrop-filter:blur(18px)}
-.stat-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:10px}
-.stat-value{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:2.6rem;font-weight:400;color:#fff;line-height:1}
-.stat-sub{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:6px}
-.section-label{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
-.meetings-table,.usage-table{width:100%;border-collapse:collapse;margin-bottom:36px}
-.meetings-table th,.usage-table th{text-align:left;font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
-.meetings-table td,.usage-table td{padding:11px 14px;font-size:.83rem;font-weight:700;color:rgba(255,255,255,.8);border-bottom:1px solid rgba(255,255,255,.05)}
-.meetings-table tr:hover td,.usage-table tr:hover td{background:rgba(255,255,255,.03)}
-.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.67rem;font-weight:900}
-.badge-active{background:rgba(72,187,120,.2);color:#9ae6b4;border:1px solid rgba(72,187,120,.3)}
-.badge-ended{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.1)}
-.badge-rec{background:rgba(245,101,101,.18);color:#feb2b2;border:1px solid rgba(245,101,101,.25)}
-.refresh-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:Inter,sans-serif;font-weight:800;font-size:.82rem;cursor:pointer;transition:.15s;margin-bottom:32px}
-.refresh-btn:hover{background:rgba(255,255,255,.14)}
-/* HOST CONTROL MENU ON TILES */
-.tile-menu-btn{
-  position:absolute;top:10px;right:10px;width:28px;height:28px;
-  border-radius:8px;background:rgba(0,0,0,.5);border:none;color:#fff;
-  cursor:pointer;display:none;align-items:center;justify-content:center;
-  backdrop-filter:blur(6px);transition:.15s;z-index:5;
-}
-.tile-menu-btn.show{display:flex}
-.tile-menu-btn:hover{background:rgba(0,0,0,.75)}
-.tile-menu-btn svg{width:16px;height:16px;fill:currentColor;stroke:none}
-
-.tile-menu-dropdown{
-  position:absolute;top:44px;right:10px;min-width:190px;
-  background:rgba(14,17,28,.98);border:1px solid rgba(255,255,255,.14);
-  border-radius:14px;padding:6px;z-index:20;display:none;
-  box-shadow:0 16px 50px rgba(0,0,0,.5);backdrop-filter:blur(18px);
-}
-.tile-menu-dropdown.show{display:block}
-.tile-menu-item{
-  display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;
-  border-radius:10px;border:none;background:transparent;color:#fff;
-  font-family:Inter,sans-serif;font-weight:700;font-size:.82rem;
-  cursor:pointer;text-align:left;transition:.12s;
-}
-.tile-menu-item:hover{background:rgba(255,255,255,.08)}
-.tile-menu-item.danger{color:#fca5a5}
-.tile-menu-item.danger:hover{background:rgba(245,101,101,.15)}
-.tile-menu-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
-
-/* PARTICIPANT LIST — host action button */
-.p-host-action{
-  width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.06);
-  border:none;color:rgba(255,255,255,.5);cursor:pointer;display:flex;
-  align-items:center;justify-content:center;flex-shrink:0;transition:.12s;
-  margin-left:4px;
-}
-.p-host-action:hover{background:rgba(255,255,255,.14);color:#fff}
-.p-host-action svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2}
-
-/* KICKED / FORCE-MUTED NOTICES */
-.host-notice-toast{
-  background:rgba(30,20,10,.96)!important;border-color:rgba(251,191,36,.4)!important;color:#fde68a!important;
-}
-
-/* Presenting bar (Meet/Zoom-style) */
-.presenting-bar{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:600;display:flex;align-items:center;gap:12px;background:rgba(20,24,38,.97);border:1px solid rgba(52,211,153,.35);border-radius:999px;padding:10px 12px 10px 18px;backdrop-filter:blur(18px);box-shadow:0 16px 50px rgba(0,0,0,.5)}
-.presenting-bar-dot{width:8px;height:8px;border-radius:50%;background:#34d399;flex-shrink:0;animation:presentPulse 1.6s ease-in-out infinite}
-@keyframes presentPulse{0%,100%{opacity:1}50%{opacity:.35}}
-.presenting-bar-text{font-family:Inter,sans-serif;font-weight:800;font-size:.82rem;color:#fff;white-space:nowrap}
-.presenting-bar-stop{padding:8px 16px;border-radius:999px;border:none;background:#ef4444;color:#fff;font-family:Inter,sans-serif;font-weight:900;font-size:.76rem;cursor:pointer;white-space:nowrap}
-.presenting-bar-stop:hover{background:#dc2626}
-.presenting-badge{background:rgba(52,211,153,.18);color:#6ee7b7;border:1px solid rgba(52,211,153,.3);margin-left:4px}
-
-════════════════════════════════════════════════════════════════
-FILE DUMP: public\teacher\live-room.html
+FILE DUMP: public/teacher/live-room.html
 ════════════════════════════════════════════════════════════════
 
 PATH:   C:\impact-test-platform\public\teacher\live-room.html
-CHARS:  63674
+CHARS:  68910
 
 ════════════════════════════════════════════════════════════════
 FULL CONTENTS
@@ -322,9 +30,9 @@ FULL CONTENTS
 
 .presented-overlay{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;pointer-events:none;background:rgba(5,6,11,.7)}
 .presented-overlay.active{display:flex}
-.presented-overlay.active ~ .room-shell .video-grid,
-body.presenting .video-grid{display:flex !important;flex-direction:column !important;position:fixed !important;right:12px !important;bottom:92px !important;top:auto !important;left:auto !important;width:200px !important;height:auto !important;max-height:60vh !important;overflow-y:auto !important;z-index:410 !important;gap:8px !important}
-body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 !important;flex-shrink:0 !important;min-height:110px !important}
+.presented-overlay.active ~ .room-shell .video-grid:not(.screenshare-active),
+body.presenting .video-grid:not(.screenshare-active){display:flex !important;flex-direction:column !important;position:fixed !important;right:12px !important;bottom:92px !important;top:auto !important;left:auto !important;width:200px !important;height:auto !important;max-height:60vh !important;overflow-y:auto !important;z-index:410 !important;gap:8px !important}
+body.presenting .video-grid:not(.screenshare-active) .video-tile{width:100% !important;aspect-ratio:16/9 !important;flex-shrink:0 !important;min-height:110px !important}
 .presented-card{pointer-events:auto;width:min(900px,88vw);max-height:76vh;overflow-y:auto;background:#fff;color:#1a1a1a;border-radius:20px;padding:32px;box-shadow:0 30px 90px rgba(0,0,0,.5)}
 .presented-card img,.presented-card video{width:100%;border-radius:12px;max-height:60vh;object-fit:contain;background:#0a0c14;display:block}
 .presented-card .p-header{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;color:#0f172a;margin-bottom:8px}
@@ -553,6 +261,12 @@ let elapsedInterval  = null;
 
 const peerConns = {};   // peerId -> RTCPeerConnection
 const peerMeta  = {};   // peerId -> { name, isHost, camOn, micOn }
+// Most recent video MediaStreamTrack received per peer, cached the instant
+// ontrack fires regardless of whether the Firestore screenSharing flag has
+// arrived yet. ontrack and that Firestore update are two independent async
+// events with no guaranteed order -- whichever one completes SECOND uses
+// this cache to finish the big-screen bind, so neither ordering is missed.
+const peerVideoTracks = {};   // peerId -> MediaStreamTrack
 const unsubs    = [];
 const politeMap = {};   // peerId -> bool (am I polite toward this peer?)
 const makingOffer = {};
@@ -896,15 +610,27 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
   pc.ontrack = (event) => {
     const stream = event.streams[0];
     if(!stream) return;
+    console.log("[SCREENSHARE DEBUG] ontrack fired for", otherId, "kind=", event.track.kind, "trackReadyState=", event.track.readyState, "streamId=", stream.id, "streamVideoTracks=", stream.getVideoTracks().length, "streamAudioTracks=", stream.getAudioTracks().length, "screenSharingFlag=", peerMeta[otherId] && peerMeta[otherId].screenSharing);
     setTileStream(otherId, stream);
     setCamOff(otherId, stream.getVideoTracks().length === 0 || !stream.getVideoTracks()[0].enabled);
 
-    // If this peer is currently marked as screen-sharing, also refresh the
-    // big-screen view directly from this track event. Reading a tile's
-    // srcObject separately (elsewhere) is racy against WebRTC renegotiation
-    // timing and can bind a stale/dead stream that never updates again.
-    if(peerMeta[otherId] && peerMeta[otherId].screenSharing){
-      enterScreenshareLayout(otherId, stream, peerMeta[otherId].name);
+    if(event.track.kind === "video"){
+      // Always cache the most recent video track for this peer, regardless
+      // of whether the screenSharing flag has arrived yet -- this event and
+      // that Firestore update have no guaranteed order relative to each
+      // other, and this cache lets whichever finishes second complete the
+      // bind using the other one's result.
+      peerVideoTracks[otherId] = event.track;
+
+      if(peerMeta[otherId] && peerMeta[otherId].screenSharing){
+        const mainEl = document.getElementById("screenshareMain");
+        const currentVid = mainEl ? mainEl.querySelector("video") : null;
+        const currentTrack = currentVid && currentVid.srcObject ? currentVid.srcObject.getVideoTracks()[0] : null;
+        if(!currentTrack || currentTrack.id !== event.track.id){
+          console.log("[SCREENSHARE DEBUG] binding big-screen from ontrack video-only stream, trackId=", event.track.id);
+          enterScreenshareLayout(otherId, new MediaStream([event.track]), peerMeta[otherId].name);
+        }
+      }
     }
   };
 
@@ -1024,12 +750,34 @@ function watchParticipants(){
             peerMeta[rid].screenSharing = !!data.screenSharing;
 
             if(data.screenSharing && currentScreenSharerId !== rid){
-              const remoteTile = document.getElementById("tile-"+rid);
-              const remoteVid = remoteTile ? remoteTile.querySelector("video") : null;
-              if(remoteVid && remoteVid.srcObject) enterScreenshareLayout(rid, remoteVid.srcObject, peerMeta[rid].name);
-              // If the renegotiation hasn't completed yet, the srcObject read
-              // above may be stale -- ontrack (added above) will correctly
-              // re-bind once the real screen-share frames actually arrive.
+              currentScreenSharerId = rid;
+              videoGrid.classList.add("screenshare-active");
+              let stripEl = document.getElementById("screenshareStrip");
+              if(!stripEl){
+                stripEl = document.createElement("div");
+                stripEl.className = "screenshare-strip";
+                stripEl.id = "screenshareStrip";
+                videoGrid.appendChild(stripEl);
+              }
+              videoGrid.querySelectorAll(".video-tile").forEach(t => {
+                if(t.parentElement !== stripEl) stripEl.appendChild(t);
+              });
+              if(presentingBar){
+                presentingBarText.textContent = (peerMeta[rid].name || "Someone") + " is presenting";
+                presentingBarStop.style.display = "none";
+                presentingBar.style.display = "flex";
+              }
+
+              // If ontrack already delivered the video track before this
+              // Firestore update arrived, it's sitting in the cache -- bind
+              // immediately instead of waiting for an ontrack event that
+              // already happened and will never fire again for this track.
+              if(peerVideoTracks[rid]){
+                console.log("[SCREENSHARE DEBUG] Firestore flag arrived AFTER ontrack -- binding from cached video track, trackId=", peerVideoTracks[rid].id);
+                enterScreenshareLayout(rid, new MediaStream([peerVideoTracks[rid]]), peerMeta[rid].name);
+              }else{
+                console.log("[SCREENSHARE DEBUG] Firestore flag says", rid, "is sharing -- no cached video track yet, waiting for ontrack.");
+              }
             }
             if(!data.screenSharing && currentScreenSharerId === rid){
               exitScreenshareLayout();
@@ -1172,18 +920,82 @@ function enterScreenshareLayout(sharerId, stream, sharerName){
   currentScreenSharerId = sharerId;
   videoGrid.classList.add("screenshare-active");
 
+  const isMe = (sharerId === MY_ID);
+
   let mainEl = document.getElementById("screenshareMain");
   if(!mainEl){
     mainEl = document.createElement("div");
     mainEl.className = "screenshare-main";
     mainEl.id = "screenshareMain";
+
     const v = document.createElement("video");
-    v.autoplay = true; v.playsInline = true; v.muted = (sharerId === MY_ID);
+    v.autoplay = true; v.playsInline = true;
+    // Always start muted. Browsers reliably allow muted autoplay with no
+    // user gesture, but silently block UNMUTED autoplay for anyone who
+    // isn't the presenter -- that (not the stream or the layout) is what
+    // was leaving remote viewers with a black/paused video the whole time.
+    v.muted = true;
     mainEl.appendChild(v);
+
+    if(!isMe){
+      const unmuteHint = document.createElement("button");
+      unmuteHint.type = "button";
+      unmuteHint.className = "screenshare-unmute-hint";
+      unmuteHint.innerHTML = "\uD83D\uDD07 Tap to unmute";
+      unmuteHint.onclick = () => {
+        v.muted = false;
+        v.play().catch(()=>{});
+        unmuteHint.style.display = "none";
+      };
+      mainEl.appendChild(unmuteHint);
+    }
+
     videoGrid.insertBefore(mainEl, videoGrid.firstChild);
   }
+
   const vidEl = mainEl.querySelector("video");
-  if(vidEl.srcObject !== stream){ vidEl.srcObject = stream; vidEl.play().catch(()=>{}); }
+
+  // On-screen diagnostic readout -- readable directly from a screenshot,
+  // no DevTools/console access required. Temporary, for debugging the
+  // black-video issue; safe to remove once resolved.
+  let debugOverlay = mainEl.querySelector(".screenshare-debug-overlay");
+  if(!debugOverlay){
+    debugOverlay = document.createElement("div");
+    debugOverlay.className = "screenshare-debug-overlay";
+    debugOverlay.textContent = "Loading diagnostics...";
+    mainEl.appendChild(debugOverlay);
+  }
+
+  if(vidEl.srcObject !== stream){
+    console.log("[SCREENSHARE DEBUG] binding stream to main video. isMe=", isMe, "streamId=", stream.id, "videoTracks=", stream.getVideoTracks().map(t=>({label:t.label, readyState:t.readyState, enabled:t.enabled, muted:t.muted})));
+    vidEl.srcObject = stream;
+    vidEl.play().then(()=>{
+      console.log("[SCREENSHARE DEBUG] play() resolved. paused=", vidEl.paused, "muted=", vidEl.muted);
+    }).catch((err)=>{
+      console.log("[SCREENSHARE DEBUG] play() REJECTED:", err.name, err.message);
+      debugOverlay.textContent = "play() REJECTED: " + err.name + " -- " + err.message;
+    });
+
+    let checkCount = 0;
+    const diagInterval = setInterval(() => {
+      checkCount++;
+      const vt = stream.getVideoTracks()[0];
+      const txt = "isMe=" + isMe +
+        " | check#" + checkCount +
+        " | vidW=" + vidEl.videoWidth + " vidH=" + vidEl.videoHeight +
+        " | readyState=" + vidEl.readyState +
+        " | paused=" + vidEl.paused +
+        " | t=" + vidEl.currentTime.toFixed(1) +
+        " | muted=" + vidEl.muted +
+        " | trackState=" + (vt ? vt.readyState : "none") +
+        " | trackEnabled=" + (vt ? vt.enabled : "none") +
+        " | trackMuted=" + (vt ? vt.muted : "none") +
+        " | boxSize=" + vidEl.clientWidth + "x" + vidEl.clientHeight;
+      debugOverlay.textContent = txt;
+      console.log("[SCREENSHARE DEBUG]", txt);
+      if(checkCount >= 10) clearInterval(diagInterval);
+    }, 1000);
+  }
 
   let stripEl = document.getElementById("screenshareStrip");
   if(!stripEl){
