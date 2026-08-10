@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  71603
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1066,26 +1077,6 @@ function exitScreenshareLayout(){
   renderParticipantList();
 }
 
-// Waits until a peer connection's signaling has settled to "stable" before
-// allowing a new renegotiation to start, so it never collides with the
-// very first connection handshake (which can still be in progress if
-// screen share is started right after joining).
-function waitForStable(pc, timeoutMs){
-  timeoutMs = timeoutMs || 5000;
-  return new Promise((resolve) => {
-    if(pc.signalingState === "stable"){ resolve(); return; }
-    const start = Date.now();
-    const check = () => {
-      if(pc.signalingState === "stable" || Date.now() - start > timeoutMs){
-        resolve();
-      }else{
-        setTimeout(check, 150);
-      }
-    };
-    check();
-  });
-}
-
 screenBtn.onclick = async function(){
   if(!SCREEN_SHARE_SUPPORTED){
     toast("📵 Screen sharing isn't supported on this device. Try from a desktop browser.");
@@ -1109,7 +1100,6 @@ screenBtn.onclick = async function(){
     // routes this through the same tested perfect-negotiation pipeline
     // already used for the initial connection.
     await Promise.all(Object.values(peerConns).map(async pc => {
-      await waitForStable(pc);
       const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
       if(sender){
         pc.removeTrack(sender);
@@ -1144,7 +1134,6 @@ async function stopScreenShare(){
     const camTrack = localStream.getVideoTracks()[0];
     if(camTrack){
       await Promise.all(Object.values(peerConns).map(async pc => {
-        await waitForStable(pc);
         const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
         if(sender){
           pc.removeTrack(sender);
