@@ -39,7 +39,9 @@
     </div>
 
     <input class="lc-input" id="nameInput" type="text" placeholder="Your name" maxlength="40" autocomplete="name">
-    <button class="lc-btn lc-btn-success" id="joinBtn" type="button" style="margin-top:4px">
+    <input class="lc-input" id="passkeyInput" type="password" placeholder="Staff passkey (optional)" maxlength="40" autocomplete="off" style="margin-top:8px;font-size:.82rem;opacity:.88">
+    <p style="font-size:.66rem;color:rgba(255,255,255,.4);margin:5px 2px 0;text-align:left">Teachers: enter your passkey to unlock host controls in this class.</p>
+    <button class="lc-btn lc-btn-success" id="joinBtn" type="button" style="margin-top:10px">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
       Join Class
     </button>
@@ -52,6 +54,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
 <script src="/__/firebase/init.js"></script>
+
+<script type="module">
+  import { validatePasskey } from "/js/passkey-auth.js?v=learner-gate-fixed-001";
+  window.__validatePasskey = validatePasskey;
+</script>
 
 <script>
 document.addEventListener("DOMContentLoaded", async function(){
@@ -161,18 +168,45 @@ document.addEventListener("DOMContentLoaded", async function(){
     if(e.key === "Enter") document.getElementById("joinBtn").click();
   });
 
-  document.getElementById("joinBtn").onclick = function(){
+  document.getElementById("joinBtn").onclick = async function(){
     const name = document.getElementById("nameInput").value.trim();
+    const passkeyValue = document.getElementById("passkeyInput").value.trim();
     const err  = document.getElementById("errMsg");
     if(!name){ err.textContent = "Please enter your name."; return; }
     err.textContent = "";
 
-    // window.open() must be the first thing that runs here, synchronously,
-    // for mobile Safari to allow it -- any delay (even stopping media
-    // tracks first) risks breaking the direct user-gesture chain.
-    window.open(`/teacher/live-room.html?id=${MEETING_ID}&name=${encodeURIComponent(name)}&host=${IS_HOST}&cam=${camOn}&mic=${micOn}`, "_blank");
+    // window.open() must be the very first synchronous action for mobile
+    // Safari to allow it -- open a blank placeholder now, validate the
+    // passkey (if any) afterward, then redirect this already-open tab.
+    const newTab = window.open("", "_blank");
+    if(newTab){
+      newTab.document.write("<!DOCTYPE html><html><head><title>Impact Live Class</title></head><body style=\"background:#05060b;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0\">Joining class...</body></html>");
+    }
+
+    let effectiveHost = IS_HOST;
+    if(passkeyValue){
+      try{
+        const result = await window.__validatePasskey(passkeyValue, "teacher");
+        if(result && result.ok && String(result.role || "").toLowerCase() !== "learner"){
+          effectiveHost = true;
+          sessionStorage.setItem("impactPersonnelRole", result.role || "Teacher");
+          sessionStorage.setItem("impactAccessName", result.ownerName || name);
+        }else{
+          err.textContent = "Passkey not recognized -- joining as a regular participant.";
+        }
+      }catch(e){
+        err.textContent = "Could not verify passkey -- joining as a regular participant.";
+      }
+    }
 
     if(previewStream) previewStream.getTracks().forEach(t=>t.stop());
+
+    const roomUrl = `/teacher/live-room.html?id=${MEETING_ID}&name=${encodeURIComponent(name)}&host=${effectiveHost}&cam=${camOn}&mic=${micOn}`;
+    if(newTab){
+      newTab.location.href = roomUrl;
+    }else{
+      location.href = roomUrl;
+    }
     toast("Opening class in a new tab...");
   };
 });
