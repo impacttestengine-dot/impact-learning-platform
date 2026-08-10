@@ -1,3 +1,14 @@
+════════════════════════════════════════════════════════════════
+FILE DUMP: public/teacher/live-room.html
+════════════════════════════════════════════════════════════════
+
+PATH:   C:\impact-test-platform\public\teacher\live-room.html
+CHARS:  66924
+
+════════════════════════════════════════════════════════════════
+FULL CONTENTS
+════════════════════════════════════════════════════════════════
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -593,24 +604,16 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
   pc.ontrack = (event) => {
     const stream = event.streams[0];
     if(!stream) return;
-    console.log("[SCREENSHARE DEBUG] ontrack fired for", otherId, "kind=", event.track.kind, "trackReadyState=", event.track.readyState, "streamId=", stream.id, "streamVideoTracks=", stream.getVideoTracks().length, "streamAudioTracks=", stream.getAudioTracks().length, "screenSharingFlag=", peerMeta[otherId] && peerMeta[otherId].screenSharing);
+    console.log("[SCREENSHARE DEBUG] ontrack fired for", otherId, "kind=", event.track.kind, "trackReadyState=", event.track.readyState, "streamId=", stream.id, "screenSharingFlag=", peerMeta[otherId] && peerMeta[otherId].screenSharing);
     setTileStream(otherId, stream);
     setCamOff(otherId, stream.getVideoTracks().length === 0 || !stream.getVideoTracks()[0].enabled);
 
-    // If this peer is currently marked as screen-sharing, refresh the
-    // big-screen view -- but ONLY in response to the VIDEO track's own
-    // ontrack event, and using a stream built from just that track. Screen
-    // video and mic audio arrive as separate MediaStream objects once
-    // sharing starts, so trusting event.streams[0] directly could bind an
-    // audio-only stream with zero video tracks depending on event order.
-    if(event.track.kind === "video" && peerMeta[otherId] && peerMeta[otherId].screenSharing){
-      const mainEl = document.getElementById("screenshareMain");
-      const currentVid = mainEl ? mainEl.querySelector("video") : null;
-      const currentTrack = currentVid && currentVid.srcObject ? currentVid.srcObject.getVideoTracks()[0] : null;
-      if(!currentTrack || currentTrack.id !== event.track.id){
-        console.log("[SCREENSHARE DEBUG] binding big-screen from ontrack video-only stream, trackId=", event.track.id);
-        enterScreenshareLayout(otherId, new MediaStream([event.track]), peerMeta[otherId].name);
-      }
+    // If this peer is currently marked as screen-sharing, also refresh the
+    // big-screen view directly from this track event. Reading a tile's
+    // srcObject separately (elsewhere) is racy against WebRTC renegotiation
+    // timing and can bind a stale/dead stream that never updates again.
+    if(peerMeta[otherId] && peerMeta[otherId].screenSharing){
+      enterScreenshareLayout(otherId, stream, peerMeta[otherId].name);
     }
   };
 
@@ -730,28 +733,13 @@ function watchParticipants(){
             peerMeta[rid].screenSharing = !!data.screenSharing;
 
             if(data.screenSharing && currentScreenSharerId !== rid){
-              console.log("[SCREENSHARE DEBUG] Firestore flag says", rid, "is sharing -- waiting for the video track's own ontrack event to bind the big screen (see fix note in pc.ontrack), rather than guessing from a tile's current srcObject.");
-              // Still need to enter screenshare-active layout mode right
-              // away (moves tiles into the strip etc.) even before the
-              // actual video track has been confirmed -- but the video
-              // binding itself now happens exclusively in pc.ontrack.
-              currentScreenSharerId = rid;
-              videoGrid.classList.add("screenshare-active");
-              let stripEl = document.getElementById("screenshareStrip");
-              if(!stripEl){
-                stripEl = document.createElement("div");
-                stripEl.className = "screenshare-strip";
-                stripEl.id = "screenshareStrip";
-                videoGrid.appendChild(stripEl);
-              }
-              videoGrid.querySelectorAll(".video-tile").forEach(t => {
-                if(t.parentElement !== stripEl) stripEl.appendChild(t);
-              });
-              if(presentingBar){
-                presentingBarText.textContent = (peerMeta[rid].name || "Someone") + " is presenting";
-                presentingBarStop.style.display = "none";
-                presentingBar.style.display = "flex";
-              }
+              const remoteTile = document.getElementById("tile-"+rid);
+              const remoteVid = remoteTile ? remoteTile.querySelector("video") : null;
+              console.log("[SCREENSHARE DEBUG] Firestore flag says", rid, "is sharing. remoteVid found=", !!remoteVid, "srcObject=", remoteVid && remoteVid.srcObject, "videoTracks=", remoteVid && remoteVid.srcObject ? remoteVid.srcObject.getVideoTracks().map(t=>({readyState:t.readyState,muted:t.muted})) : "n/a");
+              if(remoteVid && remoteVid.srcObject) enterScreenshareLayout(rid, remoteVid.srcObject, peerMeta[rid].name);
+              // If the renegotiation hasn't completed yet, the srcObject read
+              // above may be stale -- ontrack (added above) will correctly
+              // re-bind once the real screen-share frames actually arrive.
             }
             if(!data.screenSharing && currentScreenSharerId === rid){
               exitScreenshareLayout();
