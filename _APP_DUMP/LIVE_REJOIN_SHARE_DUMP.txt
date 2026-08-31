@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿LIVE CLASSROOM REJOIN + SCREENSHARE AUDIO DUMP
+Generated: 2026-08-31 14:43:37
+==================================================
+
+==================================================
+FILE: public\teacher\live-room.html
+==================================================
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -19,9 +26,9 @@
 
 .presented-overlay{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;pointer-events:none;background:rgba(5,6,11,.7)}
 .presented-overlay.active{display:flex}
-.presented-overlay.active ~ .room-shell .video-grid,
-body.presenting .video-grid{display:flex !important;flex-direction:column !important;position:fixed !important;right:12px !important;bottom:92px !important;top:auto !important;left:auto !important;width:200px !important;height:auto !important;max-height:60vh !important;overflow-y:auto !important;z-index:410 !important;gap:8px !important}
-body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 !important;flex-shrink:0 !important;min-height:110px !important}
+.presented-overlay.active ~ .room-shell .video-grid:not(.screenshare-active),
+body.presenting .video-grid:not(.screenshare-active){display:flex !important;flex-direction:column !important;position:fixed !important;right:12px !important;bottom:92px !important;top:auto !important;left:auto !important;width:200px !important;height:auto !important;max-height:60vh !important;overflow-y:auto !important;z-index:410 !important;gap:8px !important}
+body.presenting .video-grid:not(.screenshare-active) .video-tile{width:100% !important;aspect-ratio:16/9 !important;flex-shrink:0 !important;min-height:110px !important}
 .presented-card{pointer-events:auto;width:min(900px,88vw);max-height:76vh;overflow-y:auto;background:#fff;color:#1a1a1a;border-radius:20px;padding:32px;box-shadow:0 30px 90px rgba(0,0,0,.5)}
 .presented-card img,.presented-card video{width:100%;border-radius:12px;max-height:60vh;object-fit:contain;background:#0a0c14;display:block}
 .presented-card .p-header{font-family:"Sorts Mill Goudy",serif;font-size:2rem;font-weight:400;color:#0f172a;margin-bottom:8px}
@@ -34,6 +41,29 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
 </style>
 </head>
 <body style="overflow:hidden">
+
+<style>
+.host-left-notice{position:fixed;inset:0;z-index:99997;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;padding:20px}
+.host-left-notice.show{display:flex}
+.host-left-card{width:min(420px,100%);background:#12151f;border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:26px;text-align:center}
+.host-left-card h3{font-family:"Sorts Mill Goudy",Georgia,serif;font-weight:400;font-size:1.35rem;color:#fff;margin-bottom:10px}
+.host-left-card p{color:rgba(255,255,255,.6);font-size:.86rem;font-weight:600;line-height:1.5;margin-bottom:20px}
+.host-left-actions{display:flex;gap:10px}
+.host-left-actions button{flex:1;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.16);font-family:Inter,sans-serif;font-weight:900;font-size:.84rem;cursor:pointer}
+#keepWaitingBtn{background:rgba(255,255,255,.08);color:#fff}
+#leaveNowBtn{background:rgba(255,80,80,.2);border-color:rgba(255,100,100,.4);color:#fca5a5}
+</style>
+
+<div class="host-left-notice" id="hostLeftNotice">
+  <div class="host-left-card">
+    <h3>The host appears to have left</h3>
+    <p>You can keep waiting in case they reconnect, or leave the class now.</p>
+    <div class="host-left-actions">
+      <button id="keepWaitingBtn" type="button">Keep Waiting</button>
+      <button id="leaveNowBtn" type="button">Leave</button>
+    </div>
+  </div>
+</div>
 
 <div class="room-shell">
 
@@ -49,6 +79,12 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
       </div>
     </div>
   </header>
+
+  <div class="presenting-bar" id="presentingBar" style="display:none">
+    <span class="presenting-bar-dot"></span>
+    <span class="presenting-bar-text" id="presentingBarText">You are presenting your screen</span>
+    <button class="presenting-bar-stop" id="presentingBarStop" type="button" style="display:none">Stop Sharing</button>
+  </div>
 
   <div class="room-body">
     <div class="video-stage">
@@ -134,9 +170,9 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
   <p class="invite-note">They'll see a camera preview before joining — just like Meet.</p>
 </div>
 
-<div class="lc-toast-wrap"><div class="lc-toast" id="toast"></div>
+<div class="lc-toast-wrap"><div class="lc-toast" id="toast"></div></div>
 
-<div id="recDestModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;">
+<div id="recDestModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;pointer-events:auto;">
   <div style="background:#14171f;border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:28px;width:min(380px,90vw);">
     <h3 style="font-family:'Sorts Mill Goudy',serif;font-weight:400;font-size:1.3rem;margin-bottom:6px;color:#fff">Save recording as...</h3>
     <p style="font-size:.8rem;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:18px">Choose where this recording should be saved.</p>
@@ -155,7 +191,7 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
     <button id="recDestConfirm" style="display:none;width:100%;padding:13px;border-radius:14px;border:none;background:#90cdf4;color:#0a0f1a;font-weight:900;font-size:.86rem;cursor:pointer;font-family:Inter,sans-serif">Start Recording</button>
     <button id="recDestCancel" style="width:100%;padding:11px;border-radius:14px;border:none;background:transparent;color:rgba(255,255,255,.4);font-weight:700;font-size:.8rem;cursor:pointer;font-family:Inter,sans-serif;margin-top:6px">Cancel</button>
   </div>
-</div></div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
@@ -172,10 +208,28 @@ body.presenting .video-grid .video-tile{width:100% !important;aspect-ratio:16/9 
 const params     = new URLSearchParams(location.search);
 const MEETING_ID = (params.get("id") || "").toUpperCase();
 const MY_NAME    = decodeURIComponent(params.get("name") || "Guest");
-const IS_HOST    = params.get("host") === "true";
+
+// Any logged-in staff member (not just whoever happened to create this
+// specific meeting) gets full host-level functions -- moderation,
+// Present Lesson, recording. Checks both plausible session keys used
+// across the platform's personnel-side vs learner-side logins.
+const myRole   = (sessionStorage.getItem("impactPersonnelRole") || sessionStorage.getItem("impactAccessRole") || "").trim().toLowerCase();
+const IS_STAFF = !!myRole && myRole !== "learner";
+const IS_HOST    = params.get("host") === "true" || IS_STAFF;
+
 const INIT_CAM   = params.get("cam") !== "false";
 const INIT_MIC   = params.get("mic") !== "false";
 const MY_ID      = "u_" + Math.random().toString(36).slice(2,10);
+
+// Tracks which currently-connected participants have host-level powers.
+// Multiple staff members can simultaneously have isHost:true, so "the
+// host left" really means this set became empty. Seeded with ourselves
+// if we are host, since we never process our own doc through the
+// participants "added"/"removed" listener (it skips rid === MY_ID).
+const hostParticipantIds = new Set();
+let hostGoneTimer = null;
+const HOST_GRACE_PERIOD_MS = 10000;
+if(IS_HOST) hostParticipantIds.add(MY_ID);
 
 if(!MEETING_ID){ location.href="/teacher/live-classroom.html"; return; }
 
@@ -235,7 +289,19 @@ let startTime        = Date.now();
 let elapsedInterval  = null;
 
 const peerConns = {};   // peerId -> RTCPeerConnection
+// Most recent video MediaStreamTrack received per peer, cached the instant
+// ontrack fires regardless of whether the Firestore screenSharing flag has
+// arrived yet -- covers both possible orderings between those two
+// independent async events.
+const peerVideoTracks = {};   // peerId -> MediaStreamTrack
+
 const peerMeta  = {};   // peerId -> { name, isHost, camOn, micOn }
+// Most recent video MediaStreamTrack received per peer, cached the instant
+// ontrack fires regardless of whether the Firestore screenSharing flag has
+// arrived yet. ontrack and that Firestore update are two independent async
+// events with no guaranteed order -- whichever one completes SECOND uses
+// this cache to finish the big-screen bind, so neither ordering is missed.
+
 const unsubs    = [];
 const politeMap = {};   // peerId -> bool (am I polite toward this peer?)
 const makingOffer = {};
@@ -449,6 +515,7 @@ function renderParticipantList(){
           ${p.name}
           ${p.isLocal ? '<span class="you-tag">(You)</span>' : ''}
           ${p.isHost ? '<span class="p-badge">HOST</span>' : ''}
+          ${p.id === currentScreenSharerId ? '<span class="p-badge presenting-badge">PRESENTING</span>' : ''}
         </div>
       </div>
       <div class="p-icons">
@@ -475,18 +542,35 @@ function renderParticipantList(){
 // LOCAL MEDIA — correct permission handling
 // ══════════════════════════════════════════════════════════════
 async function startLocalStream(){
+  const AUDIO_CONSTRAINTS = { echoCancellation:true, noiseSuppression:true, autoGainControl:true };
+
+  // Progressive fallback. "facingMode:user" and strict width/height/frameRate
+  // throw OverconstrainedError on many laptop webcams, which previously dropped
+  // straight to audio-only and left every video tile blank. Try loosest-last.
+  const VIDEO_ATTEMPTS = [
+    { facingMode:"user", width:{ideal:1280}, height:{ideal:720} },
+    { width:{ideal:1280}, height:{ideal:720} },
+    true
+  ];
+
+  let gotVideo = false;
+  for(const videoConstraint of VIDEO_ATTEMPTS){
+    try{
+      localStream = await navigator.mediaDevices.getUserMedia({
+        video: videoConstraint,
+        audio: AUDIO_CONSTRAINTS
+      });
+      gotVideo = true;
+      break;
+    }catch(e){
+      console.warn("getUserMedia attempt failed:", e.name, JSON.stringify(videoConstraint));
+      if(e.name === "NotAllowedError") break; // permission denied - stop retrying
+    }
+  }
+
   try{
-    localStream = await navigator.mediaDevices.getUserMedia({
-      video:{
-        facingMode: "user",
-        width:{ ideal:1280, max:1920 },
-        height:{ ideal:720, max:1080 },
-        frameRate:{ ideal:30, max:60 }
-      },
-      audio:{ echoCancellation:true, noiseSuppression:true, autoGainControl:true }
-    });
-  }catch(err){
-    console.warn("getUserMedia video+audio failed:", err.name);
+    if(gotVideo) throw { __skip:true };
+    const err = { name: "OverconstrainedError" };
     try{
       localStream = await navigator.mediaDevices.getUserMedia({
         audio:{ echoCancellation:true, noiseSuppression:true }
@@ -494,6 +578,7 @@ async function startLocalStream(){
       camOn = false;
       toast("📷 Camera unavailable — joined with mic only.");
     }catch(err2){
+      if(err2 && err2.__skip) throw err2;
       localStream = new MediaStream();
       camOn = false; micOn = false;
       if(err.name === "NotAllowedError" || err2.name === "NotAllowedError"){
@@ -501,10 +586,15 @@ async function startLocalStream(){
         document.getElementById("permBannerText").innerHTML =
           'Camera/mic blocked. Click the 🔒 icon in your address bar → Allow → then <a href="javascript:location.reload()" style="color:#fde68a;text-decoration:underline">reload</a>.';
       }else{
-        toast("⚠️ No camera or microphone detected.");
+        toast("No camera or microphone detected.");
       }
     }
+  }catch(outer){
+    if(!(outer && outer.__skip)) console.warn("media setup:", outer);
   }
+
+  if(!localStream) localStream = new MediaStream();
+  if(localStream.getVideoTracks().length === 0) camOn = false;
 
   localStream.getVideoTracks().forEach(t => t.enabled = camOn);
   localStream.getAudioTracks().forEach(t => t.enabled = micOn);
@@ -557,6 +647,18 @@ async function createPeerConnection(otherId, otherName, otherIsHost){
     if(!stream) return;
     setTileStream(otherId, stream);
     setCamOff(otherId, stream.getVideoTracks().length === 0 || !stream.getVideoTracks()[0].enabled);
+
+    if(event.track.kind === "video"){
+      peerVideoTracks[otherId] = event.track;
+      if(peerMeta[otherId] && peerMeta[otherId].screenSharing){
+        const mainEl = document.getElementById("screenshareMain");
+        const currentVid = mainEl ? mainEl.querySelector("video") : null;
+        const currentTrack = currentVid && currentVid.srcObject ? currentVid.srcObject.getVideoTracks()[0] : null;
+        if(!currentTrack || currentTrack.id !== event.track.id){
+          enterScreenshareLayout(otherId, new MediaStream([event.track]), peerMeta[otherId].name);
+        }
+      }
+    }
   };
 
   pc.onicecandidate = (event) => {
@@ -661,6 +763,11 @@ function watchParticipants(){
 
         if(change.type === "added"){
           toast(data.displayName + " joined the class");
+          if(data.isHost){
+            hostParticipantIds.add(rid);
+            if(hostGoneTimer){ clearTimeout(hostGoneTimer); hostGoneTimer = null; }
+            document.getElementById("hostLeftNotice").classList.remove("show");
+          }
           await createPeerConnection(rid, data.displayName, data.isHost);
         }
 
@@ -671,6 +778,39 @@ function watchParticipants(){
             setCamOff(rid, !data.cameraEnabled);
             setMicIcon(rid, data.micEnabled);
             renderParticipantList();
+
+            peerMeta[rid].screenSharing = !!data.screenSharing;
+
+            if(data.screenSharing && currentScreenSharerId !== rid){
+              currentScreenSharerId = rid;
+              videoGrid.classList.add("screenshare-active");
+              let stripEl = document.getElementById("screenshareStrip");
+              if(!stripEl){
+                stripEl = document.createElement("div");
+                stripEl.className = "screenshare-strip";
+                stripEl.id = "screenshareStrip";
+                videoGrid.appendChild(stripEl);
+              }
+              videoGrid.querySelectorAll(".video-tile").forEach(t => {
+                if(t.parentElement !== stripEl) stripEl.appendChild(t);
+              });
+              if(presentingBar){
+                presentingBarText.textContent = (peerMeta[rid].name || "Someone") + " is presenting";
+                presentingBarStop.style.display = "none";
+                presentingBar.style.display = "flex";
+              }
+
+              // If ontrack already delivered the video track before this
+              // Firestore update arrived, it's sitting in the cache -- bind
+              // immediately instead of waiting for an ontrack event that
+              // already happened and won't fire again for this same track.
+              if(peerVideoTracks[rid]){
+                enterScreenshareLayout(rid, new MediaStream([peerVideoTracks[rid]]), peerMeta[rid].name);
+              }
+            }
+            if(!data.screenSharing && currentScreenSharerId === rid){
+              exitScreenshareLayout();
+            }
           }
         }
 
@@ -678,8 +818,15 @@ function watchParticipants(){
           toast(data.displayName + " left");
           closePeerConnection(rid);
           if(data.isHost){
-            cleanup();
-            location.href = "/teacher/live-ended.html?reason=ended";
+            hostParticipantIds.delete(rid);
+            if(hostParticipantIds.size === 0 && !hostGoneTimer){
+              hostGoneTimer = setTimeout(() => {
+                hostGoneTimer = null;
+                if(hostParticipantIds.size === 0){
+                  document.getElementById("hostLeftNotice").classList.add("show");
+                }
+              }, HOST_GRACE_PERIOD_MS);
+            }
           }
         }
       });
@@ -688,6 +835,21 @@ function watchParticipants(){
 }
 
 async function registerSelf(){
+  // If a previous tab/session under this same name is still sitting in
+  // the participant list (its cleanup on close may not have completed --
+  // beforeunload/pagehide are not fully reliable), replace it instead of
+  // adding a duplicate. This is what makes leave-and-rejoin result in
+  // exactly one entry instead of two.
+  try{
+    const dupSnap = await db.collection("meetings").doc(MEETING_ID)
+      .collection("participants")
+      .where("displayName","==",MY_NAME)
+      .get();
+    await Promise.all(dupSnap.docs.map(d => d.ref.delete()));
+  }catch(e){
+    console.warn("Could not clear stale participant entries:", e);
+  }
+
   await db.collection("meetings").doc(MEETING_ID)
     .collection("participants").doc(MY_ID).set({
       participantId: MY_ID, displayName: MY_NAME, isHost: IS_HOST,
@@ -701,6 +863,14 @@ async function registerSelf(){
   const unsubSelf = db.collection("meetings").doc(MEETING_ID)
     .collection("participants").doc(MY_ID)
     .onSnapshot((snap) => {
+      // If this doc vanished entirely (not just a flag change), another
+      // tab/device rejoined under the same name and took over -- leave
+      // gracefully instead of silently going dark for everyone else.
+      if(!snap.exists){
+        toast("You joined this meeting from another tab or device.");
+        setTimeout(()=>{ cleanup(); location.href = "/teacher/live-ended.html?reason=duplicate"; }, 1200);
+        return;
+      }
       const data = snap.data();
       if(!data) return;
 
@@ -774,6 +944,129 @@ if(!SCREEN_SHARE_SUPPORTED){
   screenBtn.title = "Screen sharing is only available on desktop browsers";
 }
 
+// ── SCREENSHARE BIG-SCREEN LAYOUT ──
+// Reuses the .screenshare-active/.screenshare-main/.screenshare-strip CSS
+// that already existed in live-classroom.css but was never wired up.
+let currentScreenSharerId = null;
+const presentingBar = document.getElementById("presentingBar");
+const presentingBarText = document.getElementById("presentingBarText");
+const presentingBarStop = document.getElementById("presentingBarStop");
+
+function enterScreenshareLayout(sharerId, stream, sharerName){
+  currentScreenSharerId = sharerId;
+  videoGrid.classList.add("screenshare-active");
+
+  const isMe = (sharerId === MY_ID);
+
+  let mainEl = document.getElementById("screenshareMain");
+  if(!mainEl){
+    mainEl = document.createElement("div");
+    mainEl.className = "screenshare-main";
+    mainEl.id = "screenshareMain";
+
+    const v = document.createElement("video");
+    v.autoplay = true; v.playsInline = true;
+    // Always start muted. Browsers reliably allow muted autoplay with no
+    // user gesture, but silently block UNMUTED autoplay for anyone who
+    // isn't the presenter -- that (not the stream or the layout) is what
+    // was leaving remote viewers with a black/paused video the whole time.
+    v.muted = true;
+    mainEl.appendChild(v);
+
+    if(!isMe){
+      const unmuteHint = document.createElement("button");
+      unmuteHint.type = "button";
+      unmuteHint.className = "screenshare-unmute-hint";
+      unmuteHint.innerHTML = "\uD83D\uDD07 Tap to unmute";
+      unmuteHint.onclick = () => {
+        v.muted = false;
+        v.play().catch(()=>{});
+        unmuteHint.style.display = "none";
+      };
+      mainEl.appendChild(unmuteHint);
+    }
+
+    videoGrid.insertBefore(mainEl, videoGrid.firstChild);
+  }
+
+  const vidEl = mainEl.querySelector("video");
+  if(vidEl.srcObject !== stream){
+    vidEl.srcObject = stream;
+    vidEl.play().catch(()=>{});
+  }
+
+  let stripEl = document.getElementById("screenshareStrip");
+  if(!stripEl){
+    stripEl = document.createElement("div");
+    stripEl.className = "screenshare-strip";
+    stripEl.id = "screenshareStrip";
+    videoGrid.appendChild(stripEl);
+  }
+  videoGrid.querySelectorAll(".video-tile").forEach(t => {
+    if(t.parentElement !== stripEl) stripEl.appendChild(t);
+  });
+
+  if(presentingBar){
+    const isMe = sharerId === MY_ID;
+    presentingBarText.textContent = isMe ? "You are presenting your screen" : (sharerName || "Someone") + " is presenting";
+    presentingBarStop.style.display = isMe ? "inline-block" : "none";
+    presentingBarStop.onclick = stopScreenShare;
+    presentingBar.style.display = "flex";
+  }
+  renderParticipantList();
+}
+
+function exitScreenshareLayout(){
+  currentScreenSharerId = null;
+  videoGrid.classList.remove("screenshare-active");
+  const mainEl = document.getElementById("screenshareMain");
+  if(mainEl) mainEl.remove();
+  const stripEl = document.getElementById("screenshareStrip");
+  if(stripEl){
+    Array.from(stripEl.children).forEach(t => videoGrid.appendChild(t));
+    stripEl.remove();
+  }
+  if(presentingBar) presentingBar.style.display = "none";
+  updateGridLayout();
+  renderParticipantList();
+}
+
+// Waits until a peer connection's signaling has settled to "stable" before
+// allowing a new renegotiation to start, so it never collides with the
+// very first connection handshake (which can still be in progress if
+// screen share is started right after joining).
+// After a renegotiation offer is sent, confirms it actually completed
+// (signalingState returns to "stable", meaning an answer was received and
+// applied). If a colliding offer got silently ignored on the other end,
+// nothing else would ever retry it on its own -- this detects that and
+// forces a fresh attempt via restartIce(), which is guaranteed to trigger
+// onnegotiationneeded again even with no other change pending.
+async function ensureNegotiationCompletes(pc, otherId, label){
+  const timeoutMs = 4000;
+  const start = Date.now();
+  while(Date.now() - start < timeoutMs){
+    if(pc.signalingState === "stable") return;
+    await new Promise(r => setTimeout(r, 250));
+  }
+  try{ pc.restartIce(); }catch(e){}
+}
+
+function waitForStable(pc, timeoutMs){
+  timeoutMs = timeoutMs || 5000;
+  return new Promise((resolve) => {
+    if(pc.signalingState === "stable"){ resolve(); return; }
+    const start = Date.now();
+    const check = () => {
+      if(pc.signalingState === "stable" || Date.now() - start > timeoutMs){
+        resolve();
+      }else{
+        setTimeout(check, 150);
+      }
+    };
+    check();
+  });
+}
+
 screenBtn.onclick = async function(){
   if(!SCREEN_SHARE_SUPPORTED){
     toast("📵 Screen sharing isn't supported on this device. Try from a desktop browser.");
@@ -791,15 +1084,31 @@ screenBtn.onclick = async function(){
 
     const screenTrack = screenStream.getVideoTracks()[0];
 
-    // Replace outgoing video track on every peer connection
-    await Promise.all(Object.values(peerConns).map(async pc => {
+    // Full renegotiation instead of replaceTrack -- replaceTrack alone can
+    // silently fail to properly encode a track very different from what was
+    // originally negotiated (camera resolution/frame-rate vs. screen
+    // capture), with no error thrown anywhere. removeTrack+addTrack forces
+    // a fresh SDP exchange that correctly re-describes the new track.
+    await Promise.all(Object.entries(peerConns).map(async ([otherId, pc]) => {
+      await waitForStable(pc);
+      // Always add the screen track. If a video sender already exists
+      // (camera was on), remove it first -- but if not (camera was off or
+      // faulty when this connection was made, so no video track was ever
+      // sent), there's nothing to remove, and skipping straight to
+      // addTrack still correctly creates a fresh video transceiver.
       const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
-      if(sender) await sender.replaceTrack(screenTrack);
+      if(sender) pc.removeTrack(sender);
+      pc.addTrack(screenTrack, screenStream);
+      ensureNegotiationCompletes(pc, otherId, "Screen share start");
     }));
 
     // Show the screen share in the LOCAL tile
     setTileStream(MY_ID, screenStream);
     document.getElementById("tile-"+MY_ID).classList.remove("mirrored");
+
+    enterScreenshareLayout(MY_ID, screenStream, MY_NAME);
+    db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
+      .update({ screenSharing: true }).catch(()=>{});
 
     screenTrack.onended = () => stopScreenShare();
   }catch(e){
@@ -811,14 +1120,20 @@ async function stopScreenShare(){
   if(!screenOn) return;
   screenOn = false;
   screenBtn.classList.remove("active");
+  if(currentScreenSharerId === MY_ID) exitScreenshareLayout();
+  db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
+    .update({ screenSharing: false }).catch(()=>{});
   if(screenStream){ screenStream.getTracks().forEach(t=>t.stop()); screenStream=null; }
 
   if(localStream){
     const camTrack = localStream.getVideoTracks()[0];
     if(camTrack){
-      await Promise.all(Object.values(peerConns).map(async pc => {
+      await Promise.all(Object.entries(peerConns).map(async ([otherId, pc]) => {
+        await waitForStable(pc);
         const sender = pc.getSenders().find(s => s.track && s.track.kind === "video");
-        if(sender) await sender.replaceTrack(camTrack);
+        if(sender) pc.removeTrack(sender);
+        pc.addTrack(camTrack, localStream);
+        ensureNegotiationCompletes(pc, otherId, "Screen share stop");
       }));
     }
     setTileStream(MY_ID, localStream);
@@ -891,8 +1206,11 @@ document.getElementById("inviteClose").onclick = () => document.getElementById("
 
   async function loadTeacherLessons(){
     try{
+      // Show every published lesson plan from the whole team, not just
+      // ones this specific person personally authored -- otherwise
+      // whoever is hosting sees an empty picker if a colleague made it.
       const snap = await db.collection("lessonPlans")
-        .where("createdByTeacher","==",MY_NAME)
+        .where("status","==","published")
         .get();
       const plans = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       lessonPicker.innerHTML = '<option value="">Select a lesson plan...</option>' +
@@ -1244,6 +1562,13 @@ function startTimer(){
 // ══════════════════════════════════════════════════════════════
 // LEAVE / CLEANUP
 // ══════════════════════════════════════════════════════════════
+document.getElementById("keepWaitingBtn").onclick = function(){
+  document.getElementById("hostLeftNotice").classList.remove("show");
+};
+document.getElementById("leaveNowBtn").onclick = function(){
+  document.getElementById("leaveBtn").click();
+};
+
 document.getElementById("leaveBtn").onclick = async function(){
   if(recording) stopRecording();
   const dur = Math.round((Date.now()-startTime)/1000);
@@ -1288,14 +1613,19 @@ async function init(){
   document.getElementById("inviteLinkField").value = `${location.origin}/teacher/live-join.html?id=${MEETING_ID}`;
 
   await startLocalStream();
+  // Load real TURN credentials FIRST - before registering (which lets other
+  // clients start connecting to us) or watching participants (which starts
+  // OUR outgoing peer connections). Previously this ran after both, so early
+  // connections silently formed with STUN-only config and failed on
+  // restrictive networks - remote tiles stayed black even though local
+  // camera worked fine.
+  await loadTurnCredentials();
   await registerSelf();
   watchParticipants();
   renderParticipantList();
   startTimer();
 
   if(IS_HOST) initRecording();
-  // Load real TURN credentials before any peer connection is created
-  await loadTurnCredentials();
 
   setStatus("Live", false);
 
@@ -1310,3 +1640,531 @@ init();
 </script>
 </body>
 </html>
+
+==================================================
+FILE: public\teacher\live-join.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Join Class | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/live-classroom.css">
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<div class="join-page">
+  <div class="join-card">
+    <div class="meeting-badge" id="meetingBadge">Loading...</div>
+    <h1 id="meetingTitle">Impact Live Class</h1>
+    <p class="join-sub" id="hostLine">Hosted by —</p>
+
+    <div class="join-preview">
+      <video id="previewVideo" autoplay playsinline muted></video>
+      <div class="join-preview-placeholder" id="previewPlaceholder">
+        <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <span id="previewText">Requesting camera access...</span>
+      </div>
+    </div>
+
+    <p class="perm-note" id="permNote">Your browser will ask for camera and microphone permission. Please click <b>Allow</b>.</p>
+
+    <div class="join-controls-row">
+      <button class="join-ctrl" id="prevCamBtn" type="button">
+        <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Camera On
+      </button>
+      <button class="join-ctrl" id="prevMicBtn" type="button">
+        <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        Mic On
+      </button>
+    </div>
+
+    <input class="lc-input" id="nameInput" type="text" placeholder="Your name" maxlength="40" autocomplete="name">
+    <input class="lc-input" id="passkeyInput" type="password" placeholder="Staff passkey (optional)" maxlength="40" autocomplete="off" style="margin-top:8px;font-size:.82rem;opacity:.88">
+    <p style="font-size:.66rem;color:rgba(255,255,255,.4);margin:5px 2px 0;text-align:left">Teachers: enter your passkey to unlock host controls in this class.</p>
+    <button class="lc-btn lc-btn-success" id="joinBtn" type="button" style="margin-top:10px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Join Class
+    </button>
+    <div class="error-msg" id="errMsg"></div>
+  </div>
+</div>
+
+<div class="lc-toast-wrap"><div class="lc-toast" id="toast"></div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script type="module">
+  import { validatePasskey } from "/js/passkey-auth.js?v=learner-gate-fixed-001";
+  window.__validatePasskey = validatePasskey;
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  const db = firebase.firestore();
+  const params = new URLSearchParams(location.search);
+  const MEETING_ID = (params.get("id") || params.get("join") || "").toUpperCase();
+  const IS_HOST = params.get("host") === "true";
+  const PRESET_NAME = params.get("name") ? decodeURIComponent(params.get("name")) : "";
+
+  if(!MEETING_ID){ location.href = "/teacher/live-classroom.html"; return; }
+
+  function toast(msg){
+    const t=document.getElementById("toast");
+    t.textContent=msg;t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"),3200);
+  }
+
+  // Load meeting info
+  try{
+    const snap = await db.collection("meetings").doc(MEETING_ID).get();
+    if(!snap.exists || snap.data().status === "ended"){
+      document.getElementById("meetingTitle").textContent = "Meeting Not Found";
+      document.getElementById("hostLine").textContent = "This meeting has ended or does not exist.";
+      document.getElementById("joinBtn").disabled = true;
+      document.getElementById("permNote").style.display = "none";
+      return;
+    }
+    const d = snap.data();
+    document.getElementById("meetingBadge").textContent = MEETING_ID;
+    document.getElementById("meetingTitle").textContent = d.title || "Impact Live Class";
+    document.getElementById("hostLine").textContent = IS_HOST
+      ? "You are the host"
+      : "Hosted by " + (d.hostName || "Your teacher");
+    document.title = (d.title || "Join Class") + " | Impact";
+  }catch(e){
+    document.getElementById("hostLine").textContent = "Could not load meeting details.";
+  }
+
+  if(PRESET_NAME) document.getElementById("nameInput").value = PRESET_NAME;
+
+  // ── Camera/mic preview with correct permission handling ────
+  let previewStream = null;
+  let camOn = true;
+  let micOn = true;
+  const previewText = document.getElementById("previewText");
+  const permNote     = document.getElementById("permNote");
+
+  async function startPreview(){
+    try{
+      previewStream = await navigator.mediaDevices.getUserMedia({
+        video:{ facingMode:"user", width:{ideal:1280}, height:{ideal:720} },
+        audio:{ echoCancellation:true, noiseSuppression:true }
+      });
+      const vid = document.getElementById("previewVideo");
+      vid.srcObject = previewStream;
+      vid.style.display = "block";
+      document.getElementById("previewPlaceholder").style.display = "none";
+      permNote.style.display = "none";
+    }catch(err){
+      console.warn("getUserMedia (video+audio) failed:", err.name);
+      // Try audio only
+      try{
+        previewStream = await navigator.mediaDevices.getUserMedia({ audio:true });
+        camOn = false;
+        document.getElementById("prevCamBtn").classList.add("off");
+        previewText.textContent = "Camera unavailable";
+        toast("Camera not available — joining with mic only.");
+      }catch(err2){
+        camOn = false; micOn = false;
+        document.getElementById("prevCamBtn").classList.add("off");
+        document.getElementById("prevMicBtn").classList.add("off");
+        if(err.name === "NotAllowedError" || err2.name === "NotAllowedError"){
+          previewText.textContent = "Permission denied";
+          permNote.innerHTML = "⚠️ Camera/mic access was blocked. Click the 🔒 icon in your address bar and allow access, then reload this page.";
+          permNote.style.color = "#feb2b2";
+          permNote.style.display = "block";
+        }else{
+          previewText.textContent = "No camera or mic found";
+        }
+      }
+      permNote.style.display = permNote.innerHTML.includes("blocked") ? "block" : "none";
+    }
+  }
+
+  await startPreview();
+
+  document.getElementById("prevCamBtn").onclick = function(){
+    camOn = !camOn;
+    if(previewStream) previewStream.getVideoTracks().forEach(t=>t.enabled=camOn);
+    this.classList.toggle("off",!camOn);
+    this.innerHTML = camOn
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Camera On`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 0 1-2-2V8"/><path d="M16 13l7 4V7l-7 4"/></svg> Camera Off`;
+  };
+
+  document.getElementById("prevMicBtn").onclick = function(){
+    micOn = !micOn;
+    if(previewStream) previewStream.getAudioTracks().forEach(t=>t.enabled=micOn);
+    this.classList.toggle("off",!micOn);
+    this.innerHTML = micOn
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> Mic On`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> Mic Off`;
+  };
+
+  if(!PRESET_NAME) document.getElementById("nameInput").focus();
+  document.getElementById("nameInput").addEventListener("keydown", function(e){
+    if(e.key === "Enter") document.getElementById("joinBtn").click();
+  });
+
+  document.getElementById("joinBtn").onclick = async function(){
+    const name = document.getElementById("nameInput").value.trim();
+    const passkeyValue = document.getElementById("passkeyInput").value.trim();
+    const err  = document.getElementById("errMsg");
+    if(!name){ err.textContent = "Please enter your name."; return; }
+    err.textContent = "";
+
+    // window.open() must be the very first synchronous action for mobile
+    // Safari to allow it -- open a blank placeholder now, validate the
+    // passkey (if any) afterward, then redirect this already-open tab.
+    const newTab = window.open("", "_blank");
+    if(newTab){
+      newTab.document.write("<!DOCTYPE html><html><head><title>Impact Live Class</title></head><body style=\"background:#05060b;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0\">Joining class...</body></html>");
+    }
+
+    let effectiveHost = IS_HOST;
+    if(passkeyValue){
+      try{
+        const result = await window.__validatePasskey(passkeyValue, "teacher");
+        if(result && result.ok && String(result.role || "").toLowerCase() !== "learner"){
+          effectiveHost = true;
+          sessionStorage.setItem("impactPersonnelRole", result.role || "Teacher");
+          sessionStorage.setItem("impactAccessName", result.ownerName || name);
+        }else{
+          err.textContent = "Passkey not recognized -- joining as a regular participant.";
+        }
+      }catch(e){
+        err.textContent = "Could not verify passkey -- joining as a regular participant.";
+      }
+    }
+
+    if(previewStream) previewStream.getTracks().forEach(t=>t.stop());
+
+    const roomUrl = `/teacher/live-room.html?id=${MEETING_ID}&name=${encodeURIComponent(name)}&host=${effectiveHost}&cam=${camOn}&mic=${micOn}`;
+    if(newTab){
+      newTab.location.href = roomUrl;
+    }else{
+      location.href = roomUrl;
+    }
+    toast("Opening class in a new tab...");
+  };
+});
+</script>
+</body>
+</html>
+
+==================================================
+FILE: public\teacher\live-ended.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Class Ended | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<link rel="stylesheet" href="/css/live-classroom.css">
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<div class="ended-page">
+  <div class="ended-card">
+    <div class="ended-icon" id="endedIcon">👋</div>
+    <h1 id="endedTitle">You left the class</h1>
+    <p id="endedSub">The class session has ended. Thank you for joining.</p>
+    <div class="ended-actions">
+      <a class="lc-btn lc-btn-primary" href="/teacher/live-classroom.html">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Start or Join Another Class
+      </a>
+      <a class="lc-btn lc-btn-ghost" href="/teacher/dashboard.html">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+        Back to Dashboard
+      </a>
+      <a class="lc-btn lc-btn-ghost" href="/teacher/recordings.html" style="opacity:.7">
+        📹 View Recordings
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const reason = params.get("reason") || "left";
+const icon  = document.getElementById("endedIcon");
+const title = document.getElementById("endedTitle");
+const sub   = document.getElementById("endedSub");
+
+if(reason === "removed"){
+  icon.textContent  = "🚪";
+  title.textContent = "You were removed";
+  sub.textContent   = "The host removed you from this meeting.";
+} else if(reason === "ended"){
+  icon.textContent  = "🏁";
+  title.textContent = "Class has ended";
+  sub.textContent   = "The host has ended the session. Thank you for attending.";
+} else if(reason === "notfound"){
+  icon.textContent  = "🔍";
+  title.textContent = "Meeting not found";
+  sub.textContent   = "This meeting doesn't exist or has already ended.";
+} else {
+  icon.textContent  = "👋";
+  title.textContent = "You left the class";
+  sub.textContent   = "The session is still running. Rejoin anytime with your Meeting ID.";
+}
+</script>
+</body>
+</html>
+
+==================================================
+FILE: public\teacher\live-classroom.html
+==================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Live Classroom | Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/impact-global-bg.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#05060b;color:#fff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+
+.lc-nav{position:fixed;top:24px;left:28px;z-index:999}
+.lc-nav-btn{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);transition:.2s ease}
+.lc-nav-btn:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+.lc-nav-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8}
+
+.lobby{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 60px}
+
+.lobby-eyebrow{text-transform:uppercase;letter-spacing:.32em;font-size:.66rem;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:18px}
+.lobby h1{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:clamp(2.6rem,5.6vw,4.4rem);font-weight:400;line-height:1.04;letter-spacing:-.01em}
+.lobby-sub{margin-top:14px;color:rgba(255,255,255,.48);font-weight:500;font-size:.94rem;max-width:420px;text-align:center;line-height:1.6}
+
+.lobby-cards{display:grid;grid-template-columns:1fr 1fr;gap:1px;width:min(760px,92vw);margin:56px 0 40px;border-radius:28px;overflow:hidden;background:rgba(255,255,255,.09);box-shadow:0 40px 100px rgba(0,0,0,.4)}
+@media(max-width:640px){.lobby-cards{grid-template-columns:1fr}}
+
+.lc-card{background:rgba(11,13,20,.92);padding:38px 34px;text-align:left;position:relative}
+
+.lc-card-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.lc-card-icon svg{width:20px;height:20px;fill:none;stroke:rgba(255,255,255,.85);stroke-width:1.6}
+
+.lc-card h2{font-family:"Sorts Mill Goudy",Georgia,serif;font-size:1.5rem;font-weight:400;margin-bottom:10px;letter-spacing:-.01em}
+.lc-card p{font-size:.8rem;font-weight:500;color:rgba(255,255,255,.42);line-height:1.6;margin-bottom:24px;min-height:58px}
+
+.lc-input{width:100%;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);color:#fff;font-family:Inter,sans-serif;font-weight:500;font-size:.86rem;outline:none;margin-bottom:10px;transition:.18s ease}
+.lc-input:focus{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.07)}
+.lc-input::placeholder{color:rgba(255,255,255,.28)}
+
+.lc-btn{width:100%;padding:13px;border-radius:12px;border:none;font-family:Inter,sans-serif;font-weight:700;font-size:.84rem;cursor:pointer;transition:.2s ease;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
+.lc-btn svg{width:15px;height:15px;stroke-width:2}
+.lc-btn:hover{transform:translateY(-1px)}
+.lc-btn:active{transform:scale(.98)}
+.lc-btn-primary{background:#fff;color:#0a0c14}
+.lc-btn-primary:hover{background:rgba(255,255,255,.9)}
+.lc-btn-success{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.22)}
+.lc-btn-success:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.32)}
+
+.error-msg{color:#f0a5a5;font-size:.74rem;font-weight:600;margin-top:8px;min-height:16px}
+
+.lobby-links{display:flex;align-items:center;gap:20px;margin-top:6px}
+.lobby-link{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.4);font-size:.78rem;font-weight:600;text-decoration:none;transition:.18s ease}
+.lobby-link:hover{color:rgba(255,255,255,.75)}
+.lobby-link svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none}
+.lobby-divider{width:1px;height:14px;background:rgba(255,255,255,.15)}
+
+.lc-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:9999;background:rgba(16,18,26,.95);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);padding:11px 20px;border-radius:13px;font-size:.8rem;font-weight:600;color:#fff;opacity:0;transition:.25s ease;pointer-events:none;white-space:nowrap}
+.lc-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<script src="/js/impact-global-bg.js"></script>
+
+<nav class="lc-nav">
+  <a class="lc-nav-btn" href="/teacher/dashboard.html" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
+  </a>
+</nav>
+
+<main class="lobby">
+  <p class="lobby-eyebrow">Impact Platform</p>
+  <h1>Live Classroom</h1>
+  <p class="lobby-sub">Start or join a live video class, hosted directly inside your workspace.</p>
+
+  <div class="lobby-cards">
+    <div class="lc-card">
+      <div class="lc-card-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><polygon points="16,10 22,7 22,17 16,14"/></svg>
+      </div>
+      <h2>Start a Class</h2>
+      <p>Create a new meeting room and share the Meeting ID with your learners so they can join.</p>
+      <input class="lc-input" id="createName" type="text" placeholder="Your display name" maxlength="40">
+      <input class="lc-input" id="meetingTitle" type="text" placeholder="Meeting title (optional)" maxlength="60">
+      <button class="lc-btn lc-btn-primary" id="createBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Create Meeting
+      </button>
+      <div class="error-msg" id="createErr"></div>
+    </div>
+
+    <div class="lc-card">
+      <div class="lc-card-icon">
+        <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      </div>
+      <h2>Join a Class</h2>
+      <p>Enter the Meeting ID shared by your teacher to join an existing live class.</p>
+      <input class="lc-input" id="joinName" type="text" placeholder="Your display name" maxlength="40">
+      <input class="lc-input" id="joinId" type="text" placeholder="Meeting ID" maxlength="20" style="text-transform:uppercase;letter-spacing:.08em">
+      <button class="lc-btn lc-btn-success" id="joinBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Join Meeting
+      </button>
+      <div class="error-msg" id="joinErr"></div>
+    </div>
+  </div>
+
+  <div class="lobby-links">
+    <a class="lobby-link" href="/teacher/recordings.html">
+      <svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="12" rx="2"/><polygon points="16,10 22,7 22,17 16,14"/></svg>
+      Recordings
+    </a>
+    <div class="lobby-divider"></div>
+    <a class="lobby-link" href="/teacher/live-classroom-data.html">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Data Centre
+    </a>
+  </div>
+</main>
+
+<div class="lc-toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="/__/firebase/init.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const db = firebase.firestore();
+
+  function toast(msg, dur=2800){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), dur);
+  }
+
+  function genId(){
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let id = "";
+    for(let i=0;i<3;i++){
+      for(let j=0;j<3;j++) id += chars[Math.floor(Math.random()*chars.length)];
+      if(i<2) id += "-";
+    }
+    return id;
+  }
+
+  document.getElementById("createBtn").onclick = async function(){
+    const name  = document.getElementById("createName").value.trim();
+    const title = document.getElementById("meetingTitle").value.trim() || "Impact Live Class";
+    const err   = document.getElementById("createErr");
+
+    if(!name){ err.textContent = "Please enter your display name."; return; }
+    err.textContent = "";
+
+    const meetingId = genId();
+
+    // Mobile Safari only allows window.open() to succeed when it runs
+    // synchronously, still directly inside the click's execution -- an
+    // await BEFORE it (even one) breaks that chain and gets silently
+    // blocked. So we open the tab immediately to a blank placeholder,
+    // then redirect that already-open window once the async write finishes.
+    const newTab = window.open("", "_blank");
+    if(newTab){
+      newTab.document.write("<!DOCTYPE html><html><head><title>Impact Live Class</title></head><body style=\"background:#05060b;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0\">Creating your class...</body></html>");
+    }
+
+    await db.collection("meetings").doc(meetingId).set({
+      meetingId,
+      title,
+      createdAt:  new Date().toISOString(),
+      startedAt:  new Date().toISOString(),
+      endedAt:    "",
+      status:     "active",
+      hostName:   name
+    });
+
+    const roomUrl = "/teacher/live-room.html?id=" + meetingId + "&name=" + encodeURIComponent(name) + "&host=true";
+    if(newTab){
+      newTab.location.href = roomUrl;
+    }else{
+      // Popup blocked entirely (rare, but possible) -- fall back to
+      // navigating this same tab so the user isn't left stuck.
+      location.href = roomUrl;
+    }
+    toast("Meeting created — opening in a new tab");
+  };
+
+  document.getElementById("joinBtn").onclick = async function(){
+    const name = document.getElementById("joinName").value.trim();
+    const id   = document.getElementById("joinId").value.trim().toUpperCase().replace(/\s/g,"");
+    const err  = document.getElementById("joinErr");
+
+    if(!name){ err.textContent = "Please enter your display name."; return; }
+    if(!id)  { err.textContent = "Please enter a Meeting ID."; return; }
+    err.textContent = "";
+
+    // Open synchronously first (see createBtn above for why), then redirect
+    // once we've confirmed the meeting actually exists.
+    const newTab = window.open("", "_blank");
+    if(newTab){
+      newTab.document.write("<!DOCTYPE html><html><head><title>Impact Live Class</title></head><body style=\"background:#05060b;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0\">Joining class...</body></html>");
+    }
+
+    try{
+      const snap = await db.collection("meetings").doc(id).get();
+      if(!snap.exists || snap.data().status !== "active"){
+        err.textContent = "Meeting not found or has ended.";
+        if(newTab) newTab.close();
+        return;
+      }
+      const joinUrl = "/teacher/live-join.html?id=" + id + "&name=" + encodeURIComponent(name) + "&host=false";
+      if(newTab){
+        newTab.location.href = joinUrl;
+      }else{
+        location.href = joinUrl;
+      }
+      toast("Opening meeting in a new tab");
+    }catch(e){
+      err.textContent = "Could not reach the meeting. Check your connection.";
+      if(newTab) newTab.close();
+    }
+  };
+
+  document.getElementById("joinId").addEventListener("keydown", function(e){
+    if(e.key === "Enter") document.getElementById("joinBtn").click();
+  });
+
+  const params = new URLSearchParams(location.search);
+  if(params.get("join")){
+    document.getElementById("joinId").value = params.get("join");
+    document.getElementById("joinName").focus();
+  }
+});
+</script>
+
+<script src="/js/impact-page-nav.js"></script>
+<script src="/js/impact-recycle-bin.js"></script>
+<script src="/js/impact-route-guard.js?v=inactivity-1hr"></script>
+</body>
+</html>
+

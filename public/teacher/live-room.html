@@ -1068,8 +1068,13 @@ screenBtn.onclick = async function(){
   if(screenOn){ stopScreenShare(); return; }
   try{
     screenStream = await navigator.mediaDevices.getDisplayMedia({
-      video:{ cursor:"always", frameRate:15 },
-      audio:true
+      video:{ cursor:"always", frameRate:15 }
+      // No audio:true here on purpose. On several browsers, requesting
+      // display audio alongside screen capture ducks or mutes the
+      // presenter's own microphone at the OS/browser level even though
+      // the mic track itself is never touched by our replaceTrack logic
+      // below - this was silencing the host for every participant while
+      // sharing. The host's mic keeps flowing on its own untouched sender.
     });
     screenOn = true;
     screenBtn.classList.add("active");
@@ -1573,7 +1578,7 @@ document.getElementById("leaveBtn").onclick = async function(){
     });
   }catch(e){}
   cleanup();
-  location.href = `/teacher/live-ended.html?reason=${IS_HOST?"ended":"left"}`;
+  location.href = `/teacher/live-ended.html?reason=${IS_HOST?"ended":"left"}&id=${MEETING_ID}&name=${encodeURIComponent(MY_NAME)}&host=${IS_HOST}`;
 };
 
 function cleanup(){
