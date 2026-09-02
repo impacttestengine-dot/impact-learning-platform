@@ -56,6 +56,10 @@ if(reason === "removed"){
   icon.textContent  = "🔍";
   title.textContent = "Meeting not found";
   sub.textContent   = "This meeting doesn't exist or has already ended.";
+} else if(reason === "duplicate"){
+  icon.textContent  = "🔄";
+  title.textContent = "Joined elsewhere";
+  sub.textContent   = "You opened this meeting in another tab or device. The class is still running.";
 } else {
   icon.textContent  = "👋";
   title.textContent = "You left the class";
