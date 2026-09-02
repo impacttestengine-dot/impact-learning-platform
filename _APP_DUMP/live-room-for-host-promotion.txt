@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -208,8 +208,7 @@ const MY_NAME    = decodeURIComponent(params.get("name") || "Guest");
 // across the platform's personnel-side vs learner-side logins.
 const myRole   = (sessionStorage.getItem("impactPersonnelRole") || sessionStorage.getItem("impactAccessRole") || "").trim().toLowerCase();
 const IS_STAFF = !!myRole && myRole !== "learner";
-let IS_HOST    = params.get("host") === "true" || IS_STAFF;
-const REQUESTED_AS_HOST = IS_HOST; // remembers the original URL intent, used to reclaim host on rejoin
+const IS_HOST    = params.get("host") === "true" || IS_STAFF;
 
 const INIT_CAM   = params.get("cam") !== "false";
 const INIT_MIC   = params.get("mic") !== "false";
@@ -813,16 +812,13 @@ function watchParticipants(){
           closePeerConnection(rid);
           if(data.isHost){
             hostParticipantIds.delete(rid);
-            if(hostParticipantIds.size === 0){
-              await promoteNextHost();
-              if(hostParticipantIds.size === 0 && !hostGoneTimer){
-                hostGoneTimer = setTimeout(() => {
-                  hostGoneTimer = null;
-                  if(hostParticipantIds.size === 0){
-                    document.getElementById("hostLeftNotice").classList.add("show");
-                  }
-                }, HOST_GRACE_PERIOD_MS);
-              }
+            if(hostParticipantIds.size === 0 && !hostGoneTimer){
+              hostGoneTimer = setTimeout(() => {
+                hostGoneTimer = null;
+                if(hostParticipantIds.size === 0){
+                  document.getElementById("hostLeftNotice").classList.add("show");
+                }
+              }, HOST_GRACE_PERIOD_MS);
             }
           }
         }
@@ -831,49 +827,6 @@ function watchParticipants(){
   unsubs.push(unsub);
 }
 
-// When the meeting has no host left, immediately promote the
-// earliest-joined remaining participant instead of waiting out the
-// grace period - the grace period stays as a fallback notice only for
-// the case where nobody else is left to promote.
-function applyHostPromotionUI(){
-  document.body.classList.add("is-host");
-  const lessonBtn = document.getElementById("lessonBtn");
-  if(lessonBtn) lessonBtn.style.display = "flex";
-  const recBtn = document.getElementById("recBtn");
-  if(recBtn) recBtn.style.display = "flex";
-  renderParticipantList();
-}
-function applyHostDemotionUI(){
-  document.body.classList.remove("is-host");
-  const lessonBtn = document.getElementById("lessonBtn");
-  if(lessonBtn) lessonBtn.style.display = "none";
-  renderParticipantList();
-}
-async function promoteNextHost(){
-  try{
-    const meetingRef = db.collection("meetings").doc(MEETING_ID);
-    await db.runTransaction(async (t) => {
-      const mDoc = await t.get(meetingRef);
-      if(!mDoc.exists) return;
-      const mData = mDoc.data();
-      // Someone already handled this promotion - do not double-promote.
-      if(mData.currentHostId && mData.currentHostId !== "") {
-        const existing = await t.get(meetingRef.collection("participants").doc(mData.currentHostId));
-        if(existing.exists && existing.data().isHost) return;
-      }
-
-      const partsSnap = await meetingRef.collection("participants")
-        .orderBy("joinedAt","asc").get();
-      const candidate = partsSnap.docs.find(d => !d.data().isHost && !d.data().kicked);
-      if(!candidate) return;
-
-      t.update(candidate.ref, { isHost:true, promotedToHost:true });
-      t.update(meetingRef, { currentHostId: candidate.id, currentHostName: candidate.data().displayName });
-    });
-  }catch(e){
-    console.warn("promoteNextHost failed:", e);
-  }
-}
 async function registerSelf(){
   // If a previous tab/session under this same name is still sitting in
   // the participant list (its cleanup on close may not have completed --
@@ -890,36 +843,12 @@ async function registerSelf(){
     console.warn("Could not clear stale participant entries:", e);
   }
 
-  // Stamp the room with who its original host is, once, so a later
-  // rejoin by that same person can reclaim host from whoever was
-  // promoted while they were gone.
-  const meetingRef = db.collection("meetings").doc(MEETING_ID);
-  if(REQUESTED_AS_HOST){
-    await meetingRef.set({ originalHostName: MY_NAME }, { merge:true });
-  }
-
-  await meetingRef
+  await db.collection("meetings").doc(MEETING_ID)
     .collection("participants").doc(MY_ID).set({
       participantId: MY_ID, displayName: MY_NAME, isHost: IS_HOST,
       cameraEnabled: camOn, micEnabled: micOn, joinedAt: new Date().toISOString(),
       forceMuted: false, forceCameraOff: false, kicked: false
     });
-
-  // If I am the real original host rejoining after being away, reclaim
-  // host status from whoever was promoted in my absence.
-  if(REQUESTED_AS_HOST){
-    try{
-      const mSnap = await meetingRef.get();
-      const mData = mSnap.exists ? mSnap.data() : {};
-      if(mData.originalHostName === MY_NAME && mData.currentHostId && mData.currentHostId !== MY_ID){
-        await meetingRef.collection("participants").doc(mData.currentHostId)
-          .update({ isHost:false, promotedToHost:false, demotedFromHost:true }).catch(()=>{});
-        await meetingRef.update({ currentHostId: MY_ID, currentHostName: MY_NAME }).catch(()=>{});
-      }else{
-        await meetingRef.update({ currentHostId: MY_ID, currentHostName: MY_NAME }).catch(()=>{});
-      }
-    }catch(e){ console.warn("Host reclaim check failed:", e); }
-  }
   window.addEventListener("pagehide", cleanup);
   window.addEventListener("beforeunload", cleanup);
 
@@ -958,24 +887,6 @@ async function registerSelf(){
         toast("📷 The host turned off your camera");
         db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
           .update({ forceCameraOff: false }).catch(()=>{});
-      }
-
-      // I was just promoted to host while the meeting had none
-      if(data.promotedToHost && !IS_HOST){
-        IS_HOST = true;
-        applyHostPromotionUI();
-        toast("You are now the host of this class.");
-        db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
-          .update({ promotedToHost:false }).catch(()=>{});
-      }
-
-      // The original host has returned and reclaimed host status
-      if(data.demotedFromHost && IS_HOST && !REQUESTED_AS_HOST){
-        IS_HOST = false;
-        applyHostDemotionUI();
-        toast("The host has returned.");
-        db.collection("meetings").doc(MEETING_ID).collection("participants").doc(MY_ID)
-          .update({ demotedFromHost:false }).catch(()=>{});
       }
 
       // Host removed me from the meeting
