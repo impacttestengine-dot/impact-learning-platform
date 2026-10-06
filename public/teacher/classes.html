@@ -131,7 +131,7 @@
   <div class="page-header">
     <div>
       <h1>Classes</h1>
-      <p>Each class gets its own private meeting room automatically &middot; <a class="tracker-link" href="/teacher/class-logger.html">Class Tracker</a></p>
+      <p>Each class uses one of the Impact Google Meet rooms &middot; <a class="tracker-link" href="/teacher/class-logger.html">Class Tracker</a></p>
     </div>
     <div class="header-meta" id="classCount">0 classes</div>
   </div>
@@ -174,7 +174,14 @@
         </div>
       </div>
 
-      <p class="room-note" id="roomNote">A private meeting room is generated automatically for each class.</p>
+      <select id="meetRoom" required>
+<option value="">Select Meet Room</option>
+<option>Impact Meet Room 1</option>
+<option>Impact Meet Room 2</option>
+<option>Impact Meet Room 3</option>
+<option>Impact Meet Room 4</option>
+</select>
+<p class="room-note" id="roomNote">Pick the Google Meet room this class will use.</p>
 
       <div class="form-grid2">
         <div>
@@ -260,11 +267,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     return newId;
   }
 
-  function joinLinkFor(item){
-    const id = item.meetingId || "";
-    return location.origin + "/teacher/live-join.html?id=" + id +
-      "&name=" + encodeURIComponent(item.learner || "") + "&host=false";
+  var MEET_ROOMS = {
+    "Impact Meet Room 1":"https://meet.google.com/ukw-macm-cvo",
+    "Impact Meet Room 2":"https://meet.google.com/fxh-gazg-jpp",
+    "Impact Meet Room 3":"https://meet.google.com/rps-qrqe-upw",
+    "Impact Meet Room 4":"https://meet.google.com/mea-ihvu-jhi"
+  };
+  function meetUrlFor(item){
+    var u = item.meetUrl || "";
+    if(u.indexOf("https://meet.google.com/") === 0) return u;
+    var r = item.meetRoom || item.googleMeetRoom || "";
+    if(r.indexOf("https://meet.google.com/") === 0) return r;
+    return MEET_ROOMS[r] || "";
   }
+  function roomLabel(item){
+    var r = item.meetRoom || item.googleMeetRoom || "";
+    if(r.indexOf("https://") === 0){
+      for(var k in MEET_ROOMS){ if(MEET_ROOMS[k] === r) return k; }
+    }
+    return r || "No room set";
+  }
+  function joinLinkFor(item){ return meetUrlFor(item); }
 
   async function loadClasses(){
     classList.innerHTML = '<div class="empty">Loading classes...</div>';
@@ -305,7 +328,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           '<div class="class-meta-inline">' +
             '<span class="meta-chip">' + ICONS.user + '<span class="chip-label">' + (item.teacher || "") + '</span></span>' +
             '<span class="meta-chip">' + ICONS.calendar + '<span class="chip-label">' + (item.day || "") + ' ' + (item.time || "") + '</span></span>' +
-            '<span class="meta-chip room-chip">' + ICONS.link + '<span class="chip-label">' + (item.meetingId || "auto") + '</span></span>' +
+            '<span class="meta-chip room-chip">' + ICONS.link + '<span class="chip-label">' + roomLabel(item) + '</span></span>' +
           '</div>' +
           '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>' +
         '</div>' +
@@ -314,13 +337,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             '<div class="detail-row">' +
               '<div class="detail-item"><span class="detail-label">Duration</span><span class="detail-value">' + (item.duration || "") + '</span></div>' +
               '<div class="detail-item"><span class="detail-label">Status</span><span class="detail-value">' + (item.status || "Scheduled") + '</span></div>' +
-              '<div class="detail-item"><span class="detail-label">Room</span><span class="detail-value">' + (item.meetingId || "generated on first start") + '</span></div>' +
+              '<div class="detail-item"><span class="detail-label">Room</span><span class="detail-value">' + roomLabel(item) + '</span></div>' +
               (active ? '<div class="detail-item"><span class="detail-label">Live</span><span class="detail-value live-flag">Started ' + (active.startedAtText || "") + '</span></div>' : '') +
               (item.notes ? '<div class="detail-item"><span class="detail-label">Notes</span><span class="detail-value">' + item.notes + '</span></div>' : '') +
             '</div>' +
             '<div class="detail-actions">' +
               '<button type="button" class="action-btn primary open-meet-btn ' + (active ? "running" : "") + '">' + (active ? ICONS.stop + " End Class" : ICONS.video + " Open Meet") + '</button>' +
-              '<button type="button" class="action-btn copy copy-link-btn">' + ICONS.copy + ' Copy Student Link</button>' +
+              '<button type="button" class="action-btn copy copy-link-btn">' + ICONS.copy + ' Copy Meet Link</button>' +
               '<button type="button" class="action-btn edit" data-edit="' + item.id + '">' + ICONS.edit + ' Edit</button>' +
               '<button type="button" class="action-btn delete" data-delete="' + item.id + '">' + ICONS.trash + ' Delete</button>' +
             '</div>' +
@@ -355,7 +378,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function copyStudentLink(item, btn){
-    await ensureMeetingId(item);
+    
     const link = joinLinkFor(item);
     try{
       await navigator.clipboard.writeText(link);
@@ -372,23 +395,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const active = getActive(item.id);
 
     if(!active){
-      const meetingId = await ensureMeetingId(item);
+      const meetUrl = meetUrlFor(item);
+      if(!meetUrl){
+        alert("No Google Meet room is set for this class. Click Edit and choose a Meet room.");
+        return;
+      }
       const now = new Date();
-      const currentUserName = sessionStorage.getItem("impactAccessName") ||
-        sessionStorage.getItem("impactPersonnelName") || item.teacher || "Teacher";
-
-      await db.collection("meetings").doc(meetingId).set({
-        meetingId,
-        title:(item.learner || "Class") + " \u2014 " + (item.level || ""),
-        createdAt:new Date().toISOString(),
-        startedAt:new Date().toISOString(),
-        endedAt:"",
-        status:"active",
-        hostName:currentUserName
-      }, { merge:true });
-
-      const meetUrl = location.origin + "/teacher/live-room.html?id=" + meetingId +
-        "&name=" + encodeURIComponent(currentUserName) + "&host=true";
 
       const logRef = await db.collection("classTracker").add({
         classId:item.id,
@@ -398,7 +410,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         day:item.day || "",
         time:item.time || "",
         duration:item.duration || "",
-        meetRoom:meetingId,
+        meetRoom:roomLabel(item),
         meetUrl:meetUrl,
         startedAt:now.toISOString(),
         startedAtText:now.toLocaleString(),
@@ -417,7 +429,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         startedAtText:now.toLocaleString()
       });
 
-      window.open(meetUrl, "_blank");
+      window.open(meetUrl, "_blank", "noopener");
       renderClasses();
       return;
     }
@@ -515,7 +527,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     duration.value = item.duration || "";
     status.value = item.status || "Scheduled";
     notes.value = item.notes || "";
-    saveStatus.textContent = "Editing selected class \u2014 its meeting room stays the same.";
+    var rl = roomLabel(item); document.getElementById("meetRoom").value = MEET_ROOMS[rl] ? rl : "";
+    saveStatus.textContent = "Editing selected class \u2014 change the Meet room if needed.";
     window.scrollTo({top:0, behavior:"smooth"});
   }
 
@@ -538,6 +551,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       day:day.value,
       time:time.value,
       duration:duration.value.trim(),
+      meetRoom:document.getElementById("meetRoom").value,
+      meetUrl:MEET_ROOMS[document.getElementById("meetRoom").value] || "",
       status:status.value,
       notes:notes.value.trim(),
       updatedAt:now.toISOString(),
@@ -549,7 +564,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }else{
       await db.collection("classes").add({
         ...data,
-        meetingId:genId(),
+        
         createdAt:now.toISOString(),
         createdAtText:now.toLocaleString()
       });
