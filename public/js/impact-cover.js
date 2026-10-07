@@ -111,6 +111,8 @@
     if(typeof st.color === "string" && /^#[0-9a-fA-F]{6}$/.test(st.color)) o.color = st.color;
     if(st.bold === "1" || st.bold === "0") o.bold = st.bold;
     if(st.italic === "1" || st.italic === "0") o.italic = st.italic;
+    var spc = parseFloat(st.spacing);
+    if(isFinite(spc) && spc >= -2 && spc <= 40) o.spacing = Math.round(spc * 10) / 10;
     return o;
   }
   function cleanStyles(map){
@@ -134,6 +136,7 @@
     var f = fontStack(o.font);
     if(f) c += "font-family:" + f + ";";
     if(o.size) c += "font-size:" + o.size + "px;";
+    if(typeof o.spacing === "number") c += "letter-spacing:" + o.spacing + "px;";
     if(o.color) c += "color:" + o.color + ";";
     if(o.bold === "1") c += "font-weight:700;";
     if(o.bold === "0") c += "font-weight:400;";
@@ -144,7 +147,7 @@
   function attrsFor(o){
     if(!o || !Object.keys(o).length) return "";
     var a = "";
-    ["font","size","color","bold","italic"].forEach(function(k){ if(o[k] !== undefined) a += ' data-' + k + '="' + escA(o[k]) + '"'; });
+    ["font","size","color","bold","italic","spacing"].forEach(function(k){ if(o[k] !== undefined) a += ' data-' + k + '="' + escA(o[k]) + '"'; });
     var css = styleCss(o);
     if(css) a += ' style="' + escA(css) + '"';
     return a;
@@ -156,7 +159,7 @@
   function readAttrs(el){
     return cleanStyle({
       font:el.getAttribute("data-font"), size:el.getAttribute("data-size"), color:el.getAttribute("data-color"),
-      bold:el.getAttribute("data-bold"), italic:el.getAttribute("data-italic")
+      bold:el.getAttribute("data-bold"), italic:el.getAttribute("data-italic"), spacing:el.getAttribute("data-spacing")
     });
   }
   function applyField(el){
@@ -221,6 +224,7 @@
       + '<span class="ic-bar-label ic-bar-target">Click a text field on the cover to style it</span>'
       + '<select data-ics="font" title="Font">' + fonts + '</select>'
       + '<input type="number" data-ics="size" min="8" max="120" placeholder="Size" title="Font size (px)">'
+      + '<input type="number" data-ics="spacing" min="-2" max="40" step="0.5" placeholder="Spacing" title="Letter spacing (px)" style="width:78px">'
       + '<input type="color" data-ics="color" value="#000000" title="Text colour">'
       + sw
       + '<button type="button" class="ic-btn" data-ic="bold" style="font-weight:800">B</button>'
@@ -349,6 +353,7 @@
     bar.querySelector('[data-ics="font"]').value = f.getAttribute("data-font") || "";
     bar.querySelector('[data-ics="size"]').value = f.getAttribute("data-size") || String(Math.round(parseFloat(cs.fontSize)) || "");
     bar.querySelector('[data-ics="color"]').value = f.getAttribute("data-color") || rgbToHex(cs.color);
+    var spIn = bar.querySelector('[data-ics="spacing"]'); if(spIn){ var spCs = parseFloat(cs.letterSpacing); spIn.value = f.getAttribute("data-spacing") || (spCs ? String(Math.round(spCs * 10) / 10) : ""); }
     var bb = bar.querySelector('[data-ic="bold"]');
     var ib = bar.querySelector('[data-ic="italic"]');
     if(parseInt(cs.fontWeight, 10) >= 600) bb.classList.add("on"); else bb.classList.remove("on");
@@ -469,7 +474,7 @@
     else if(act === "reset-style"){
       f = activeField(block);
       if(f){
-        ["font","size","color","bold","italic"].forEach(function(n){ f.removeAttribute("data-" + n); });
+        ["font","size","color","bold","italic","spacing"].forEach(function(n){ f.removeAttribute("data-" + n); });
         applyField(f);
         syncBar(block);
       }
@@ -493,6 +498,7 @@
     var f = activeField(block);
     if(!f) return;
     if(k === "font"){ setAttr(f, "font", fontStack(el.value) ? el.value : ""); }
+    else if(k === "spacing"){ var spN = parseFloat(el.value); if(el.value === "") setAttr(f, "spacing", ""); else if(spN >= -2 && spN <= 40) setAttr(f, "spacing", Math.round(spN * 10) / 10); }
     else if(k === "size"){
       var n = parseInt(el.value, 10);
       if(el.value === "") setAttr(f, "size", "");
