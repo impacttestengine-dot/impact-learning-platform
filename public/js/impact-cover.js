@@ -432,13 +432,12 @@
     return "";
   }
 
-  document.addEventListener("click", function(e){
+  var coverClick = function(e){
     var btn = (e.target && e.target.closest) ? e.target.closest("[data-ic]") : null;
     if(!btn) return;
     var block = btn.closest('.c-block[data-type="cover"]');
     if(!block) return;
     e.preventDefault();
-    e.stopPropagation();
     var act = btn.getAttribute("data-ic");
     var f;
     if(act === "new"){ setInner(block, editorHtml(autofill(), "", {}, null)); }
@@ -475,7 +474,8 @@
         syncBar(block);
       }
     }
-  });
+  };
+  document.addEventListener("click", coverClick, true);
 
   function onStyleInput(e){
     var el = e.target;
