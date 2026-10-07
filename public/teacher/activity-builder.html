@@ -176,6 +176,16 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 .assign-level-chip input{display:none}</style>
 <script src="/js/impact-cover.js?v=6"></script>
 <script src="/js/impact-cover-tools.js?v=1"></script>
+<style id="ic-long-canvas">
+html,body{overflow-x:clip !important}
+.workspace{height:auto !important;min-height:calc(100vh - 108px);align-items:start}
+.canvas-panel{height:auto !important;min-height:calc(100vh - 108px);overflow:visible !important}
+.canvas{flex:none !important;overflow:visible !important;min-height:1100px}
+.canvas-toolbar{position:sticky;top:0;z-index:61;border-radius:24px 24px 0 0}
+.fmt-bar{top:56px !important}
+.blocks-panel,.settings-panel{height:auto !important;position:sticky;top:12px;max-height:calc(100vh - 130px);overflow-y:auto}
+@media(max-width:800px){.blocks-panel,.settings-panel{position:relative;top:auto;max-height:400px}.canvas{min-height:600px}}
+</style>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
