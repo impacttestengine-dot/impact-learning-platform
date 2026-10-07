@@ -4,7 +4,7 @@
 
   var COLLECTION = "coverTemplates";
   var PH = { org:"Organisation name", label:"Document type", title:"Document title", subtitle:"Subtitle (optional)", level:"Level", teacher:"Teacher", date:"Date" };
-  var META = ["level","teacher","date"];
+  var META = [];
   var META_LABEL = { level:"Level", teacher:"Teacher", date:"Date" };
   var SAVED = {};
   var BG_LIMIT = 350000;
@@ -256,11 +256,11 @@
     h += fieldEl("label", f.label, "ic-label", styles.label);
     h += fieldEl("title", f.title, "ic-title", styles.title);
     h += fieldEl("subtitle", f.subtitle, "ic-subtitle", styles.subtitle);
-    h += '<div class="ic-meta">';
+    if(META.length) h += '<div class="ic-meta">';
     META.forEach(function(k){
       h += '<div class="ic-meta-item"><div class="ic-meta-k">' + META_LABEL[k] + '</div>' + fieldEl(k, f[k], "ic-meta-v", styles[k]) + '</div>';
     });
-    h += '</div></div>';
+    h += (META.length ? '</div></div>' : '</div>');
     return h;
   }
   function chooserHtml(){
