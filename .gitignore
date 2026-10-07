@@ -14,3 +14,5 @@ safe-backups/
 *.log
 *.pem
 *.key
+
+_backup/
