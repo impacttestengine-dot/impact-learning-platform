@@ -33,6 +33,12 @@
   var CSS = [
     '.ic-cover{position:relative;overflow:hidden;background:#fff;color:#1f2430;border:1px solid #e5e7eb;border-top:6px solid #B5654A;border-radius:14px;padding:44px 36px;text-align:center;font-family:Inter,Arial,sans-serif;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;box-sizing:border-box;width:100%}',
     '.ic-bg{position:absolute;top:0;right:0;bottom:0;left:0;background-size:cover;background-position:center;z-index:0}',
+    '.ic-cover{min-height:560px;padding:64px 36px;display:flex;flex-direction:column;align-items:center;justify-content:space-evenly}',
+    '.ic-cover [data-field]{width:100%;max-width:640px;text-align:center}',
+    '.ic-cover .ic-org{font-size:1.25rem}',
+    '.ic-cover .ic-lvl{font-size:1.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#1f2430}',
+    '.ic-cover .ic-lesson{font-size:1.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#6b7280}',
+    '.ic-cover .ic-topic{font-size:2.4rem;font-weight:800;line-height:1.2;color:#1f2430}',
     '.ic-shade{position:absolute;top:0;right:0;bottom:0;left:0;z-index:0;pointer-events:none}',
     '.ic-cover > *:not(.ic-bg):not(.ic-shade){position:relative;z-index:1}',
     '.ic-logo{max-height:84px;max-width:240px;object-fit:contain;display:block}',
@@ -115,7 +121,7 @@
     if(isFinite(spc) && spc >= -2 && spc <= 40) o.spacing = Math.round(spc * 10) / 10;
     return o;
   }
-  function cleanStyles(map){
+  function cleanStyles(map){ ensurePH();
     var out = {};
     if(!map || typeof map !== "object") return out;
     Object.keys(PH).forEach(function(k){
@@ -198,9 +204,9 @@
     var t = document.getElementById("lessonTitle") || document.getElementById("mockTitle");
     var l = document.getElementById("lessonLevel") || document.getElementById("mockLevel");
     return {
-      org:"IMPACT", label:docLabel(),
+      org:"IMPACT - THE LANGUAGE PEOPLE", label:docLabel(),
       title:t ? esc(String(t.value || "").trim()) : "",
-      subtitle:"", level:l ? esc(l.value) : "", teacher:esc(whoAmI()), date:today()
+      subtitle:"", lesson:"", topic:t ? esc(String(t.value || "").trim()) : "", level:l ? esc(l.value) : "", teacher:esc(whoAmI()), date:today()
     };
   }
 
@@ -240,7 +246,12 @@
     h += '</div>';
     return h;
   }
+  function ensurePH(){
+    if(typeof PH !== "object" || !PH) return;
+    PH.level = "Level"; PH.lesson = "Lesson number"; PH.topic = "Topic";
+  }
   function editorHtml(f, logo, styles, bg){
+    ensurePH();
     f = f || {};
     styles = cleanStyles(styles);
     bg = cleanBg(bg);
@@ -256,10 +267,10 @@
     h += '<div class="ic-cover">' + bgHtml(bg);
     if(lg) h += '<img class="ic-logo" src="' + lg + '" alt="">';
     h += fieldEl("org", f.org, "ic-org", styles.org);
-    h += '<div class="ic-rule"></div>';
-    h += fieldEl("label", f.label, "ic-label", styles.label);
-    h += fieldEl("title", f.title, "ic-title", styles.title);
-    h += fieldEl("subtitle", f.subtitle, "ic-subtitle", styles.subtitle);
+    h += fieldEl("level", f.level, "ic-lvl", styles.level);
+    h += fieldEl("lesson", f.lesson, "ic-lesson", styles.lesson);
+    h += fieldEl("topic", f.topic || f.title, "ic-topic", styles.topic || styles.title);
+    
     if(META.length) h += '<div class="ic-meta">';
     META.forEach(function(k){
       h += '<div class="ic-meta-item"><div class="ic-meta-k">' + META_LABEL[k] + '</div>' + fieldEl(k, f[k], "ic-meta-v", styles[k]) + '</div>';
@@ -278,7 +289,7 @@
       + '<div class="ic-saved-list" style="display:none"></div>'
       + '</div>';
   }
-  function viewHtml(b){
+  function viewHtml(b){ ensurePH();
     if(!b || b.mode !== "editor") return "";
     var f = b.fields || {};
     var styles = cleanStyles(b.styles);
@@ -292,10 +303,10 @@
     return '<div class="ic-cover">' + bgHtml(bg)
       + (lg ? '<img class="ic-logo" src="' + lg + '" alt="">' : '')
       + one("org","ic-org")
-      + '<div class="ic-rule"></div>'
-      + one("label","ic-label")
-      + one("title","ic-title")
-      + one("subtitle","ic-subtitle")
+      + one("level","ic-lvl")
+      + one("lesson","ic-lesson")
+      + (f.topic ? one("topic","ic-topic") : one("title","ic-topic"))
+      
       + (meta ? '<div class="ic-meta">' + meta + '</div>' : '')
       + '</div>';
   }
@@ -306,7 +317,7 @@
       return chooserHtml();
     }};
   }
-  function extract(block){
+  function extract(block){ ensurePH();
     var cover = block.querySelector(".ic-cover");
     if(!cover) return { mode:"choose" };
     var f = {}, st = {};
@@ -394,7 +405,7 @@
     if(!t) return;
     var base = autofill();
     var tf = t.fields || {};
-    ["org","subtitle","teacher"].forEach(function(k){ if(tf[k]) base[k] = tf[k]; });
+    ["org"].forEach(function(k){ if(tf[k]) base[k] = tf[k]; });
     setInner(block, editorHtml(base, t.logo, t.styles, t.bg));
   }
   function deleteSaved(btn){
