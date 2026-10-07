@@ -118,6 +118,7 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 .status-note{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.4);line-height:1.5}
 .act-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 </style>
+<script src="/js/impact-cover.js"></script>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
@@ -134,7 +135,8 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 <aside class="panel blocks-panel">
   <p class="panel-title">Structure</p>
   <div class="block-group">
-    <button class="block-btn" data-block="sectionheader" type="button"><span class="block-icon">&sect;</span>Section Header</button>
+    <button class="block-btn" data-block="cover" type="button"><span class="block-icon">C</span>Cover Page</button>
+<button class="block-btn" data-block="sectionheader" type="button"><span class="block-icon">&sect;</span>Section Header</button>
     <button class="block-btn" data-block="header" type="button"><span class="block-icon">H1</span>Header</button>
     <button class="block-btn" data-block="text" type="button"><span class="block-icon">T</span>Instructions Text</button>
   </div>
@@ -331,6 +333,7 @@ function questionRowHtml(qid, data){
 }
 
 const TEMPLATES = {
+  cover:(window.ImpactCover ? window.ImpactCover.template() : { render:function(){ return ""; } }),
   sectionheader: { render: function(data){
     const title = (data && data.title) ? data.title : "Comprehension Orale";
     const points = (data && data.points) ? data.points : "25 points";
@@ -524,6 +527,7 @@ document.getElementById("clearBtn").addEventListener("click", function(){
 function extractData(block){
   const type = block.dataset.type;
   const data = { type: type };
+  if(type==="cover"&&window.ImpactCover){Object.assign(data,window.ImpactCover.extract(block));}
 
   if(type==="sectionheader"){
     data.title = block.querySelector(".delf-section-title").innerHTML;

@@ -166,6 +166,7 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 .status-note{font-size:.72rem;font-weight:600;color:rgba(255,255,255,.4);line-height:1.5}
 .act-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 </style>
+<script src="/js/impact-cover.js"></script>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
@@ -182,7 +183,8 @@ body{font-family:Inter,system-ui,sans-serif;color:#fff;background:#05060b}
 <aside class="panel blocks-panel">
   <p class="panel-title">Basic</p>
   <div class="block-group">
-    <button class="block-btn" data-block="mediafile" type="button"><span class="block-icon">🖼</span>Media File</button>
+    <button class="block-btn" data-block="cover" type="button"><span class="block-icon">C</span>Cover Page</button>
+<button class="block-btn" data-block="mediafile" type="button"><span class="block-icon">🖼</span>Media File</button>
     <button class="block-btn" data-block="header" type="button"><span class="block-icon">H1</span>Header</button>
     <button class="block-btn" data-block="subheader" type="button"><span class="block-icon">H2</span>Subheader</button>
     <button class="block-btn" data-block="text" type="button"><span class="block-icon">T</span>Text</button>
@@ -335,6 +337,7 @@ function selectBlock(block){allBlocks().forEach(b=>b.classList.remove("selected"
 canvas.addEventListener("click",function(e){if(e.target===canvas||e.target===canvasEmpty)selectBlock(null);});
 function makeQ(label){return `<div class="q-label-row"><span class="q-icon">?</span><div class="q-label-text" contenteditable="true">${label}</div></div><div class="q-hint" contenteditable="true">Type in a description and fill-out hints</div>`;}
 const TEMPLATES={
+  cover:(window.ImpactCover ? window.ImpactCover.template() : { render:function(){ return ""; } }),
   mediafile:{render:(data)=>{
     const src=data&&data.src?data.src:"";
     const kind=data&&data.kind?data.kind:"";
@@ -476,6 +479,7 @@ document.getElementById("selectAllBtn").addEventListener("click",function(){allB
 document.getElementById("clearBtn").addEventListener("click",function(){if(!confirm("Clear the entire canvas?"))return;pushUndo();allBlocks().forEach(b=>b.remove());selectedBlock=null;pageCount=1;showEmpty();});
 function extractData(block){
   const type=block.dataset.type;const data={type};
+  if(type==="cover"&&window.ImpactCover){Object.assign(data,window.ImpactCover.extract(block));}
   if(type==="header"||type==="subheader"||type==="text"){data.content=block.querySelector("[contenteditable]").innerHTML;}
   if(type==="pagebreak"){const wrap=block.querySelector(".page-break-wrap");data.pageNum=wrap?parseInt(wrap.dataset.page)||2:2;}
   if(["shorttext","longtext","date","number","website","fileupload","signature","mediaanswer"].includes(type)){const lel=block.querySelector(".q-label-text");const hel=block.querySelector(".q-hint");data.label=lel?lel.innerHTML:"";data.hint=hel?hel.innerHTML:"";}

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -159,6 +159,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#05060b;color:#fff}
   z-index:999 !important;
 }
 </style>
+<script src="/js/impact-cover.js"></script>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
@@ -271,7 +272,8 @@ document.addEventListener("DOMContentLoaded", async function(){
         : `<img src="${b.src}" alt="" style="width:100%;border-radius:12px;max-height:460px;object-fit:contain;background:#0a0c14">`;
       return `<div>${mediaTag}</div>`;
     }
-    if(b.type==="header") return `<div class="sv-header">${b.content||""}</div>`;
+    if(b.type==="cover") return (window.ImpactCover ? window.ImpactCover.renderView(b) : "");
+  if(b.type==="header") return `<div class="sv-header">${b.content||""}</div>`;
     if(b.type==="subheader") return `<div class="sv-subheader">${b.content||""}</div>`;
     if(b.type==="text") return `<div class="sv-text">${b.content||""}</div>`;
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -59,6 +59,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#05060b;color:#fff;min-he
 .results-banner .score{font-family:"Sorts Mill Goudy",serif;font-size:3rem;font-weight:400;color:#d97706}
 .results-banner p{color:#6b7280;font-weight:700;font-size:.88rem;margin-top:6px}
 </style>
+<script src="/js/impact-cover.js"></script>
 </head>
 <body>
 <script src="/js/impact-global-bg.js"></script>
@@ -110,6 +111,7 @@ document.addEventListener("DOMContentLoaded", async function(){
   let html = '<div class="doc">';
 
   blocks.forEach(b=>{
+    if(b.type==="cover"){ if(window.ImpactCover){ html += window.ImpactCover.renderView(b); } return; }
     if(b.type==="sectionheader"){
       html += `<div class="delf-section-header"><div class="delf-section-icon">§</div><div class="delf-section-title">${b.title||""}</div><div class="delf-section-points">${b.points||""}</div></div>`;
     }
